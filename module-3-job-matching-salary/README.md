@@ -32,7 +32,8 @@ No database to set up. Without provider keys, searches use the cached snapshot. 
 cd module-3-job-matching-salary
 uvicorn src.api.main:app --port 8003          # Swagger UI: http://localhost:8003/docs
 python scripts/prewarm.py --dry-run           # the night before a demo: plan the cache fill
-python scripts/prewarm.py                     # fill it (add --with-jsearch to also spend JSearch quota)
+python scripts/prewarm.py                     # fill it; --with-jsearch-salary caches salary estimates (35 JSearch calls),
+                                              # --with-jsearch also uses JSearch for jobs (both spend its 200/month quota)
 ```
 
 Start module 2 (port 8002) as well, so job descriptions get skill ids.
@@ -40,7 +41,7 @@ Start module 2 (port 8002) as well, so job descriptions get skill ids.
 ## Test
 
 ```bash
-pytest module-3-job-matching-salary/tests/ -v      # 113 tests; the two live provider tests skip without keys
+pytest module-3-job-matching-salary/tests/ -v      # 138 tests; the two live provider tests skip without keys
 ```
 
 ## Endpoints
@@ -67,36 +68,45 @@ curl -X POST http://localhost:8003/api/v1/jobs/search -H "Content-Type: applicat
 }'
 ```
 
-With module 2's profile instead of `skills`, pass `"profile": <module 2 UserProfile>`, plus optional `"gap_analysis"`, `"typical_experience": {"min": 3.4, "max": 7.4}` (module 1) and `"market_baseline"` (module 1's `regional_breakdown.india`).
+With module 2's profile instead of `skills`, pass `"profile": <module 2 UserProfile>`. Typed `skills` are resolved through module 2 ("Postgres" becomes `postgresql`). Optional inputs:
 
-Response, abridged from a real search (Data Scientist, Bengaluru, module 2 profile from the fixture resume, module 1's 3.4–7.4 year band):
+| Field | From | Effect |
+|---|---|---|
+| `gap_analysis` | module 2 | drives which skills the unlocks look at |
+| `typical_experience` `{min, max}` | module 1 | experience band for jobs that don't state one |
+| `market_salary_percentiles` `{p25, p50, p75, sample_size, experience_band}` | module 1 | primary salary source after posted salaries |
+| `market_baseline` | module 1 `regional_breakdown.india` | last salary fallback |
+| `jsearch_salary: true` | — | fetch JSearch's salary estimate if not cached (spends JSearch quota; cached 7 days) |
+| `jsearch_enrichment: true` | — | also query JSearch for full job descriptions (spends JSearch quota) |
+
+Response, abridged from a real search (Data Scientist, Bengaluru, module 2 profile from the fixture resume with 7.5 years, module 1's 3.4–7.4 band, `jsearch_salary: true`):
 
 ```json
 {
   "target_role": "Data Scientist", "location": "Bengaluru", "total_found": 41, "total_available": 1022,
   "jobs": [
-    {"rank": 1, "job_id": "adzuna:5901481043", "title": "Senior Data Scientist", "company": "Epsilon",
-     "salary": {"min": null, "max": null, "currency": "INR", "is_predicted": false},
-     "match_score": 79, "classification": "Good",
-     "match": {"skills": 0.48, "experience": 0.99, "education": 1.0, "location": 1.0, "seniority": 1.0,
-               "preference": 1.0, "skill_method": "skills"},
-     "matched_skills": ["machine_learning", "statistics", "python"], "missing_skills": ["ai", "data_science"],
-     "inferred_skills": ["ai", "data_science", "machine_learning", "statistics", "python"],
-     "experience_source": "request", "rank_score": 0.8262,
-     "rank_components": {"match": 0.79, "location": 1.0, "experience": 0.99, "salary": 0.5, "recency": 0.9274}}
+    {"rank": 1, "title": "Data Scientist", "company": "Wesco", "match_score": 82, "classification": "Strong",
+     "matched_skills": ["data_analysis", "statistics"], "missing_skills": ["big_data"],
+     "skills_confidence": "extracted", "skills_note": null, "rank_score": 0.8491},
+    {"rank": 2, "title": "Senior Data Scientist", "company": "Epsilon", "match_score": 82, "classification": "Strong",
+     "matched_skills": ["machine_learning", "statistics", "python"], "missing_skills": [],
+     "skills_confidence": "inferred",
+     "skills_note": "Skills inferred from similar Data Scientist jobs in Bengaluru; the listing's text was too short.",
+     "rank_score": 0.8438}
   ],
-  "role_market_profile": {"jobs_analysed": 28, "top_skills": [{"skill": "ai", "share": 0.5, "jobs": 14},
-                          {"skill": "data_science", "share": 0.464, "jobs": 13}, {"skill": "machine_learning", "share": 0.429, "jobs": 12}]},
-  "market_salary": {"estimated_min": 500000, "estimated_median": 1500000, "estimated_max": 2500000, "confidence": 0.5,
-                    "sample_size": 446, "sources_used": ["adzuna_histogram"], "excluded": {"no_salary": 39, "wide_range": 1},
-                    "display": "Estimated market range: 5-25 LPA"},
-  "candidate_value": {"estimated_min": 1100000, "estimated_max": 2200000, "display": "Your estimated range: 11-22 LPA",
-                      "reasons": ["Good match (79%)", "Experience above the typical 3.4-7.4 years for the role", "..."]},
-  "negotiation": {"job_id": "adzuna:5901481043", "posted_salary": null, "market_range": "5-25 LPA",
-                  "candidate_range": "11-22 LPA", "recommended_target": "16.5 LPA", "reasonable_minimum": "11 LPA",
-                  "confidence": 0.38, "reasons": ["No posted salary for this job: the target comes from the market estimate.", "..."]},
-  "skill_unlocks": [{"skill": "ai", "jobs_unlocked": 4,
-                     "message": "Learning AI would move 4 more Data Scientist jobs in Bengaluru to a Good or Strong match."}],
+  "market_salary": {"estimated_min": 1400000, "estimated_median": 2100000, "estimated_max": 2800000, "confidence": 0.7,
+                    "sample_size": 466, "sources_used": ["jsearch_salary_estimate"],
+                    "display": "Estimated market range: 14-28 LPA",
+                    "note": "Estimated, market-based range ... From JSearch's salary estimate (Glassdoor data, 466 salaries)."},
+  "candidate_value": {"display": "Your estimated range: 14.4-21.5 LPA", "market_position": 0.25,
+                      "reasons": ["Strong skill and profile match (82%)", "Relevant experience (7.5 years, typical 7-9)", "..."]},
+  "negotiation": {"posted_salary": null, "market_range": "14-28 LPA", "candidate_range": "14.4-21.5 LPA",
+                  "recommended_target": "18 LPA", "reasonable_minimum": "14.5 LPA", "confidence": 0.54},
+  "skill_unlocks": [
+    {"skill": "llm", "jobs_unlocked": 4,
+     "message": "Learning Large Language Models would move 4 more Data Scientist jobs in Bengaluru to a Good or Strong match."},
+    {"skill": "rag", "jobs_unlocked": 2,
+     "message": "Learning RAG would move 2 more Data Scientist jobs in Bengaluru to a Good or Strong match."}],
   "provider_trace": [{"provider": "adzuna", "city": "Bengaluru", "status": "ok", "jobs": 50}],
   "warnings": ["Merged 9 duplicate listing(s).", "Some listings had too few skills (descriptions are truncated); ..."]
 }

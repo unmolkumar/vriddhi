@@ -90,9 +90,17 @@ Every source maps to the spec's shape: `job_id, title, company, description, loc
 1. **Extraction.** Module 2's `/skills/extract` gives skill ids and their `maps_to` parents for each job's title + description. If module 2 is down: `skills_source: "unavailable"`, a warning, keyword matching for those jobs, and a retry on the next search.
 2. **Full text.** Adzuna truncates descriptions to ~500 characters. When the same job also came from JSearch with a full description, its skills replace the Adzuna ones (`skills_source: "jsearch_full"`).
 3. **Role market profile.** `share(skill)` = jobs mentioning the skill ÷ jobs with extracted skills, for the role and city. It is returned as `role_market_profile` (useful to module 2 and integration).
-4. **Inference.** A job with fewer than `MIN_JOB_SKILLS = 3` of its own skills is topped up to `INFER_FILL_TO = 5` from profile skills with share ≥ `MIN_PROFILE_SHARE = 0.15`. It is marked `skills_inferred: true` with `inferred_skills` listed. Inferred skills count at `INFERRED_SKILL_WEIGHT = 0.5`.
+4. **Inference.** A job with fewer than `MIN_JOB_SKILLS = 3` of its own skills is topped up to `INFER_FILL_TO = 5` from profile skills with share ≥ `MIN_PROFILE_SHARE = 0.15`. It is marked `skills_inferred: true` with `inferred_skills` listed. Inferred skills count at `INFERRED_SKILL_WEIGHT = 0.5`, and the job's skill score is also penalised (§6.1).
+5. **Confidence label.** Each result carries `skills_confidence`: `extracted` (no inferred skills), `partly_inferred` or `inferred` (none of its own). Inferred results get a `skills_note` such as *"Skills inferred from similar Data Scientist jobs in Bengaluru; the listing's text was too short."*
+6. **Broad categories.** `BROAD_SKILL_IDS` lists module 2 taxonomy ids that name a field rather than a skill: `ai`, `data`, `data_science`, `big_data`, `data_engineering`, `generative_ai`, `backend`, `frontend`, `full_stack_development`, `web_development`, `mobile_development`, `api_development`, `devops`, `cloud`, `software_testing`, `cybersecurity`. They:
+   - stay in the market profile as demand signals;
+   - are never inferred into a job;
+   - count at half weight in a job's skill list (`BROAD_SKILL_WEIGHT`);
+   - always come after concrete skills in `missing_skills`;
+   - are never offered as an unlock (§9).
+7. **Typed skills.** Without a module 2 profile, typed skills go to module 2's `/skills/extract` as one comma-separated list, so "Postgres" becomes `postgresql` with `maps_to: sql`. Unrecognised names are kept as keywords with a warning. If module 2 is down, all typed skills are matched as keywords, again with a warning.
 
-In the live Bengaluru run, 28 of 41 jobs had extracted skills, and 16 were topped up by inference.
+In the live Bengaluru run, 3 of the top 20 results had fully extracted skills, 5 were partly inferred and 12 inferred.
 
 ---
 
@@ -102,7 +110,7 @@ In the live Bengaluru run, 28 of 41 jobs had extracted skills, and 16 were toppe
 
 | Component | Weight | Rule |
 |---|---|---|
-| **skills** | 0.40 | Σ w_s · credit_s / Σ w_s over the job's skills. w = 1, or 0.5 if inferred. credit = candidate level → 0.6 (L1), 0.8 (L2), 1.0 (L3+), × 0.5 if module 2 set `needs_verification`. A candidate skill whose `maps_to` is the job skill counts (PostgreSQL covers `sql`). If the candidate only has the job skill's parent, credit is 0.5 × that skill's credit. Jobs with no skills: share of the candidate's top 8 skills found in the job text (`skill_method: "keywords"`). |
+| **skills** | 0.40 | [Σ w_s · credit_s / Σ w_s] × (1 − `INFERRED_PENALTY` × inferred share) over the job's skills, with `INFERRED_PENALTY = 0.3`.<br>• **w**: 1, × 0.5 if inferred, × 0.5 if a broad category.<br>• **credit**: by candidate level, 0.6 (L1), 0.8 (L2), 1.0 (L3+); × 0.5 if module 2 set `needs_verification`.<br>• A candidate skill whose `maps_to` is the job skill counts (PostgreSQL covers `sql`). If the candidate only has the job skill's parent, credit is 0.5 × that skill's credit.<br>• Jobs with no skills: the share of the candidate's top 8 skills found in the job text (`skill_method: "keywords"`). |
 | **experience** | 0.20 | Band from the posting (`3-5 years`; `4+` read as 4–7), else the request's `typical_experience` (module 1), else the title (senior 4–8, lead 6–12, …), else neutral 0.7. Recorded as `experience_source: posting / request / title_heuristic / unknown`. Below the band: years ÷ min (the spec's 2 years for "3+" = 0.67). Inside: 1. Above: 1 − (years − max)/10, floor 0.5. |
 | **education** | 0.10 | No degree mentioned in the job: 1. Candidate degree ≥ the one mentioned: 1. Lower degree: 0.6. None: 0.4. |
 | **location** | 0.10 | Remote job or a preferred/home city: 1. Same region (Noida for a Gurugram candidate): 0.8. Unknown: 0.7. Other city: 0.3. |
@@ -128,6 +136,15 @@ The spec's example: the candidate has Python, FastAPI, SQL and Redis at level 3 
 
 overall = 0.4 × 0.95 + 0.2 × 0.6667 + 0.1 × (1 + 1 + 1 + 1) = 0.38 + 0.1333 + 0.4 = **0.9133** → 91%, **Strong**.
 
+### 6.4 Inferred-skill penalty, worked example (test `test_fully_inferred_job_cannot_outrank_a_comparable_job_with_real_skills`)
+A candidate with Python and SQL at level 3 looks at two jobs that both list Python, SQL and Spark. In one, all three skills were extracted; in the other, all three were inferred.
+- **Extracted:** (1 + 1 + 0) / 3 = **0.667**.
+- **Inferred:** the weighted ratio is the same, (0.5 + 0.5 + 0) / 1.5 = 0.667, then × (1 − 0.3 × 3/3) = **0.467**.
+
+The fully inferred job loses 0.08 overall (0.4 × 0.2) and can't outrank a comparable job with real skills.
+
+In the live run, this fix plus `BROAD_SKILL_WEIGHT` moved a real Honeywell listing (which asks for "data science") from a skill score of 0.60 to 0.69. An all-inferred listing dropped from rank 1 to rank 2.
+
 ---
 
 ## 7. Ranking (`engines/ranking.py`)
@@ -149,16 +166,44 @@ rank_score = **0.55** × match + **0.15** × location + **0.10** × experience +
    - Tukey outliers beyond 1.5 × IQR (`outlier`).
 
    With ≥ `MIN_POSTED_SAMPLE = 5` left: estimated_min/median/max = P25/P50/P75. Confidence = min(0.85, 0.45 + 0.03 × n), minus 0.1 if the IQR is wider than the median.
-2. **Adzuna histogram** for role + city (bucket midpoints weighted by vacancies). Needs ≥ 20 vacancies; P25/P50/P75; confidence 0.5. It is Adzuna's aggregate, so it may include its own predicted salaries.
-3. **Module 1 baseline** (`market_baseline.median_salary_inr_lpa`): median ± 25%, confidence 0.3.
-4. **Otherwise:** no estimate (`null` fields, confidence 0) and a note listing what was tried.
+2. **Module 1 percentiles** (`market_salary_percentiles: {p25, p50, p75, sample_size, experience_band}`, INR per year), when `sample_size ≥ MIN_PERCENTILE_SAMPLE = 30`. Confidence = min(0.85, 0.55 + 0.05 × log10 n), e.g. 0.70 for 1,200 points.
+3. **JSearch salary estimate** (`GET /estimated-salary`: Glassdoor-backed, INR, with a sample count and its own confidence label) for role × city × experience bucket. Its min/median/max are used as given. Confidence comes from JSearch's label: VERY_HIGH 0.70, HIGH 0.60, MEDIUM 0.50, LOW 0.35.
+   - Cached 7 days (`SALARY_CACHE_TTL_DAYS`), keyed by role × city × bucket, falling back to the bucket `ALL`.
+   - A fresh call is made only when the request sets `jsearch_salary: true`. Otherwise a cached estimate is used if there is one.
+   - `scripts/prewarm.py --with-jsearch-salary` caches the `ALL` bucket for every role × city (35 calls).
+4. **Adzuna histogram** for role + city (bucket midpoints weighted by vacancies). Needs ≥ 20 vacancies; P25/P50/P75; confidence 0.5. It is Adzuna's aggregate, so it may include its own predicted salaries.
+5. **Module 1 baseline** (`market_baseline.median_salary_inr_lpa`): median ± 25%, confidence 0.3.
+6. **Otherwise:** no estimate (`null` fields, confidence 0) and a note listing what was tried.
+
+In the live Bengaluru run (7.5 years, `SEVEN_TO_NINE` bucket), JSearch gave 14–28 LPA from 466 salaries at confidence 0.70. The histogram alone had given 5–25 LPA at 0.50.
 
 Figures are rounded half-up to ₹10,000, and display text reads "Estimated market range: 14.3–17.8 LPA". Every estimate carries the note *"Estimated, market-based range … indicative, not a guarantee or an offer"* (AGENTS.md §13).
 
 ### 8.2 Candidate market value
-adjustment = 1 + 0.20 × (match − 0.70) + 0.08 × experience position, clamped to [0.8, 1.2]. The experience position runs from −1 to +1 across the role band. The match used is the mean of the top 5 ranked jobs, or the specific job's match for negotiation.
+The candidate is placed inside the market range by experience, rather than given the whole distribution:
 
-The candidate range is [(min + median)/2, (median + max)/2] × adjustment. The reasons cover match strength, experience against the band, and the location and data source.
+```
+position   = clamp((years − band.min) / (band.max − band.min), 0, 1)      0.5 without a band
+adjustment = clamp(1 + 0.20 × (match − 0.70), 0.8, 1.2)                     MATCH_ADJUSTMENT, MATCH_PIVOT
+centre     = (market_min + position × (market_max − market_min)) × adjustment
+half_width = (market_max − market_min) × (0.15 + 0.35 × (1 − confidence))  NARROW_BASE, NARROW_UNCERTAINTY
+range      = centre ± half_width, rounded to ₹10k
+```
+
+**Which band:** the one the salary data describes, so experience isn't counted twice:
+- Module 1 percentiles use their `experience_band`.
+- A JSearch estimate uses its bucket (e.g. 7–9 years).
+- Otherwise the role band applies (the request's `typical_experience`, else the title).
+
+The match used is the mean of the top 5 ranked jobs, or the specific job's match for negotiation. `market_position` is returned with the range. The range is narrow with good data and widens only when confidence is low.
+
+**Worked example** (test `test_candidate_range_positions_by_experience_and_narrows_with_confidence`). Module 1 percentiles give 14–21 L with 1,200 points, so confidence = 0.55 + 0.05 × log10 1200 ≈ 0.70. A candidate with 5 years in the 3–7 band at a 70% match:
+- position = 0.5; adjustment = 1.0;
+- centre = 14 + 0.5 × 7 = 17.5 L;
+- half-width = 7 × (0.15 + 0.35 × 0.30) ≈ 1.8 L;
+- range ≈ **15.7–19.3 LPA**, against 8.5–21.5 LPA from the histogram alone at confidence 0.5.
+
+Live: 7.5 years in JSearch's 7–9 bucket gives position 0.25 and a range of **14.4–21.5 LPA**, inside the 14–28 market. Before this round, the role band put this profile at the top, which gave 25–32 LPA, above the market maximum.
 
 ### 8.3 Negotiation (spec shape)
 | Situation | Recommended target | Reasonable minimum |
@@ -174,7 +219,12 @@ Figures are rounded to 0.5 LPA and returned as text ("16.5 LPA") and INR, with c
 
 ## 9. "Unlocks N jobs"
 
-For up to 3 skills the candidate lacks, taken from module 2's `gap_analysis.critical_missing` and `learning_priorities` first, else the role market profile: count the fetched jobs that are Partial or Weak now but would be Good or Strong if the candidate had the skill at level 3. That gives *"Learning AI would move 4 more Data Scientist jobs in Bengaluru to a Good or Strong match."*, sorted by jobs unlocked, with example job ids.
+1. **Candidates:** skills the candidate lacks, from module 2's `gap_analysis.critical_missing` and `learning_priorities` first, then the role market profile.
+2. **Concrete only:** a broad category (`ai`, `data_science`…) is replaced by its most-asked concrete child in this market. The children come from module 2's `maps_to`, up to two levels down (`ai` → `generative_ai` → `llm`). If there's no concrete child, the category is dropped.
+3. **Count:** for up to 3 concrete skills, count the fetched jobs that are Partial or Weak now but would be Good or Strong if the candidate had the skill at level 3. Skills that unlock 0 jobs are left out.
+4. **Message:** uses module 2's display name, e.g. *"Learning Large Language Models would move 4 more Data Scientist jobs in Bengaluru to a Good or Strong match."* Results are sorted by jobs unlocked, with example job ids.
+
+Live Bengaluru: Large Language Models (4 jobs), RAG (2). Before this round the list was `ai`, `data_science` and a 0-job entry.
 
 ---
 
@@ -215,9 +265,11 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 - `profile`: module 2's `UserProfile`, unchanged (`skills[].name/level/evidence/maps_to/needs_verification`, `experience_years`, `education`, `location`, `preferred_locations`; extra fields ignored). Standalone alternative: `skills` + `experience_years` + `location` (typed skills become id-style slugs at level 2).
 - `gap_analysis`: module 2's `match_score`, `verdict`, `learning_priorities`, `critical_missing`. It drives the unlock candidates.
 - `typical_experience`: module 1's per-role band (its export now has one per role; e.g. Data Scientist 3.4–7.4).
+- `market_salary_percentiles`: module 1's salary percentiles for the role (`p25`, `p50`, `p75`, `sample_size`, `experience_band`). It's the primary market source after posted salaries.
 - `market_baseline`: module 1's `regional_breakdown.india` (`median_salary_inr_lpa`, …). It's the last salary fallback.
+- `jsearch_salary`, `jsearch_enrichment`: opt-in flags that spend JSearch quota.
 
-**Dependency:** module 2's `POST /api/v1/skills/extract`, on `feat/module-2-skill-gap`, isn't on `main` yet. Until it is, module 3 runs with `skills_source: "unavailable"` and keyword matching.
+**Dependency:** module 2's `POST /api/v1/skills/extract` (on `main` since module 2's PR #2) is used for job skills and typed skills. Without it, module 3 falls back to keyword matching with a warning.
 
 **Outputs:** `JobSearchResponse` and the salary/negotiation responses above. `role_market_profile` is the live demand signal module 2 or the integration layer can show next to module 1's forecast.
 
@@ -229,8 +281,8 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-3-job-matching-salary && uvicorn src.api.main:app --port 8003`. Module-local SQLite, no database to provision; runs without provider keys (snapshot) and without module 2 (keyword matching) |
 | 2 | Contract compliance | ✅ | Spec job shape and `/api/v1/jobs/search` input/output; accepts module 2's profile and module 1's baseline and band as plain data; integration error shape; `src/models/schema_m3.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **113 passed**, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call |
-| 4 | Error handling | ✅ | Provider timeout, HTTP error, bad JSON, missing key and unsubscribed key → next provider, then snapshot; module 2 down → keyword matching; no salary data → null estimate with a note; invalid input → 422; unknown job → 404; unexpected → 500 without a stack trace |
+| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **138 passed**, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call and never touch the real cache |
+| 4 | Error handling | ✅ | Provider timeout, HTTP error, bad JSON, missing key and unsubscribed key → next provider, then snapshot; JSearch salary failure → next salary source with a warning; module 2 down → keyword matching for jobs and typed skills; no salary data → null estimate with a note; invalid input → 422; unknown job → 404; unexpected → 500 without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` imports only `src.*` and third-party packages; module 2 via HTTP, module 1 via request fields |
 | 6 | Documentation | ✅ | `README.md` (install, keys, run, test, payloads); this file (formulas, worked example, contracts) |
 | 7 | Clean git history | ✅ | Conventional Commits with `(module-3)` scope on `feat/module-3-job-matching-salary`, one change per commit |
@@ -243,7 +295,7 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 pytest module-3-job-matching-salary/tests/ -v
 ```
 
-**113 passed** (~15 s, or ~4 s without the two live calls).
+**138 passed** (~15 s, or ~3 s without the two live calls).
 
 | File | Tests | Covers |
 |---|---|---|
@@ -253,10 +305,12 @@ pytest module-3-job-matching-salary/tests/ -v
 | `test_matching.py` | 25 | worked example, every component, evidence and parents, inferred weight, keyword fallback, experience sources, weights, classification, market profile and inference |
 | `test_salary_ranking.py` | 12 | the 4–25 LPA exclusion, predicted salaries, outliers, posted / histogram / baseline / none, candidate value, negotiation (low, generous, none, predicted posted salary), ranking order |
 | `test_search_api.py` | 14 | search end to end, unlocks-N-jobs, unlocks from the market profile, employment filter, module 2 down, salary estimate, negotiate (by job, by offer, no salary, unknown job), invalid requests, readable names, schema drift, OpenAPI paths |
+| `test_polish.py` | 25 | inferred penalty worked example, skills confidence, broad ids never inferred or first, broad skills at half weight, unlocks without categories or zero counts, typed 'Postgres' via module 2 and keyword fallback, percentiles tightening the range, source order, positioning worked example, experience counted once, JSearch salary normalisation, buckets, opt-in and 7-day cache |
 | `test_live_providers.py` | 2 | one real call each to Adzuna and JSearch (skipped without keys) |
 
 **Known limitations**
 - Adzuna truncates descriptions to ~500 characters, so many jobs need inferred skills (inferred skills are flagged and count half).
-- Few Indian listings post a salary (1 usable in 41 in the live Bengaluru run), so estimates often come from Adzuna's histogram, which is wide (5–25 LPA) and may include Adzuna's own predictions. Confidence reflects this (0.5).
+- Few Indian listings post a salary (1 usable in 41 in the live Bengaluru run). Module 1 percentiles or JSearch's Glassdoor estimate (14–28 LPA at 0.70 live) are much tighter than Adzuna's histogram (5–25 LPA at 0.50); without them, the histogram is used.
 - JSearch is slow (10–20+ s) and has 200 calls a month, so it is kept to fallback and opt-in enrichment.
-- Manual (non-module-2) skills are slugged, not alias-resolved ("Postgres" won't match `postgresql`); send module 2's profile for exact ids.
+- Typed skills resolve through module 2; if module 2 is down they're matched as keywords ("Postgres" then won't match `postgresql`).
+- `BROAD_SKILL_IDS` is a curated list; a new broad id in module 2's taxonomy needs adding there.
