@@ -39,7 +39,7 @@ def test_port_is_distinct_from_module_1():
 def test_health():
     body = client.get("/api/v1/health").json()
     assert body["status"] == "ok" and body["module"] == "module-2-skill-gap"
-    assert body["taxonomy_skills"] == 482 and body["similarity_backend"] in ("minilm", "tfidf")
+    assert body["taxonomy_skills"] == 483 and body["similarity_backend"] in ("minilm", "tfidf")
 
 
 @pytest.mark.parametrize("name", ["resume_text.pdf", "resume.docx", "resume.txt"])
@@ -117,3 +117,9 @@ def test_exported_schema_is_current():
 def test_openapi_lists_endpoints():
     paths = client.get("/openapi.json").json()["paths"]
     assert {"/api/v1/skills/analyze_resume", "/api/v1/skills/gap_analysis", "/api/v1/health"} <= set(paths)
+
+
+def test_gap_analysis_with_only_categories_is_422():
+    resp = client.post("/api/v1/skills/gap_analysis", json={
+        "target_role": "X", "required_skills": ["data"], "manual_profile": {"skills": ["python"]}})
+    assert_error(resp, 422, "INVALID_REQUEST")

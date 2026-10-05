@@ -53,10 +53,16 @@ async def analyze_resume(
     if skills:
         if not target_role:
             return error(422, "INVALID_REQUEST", "required_skills needs target_role.")
-        gap = analyze_gap(GapAnalysisRequest(target_role=target_role, required_skills=skills, profile=profile))
+        try:
+            gap = analyze_gap(GapAnalysisRequest(target_role=target_role, required_skills=skills, profile=profile))
+        except ValueError as e:
+            return error(422, "INVALID_REQUEST", str(e))
     return AnalyzeResumeResponse(profile=profile, gap_analysis=gap)
 
 
 @router.post("/skills/gap_analysis", response_model=GapAnalysisResult, responses=_errors)
-def gap_analysis(request: GapAnalysisRequest) -> GapAnalysisResult:
-    return analyze_gap(request)
+def gap_analysis(request: GapAnalysisRequest):
+    try:
+        return analyze_gap(request)
+    except ValueError as e:
+        return error(422, "INVALID_REQUEST", str(e))

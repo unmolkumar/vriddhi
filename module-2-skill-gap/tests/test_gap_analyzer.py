@@ -284,3 +284,16 @@ def test_empty_profile_is_all_missing():
     r = analyze_gap(manual([], target_role="Data Engineer", required_skills=DE["top_skills"]))
     assert r.match_score == round(0.15 * 1.0, 4) and r.verdict == "under_skilled"
     assert r.skills.critical_missing == ["python", "sql", "spark", "cloud"]
+
+
+# --- module 1 top_skill_weights and non-skill ids --------------------------------------------
+
+DS_EXPORT = json.loads((HERE / "mocks" / "m1_target_roles_skills_export.json").read_text(encoding="utf-8"))["target_roles"]["Data Scientist"]
+
+
+def test_broad_category_is_skipped_with_warning():
+    r = analyze_gap(manual(["python"], target_role="Data Scientist", required_skills=DS_EXPORT["top_skills"]))
+    assert "data" not in [g.skill for g in r.gap_matrix]
+    assert any("'data' is a broad category" in w for w in r.warnings)
+    with pytest.raises(ValueError):
+        analyze_gap(manual(["python"], target_role="X", required_skills=["data"]))

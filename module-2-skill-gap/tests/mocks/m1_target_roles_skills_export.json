@@ -1,0 +1,168 @@
+{
+  "target_roles": {
+    "Data Scientist": {
+      "canonical_title": "Data Scientists",
+      "soc_code": "15-2051.00",
+      "top_skills": [
+        "python",
+        "sql",
+        "machine_learning",
+        "data_analysis",
+        "data_modeling",
+        "data"
+      ],
+      "top_skill_weights": {
+        "python": 1.0,
+        "sql": 0.8907,
+        "machine_learning": 0.541,
+        "data_analysis": 0.4299,
+        "data_modeling": 0.3333,
+        "data": 0.3124
+      }
+    },
+    "Machine Learning Engineer": {
+      "canonical_title": "Machine Learning Engineer",
+      "soc_code": null,
+      "top_skills": [
+        "machine_learning",
+        "python",
+        "tensorflow",
+        "aws",
+        "pytorch",
+        "docker"
+      ],
+      "top_skill_weights": {
+        "machine_learning": 0.6033,
+        "python": 1.0,
+        "tensorflow": 0.696,
+        "aws": 0.2021,
+        "pytorch": 0.6322,
+        "docker": 0.1748
+      }
+    },
+    "Data Engineer": {
+      "canonical_title": "Data Engineer",
+      "soc_code": null,
+      "top_skills": [
+        "python",
+        "sql",
+        "machine_learning",
+        "data_analysis",
+        "data_modeling",
+        "data"
+      ],
+      "top_skill_weights": {
+        "python": 1.0,
+        "sql": 0.8896,
+        "machine_learning": 0.5395,
+        "data_analysis": 0.4279,
+        "data_modeling": 0.3319,
+        "data": 0.3117
+      }
+    },
+    "Data Analyst": {
+      "canonical_title": "Data Analyst",
+      "soc_code": null,
+      "top_skills": [
+        "python",
+        "sql",
+        "machine_learning",
+        "data_analysis",
+        "data_modeling",
+        "data"
+      ],
+      "top_skill_weights": {
+        "python": 1.0,
+        "sql": 0.8918,
+        "machine_learning": 0.5414,
+        "data_analysis": 0.4386,
+        "data_modeling": 0.3331,
+        "data": 0.3131
+      }
+    },
+    "Backend Developer": {
+      "canonical_title": "Backend Developer",
+      "soc_code": null,
+      "top_skills": [
+        "backend",
+        "postgresql",
+        "python",
+        "java",
+        "mongodb",
+        "nodejs"
+      ],
+      "top_skill_weights": {
+        "backend": 1.0,
+        "postgresql": 0.6479,
+        "python": 0.6183,
+        "java": 0.5592,
+        "mongodb": 0.5148,
+        "nodejs": 0.4763
+      }
+    },
+    "Full Stack Developer": {
+      "canonical_title": "Full Stack Developer",
+      "soc_code": null,
+      "top_skills": [
+        "javascript",
+        "postgresql",
+        "react",
+        "python",
+        "aws",
+        "mongodb"
+      ],
+      "top_skill_weights": {
+        "javascript": 1.0,
+        "postgresql": 0.9724,
+        "react": 0.9493,
+        "python": 0.894,
+        "aws": 0.8111,
+        "mongodb": 0.7834
+      }
+    },
+    "DevOps Engineer": {
+      "canonical_title": "DevOps Engineer",
+      "soc_code": null,
+      "top_skills": [
+        "devops",
+        "linux",
+        "kubernetes",
+        "automation",
+        "docker",
+        "aws"
+      ],
+      "top_skill_weights": {
+        "devops": 1.0,
+        "linux": 0.893,
+        "kubernetes": 0.7232,
+        "automation": 0.6762,
+        "docker": 0.5822,
+        "aws": 0.5744
+      }
+    }
+  },
+  "all_emitted_skill_ids": [
+    "automation",
+    "aws",
+    "backend",
+    "data",
+    "data_analysis",
+    "data_modeling",
+    "devops",
+    "docker",
+    "java",
+    "javascript",
+    "kubernetes",
+    "linux",
+    "machine_learning",
+    "mongodb",
+    "nodejs",
+    "postgresql",
+    "python",
+    "pytorch",
+    "react",
+    "sql",
+    "tensorflow"
+  ],
+  "count": 21
+}
