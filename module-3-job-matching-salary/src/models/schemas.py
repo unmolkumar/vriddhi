@@ -101,6 +101,7 @@ class CandidateSkill(BaseModel):
     evidence: list[str] = Field(default_factory=list)
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     maps_to: str | None = None
+    needs_verification: bool = Field(default=False, description="Module 2: claimed level not backed by the resume")
 
 
 class CandidateProfile(BaseModel):
