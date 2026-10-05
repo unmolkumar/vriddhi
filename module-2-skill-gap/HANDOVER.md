@@ -33,28 +33,28 @@ git pull origin feat/module-2-skill-gap
 
 You **do not** need to re-scrape job sites or re-generate career demand data. Module 1 exports the canonical source of truth for all target careers, skills, and industry requirements.
 
-### 3.1. Direct In-Process Python Import
-```python
-from module_1_career_intelligence.src import (
-    CareerIntelligenceService,
-    CareerAnalysisResponse,
-)
+### 3.1. Contract Consumption & Isolation (Strict AGENTS.md Compliance)
+Per `context/AGENTS.md` and standard clean architecture, **do NOT import cross-module Python paths** (the directory name `module-1-career-intelligence` has hyphens and cross-module private coupling is prohibited).
 
-service = CareerIntelligenceService()
-target: CareerAnalysisResponse = service.analyze_career("Data Engineer", region="all")
-
-# Core inputs for your Skill Gap & Resume Intelligence pipeline:
-target_role     = target.occupation         # e.g., "Data Engineer"
-growth_score    = target.growth_score       # e.g., 0.76 (momentum)
-current_demand  = target.current_demand_score# e.g., 0.91 (market appetite)
-ai_exposure     = target.ai_exposure_score   # e.g., 0.45 (augmentation level)
-required_skills = target.top_skills         # e.g., ['python', 'sql', 'spark', 'cloud']
-knowledge_graph = target.knowledge_graph    # Nodes & Edges (tasks, competencies, tools)
-```
+Instead, Module 2 is **completely self-contained**:
+1. **Input Interface**: Your gap analyzer function or endpoint accepts the validated contract fields:
+   - `target_role: str` (e.g. `"Data Engineer"`)
+   - `required_skills: List[str]` (e.g. `["python", "sql", "spark", "cloud"]`)
+   - `knowledge_graph: Optional[Dict]` (Nodes & edges)
+2. **Unit & Integration Testing**: Test against static mock fixtures or sample JSON payloads matching Module 1's schema.
+3. **Live Orchestration**: The actual Module 1 $\rightarrow$ Module 2 $\rightarrow$ Module 3 connection will be executed at `integration/pipeline` via REST API or adapter classes.
 
 ### 3.2. Static Schema Contract
-A language-agnostic JSON Schema is available at:
+The verified JSON Schema contract is at:
 `module-1-career-intelligence/src/models/schema_m1.json`
+
+### 3.3. Canonical Skill IDs & Semantic Vector Matching
+Module 1 uses normalized lowercase identifier tags for `top_skills`:
+- Common IDs: `python`, `sql`, `machine_learning`, `cloud`, `docker`, `kubernetes`, `deep_learning`, `data_analysis`, `statistics`, `nlp`, `spark`, `java`, `linux`, `git`, `tableau`, `agile`, etc.
+
+**Recommended Hybrid Matching Strategy for Module 2:**
+1. **Dictionary Mapping**: Map deterministic variants (e.g. `PostgreSQL` / `MySQL` $\rightarrow$ `sql`, `AWS` / `GCP` / `Azure` $\rightarrow$ `cloud`).
+2. **Vector Space / Semantic Embedding**: Use lightweight embeddings (e.g., `sentence-transformers/all-MiniLM-L6-v2` or cosine similarity) to match candidate phrasing to canonical taxonomy IDs with a cosine threshold (e.g. $\ge 0.82$). This ensures you don't miss skills or fail on slight textual variations!
 
 ---
 
