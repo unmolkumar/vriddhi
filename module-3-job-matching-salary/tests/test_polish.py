@@ -252,3 +252,36 @@ def test_store_salary_round_trip(tmp_path):
     s = JobStore(tmp_path / "x.sqlite")
     s.save_salary("k", {"median": 5}, NOW)
     assert s.load_salary("k") == ({"median": 5}, NOW) and s.stats()["salary_estimates"] == 1
+
+
+# --- found in the live run -------------------------------------------------------------------------
+
+def test_broad_job_skills_weigh_half():
+    from src.engines.matching import BROAD_SKILL_WEIGHT
+    job = make_job(skills=["python", "data_science"])
+    score = skill_component(job, candidate("python"))[0]
+    assert score == pytest.approx(1 / (1 + BROAD_SKILL_WEIGHT))     # a missing category costs less than a missing tool
+
+
+def test_real_job_with_a_category_outranks_an_all_inferred_one():
+    c = candidate("python", "machine_learning", "statistics", "data_analysis")
+    real = make_job(job_id="a:real", skills=["data_analysis", "machine_learning", "statistics", "data_science"])
+    inferred = make_job(job_id="a:inf", skills=["machine_learning", "python", "statistics"],
+                        inferred_skills=["machine_learning", "python", "statistics"], skills_inferred=True)
+    assert match_job(real, c).breakdown.skills > match_job(inferred, c).breakdown.skills
+
+
+def test_experience_specific_salary_source_is_not_double_counted(wired):
+    """Live run: a 7.5-year profile with JSearch's 7-9 year estimate landed above the market max when also
+    positioned by the role's 3.4-7.4 band. It's now positioned within the estimate's own bucket."""
+    wired.on("api.adzuna.com", json_response(ADZ)).on("127.0.0.1", m2_extract_handler)
+    seven_to_nine = json.loads(json.dumps(JS_SALARY))
+    seven_to_nine["data"][0].update(min_salary=1400000, median_salary=2100000, max_salary=2800000, salary_count=466)
+    wired.on("jsearch.p.rapidapi.com", json_response(seven_to_nine))
+    body = TestClient(app).post("/api/v1/jobs/search", json={
+        "target_role": "Data Scientist", "location": "Bengaluru", "skills": ["python"], "experience_years": 7.5,
+        "typical_experience": {"min": 3.4, "max": 7.4}, "jsearch_salary": True}).json()
+    value, market = body["candidate_value"], body["market_salary"]
+    assert market["sources_used"] == ["jsearch_salary_estimate"]
+    assert value["market_position"] == 0.25                              # 7.5 within the 7-9 bucket
+    assert value["estimated_max"] <= market["estimated_max"]
