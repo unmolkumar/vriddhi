@@ -19,6 +19,7 @@ NEEDS_VERIFICATION_FACTOR = 0.5                    # module 2 flagged the claim 
 RELATED_SKILL_CREDIT = 0.5                         # candidate has the job skill's parent (SQL for a PostgreSQL job)
 INFERRED_SKILL_WEIGHT = 0.5                        # job skills filled from the market profile count half ...
 INFERRED_PENALTY = 0.3                             # ... and the skill score shrinks by 30% x share of inferred skills
+BROAD_SKILL_WEIGHT = 0.5                           # a listing asking for a field ("data science") is a vague requirement
 KEYWORD_TOP_N = 8                                  # keyword fallback: candidate's top skills searched in job text
 
 # Experience
@@ -95,7 +96,7 @@ def skill_component(job: Job, candidate: CandidateProfile) -> tuple[float, list[
     total = credit = 0.0
     matched, missing = [], []
     for s in job.skills:
-        weight = INFERRED_SKILL_WEIGHT if s in job.inferred_skills else 1.0
+        weight = (INFERRED_SKILL_WEIGHT if s in job.inferred_skills else 1.0) * (BROAD_SKILL_WEIGHT if is_broad(s) else 1.0)
         c = direct.get(s) or via_parent.get(s) or 0.0
         parent = job.skill_parents.get(s)
         if not c and parent and parent in direct:
