@@ -150,10 +150,14 @@ def test_export_is_available():
 
 @pytest.mark.parametrize("m1_id", _export_ids())
 def test_every_exported_m1_id_is_covered(m1_id):
-    """100% coverage: each id is an exact taxonomy id, or a documented non-skill category."""
+    """100% coverage: each id resolves to a taxonomy entry (exact id or alias, e.g. pyspark -> spark),
+    or is a documented non-skill category."""
     from src.engines.skill_extractor import non_skill_reason
-    entry = resolve_skill(m1_id)
-    assert (entry is not None and entry["id"] == m1_id) or non_skill_reason(m1_id), m1_id
+    assert resolve_skill(m1_id) is not None or non_skill_reason(m1_id), m1_id
+
+
+def test_exported_alias_ids_resolve_to_the_right_skill():
+    assert resolve_skill("pyspark")["id"] == "spark"
 
 
 def test_non_skill_ids_are_documented_and_not_skills():

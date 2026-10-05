@@ -29,7 +29,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 271 tests; the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 278 tests; the live Groq test is skipped without a key
 ```
 
 ## Endpoints

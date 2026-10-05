@@ -3,7 +3,7 @@
 **Branch:** `feat/module-2-skill-gap` · **Owner:** Chaitanya Sharma · **API port:** 8002
 **Question answered:** *"Where is this person now, how well do they match the target role, and what should they learn next?"*
 
-Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 271 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
+Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 278 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
 
 ---
 
@@ -261,10 +261,11 @@ Profile fields (`UserProfile`) are described in §4 and the schema.
 - `occupation` → `target_role`
 - `top_skills` → `required_skills`
 - `top_skill_weights` → `top_skill_weights`
+- `typical_experience` (per role, from postings) → `typical_experience` (`experience_source: "request"`)
 - `knowledge_graph`, unchanged
 - `skill_importance`, when available
 
-Module 1 ids resolve through a copy of its `normalize_skill`. **Every id in module 1's `m1_target_roles_skills_export.json` (21 ids for the 7 target roles) is covered: 20 are exact taxonomy ids (incl. `backend` and the new `automation`), and `data` is a documented non-skill.** The coverage test reads module 1's live export when present and a vendored copy (`tests/mocks/m1_target_roles_skills_export.json`) otherwise. Tests also cover the 17 documented ids, its alias targets and 32 derived ids, using mocks in `tests/mocks/m1_contract.json` shaped like `schema_m1.json`.
+Module 1 ids resolve through a copy of its `normalize_skill`. **Every id in module 1's `m1_target_roles_skills_export.json` is covered: each resolves to a taxonomy entry, as an exact id (incl. `backend` and `automation`) or through an alias (`pyspark` → `spark`), or is a documented non-skill (`data`).** The coverage test reads module 1's live export when present and a vendored copy (`tests/mocks/m1_target_roles_skills_export.json`) otherwise. Tests also cover the 17 documented ids, its alias targets and 32 derived ids, using mocks in `tests/mocks/m1_contract.json` shaped like `schema_m1.json`.
 
 **Module 2 → Module 3.** `UserProfile` is a superset of the INTEGRATION.md profile (`skills[].name/level/evidence`, `experience_years`, `education: list[str]`, `location`, `preferred_locations`, `target_occupation`), with additive fields. Evidence values are Module 2 tags (`work_supported`, …); the integration layer can map them to free-text labels if needed.
 
@@ -286,11 +287,11 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**271 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**278 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
-| `test_taxonomy.py` | 126 | fields, unique ids/aliases, no cycles, Module 1 id resolution incl. 100% of the 7-role export, non-skill ids, automation/backend, spec normalisation examples, product-variant aliases |
+| `test_taxonomy.py` | 133 | fields, unique ids/aliases, no cycles, Module 1 id resolution incl. 100% of the 7-role export, non-skill ids, automation/backend, spec normalisation examples, product-variant aliases |
 | `test_skill_extractor.py` | 34 | dictionary pass, ambiguous aliases, longest match, LLM off / no key / timeout / rate limit / bad JSON / grounding / cache |
 | `test_parsers.py` | 29 | PDF, scanned PDF, DOCX, TXT, all error codes, sections, date formats, overlaps, internships, education, OCR repair, OCR page cap |
 | `test_profile.py` | 12 | evidence tags, levels, OCR parity with the text PDF, manual entry, verification flags, INTEGRATION profile shape, privacy |
@@ -313,7 +314,7 @@ pytest module-2-skill-gap/tests/ -v
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-2-skill-gap && uvicorn src.api.main:app --port 8002`; verified over HTTP (`/api/v1/health` → `status: ok`). No database or other module needed |
 | 2 | Contract compliance | ✅ | `UserProfile` is a superset of INTEGRATION.md's common profile (tested in `test_integration_profile_shape`); input takes module 1's `occupation`, `top_skills`, `knowledge_graph` as plain data; errors use `{"error": {"code", "message"}}`. JSON Schema: `src/models/schema_m2.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **271 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **278 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
 | 4 | Error handling | ✅ | Corrupt, encrypted, oversized, too many pages, empty, wrong type and legacy files → 400/413/415 with codes; invalid JSON → 422 `INVALID_REQUEST`; LLM timeout, rate limit, missing key or unknown model → dictionary fallback; MiniLM unavailable → TF-IDF fallback; unexpected errors → 500 `INTERNAL_ERROR` without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` and `tests/` import only `src.*` and third-party packages; the only module-1 references are comments, test names and a documented replica of its `normalize_skill` |
 | 6 | Documentation | ✅ | `README.md`: install, run, test, example request/response payloads. This file: architecture, formulas, contracts, results. `HANDOFF_TO_M3.md` for module 3 |

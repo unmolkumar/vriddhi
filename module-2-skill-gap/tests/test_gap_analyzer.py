@@ -288,7 +288,12 @@ def test_empty_profile_is_all_missing():
 
 # --- module 1 top_skill_weights and non-skill ids --------------------------------------------
 
-DS_EXPORT = json.loads((HERE / "mocks" / "m1_target_roles_skills_export.json").read_text(encoding="utf-8"))["target_roles"]["Data Scientist"]
+# Pinned from module 1's first 7-role export (it has since changed) so these tests don't drift with module 1.
+DS_EXPORT = {
+    "top_skills": ["python", "sql", "machine_learning", "data_analysis", "data_modeling", "data"],
+    "top_skill_weights": {"python": 1.0, "sql": 0.8907, "machine_learning": 0.541, "data_analysis": 0.4299,
+                          "data_modeling": 0.3333, "data": 0.3124},
+}
 
 
 def test_m1_top_skill_weights_drive_importance():
