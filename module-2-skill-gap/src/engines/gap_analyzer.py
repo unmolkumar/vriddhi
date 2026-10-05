@@ -198,12 +198,14 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
     gaps, credit, total = [], 0.0, 0.0
     for r in rows:
         via = r["via"]
-        current = via.level if via else 0
+        # Only a match gives the user a level in this skill; an adjacent skill is related, not known.
+        current = via.level if r["status"] == "matched" else 0
         gap = SkillGap(
             skill=r["sid"], display=r["display"], in_taxonomy=r["entry"] is not None, status=r["status"],
             reason=r["reason"], via=via.name if via else None, via_display=via.display if via else None,
             similarity=r["sim"], relation=r["relation"], importance=round(r["w"], 4), priority=_priority(r["w"]),
             required_level=r["req_level"], current_level=current, gap=r["req_level"] - current,
+            related_level=via.level if r["status"] == "adjacent" else None,
             evidence=via.evidence if via else [])
         gap.advice = _advice(gap, via)
         gaps.append(gap)

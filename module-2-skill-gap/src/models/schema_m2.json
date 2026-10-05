@@ -953,10 +953,26 @@
           "type": "integer"
         },
         "current_level": {
+          "description": "The user's level in this skill; 0 when adjacent or missing",
           "maximum": 5,
           "minimum": 0,
           "title": "Current Level",
           "type": "integer"
+        },
+        "related_level": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For adjacent skills: the user's level in the related `via` skill",
+          "title": "Related Level"
         },
         "gap": {
           "description": "required_level - current_level (>0 gap, 0 met, <0 above)",

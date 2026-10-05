@@ -48,7 +48,7 @@ def test_worked_example_data_scientist(resume_profile):
         "python": ("matched", "exact", "python", 4, 3, 1.0),
         "machine_learning": ("matched", "maps_to", "scikit_learn", 2, 3, 0.8696),
         "sql": ("matched", "exact", "sql", 3, 3, 0.7692),
-        "deep_learning": ("adjacent", "maps_to", "scikit_learn", 2, 2, 0.6897),
+        "deep_learning": ("adjacent", "maps_to", "scikit_learn", 0, 2, 0.6897),
         "cloud": ("missing", None, None, 0, 2, 0.625),
         "docker": ("matched", "exact", "docker", 1, 2, 0.5714),
     }
@@ -56,8 +56,10 @@ def test_worked_example_data_scientist(resume_profile):
         g = row(r, skill)
         assert (g.status, g.reason, g.via, g.current_level, g.required_level, g.importance) == \
             (status, reason, via, current, required, w), skill
+    assert (row(r, "deep_learning").gap, row(r, "deep_learning").related_level) == (2, 2)
+    assert row(r, "python").related_level is None and row(r, "cloud").related_level is None
     assert r.importance_source == "rank_decay"
-    assert r.score_breakdown.coverage == 0.6432
+    assert r.score_breakdown.coverage == 0.6432  # adjacent still earns ADJACENT_CREDIT, not a level ratio
     assert r.score_breakdown.experience_factor == 1.0
     assert r.match_score == 0.6967 and r.match_percent == 70
     assert r.verdict == "good_fit"

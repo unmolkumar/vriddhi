@@ -159,7 +159,9 @@ class SkillGap(BaseModel):
     importance: float = Field(ge=0.0, le=1.0)
     priority: Literal["High", "Medium", "Low"]
     required_level: int = Field(ge=0, le=5)
-    current_level: int = Field(ge=0, le=5)
+    current_level: int = Field(ge=0, le=5, description="The user's level in this skill; 0 when adjacent or missing")
+    related_level: int | None = Field(default=None, ge=0, le=5,
+                                      description="For adjacent skills: the user's level in the related `via` skill")
     gap: int = Field(description="required_level - current_level (>0 gap, 0 met, <0 above)")
     evidence: list[Evidence] = Field(default_factory=list, description="Evidence behind the user's skill")
     advice: str | None = None
