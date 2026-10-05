@@ -8,8 +8,10 @@ from functools import lru_cache
 log = logging.getLogger(__name__)
 
 MODEL_NAME = "all-MiniLM-L6-v2"
-SEMANTIC_THRESHOLD = 0.82   # MiniLM cosine needed to call two skills adjacent (HANDOVER.md §3.3)
-TFIDF_THRESHOLD = 0.82      # same bar for the fallback, on char 3-gram TF-IDF cosine
+SEMANTIC_THRESHOLD = 0.82        # MiniLM cosine to call two skills adjacent (HANDOVER.md §3.3)
+SEMANTIC_MATCH_THRESHOLD = 0.92  # ... and to treat them as the same skill (near-identical wording)
+TFIDF_THRESHOLD = 0.82           # same bars for the fallback, on char 3-gram TF-IDF cosine
+TFIDF_MATCH_THRESHOLD = 0.92
 DISABLE_ENV = "M2_DISABLE_EMBEDDINGS"  # set to 1 to force the TF-IDF fallback
 
 
@@ -32,7 +34,13 @@ def backend() -> str:
 
 
 def threshold() -> float:
+    """Similarity needed for 'adjacent'."""
     return SEMANTIC_THRESHOLD if backend() == "minilm" else TFIDF_THRESHOLD
+
+
+def match_threshold() -> float:
+    """Similarity needed for 'matched' (the same skill worded differently)."""
+    return SEMANTIC_MATCH_THRESHOLD if backend() == "minilm" else TFIDF_MATCH_THRESHOLD
 
 
 def similarity_matrix(left: list[str], right: list[str]) -> list[list[float]]:

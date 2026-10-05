@@ -100,6 +100,15 @@ def test_adjacent_via_semantic_similarity():
     assert any("not in the skill taxonomy" in w for w in r.warnings)
 
 
+def test_near_identical_wording_counts_as_matched():
+    # "data_visualisations" isn't in the taxonomy; MiniLM puts it at ~0.97 from Data Visualization.
+    r = analyze_gap(manual(["Data Visualization"], target_role="Data Analyst", required_skills=["data_visualisations"]))
+    g = row(r, "data_visualisations")
+    assert (g.status, g.reason, g.via) == ("matched", "semantic", "data_visualization")
+    assert g.similarity >= similarity.SEMANTIC_MATCH_THRESHOLD
+    assert g.current_level == 1 and r.score_breakdown.coverage == 0.3333  # matched credit = level ratio 1/3
+
+
 def test_related_tools_below_threshold_stay_missing():
     r = analyze_gap(manual(["Tableau"], target_role="Data Analyst", required_skills=["looker_enterprise_suite"]))
     assert row(r, "looker_enterprise_suite").status == "missing"

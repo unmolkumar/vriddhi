@@ -182,13 +182,15 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
                      "via": via, "sim": None, "req_level": _required_level(rank, w, has_w)})
 
     # Semantic step for what is still missing: MiniLM (or TF-IDF) cosine against the user's skill names.
+    # >= match threshold (0.92): the same skill worded differently; >= threshold (0.82): adjacent.
     missing = [r for r in rows if r["status"] == "missing"]
     if missing and profile.skills:
         matrix = similarity.similarity_matrix([r["display"] for r in missing], [s.display for s in profile.skills])
         for r, sims in zip(missing, matrix):
             best = max(range(len(sims)), key=sims.__getitem__)
             if sims[best] >= similarity.threshold():
-                r.update(status="adjacent", reason="semantic", via=profile.skills[best], sim=round(sims[best], 3))
+                status = "matched" if sims[best] >= similarity.match_threshold() else "adjacent"
+                r.update(status=status, reason="semantic", via=profile.skills[best], sim=round(sims[best], 3))
 
     gaps, credit, total = [], 0.0, 0.0
     for r in rows:
