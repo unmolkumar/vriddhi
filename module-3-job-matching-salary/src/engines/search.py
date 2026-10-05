@@ -24,6 +24,11 @@ GOOD_OR_BETTER = {"Good", "Strong"}
 VALUE_TOP_JOBS = 5                # candidate value uses the mean match of the top-ranked jobs
 
 
+def readable(skill_id: str) -> str:
+    """'machine_learning' -> 'machine learning'; short ids read as acronyms ('ai' -> 'AI', 'aws' -> 'AWS')."""
+    return skill_id.upper() if len(skill_id) <= 3 else skill_id.replace("_", " ")
+
+
 class SearchContext:
     """Everything one search computed, reused by the salary and negotiation endpoints."""
 
@@ -128,7 +133,7 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         where = f" in {city}" if city else ""
         unlocks.append(SkillUnlock(
             skill=skill, jobs_unlocked=len(moved), city=city, example_job_ids=moved[:3],
-            message=(f"Learning {skill.replace('_', ' ')} would move {len(moved)} more {req.target_role} "
+            message=(f"Learning {readable(skill)} would move {len(moved)} more {req.target_role} "
                      f"job{'s' if len(moved) != 1 else ''}{where} to a Good or Strong match.")))
     unlocks.sort(key=lambda u: -u.jobs_unlocked)
 

@@ -136,6 +136,12 @@ def test_invalid_requests(body):
     assert resp.status_code == 422 and resp.json()["error"]["code"] == "INVALID_REQUEST"
 
 
+def test_readable_skill_names():
+    from src.engines.search import readable
+    assert [readable(s) for s in ("ai", "aws", "sql", "machine_learning", "python")] == \
+        ["AI", "AWS", "SQL", "machine learning", "python"]
+
+
 def test_schema_export_is_current():
     from pathlib import Path
     committed = json.loads((Path(__file__).parent.parent / "src" / "models" / "schema_m3.json").read_text(encoding="utf-8"))
