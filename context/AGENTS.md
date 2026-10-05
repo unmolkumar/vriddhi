@@ -194,56 +194,136 @@ Modules must be replaceable.
 
 ---
 
-# 8. Git Rules
+# 8. Git Branching Strategy & Workflow
 
-Never work directly on `main`.
+### The 3-Branch Architecture
 
-Use a module-specific branch.
+**Yes, each module MUST be developed on its own dedicated feature branch.**
+Working directly on `main` is strictly forbidden.
 
-Example:
-
-```bash
-git checkout -b member1/module-1
+```text
+main (stable, production-ready, verified integration)
+ ├── feat/module-1-career-intelligence   (Agent 1 / Member 1)
+ ├── feat/module-2-skill-gap             (Agent 2 / Member 2)
+ ├── feat/module-3-job-matching-salary   (Agent 3 / Member 3)
+ └── integration/pipeline                (Integration Agent - created ONLY after modules complete)
 ```
 
-or:
+### Branch Naming Conventions
 
-```bash
-git checkout -b member2/module-2
-```
+All agents and contributors must follow this naming convention:
 
-or:
+| Scope | Branch Name | Assigned To | Target Merge |
+|---|---|---|---|
+| Module 1 | `feat/module-1-career-intelligence` | Agent 1 / Member 1 | `main` |
+| Module 2 | `feat/module-2-skill-gap` | Agent 2 / Member 2 | `main` |
+| Module 3 | `feat/module-3-job-matching-salary` | Agent 3 / Member 3 | `main` |
+| Integration | `integration/pipeline` | Integration Team | `main` |
+| Hotfix | `fix/module-<X>-<short-description>` | Assigned Agent | Feature Branch or `main` |
 
-```bash
-git checkout -b member3/module-3
-```
+### Step-by-Step Workflow for Module Agents
+
+1. **Checkout your designated branch:**
+   ```bash
+   # Make sure you have latest main
+   git checkout main
+   git pull origin main
+
+   # Switch to your module branch
+   git checkout feat/module-1-career-intelligence
+   # (or feat/module-2-skill-gap / feat/module-3-job-matching-salary)
+   ```
+
+2. **Work ONLY within your module directory:**
+   - Agent 1: `module-1-career-intelligence/`
+   - Agent 2: `module-2-skill-gap/`
+   - Agent 3: `module-3-job-matching-salary/`
+
+3. **Stage only your changes:**
+   ```bash
+   git add module-1-career-intelligence/
+   # NEVER use `git add .` blindly without checking `git status`
+   ```
+
+4. **Verify status before committing:**
+   ```bash
+   git status
+   ```
+   Ensure no untracked secrets, `.env` files, temporary artifacts, or peer module files are staged.
+
+5. **Push to remote branch:**
+   ```bash
+   git push -u origin feat/module-1-career-intelligence
+   ```
 
 ---
 
-# 9. Commit Rules
+# 9. Git Commit Standards & Hygiene
 
-Use descriptive commits.
+Every agent and developer must use the **Conventional Commits** specification.
+Commits must be **atomic** (one logical change per commit) with clear, descriptive intent.
 
-Good:
+### Commit Format
 
 ```text
-feat(career): add demand trend analysis
-feat(skill-gap): add resume skill extraction
-feat(jobs): add job ranking
-test(skill-gap): add gap calculation tests
-fix(jobs): handle missing salary
+<type>(<scope>): <short imperative summary>
+
+[optional body: explain WHAT changed and WHY, not HOW]
+
+[optional footer: references to issues, breaking changes]
 ```
 
-Avoid:
+### Allowed Types
 
+- `feat`: A new feature or capability for the module
+- `fix`: A bug fix
+- `test`: Adding or updating test suites
+- `docs`: Documentation updates (README, markdown guides)
+- `refactor`: Code restructuring without changing external API behavior
+- `perf`: Code change that improves execution speed or memory usage
+- `chore`: Maintenance tasks, dependencies, setup scripts
+
+### Standard Scopes
+
+Use the exact module or domain scope:
+- `(module-1)` or `(career)`
+- `(module-2)` or `(skill-gap)`
+- `(module-3)` or `(jobs)`
+- `(integration)`
+- `(contracts)`
+- `(docs)`
+
+### Examples of Professional Commits
+
+✅ **Good Examples:**
 ```text
-final
-changes
+feat(module-1): implement ONET occupation demand forecast extractor
+feat(module-2): add resume pdf parser and skill entity extraction
+feat(module-3): implement job ranking cosine similarity algorithm
+fix(module-3): handle missing salary range fallback to regional median
+test(module-2): add unit tests for skill taxonomy normalizer
+docs(module-1): document input output schema with example payload
+refactor(module-2): decouple skill taxonomy cache from memory store
+```
+
+❌ **Prohibited Commits (Never Do This):**
+```text
 update
-stuff
-working
-test
+changes
+wip
+fixed stuff
+final commit
+hackathon code
+done
+asdf
 ```
+
+### Commit Hygiene Rules
+
+1. **Imperative Mood**: Use imperative verbs ("add", "fix", "implement", "refactor") instead of past tense ("added", "fixed").
+2. **First Line Length**: Keep the header line under 72 characters (ideally under 50).
+3. **No Unfinished Code on Push**: Ensure tests run or at minimum no syntax errors before pushing.
+4. **Never Rewrite Shared History**: Never use `git push --force` on `main`.
 
 ---
 
@@ -410,26 +490,57 @@ Do not modify another module to provide test data.
 
 ---
 
-# 18. Final Integration
+# 18. Strict Integration Phase Gate (Only After Full Module Completion)
 
-Integration happens only after the individual modules have reached a usable state.
+### The Golden Rule of Integration Timing
+
+> **NO integration work may begin until Module 1, Module 2, AND Module 3 are independently complete, tested, and verified.**
+
+Premature integration during active module development causes merge conflicts, broken contracts, dependency chaos, and blocked teammates.
 
 ```text
-Module 1 complete
-       │
-Module 2 complete
-       │
-Module 3 complete
-       │
-       ▼
-Integration
-       │
-       ▼
-End-to-End Testing
-       │
-       ▼
-Final Demo
+Phase 1: Isolated Module Development
+  │
+  ├── Agent 1 on feat/module-1-career-intelligence  ──► Completes M1 + passes unit tests
+  ├── Agent 2 on feat/module-2-skill-gap            ──► Completes M2 + passes unit tests
+  └── Agent 3 on feat/module-3-job-matching-salary  ──► Completes M3 + passes unit tests
+  │
+  ▼
+Phase 2: Module Readiness Verification Gate (MANDATORY CHECKPOINT)
+  │  [✓] All 3 modules pass the Readiness Checklist below
+  │  [✓] All 3 feature branches merged into `main`
+  │
+  ▼
+Phase 3: Integration & Orchestration Phase (ONLY NOW)
+  │
+  ├── Cut branch: integration/pipeline
+  ├── Work strictly within integration/
+  ├── Connect modules via API / Adapters defined in INTEGRATION.md
+  ├── Write end-to-end pipeline tests
+  └── Merge integration/pipeline into main
 ```
+
+### Module Readiness Checklist (Gate Criteria)
+
+Before any module branch is merged into `main` or used for integration, the module must satisfy:
+
+1. **Self-Contained Execution**: The module runs independently with its own entrypoint or API service.
+2. **Contract Compliance**: Strictly conforms to the JSON schemas defined in `INTEGRATION.md` for both inputs and outputs.
+3. **100% Passing Tests**: Contains comprehensive unit and integration tests with mocks (no failing or skipped tests).
+4. **Error Handling**: Gracefully handles invalid inputs, missing fields, or external service timeouts without crashing the process.
+5. **Zero Cross-Module Imports**: Does NOT import or reference files from peer module directories.
+6. **Documentation**: Contains a `README.md` in its own folder explaining:
+   - How to install dependencies
+   - How to run tests
+   - Example input payload and expected output payload
+7. **Clean Git History**: Commits follow Conventional Commits format (`feat(...)`, `test(...)`, `fix(...)`).
+
+### Rules for the Integration Team / Agent
+
+1. **Work in `integration/` Only**: The integration layer lives strictly in `integration/`.
+2. **Read-Only Peer Modules**: Never edit code inside `module-1-*`, `module-2-*`, or `module-3-*` during integration.
+3. **Contract Discrepancies**: If a module's output doesn't match `INTEGRATION.md`, file a contract bug for that module owner. Do NOT patch the module yourself.
+4. **Adapter Pattern**: Use adapters and orchestrators in `integration/` to reconcile minor differences, transform schemas, and chain requests cleanly.
 
 ---
 
@@ -438,3 +549,4 @@ Final Demo
 > **Build independently. Communicate through contracts. Integrate separately.**
 
 The goal is to make it possible to remove or replace any one module without rewriting the other two.
+
