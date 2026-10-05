@@ -20,7 +20,8 @@ def base_url() -> str:
     return os.getenv("M2_BASE_URL", "").strip().rstrip("/") or DEFAULT_M2_BASE_URL
 
 
-def extract_skill_ids(text: str, *, client: httpx.Client | None = None) -> list[str]:
+def extract_skills(text: str, *, client: httpx.Client | None = None) -> list[dict]:
+    """[{id, maps_to, ...}] from module 2 for a piece of text."""
     try:
         resp = (client or httpx).post(f"{base_url()}/api/v1/skills/extract", timeout=TIMEOUT,
                                       json={"text": text[:MAX_TEXT_CHARS], "use_llm": False})
@@ -30,7 +31,7 @@ def extract_skill_ids(text: str, *, client: httpx.Client | None = None) -> list[
         return []
     if resp.status_code != 200:
         raise M2Unavailable(f"HTTP {resp.status_code}")
-    return [s["id"] for s in resp.json().get("skills", [])]
+    return resp.json().get("skills", [])
 
 
 def enrich_skills(jobs: list[Job], *, client: httpx.Client | None = None) -> tuple[list[Job], bool]:
@@ -47,8 +48,10 @@ def enrich_skills(jobs: list[Job], *, client: httpx.Client | None = None) -> tup
             continue
         if available:
             try:
-                ids = extract_skill_ids(f"{job.title}\n{job.description}", client=client)
-                out.append(job.model_copy(update={"skills": ids, "skills_source": "m2"}))
+                skills = extract_skills(f"{job.title}\n{job.description}", client=client)
+                out.append(job.model_copy(update={
+                    "skills": [s["id"] for s in skills], "skills_source": "m2",
+                    "skill_parents": {s["id"]: s["maps_to"] for s in skills if s.get("maps_to")}}))
                 continue
             except M2Unavailable:
                 available = False

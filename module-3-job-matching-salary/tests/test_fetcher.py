@@ -129,3 +129,43 @@ def test_module_2_down_then_back(fake_http, store):
     r = run(fake_http, store, now=NOW + timedelta(hours=1))   # cache hit: skills retried and stored
     assert all(j.skills_source == "m2" for j in r.jobs) and "data_analysis" in r.jobs[-1].skills + r.jobs[0].skills + r.jobs[1].skills
     assert all(j.skills_source == "m2" for j in store.load("data scientist", "Bengaluru").jobs)
+
+
+# --- JSearch: quota-aware use and full-description skills --------------------------------------
+
+def test_prewarm_style_fetch_never_calls_jsearch(fake_http, store):
+    fake_http.on(ADZ_HOST, raises(httpx.ReadTimeout)).on(JS_HOST, json_response(JS))
+    r = fetch_jobs("data scientist", "Bengaluru", store=store, client=fake_http.client(), m2_client=fake_http.client(),
+                   now=NOW, use_jsearch=False)
+    assert fake_http.calls(JS_HOST) == 0 and ("jsearch", "ok") not in statuses(r)
+
+
+def test_jsearch_enrichment_is_opt_in(fake_http, store):
+    fake_http.on(ADZ_HOST, json_response(ADZ)).on(JS_HOST, json_response(JS)).on(M2_HOST, m2_extract_handler)
+    run(fake_http, store)
+    assert fake_http.calls(JS_HOST) == 0                                   # off by default
+    r = run(fake_http, store, force_refresh=True, jsearch_enrichment=True)
+    assert fake_http.calls(JS_HOST) == 1
+    enrichment = [a for a in r.attempts if a.provider == "jsearch"]
+    assert enrichment[0].status == "ok" and enrichment[0].detail == "enrichment"
+    assert {j.source for j in r.jobs} == {"adzuna", "jsearch"}
+
+
+def test_full_jsearch_description_replaces_truncated_adzuna_skills():
+    from src.providers import adzuna, jsearch
+    adz = adzuna.normalise(ADZ["results"][1], NOW).model_copy(update={"skills": ["python"], "skills_source": "m2"})
+    js_raw = dict(JS["data"]["jobs"][4], job_description="Full JD. " + "Python, SQL, machine learning, AWS. " * 20)
+    js = jsearch.normalise(js_raw, NOW).model_copy(update={
+        "skills": ["python", "sql", "machine_learning", "aws"], "skills_source": "m2", "skill_parents": {"aws": "cloud"}})
+    [kept] = dedupe([adz, js])
+    assert kept.source == "adzuna" and kept.salary_min == 1000000                 # Adzuna copy kept for its salary...
+    assert kept.skills_source == "jsearch_full" and kept.skills == js.skills      # ...with the full-text skills
+    assert kept.skill_parents == {"aws": "cloud"}
+
+
+def test_module_2_maps_to_is_kept(fake_http, store):
+    def m2(request):
+        return httpx.Response(200, json={"skills": [{"id": "postgresql", "maps_to": "sql"}, {"id": "python", "maps_to": None}]})
+    fake_http.on(ADZ_HOST, json_response(ADZ)).on(M2_HOST, m2)
+    r = run(fake_http, store)
+    assert all(j.skill_parents == {"postgresql": "sql"} for j in r.jobs)

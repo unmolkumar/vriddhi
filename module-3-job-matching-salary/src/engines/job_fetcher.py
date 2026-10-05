@@ -32,22 +32,37 @@ def _quality(job: Job) -> tuple:
 
 
 def dedupe(jobs: list[Job]) -> list[Job]:
-    best: dict[str, Job] = {}
+    """One record per job. If the kept copy is a truncated Adzuna listing and the same job came from JSearch
+    with a full description, the JSearch skills are used instead (skills_source 'jsearch_full')."""
+    groups: dict[str, list[Job]] = {}
     for job in jobs:
-        key = dedupe_key(job.title, job.company, job.location)
-        if key not in best or _quality(job) > _quality(best[key]):
-            best[key] = job
-    return list(best.values())
+        groups.setdefault(dedupe_key(job.title, job.company, job.location), []).append(job)
+    out = []
+    for group in groups.values():
+        best = max(group, key=_quality)
+        full = [j for j in group if j.source == "jsearch" and j.skills_source == "m2" and j.skills
+                and len(j.description) > len(best.description)]
+        if best.source == "adzuna" and full:
+            donor = max(full, key=lambda j: len(j.description))
+            best = best.model_copy(update={"skills": donor.skills, "skill_parents": donor.skill_parents,
+                                           "skills_source": "jsearch_full"})
+        out.append(best)
+    return out
 
 
 def fetch_jobs(role: str, location: str, *, store: JobStore | None = None, client: httpx.Client | None = None,
                m2_client: httpx.Client | None = None, now: datetime | None = None,
-               force_refresh: bool = False) -> FetchResult:
+               force_refresh: bool = False, use_jsearch: bool = True,
+               jsearch_enrichment: bool = False) -> FetchResult:
     """Current jobs for role in location ('Delhi-NCR' expands to Delhi, Noida, Gurugram).
 
     Per city: fresh cache -> providers in order -> stale snapshot. Snapshot jobs are labelled stale with
     their age; nothing older than the TTL is served as fresh.
+
+    use_jsearch=False keeps JSearch out entirely (pre-warm default: its free quota is 200/month).
+    jsearch_enrichment=True also asks JSearch after an Adzuna success, for full descriptions.
     """
+    providers = [p for p in PROVIDERS if use_jsearch or p is not jsearch]
     now = now or datetime.now(timezone.utc)
     store = store or JobStore()
     ttl = timedelta(hours=ttl_hours())
@@ -68,7 +83,7 @@ def fetch_jobs(role: str, location: str, *, store: JobStore | None = None, clien
             continue
         all_cached = False
         fetched = None
-        for provider in PROVIDERS:
+        for provider in providers:
             if not provider.configured():
                 attempts.append(ProviderAttempt(provider=provider.NAME, city=city, status="not_configured"))
                 continue
@@ -83,6 +98,15 @@ def fetch_jobs(role: str, location: str, *, store: JobStore | None = None, clien
             attempts.append(ProviderAttempt(provider=provider.NAME, city=city, status="ok", jobs=len(jobs)))
             fetched = (provider.NAME, jobs, total)
             break
+        if fetched and fetched[0] == "adzuna" and jsearch_enrichment and use_jsearch and jsearch.configured():
+            try:
+                extra, _ = jsearch.search(role, city, client=client, now=now)
+                attempts.append(ProviderAttempt(provider="jsearch", city=city, status="ok" if extra else "empty",
+                                                jobs=len(extra), detail="enrichment"))
+                fetched = (fetched[0], fetched[1] + extra, fetched[2])
+            except ProviderError as e:
+                attempts.append(ProviderAttempt(provider="jsearch", city=city, status=e.status,
+                                                detail=f"enrichment: {e.detail}"))
         if fetched:
             name, jobs, total = fetched
             jobs, _ = enrich_skills(jobs, client=m2_client)

@@ -29,19 +29,24 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--force", action="store_true", help="refetch even when the cache is fresh")
     parser.add_argument("--dry-run", action="store_true", help="show the plan and the maximum calls, fetch nothing")
+    parser.add_argument("--with-jsearch", action="store_true",
+                        help="also use JSearch (fallback + full-description enrichment); off by default to save its 200/month quota")
     args = parser.parse_args()
     load_dotenv()
 
     pairs = [(role, city) for role in ROLES for city in CITIES]
     leaf_cities = sum(len(expand_cities(c)) for c in CITIES)
     print(f"{len(ROLES)} roles x {len(CITIES)} cities ({leaf_cities} after Delhi-NCR expands) = "
-          f"at most {len(ROLES) * leaf_cities} Adzuna calls, plus JSearch only when Adzuna fails. TTL {ttl_hours():g} h.")
+          f"at most {len(ROLES) * leaf_cities} Adzuna calls"
+          + (f" and up to {len(ROLES) * leaf_cities} JSearch calls." if args.with_jsearch else "; JSearch not used.")
+          + f" TTL {ttl_hours():g} h.")
     if args.dry_run:
         return
 
     calls, outcomes = Counter(), Counter()
     for role, city in pairs:
-        result = fetch_jobs(role, city, force_refresh=args.force)
+        result = fetch_jobs(role, city, force_refresh=args.force, use_jsearch=args.with_jsearch,
+                            jsearch_enrichment=args.with_jsearch)
         for a in result.attempts:
             outcomes[f"{a.provider}:{a.status}"] += 1
             if a.status in CALL_STATUSES:
