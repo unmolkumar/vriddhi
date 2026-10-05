@@ -3,21 +3,84 @@
   "_sources": [
     "module-1-career-intelligence/WORKING.md §4.1 response payload (top_skills, regional top_skills)",
     "module-1-career-intelligence/WORKING.md §5.1 and module-2-skill-gap/HANDOVER.md §3.1 (required_skills example)",
+    "module-2-skill-gap/HANDOVER.md §3.3 (common module 1 ids)",
     "context/INTEGRATION.md M1 -> M2 example",
     "module-1-career-intelligence/data/scripts/02_etl_clean_load.py normalize_skill alias targets"
   ],
-  "documented_top_skills": ["python", "machine_learning", "sql", "deep_learning", "cloud", "docker", "aws", "spark"],
+  "documented_top_skills": [
+    "python",
+    "machine_learning",
+    "sql",
+    "deep_learning",
+    "cloud",
+    "docker",
+    "aws",
+    "spark",
+    "kubernetes",
+    "data_analysis",
+    "statistics",
+    "nlp",
+    "java",
+    "linux",
+    "git",
+    "tableau",
+    "agile"
+  ],
   "normalize_skill_alias_targets": [
-    "javascript", "nodejs", "react", "vue", "python", "machine_learning", "deep_learning", "ai", "generative_ai",
-    "llm", "aws", "gcp", "azure", "postgresql", "mongodb", "kubernetes", "csharp", "cpp", "go"
+    "javascript",
+    "nodejs",
+    "react",
+    "vue",
+    "python",
+    "machine_learning",
+    "deep_learning",
+    "ai",
+    "generative_ai",
+    "llm",
+    "aws",
+    "gcp",
+    "azure",
+    "postgresql",
+    "mongodb",
+    "kubernetes",
+    "csharp",
+    "cpp",
+    "go"
   ],
   "_derived_note": "What module 1's normalize_skill produces for common Indian posting skill strings (e.g. 'Apache Spark' -> apache_spark). Not observed output: the module 1 database is not available locally.",
   "derived_ids": [
-    "apache_spark", "power_bi", "rest_api", "ci_cd", "scikit_learn", "tensorflow", "pytorch", "tableau", "excel",
-    "java", "typescript", "html", "css", "git", "linux", "data_analysis", "statistics", "hadoop", "kafka",
-    "airflow", "snowflake", "nlp", "computer_vision", "pandas", "numpy", "spring_boot", "microservices",
-    "django", "flask", "fastapi", "angular", "mysql", "redis", "jenkins", "terraform", "data_visualization",
-    "etl", "big_data", "rest_apis", "agile"
+    "apache_spark",
+    "power_bi",
+    "rest_api",
+    "ci_cd",
+    "scikit_learn",
+    "tensorflow",
+    "pytorch",
+    "excel",
+    "typescript",
+    "html",
+    "css",
+    "hadoop",
+    "kafka",
+    "airflow",
+    "snowflake",
+    "computer_vision",
+    "pandas",
+    "numpy",
+    "spring_boot",
+    "microservices",
+    "django",
+    "flask",
+    "fastapi",
+    "angular",
+    "mysql",
+    "redis",
+    "jenkins",
+    "terraform",
+    "data_visualization",
+    "etl",
+    "big_data",
+    "rest_apis"
   ],
   "career_analysis_examples": {
     "Data Scientists": {
@@ -28,7 +91,14 @@
       "ai_exposure_score": 0.45,
       "confidence_score": 0.95,
       "outlook": "Strong Growth",
-      "top_skills": ["python", "machine_learning", "sql", "deep_learning", "cloud", "docker"]
+      "top_skills": [
+        "python",
+        "machine_learning",
+        "sql",
+        "deep_learning",
+        "cloud",
+        "docker"
+      ]
     },
     "Data Engineer": {
       "occupation": "Data Engineer",
@@ -37,7 +107,12 @@
       "ai_exposure_score": 0.42,
       "confidence_score": 0.78,
       "outlook": "Strong Growth",
-      "top_skills": ["python", "sql", "spark", "cloud"]
+      "top_skills": [
+        "python",
+        "sql",
+        "spark",
+        "cloud"
+      ]
     }
   }
 }
