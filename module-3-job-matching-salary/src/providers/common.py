@@ -87,7 +87,9 @@ def employment_from_text(title: str) -> str | None:
     return "internship" if re.search(r"\bintern(ship)?\b", title or "", re.I) else None
 
 
-_COMPANY_NOISE = re.compile(r"\b(pvt|private|ltd|limited|inc|llp|llc|corp|corporation|co)\b\.?", re.I)
+# Legal and generic suffixes that vary between listings of the same employer ("Honeywell" vs "Honeywell Technologies").
+_COMPANY_NOISE = re.compile(r"\b(pvt|private|ltd|limited|inc|llp|llc|corp|corporation|co|india|technologies|technology|"
+                            r"solutions|services)\b\.?", re.I)
 
 
 def dedupe_key(title: str, company: str | None, city: str | None) -> str:

@@ -160,3 +160,7 @@ def test_dedupe_key_ignores_company_suffixes_and_case():
     assert dedupe_key("Data Scientist", "VY SYSTEMS PRIVATE LIMITED", "Bengaluru") == \
         dedupe_key("data scientist", "VY Systems Pvt Ltd", "bengaluru")
     assert dedupe_key("Data Scientist", "A", "Pune") != dedupe_key("Data Scientist", "A", "Mumbai")
+    # seen live: the same Honeywell listing under two employer spellings
+    assert dedupe_key("Advanced Data Scientist", "Honeywell", "Bengaluru") == \
+        dedupe_key("Advanced Data Scientist", "Honeywell Technologies", "Bengaluru")
+    assert dedupe_key("Analyst", "Infosys", "Pune") != dedupe_key("Analyst", "TCS", "Pune")
