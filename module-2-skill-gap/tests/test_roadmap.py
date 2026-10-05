@@ -61,6 +61,16 @@ def test_hours_are_estimate_ranges_by_tier_and_kind():
     assert "estimated" in r.roadmap.note and "not guarantees" in r.roadmap.note
 
 
+def test_adjacent_skill_estimate_is_lower_than_missing():
+    adjacent = next(m for m in gap_for(["Docker"], ["kubernetes"]).roadmap.milestones if m.skill == "kubernetes")
+    missing = next(m for m in gap_for(["Excel"], ["kubernetes"]).roadmap.milestones if m.skill == "kubernetes")
+    assert (adjacent.kind, missing.kind) == ("adjacent", "missing")
+    assert (adjacent.hours_factor, missing.hours_factor) == (0.5, 1.0)
+    assert adjacent.estimated_hours.high < missing.estimated_hours.high
+    assert adjacent.estimated_hours.low < missing.estimated_hours.low
+    assert (missing.estimated_hours.low, missing.estimated_hours.high) == TIER_HOURS[3]
+
+
 def test_weekly_milestones_are_cumulative():
     r = gap_for(["Excel"], ["python", "sql"], hours_per_week=10)
     m1, m2 = r.roadmap.milestones

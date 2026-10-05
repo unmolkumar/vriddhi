@@ -10,9 +10,10 @@ from src.models.schemas import HourRange, Milestone, Roadmap, SkillGap, UserProf
 # Estimated learning hours by taxonomy difficulty tier (low, high). Estimates, not promises.
 TIER_HOURS = {1: (10, 25), 2: (30, 60), 3: (60, 120)}
 DEFAULT_TIER = 2                 # skills outside the taxonomy
-KIND_HOURS_FACTOR = {            # adjacent / weak skills start from related or partial knowledge
-    "missing": 1.0, "prerequisite": 1.0, "adjacent": 0.5, "weak": 0.5,
-}
+ADJACENT_HOURS_DISCOUNT = 0.5    # an adjacent skill starts from a related one: half the full estimate
+WEAK_HOURS_DISCOUNT = 0.5        # a weak skill is already partly known: half the full estimate
+KIND_HOURS_FACTOR = {"missing": 1.0, "prerequisite": 1.0,
+                     "adjacent": ADJACENT_HOURS_DISCOUNT, "weak": WEAK_HOURS_DISCOUNT}
 MAX_MILESTONES = 15
 ROADMAP_NOTE = ("Hours and weeks are estimated ranges based on each skill's difficulty tier, not guarantees. "
                 "Actual time depends on your background and how you practise.")
@@ -92,7 +93,8 @@ def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: fl
                  if hours_per_week else None)
         milestones.append(Milestone(
             order=n, skill=sid, display=it["display"], kind=it["kind"], reason=it["reason"],
-            importance=round(it["importance"], 3), difficulty_tier=tier, prerequisites=deps[sid],
+            importance=round(it["importance"], 3), difficulty_tier=tier, hours_factor=KIND_HOURS_FACTOR[it["kind"]],
+            prerequisites=deps[sid],
             required_for=it["required_for"], estimated_hours=HourRange(low=lo, high=hi), estimated_weeks=weeks))
     note = ROADMAP_NOTE
     if len(order) > MAX_MILESTONES:

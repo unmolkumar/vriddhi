@@ -658,6 +658,11 @@
           "title": "Difficulty Tier",
           "type": "integer"
         },
+        "hours_factor": {
+          "description": "Multiplier on the tier's hours: 1.0 new skill, 0.5 adjacent or weak",
+          "title": "Hours Factor",
+          "type": "number"
+        },
         "prerequisites": {
           "description": "Ids learned earlier in this roadmap",
           "items": {
@@ -698,6 +703,7 @@
         "reason",
         "importance",
         "difficulty_tier",
+        "hours_factor",
         "estimated_hours"
       ],
       "title": "Milestone",

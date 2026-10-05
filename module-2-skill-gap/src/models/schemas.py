@@ -197,6 +197,7 @@ class Milestone(BaseModel):
     reason: str
     importance: float
     difficulty_tier: int
+    hours_factor: float = Field(description="Multiplier on the tier's hours: 1.0 new skill, 0.5 adjacent or weak")
     prerequisites: list[str] = Field(default_factory=list, description="Ids learned earlier in this roadmap")
     required_for: list[str] = Field(default_factory=list, description="For pulled-in prerequisites")
     estimated_hours: HourRange
