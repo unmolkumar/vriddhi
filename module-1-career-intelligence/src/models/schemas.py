@@ -81,6 +81,7 @@ class CareerAnalysisResponse(BaseModel):
     tasks_analyzed: int = Field(0, description="Count of granular O*NET tasks evaluated")
     sample_tasks: List[TaskExposureDetail] = Field(default_factory=list, description="Sample task transformation breakdown")
     regional_breakdown: Dict[str, RegionMetricDetail] = Field(default_factory=dict, description="Side-by-side India vs Global metrics")
+    typical_experience: Dict[str, float] = Field(default_factory=dict, description="Typical experience years band {min, max} derived from empirical postings")
     yearly_trajectory: Optional[YearlyTrajectory] = Field(None, description="Past year-wise trend + 5-year forecast points")
     knowledge_graph: Optional[KnowledgeGraph] = Field(None, description="Career knowledge graph (nodes and edges)")
 

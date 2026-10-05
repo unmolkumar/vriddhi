@@ -123,6 +123,9 @@ class CareerIntelligenceService:
             top_market_skills=all_skills
         )
 
+        # 8. Derive empirical experience band
+        exp_band = self.db.get_experience_band(target_name)
+
         return CareerAnalysisResponse(
             occupation=target_name,
             soc_code=soc_code,
@@ -137,6 +140,7 @@ class CareerIntelligenceService:
             tasks_analyzed=ai_metrics.get("task_count", 0),
             sample_tasks=sample_task_details,
             regional_breakdown=regional_breakdown,
+            typical_experience=exp_band,
             yearly_trajectory=forecast.get("trajectory"),
             knowledge_graph=kg
         )
