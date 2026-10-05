@@ -1,0 +1,20 @@
+Aarav Mehta
+Bengaluru | aarav.mehta@example.com | github.com/aarav-example
+SUMMARY
+Data analyst who will go the extra mile. Background in statistical analysis.
+EXPERIENCE
+Data Analyst | Swiggy | Jun 2021 - Present
+- Built SQL dashboards in Tableau for city operations teams
+- Automated weekly reports with Python and pandas
+Junior Data Analyst, Mu Sigma | Jul 2019 - Aug 2021
+- Wrote SQL queries and Excel models for retail clients
+Data Science Intern | Fractal Analytics | Jan 2019 - Jun 2019
+- Cleaned survey data in R
+PROJECTS
+Churn Prediction
+- Built a churn model in Python with XGBoost and scikit-learn
+- Served predictions through a FastAPI service
+SKILLS
+Python, SQL, Go, R, Excel, Docker, Power BI, Tableau
+EDUCATION
+B.Tech in Computer Science, NIT Trichy, 2019

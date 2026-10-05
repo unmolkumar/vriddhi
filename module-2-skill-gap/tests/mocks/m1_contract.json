@@ -1,0 +1,200 @@
+{
+  "_about": "Module 1 data used by module-2 tests. Copied from module 1's documentation, not imported. Integration wires the real module 1 later.",
+  "_sources": [
+    "module-1-career-intelligence/WORKING.md §4.1 response payload (top_skills, regional top_skills)",
+    "module-1-career-intelligence/WORKING.md §5.1 and module-2-skill-gap/HANDOVER.md §3.1 (required_skills example)",
+    "module-2-skill-gap/HANDOVER.md §3.3 (common module 1 ids)",
+    "context/INTEGRATION.md M1 -> M2 example",
+    "module-1-career-intelligence/data/scripts/02_etl_clean_load.py normalize_skill alias targets"
+  ],
+  "documented_top_skills": [
+    "python",
+    "machine_learning",
+    "sql",
+    "deep_learning",
+    "cloud",
+    "docker",
+    "aws",
+    "spark",
+    "kubernetes",
+    "data_analysis",
+    "statistics",
+    "nlp",
+    "java",
+    "linux",
+    "git",
+    "tableau",
+    "agile"
+  ],
+  "normalize_skill_alias_targets": [
+    "javascript",
+    "nodejs",
+    "react",
+    "vue",
+    "python",
+    "machine_learning",
+    "deep_learning",
+    "ai",
+    "generative_ai",
+    "llm",
+    "aws",
+    "gcp",
+    "azure",
+    "postgresql",
+    "mongodb",
+    "kubernetes",
+    "csharp",
+    "cpp",
+    "go"
+  ],
+  "_derived_note": "What module 1's normalize_skill produces for common Indian posting skill strings (e.g. 'Apache Spark' -> apache_spark). Not observed output: the module 1 database is not available locally.",
+  "derived_ids": [
+    "apache_spark",
+    "power_bi",
+    "rest_api",
+    "ci_cd",
+    "scikit_learn",
+    "tensorflow",
+    "pytorch",
+    "excel",
+    "typescript",
+    "html",
+    "css",
+    "hadoop",
+    "kafka",
+    "airflow",
+    "snowflake",
+    "computer_vision",
+    "pandas",
+    "numpy",
+    "spring_boot",
+    "microservices",
+    "django",
+    "flask",
+    "fastapi",
+    "angular",
+    "mysql",
+    "redis",
+    "jenkins",
+    "terraform",
+    "data_visualization",
+    "etl",
+    "big_data",
+    "rest_apis"
+  ],
+  "career_analysis_examples": {
+    "Data Scientists": {
+      "occupation": "Data Scientists",
+      "soc_code": "15-2051.00",
+      "current_demand_score": 0.91,
+      "growth_score": 0.76,
+      "ai_exposure_score": 0.45,
+      "confidence_score": 0.95,
+      "outlook": "Strong Growth",
+      "top_skills": [
+        "python",
+        "machine_learning",
+        "sql",
+        "deep_learning",
+        "cloud",
+        "docker"
+      ],
+      "knowledge_graph": {
+        "_note": "Shape from module 1 WORKING.md §4.1 and knowledge_graph.py: tech_* nodes weigh 1.0 (hot) or 0.65, skill_* nodes are O*NET skills with importance/100.",
+        "nodes": [
+          {
+            "id": "occ_15-2051.00",
+            "label": "Data Scientists",
+            "type": "occupation",
+            "weight": 1.0
+          },
+          {
+            "id": "dom_technology",
+            "label": "Technology & Applied Sciences",
+            "type": "domain",
+            "weight": 0.85
+          },
+          {
+            "id": "tech_python",
+            "label": "Python",
+            "type": "technology",
+            "weight": 1.0,
+            "metadata": {
+              "is_hot_tech": true
+            }
+          },
+          {
+            "id": "tech_sql",
+            "label": "SQL",
+            "type": "technology",
+            "weight": 1.0,
+            "metadata": {
+              "is_hot_tech": true
+            }
+          },
+          {
+            "id": "tech_docker",
+            "label": "Docker",
+            "type": "technology",
+            "weight": 0.65,
+            "metadata": {
+              "is_hot_tech": false
+            }
+          },
+          {
+            "id": "skill_programming",
+            "label": "Programming",
+            "type": "skill",
+            "weight": 0.72
+          },
+          {
+            "id": "skill_mathematics",
+            "label": "Mathematics",
+            "type": "skill",
+            "weight": 0.69
+          }
+        ],
+        "edges": [
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_python",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.9
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_sql",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.9
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_docker",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.65
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "skill_programming",
+            "relationship": "REQUIRES_COMPETENCY",
+            "weight": 0.72
+          }
+        ]
+      }
+    },
+    "Data Engineer": {
+      "occupation": "Data Engineer",
+      "current_demand_score": 0.87,
+      "growth_score": 0.84,
+      "ai_exposure_score": 0.42,
+      "confidence_score": 0.78,
+      "outlook": "Strong Growth",
+      "top_skills": [
+        "python",
+        "sql",
+        "spark",
+        "cloud"
+      ]
+    }
+  }
+}
