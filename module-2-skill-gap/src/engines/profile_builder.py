@@ -68,7 +68,7 @@ def _skill(hit: SkillHit, evidence: list[Evidence], claimed: int | None = None) 
             level = max(level, min(claimed, level + 1))
     entry = resolve_skill(hit.id) if hit.in_taxonomy else None
     return ExtractedSkill(
-        name=hit.id, display=hit.display, category=hit.category, in_taxonomy=hit.in_taxonomy,
+        name=hit.id, display=hit.display, category=hit.category, in_taxonomy=hit.in_taxonomy, is_category=hit.is_category,
         maps_to=entry.get("maps_to") if entry else None, level=level, confidence=confidence,
         evidence=evidence, claimed_level=claimed, needs_verification=needs_verification)
 
@@ -139,8 +139,8 @@ def profile_from_manual(data: ManualProfileInput) -> UserProfile:
         if not name:
             continue
         entry = resolve_skill(name)
-        hits = ([SkillHit(id=entry["id"], display=entry["display"], category=entry["category"],
-                          in_taxonomy=True, source="dictionary", matches=[name])] if entry
+        hits = ([SkillHit(id=entry["id"], display=entry["display"], category=entry["category"], in_taxonomy=True,
+                          is_category=entry.get("is_category", False), source="dictionary", matches=[name])] if entry
                 else extract_skills(name, use_llm=False, skills_context=True))
         if not hits:
             unknown.append(name)
