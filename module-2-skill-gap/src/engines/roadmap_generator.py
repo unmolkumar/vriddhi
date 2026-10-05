@@ -28,6 +28,12 @@ def known_ids(profile: UserProfile) -> set[str]:
     return known
 
 
+def _weeks(low_hours: int, high_hours: int, hours_per_week: float | None) -> HourRange | None:
+    if not hours_per_week:
+        return None
+    return HourRange(low=math.ceil(low_hours / hours_per_week), high=math.ceil(high_hours / hours_per_week))
+
+
 def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: float | None = None) -> Roadmap:
     by_id = taxonomy()["by_id"]
     known = known_ids(profile)
@@ -89,19 +95,19 @@ def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: fl
         tier = by_id.get(sid, {}).get("difficulty_tier", DEFAULT_TIER)
         lo, hi = (round(h * KIND_HOURS_FACTOR[it["kind"]]) for h in TIER_HOURS[tier])
         low_total, high_total = low_total + lo, high_total + hi
-        weeks = (HourRange(low=math.ceil(low_total / hours_per_week), high=math.ceil(high_total / hours_per_week))
-                 if hours_per_week else None)
+        weeks = _weeks(lo, hi, hours_per_week)                    # this skill alone
+        cumulative = _weeks(low_total, high_total, hours_per_week)  # running total up to this milestone
         milestones.append(Milestone(
             order=n, skill=sid, display=it["display"], kind=it["kind"], reason=it["reason"],
             importance=round(it["importance"], 3), difficulty_tier=tier, hours_factor=KIND_HOURS_FACTOR[it["kind"]],
             prerequisites=deps[sid],
-            required_for=it["required_for"], estimated_hours=HourRange(low=lo, high=hi), estimated_weeks=weeks))
+            required_for=it["required_for"], estimated_hours=HourRange(low=lo, high=hi), weeks=weeks,
+            cumulative_weeks=cumulative))
     note = ROADMAP_NOTE
     if len(order) > MAX_MILESTONES:
         note += f" {len(order) - MAX_MILESTONES} further skills omitted; finish these first."
     total = HourRange(low=low_total, high=high_total)
     return Roadmap(
         milestones=milestones, total_estimated_hours=total, hours_per_week=hours_per_week,
-        estimated_total_weeks=(HourRange(low=math.ceil(low_total / hours_per_week), high=math.ceil(high_total / hours_per_week))
-                               if hours_per_week else None),
+        estimated_total_weeks=_weeks(low_total, high_total, hours_per_week),
         note=note)

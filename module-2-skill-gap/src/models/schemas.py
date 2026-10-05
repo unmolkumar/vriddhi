@@ -201,7 +201,9 @@ class Milestone(BaseModel):
     prerequisites: list[str] = Field(default_factory=list, description="Ids learned earlier in this roadmap")
     required_for: list[str] = Field(default_factory=list, description="For pulled-in prerequisites")
     estimated_hours: HourRange
-    estimated_weeks: HourRange | None = Field(default=None, description="Cumulative week range when hours_per_week is given")
+    weeks: HourRange | None = Field(default=None, description="Estimated weeks for this skill alone, when hours_per_week is given")
+    cumulative_weeks: HourRange | None = Field(
+        default=None, description="Estimated week by which this milestone is done (running total), when hours_per_week is given")
 
 
 class Roadmap(BaseModel):

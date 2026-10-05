@@ -74,8 +74,10 @@ def test_adjacent_skill_estimate_is_lower_than_missing():
 def test_weekly_milestones_are_cumulative():
     r = gap_for(["Excel"], ["python", "sql"], hours_per_week=10)
     m1, m2 = r.roadmap.milestones
-    assert (m1.estimated_weeks.low, m1.estimated_weeks.high) == (3, 6)       # python: 30-60 h at 10 h/week
-    assert (m2.estimated_weeks.low, m2.estimated_weeks.high) == (6, 12)      # + sql: 30-60 h
+    assert (m1.weeks.low, m1.weeks.high) == (3, 6)                       # python: 30-60 h at 10 h/week
+    assert (m2.weeks.low, m2.weeks.high) == (3, 6)                       # sql alone: 30-60 h
+    assert (m1.cumulative_weeks.low, m1.cumulative_weeks.high) == (3, 6)
+    assert (m2.cumulative_weeks.low, m2.cumulative_weeks.high) == (6, 12)  # python + sql
     assert (r.roadmap.estimated_total_weeks.low, r.roadmap.estimated_total_weeks.high) == (6, 12)
     assert r.roadmap.total_estimated_hours.low == 60
     assert gap_for(["Excel"], ["python"]).roadmap.estimated_total_weeks is None

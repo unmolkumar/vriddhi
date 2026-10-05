@@ -682,7 +682,7 @@
         "estimated_hours": {
           "$ref": "#/$defs/HourRange"
         },
-        "estimated_weeks": {
+        "weeks": {
           "anyOf": [
             {
               "$ref": "#/$defs/HourRange"
@@ -692,7 +692,19 @@
             }
           ],
           "default": null,
-          "description": "Cumulative week range when hours_per_week is given"
+          "description": "Estimated weeks for this skill alone, when hours_per_week is given"
+        },
+        "cumulative_weeks": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HourRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated week by which this milestone is done (running total), when hours_per_week is given"
         }
       },
       "required": [
