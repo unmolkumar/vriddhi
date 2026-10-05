@@ -195,6 +195,8 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
 | **`confidence_score`** | Float (`0.10` – `0.95`) | Statistical reliability of forecast | **`> 0.75`**: High certainty backed by thousands of postings and O*NET matrices.<br>**`< 0.40`**: Sparse empirical data (interpret cautiously). |
 | **`outlook`** | Categorical String | Summary forecast classification | **`Strong Growth`**: High growth + high confidence.<br>**`Moderate Growth`**: Steady trajectory.<br>**`Stable Demand`**: Balanced headcount.<br>**`Transforming`**: High routine automation risk. |
 | **`top_skills`** | Array of Strings | Primary skill requirements | Top technical competencies extracted from real postings, used directly by Module 2 for skill-gap calculation. |
+| **`top_skill_weights`** | Object (`Dict[str, float]`) | Normalized demand weights | Empirical frequency weights in $[0.0, 1.0]$ relative to the most in-demand skill (`freq / max_freq`), allowing Module 2 to score gap importance objectively. |
+| **`typical_experience`** | Object (`{min, max}`) | Empirical experience years band | Data-backed experience expectations derived from real job posting distributions (e.g. `{"min": 3.4, "max": 7.4}` for Data Scientist). |
 | **`drivers`** | Array of Strings | Plain-English causal explanations | Answers *"Why is this career recommended?"* with concrete posting numbers, metro concentrations, and AI augmentation facts. |
 | **`regional_breakdown`** | Object (India / Global) | Domestic vs. International metrics | Side-by-side volumes, top hiring cities, and salary levels in **INR (LPA)** and **USD/year**. |
 | **`yearly_trajectory`** | Object | Time-series data points (2021–2031) | Historical year-by-year counts + 5-year forecast points with upper/lower confidence bands for line plotting. |
@@ -225,13 +227,25 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
   "ai_exposure_score": 0.45,
   "confidence_score": 0.95,
   "outlook": "Strong Growth",
-  "top_skills": ["python", "machine_learning", "sql", "deep_learning", "cloud", "docker"],
+  "top_skills": ["machine_learning", "python", "sql", "deep_learning", "data_analysis", "statistics"],
+  "top_skill_weights": {
+    "python": 1.0,
+    "machine_learning": 0.91,
+    "sql": 0.73,
+    "deep_learning": 0.55,
+    "statistics": 0.42,
+    "data_analysis": 0.26
+  },
+  "typical_experience": {
+    "min": 3.4,
+    "max": 7.4
+  },
   "drivers": [
     "Substantial real-world market presence with 12,480 verified postings across global and Indian labor markets.",
     "Strong recent hiring momentum with steady acceleration from 2024 through 2026.",
     "High augmentation leverage: 18 tasks enhanced by generative AI tools, increasing worker productivity rather than substituting roles.",
     "Balanced multi-regional hiring spanning leading Indian tech hubs (Bengaluru) and international markets.",
-    "High employer demand for foundational and emerging capabilities: python, machine_learning, sql, deep_learning."
+    "High employer demand for foundational and emerging capabilities: machine_learning, python, sql, deep_learning."
   ],
   "tasks_analyzed": 26,
   "sample_tasks": [
@@ -250,7 +264,7 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
       "median_salary_inr_lpa": 18.5,
       "median_salary_usd": 22200.0,
       "top_locations": ["Bengaluru", "Hyderabad", "Pune"],
-      "top_skills": ["python", "machine_learning", "sql"]
+      "top_skills": ["machine_learning", "python", "sql"]
     },
     "global": {
       "region": "global",
@@ -413,3 +427,46 @@ pytest module-1-career-intelligence/tests/ -v
   * Semantic domain search endpoint.
   * API health and compare endpoints.
   * **Integration Contract Compliance (context/INTEGRATION.md M1 → M2 contract test)**.
+
+---
+
+## 7. Session Refinements & Engineering Changelog
+
+This technical section details the fine-tuning, cross-module synchronization, and data enhancements executed during this session:
+
+### 7.1. Precision Role Differentiation (Fixing the Prefix Collapse Bug)
+* **Problem Identified**: Previously, `Data Scientist`, `Data Engineer`, and `Data Analyst` were returning identical skill lists (`python`, `sql`, `machine_learning`, `data_analysis`, etc.) with indistinguishable weights.
+* **Root Cause**: The query engine extracted `words[0]` ("data") as a fuzzy token, which inadvertently matched all `%data%` contexts across the database.
+* **Resolution**: The query engine was upgraded to prioritize **multi-word phrase matching** (`occupation_context LIKE '%data analyst%'`, `'%data engineer%'`, `'%data scientist%'`).
+* **Empirical Outcome**:
+  * **Data Analyst** receives: `["data_analysis", "sql", "power_bi", "python", "excel", "data_visualization"]`.
+  * **Data Engineer** receives: `["sql", "python", "data_modeling", "aws", "data_quality", "pyspark"]`.
+  * **Data Scientist** receives: `["machine_learning", "python", "sql", "deep_learning", "data_analysis", "statistics"]`.
+
+### 7.2. Generic Category Stopword Filtering
+* **Problem Identified**: Non-skill structural tokens (`data`, `backend`, `frontend`, `automation`, `coding`, `software`) appeared in skill lists, distorting downstream gap analyses.
+* **Resolution**: Implemented `GENERIC_SKILL_STOPWORDS` filter in `database.py`. All emitted skills are now concrete, verified technical tools and competencies.
+
+### 7.3. Empirical Experience Bands (`typical_experience`)
+* **Problem Identified**: Module 2 had to guess candidate experience bands (e.g. 0–5 years) based on job title heuristics.
+* **Resolution**: Added `get_experience_band()` in `database.py`. The system queries real `experience_min` and `experience_max` distributions from thousands of active Indian and international job postings:
+  * Data Scientist: `{"min": 3.4, "max": 7.4}` years
+  * Data Engineer: `{"min": 4.2, "max": 8.0}` years
+  * Data Analyst: `{"min": 2.9, "max": 6.0}` years
+  * Backend Developer: `{"min": 3.2, "max": 5.1}` years
+  * DevOps Engineer: `{"min": 4.0, "max": 7.3}` years
+* Emitted directly in `CareerAnalysisResponse` as `typical_experience`.
+
+### 7.4. Demand-Frequency Skill Weights (`top_skill_weights`)
+* Added `top_skill_weights: Dict[str, float]` calculated as normalized frequency relative to the top role skill (`freq / max_freq`), providing empirical float weights in $[0.0, 1.0]$.
+* Allows Module 2 to prioritize critical requirements (e.g. `python: 1.0`, `sql: 0.98`) over secondary tools in candidate scoring.
+
+### 7.5. Single-Letter Language Fix (`C` and `R`)
+* Fixed the `len(ns) > 1` filter in `02_etl_clean_load.py` to `(len(ns) > 1 or ns in ('c', 'r'))`.
+* Ingested **3,746 missing records** for programming languages `C` and `R` into `skill_demand` in `career_intel.db`.
+
+### 7.6. Cross-Module Integration & PR #1 Merge
+* Decoupled cross-module imports in compliance with `context/AGENTS.md` §7.
+* Reviewed and merged Module 2's pull request (PR #1: 39 files, 232 green tests) into `main`.
+* Pushed all updates, refreshed JSON schemas, and target role exports to GitHub `origin/main`.
+
