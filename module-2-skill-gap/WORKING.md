@@ -3,7 +3,7 @@
 **Branch:** `feat/module-2-skill-gap` · **Owner:** Chaitanya Sharma · **API port:** 8002
 **Question answered:** *"Where is this person now, how well do they match the target role, and what should they learn next?"*
 
-Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 209 passing tests, no cross-module imports.
+Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 232 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
 
 ---
 
@@ -86,6 +86,7 @@ The format is detected from the bytes; the filename only breaks ties. Every erro
 - `prerequisites`: 139 skills; acyclic.
 - `difficulty_tier`: 1 foundational tool/syntax · 2 working skill · 3 deep specialisation.
 - `context`: rules for ambiguous aliases.
+- Product variants are aliases of their base skill (Tableau Desktop/Server/Public/Prep → Tableau, Power BI Desktop/Service → Power BI, MS Excel → Excel, Google Colab → Jupyter, Docker Desktop → Docker, MySQL Workbench → MySQL, SSMS → SQL Server). AWS EC2, S3 and Lambda are their own skills with `maps_to` aws → cloud.
 - `esco_uri`: `null`. This is an **ESCO-aligned taxonomy, mapping in progress**, not ESCO.
 
 ### 3.2 Extraction (`engines/skill_extractor.py`)
@@ -95,7 +96,8 @@ The format is detected from the bytes; the filename only breaks ties. Every erro
   - `list` rule (`go`, `c`, `spring`, `express`, `node`, `m.l.`, …): the alias must be a whole item of a delimited list, or the text must be a skills list.
   - `case` rule (`r`, `excel`, `rust`, `spark`, `ai`, …): the list rule, or the alias capitalised mid-sentence (*"analysis in R"*, *"Advanced Excel"*).
   - *"go the extra mile"*, *"Grade C"*, *"Spring 2023"* and *"M.L. Sharma"* don't match.
-- **Pass 2, Groq** (JSON mode, temperature 0, 10 s timeout, no retries). The default model is `openai/gpt-oss-120b`; override it with `GROQ_MODEL`. The originally planned `llama-3.3-70b-versatile` is no longer served by Groq. `gpt-oss-120b`, `gpt-oss-20b` and `qwen/qwen3.8-27b` all returned identical results on the test prompt in ~1 s.
+- **Pass 2, Groq** (JSON mode, temperature 0, 10 s timeout, no retries). The default model is `openai/gpt-oss-120b`; override it with `GROQ_MODEL`.
+  - **Team-facing change (approved):** the originally planned `llama-3.3-70b-versatile` is no longer served by Groq. `gpt-oss-120b`, `gpt-oss-20b` and `qwen/qwen3.8-27b` all returned identical results on the test prompt in ~1 s, and `gpt-oss-120b` was approved as the default.
   - Only skills the dictionary missed are requested, and each must literally appear in the text or it is dropped.
   - Results are cached by `sha1(prompt version | model | text)`.
   - No key, timeout, rate limit, unknown model or bad JSON → dictionary results, never an exception.
@@ -136,19 +138,23 @@ Skills without an explicit value fall back to rank decay, and `importance_source
 - With rank decay: the first 3 required skills need 3 (`TOP_REQUIRED_LEVEL`), the rest 2.
 
 ### 5.3 Matching (per required skill, first rule that applies)
-| Status | Reason | Rule | Current level |
-|---|---|---|---|
-| matched | `exact` | the profile has the id | that skill's level |
-| matched | `maps_to` | a profile skill's `maps_to` chain reaches it (PostgreSQL → **sql**, AWS → **cloud**, scikit-learn → **machine_learning**) | best such skill |
-| adjacent | `maps_to` | the profile has the required skill's parent, or a skill under that parent (MySQL ↔ PostgreSQL, SQL → PostgreSQL) | related skill's level |
-| adjacent | `prerequisite` | the profile has a prerequisite of it (Docker → Kubernetes) or a skill that builds on it | related skill's level |
-| adjacent | `semantic` | cosine(display names) ≥ **0.82** (`SEMANTIC_THRESHOLD`, MiniLM `all-MiniLM-L6-v2`); TF-IDF char 3-gram cosine ≥ 0.82 if the model can't load | related skill's level |
-| missing | — | none of the above | 0 |
+| Status | Reason | Rule | `relation` | `current_level` |
+|---|---|---|---|---|
+| matched | `exact` | the profile has the id | — | that skill's level |
+| matched | `maps_to` | a profile skill's `maps_to` chain reaches it (PostgreSQL → **sql**, AWS → **cloud**, scikit-learn → **machine_learning**) | — | best such skill's level |
+| matched | `semantic` | cosine(display names) ≥ **0.92** (`SEMANTIC_MATCH_THRESHOLD`): the same skill worded differently | — | that skill's level |
+| adjacent | `maps_to` | the profile has the required skill's parent, or a skill under that parent (MySQL ↔ PostgreSQL, SQL → PostgreSQL, scikit-learn ↔ Deep Learning) | *is related to X* | 0 |
+| adjacent | `prerequisite` | the profile has a prerequisite of it (Docker → Kubernetes), or a skill that builds on it (Kubernetes → Docker) | *builds on X* / *is a foundation of X* | 0 |
+| adjacent | `semantic` | 0.82 ≤ cosine < 0.92 (`SEMANTIC_THRESHOLD`, MiniLM `all-MiniLM-L6-v2`; TF-IDF char 3-gram cosine with the same bars if the model can't load) | *is similar to X* | 0 |
+| missing | — | none of the above | — | 0 |
+
+For adjacent skills, `related_level` holds the level of the related `via` skill. The required skill itself isn't known yet, so `current_level` is 0 and `gap` equals `required_level`.
 
 `gap = required_level − current_level`: > 0 is a gap, 0 is met, < 0 is above the requirement. The buckets are `matched` (gap ≤ 0), `weak` (matched with gap > 0), `adjacent`, `critical_missing` (by importance) and `above_requirement`.
 
 Measured MiniLM cosines show why 0.82 is a conservative bar:
-- **Pass:** *Data Visualization ~ Data Visualisation Tools* 0.88, *Tableau Desktop ~ Tableau* 0.85, *Microsoft Excel ~ Excel* 0.97.
+- **Adjacent (0.82–0.92):** *Data Visualization ~ Data Visualisation Tools* 0.88, *Machine Learning ~ Machine Learning Models* 0.87.
+- **Matched (≥ 0.92):** *Data Visualization ~ Data Visualisations* 0.97, *Microsoft Excel ~ Excel* 0.97. Product names like *Tableau Desktop* are now taxonomy aliases, so they match exactly.
 - **Don't pass:** *MySQL ~ PostgreSQL* 0.55, *PyTorch ~ TensorFlow* 0.49, *Docker ~ Kubernetes* 0.32.
 
 The taxonomy rules catch those related tools instead, so the three reasons complement each other.
@@ -162,7 +168,7 @@ coverage   = Σ w_r · credit_r / Σ w_r
 experience_factor = min(1, (years + 1) / (role_min + 1))          (EXPERIENCE_SMOOTHING = 1)
 match_score = 0.85 · coverage + 0.15 · experience_factor           (COVERAGE_WEIGHT, EXPERIENCE_WEIGHT)
 ```
-`role_min`/`role_max` come from `typical_experience_years` in the request. Otherwise they come from the title: intern/junior/graduate 0–2, senior 4–8, lead/manager 6–12, principal/staff/head/architect 8–15, anything else 0–5.
+`role_min`/`role_max` come from `typical_experience` in the request (`experience_source: "request"`), e.g. a per-occupation band from module 1. Otherwise they come from the title (`experience_source: "title_heuristic"`): intern/junior/graduate 0–2, senior 4–8, lead/manager 6–12, principal/staff/head/architect 8–15, anything else 0–5.
 
 **What 0.72 means.** The profile covers about 72% of the importance-weighted requirement at the required levels, after a small experience adjustment. Adjacent skills count 40%, and a level-1 skill against a level-2 requirement counts 50%. It is an estimate of fit, not a hiring probability.
 
@@ -173,7 +179,7 @@ match_score = 0.85 · coverage + 0.15 · experience_factor           (COVERAGE_W
 | 0 | python | 1.0000 | matched exact | 4 / 3 | 1.0000 | 1.0000 |
 | 1 | machine_learning | 0.8696 | matched maps_to (scikit-learn) | 2 / 3 | 0.6667 | 0.5797 |
 | 2 | sql | 0.7692 | matched exact | 3 / 3 | 1.0000 | 0.7692 |
-| 3 | deep_learning | 0.6897 | adjacent maps_to (scikit-learn) | 2 / 2 | 0.40 | 0.2759 |
+| 3 | deep_learning | 0.6897 | adjacent maps_to (scikit-learn, related_level 2) | 0 / 2 | 0.40 | 0.2759 |
 | 4 | cloud | 0.6250 | missing | 0 / 2 | 0 | 0 |
 | 5 | docker | 0.5714 | matched exact (mentioned only) | 1 / 2 | 0.5000 | 0.2857 |
 | | | **Σ 4.5249** | | | | **Σ 2.9105** |
@@ -193,7 +199,7 @@ Test cases: the fixture against *Data Analyst* (sql, excel, tableau, power_bi, s
 Advice is evidence-based, per required skill:
 - The matching skill is only `resume_mentioned`/`self_reported`: *"You list Docker, but nothing in your work or projects shows it. Build a project with Docker."*
 - A claim needing verification: *"You rate yourself level 5 in AWS, but your resume doesn't show it yet…"*
-- An adjacent skill: *"You already know scikit-learn; Deep Learning builds on it, so this is a quick win."*
+- An adjacent skill, worded by its relation: *"Deep Learning is related to scikit-learn, which you know, so it's a quick win."*, *"Kubernetes builds on Docker, which you know…"*, *"Data Visualisation Tools is similar to Data Visualization, which you know…"*. Roadmap milestone `reason`s use the same wording.
 
 ---
 
@@ -202,8 +208,8 @@ Advice is evidence-based, per required skill:
 1. **Items:** missing skills, adjacent skills and weak matched skills (gap > 0).
 2. **Prerequisites:** for missing and adjacent items, taxonomy prerequisites the user doesn't know are added recursively (`kind = prerequisite`; `required_for` lists the dependants). "Known" includes skills implied through `maps_to` (pandas implies Python).
 3. **Order:** Kahn's topological sort over prerequisite edges. Among ready skills, the highest importance goes first, and pulled-in prerequisites inherit their dependant's importance. Prerequisites always come before dependants (tested over the whole taxonomy).
-4. **Hours (estimates):** by difficulty tier, tier 1 = 10–25 h, tier 2 = 30–60 h, tier 3 = 60–120 h (`TIER_HOURS`). Adjacent and weak skills are multiplied by 0.5 (`KIND_HOURS_FACTOR`).
-5. **Weeks:** with `hours_per_week`, each milestone gets the cumulative week range `ceil(Σ hours / hours_per_week)`.
+4. **Hours (estimates):** by difficulty tier, tier 1 = 10–25 h, tier 2 = 30–60 h, tier 3 = 60–120 h (`TIER_HOURS`). Adjacent skills are multiplied by `ADJACENT_HOURS_DISCOUNT = 0.5` and weak skills by `WEAK_HOURS_DISCOUNT = 0.5`. Each milestone reports its `hours_factor`, so adjacent Deep Learning (tier 3) shows 30–60 h with factor 0.5, against 60–120 h if it were missing.
+5. **Weeks:** with `hours_per_week`, each milestone gets `weeks` (this skill alone, `ceil(hours / hours_per_week)`) and `cumulative_weeks` (the running total: done by this week).
 6. **Length:** at most 15 milestones (`MAX_MILESTONES`); the note says how many were omitted.
 
 The wording follows AGENTS.md §12: every figure is an "estimated" range, and the roadmap note says they are not guarantees.
@@ -221,13 +227,14 @@ The wording follows AGENTS.md §12: every figure is an "estimated" range, and th
 | `suggested_role` | str \| null | Next seniority rung when over-qualified |
 | `score_breakdown` | object | `coverage`, `experience_factor`, weights, formula text |
 | `importance_source` | `skill_importance` · `knowledge_graph` · `rank_decay` | Where the weights came from |
-| `typical_experience_years` | {min, max} | Role band used for the experience factor and over-qualification |
-| `gap_matrix[]` | SkillGap | Per required skill: `status`, `reason` (`exact`/`maps_to`/`prerequisite`/`semantic`), `via`, `similarity`, `importance`, `priority`, `required_level`, `current_level`, `gap`, `evidence`, `advice` |
+| `typical_experience` | {min, max} | Role band used for the experience factor and over-qualification |
+| `experience_source` | `request` · `title_heuristic` | Whether the band came from the request or the job title |
+| `gap_matrix[]` | SkillGap | Per required skill: `status`, `reason` (`exact`/`maps_to`/`prerequisite`/`semantic`), `via`, `similarity`, `relation` (adjacent only), `importance`, `priority`, `required_level`, `current_level` (0 unless matched), `related_level` (adjacent only), `gap`, `evidence`, `advice` |
 | `skills` | buckets | `matched`, `weak`, `adjacent`, `critical_missing`, `above_requirement` (ids) |
 | `strengths` | list[str] | Matched skills meeting the requirement |
 | `learning_priorities` | list[str] | First 5 roadmap skills |
 | `advice` | list[str] | §5.6 |
-| `roadmap` | Roadmap | §6: `milestones[]` (`order`, `kind`, `reason`, `prerequisites`, `required_for`, `difficulty_tier`, `estimated_hours`, `estimated_weeks`), totals, `note` |
+| `roadmap` | Roadmap | §6: `milestones[]` (`order`, `kind`, `reason`, `prerequisites`, `required_for`, `difficulty_tier`, `hours_factor`, `estimated_hours`, `weeks`, `cumulative_weeks`), totals, `note` |
 | `similarity_backend` | `minilm` · `tfidf` | Which semantic matcher ran |
 | `warnings` | list[str] | Duplicates, unknown required skills, ignored knowledge graph |
 
@@ -244,7 +251,7 @@ Profile fields (`UserProfile`) are described in §4 and the schema.
 | Method & path | Body | Returns |
 |---|---|---|
 | `POST /api/v1/skills/analyze_resume` | multipart: `file` (PDF/DOCX/TXT ≤ 5 MB), optional `target_role`, `required_skills` (comma-separated), `location`, `use_llm` | `AnalyzeResumeResponse` = `{profile, gap_analysis \| null}` |
-| `POST /api/v1/skills/gap_analysis` | `GapAnalysisRequest` JSON: `target_role`, `required_skills`, optional `knowledge_graph`, `skill_importance`, `typical_experience_years`, `hours_per_week`, and exactly one of `profile` / `manual_profile` | `GapAnalysisResult` |
+| `POST /api/v1/skills/gap_analysis` | `GapAnalysisRequest` JSON: `target_role`, `required_skills`, optional `knowledge_graph`, `skill_importance`, `typical_experience` (`{min, max}`; the old name `typical_experience_years` is still accepted), `hours_per_week`, and exactly one of `profile` / `manual_profile` | `GapAnalysisResult` |
 | `GET /api/v1/health` | — | status, version, taxonomy size, similarity backend, whether an LLM key is configured |
 
 **Module 1 → Module 2** (team decision with the Module 1 owner). Module 2 is self-contained and never imports Module 1: the hyphenated folder isn't importable, and AGENTS.md §3/§7 forbid it. The integration layer calls Module 1 over REST and passes:
@@ -258,6 +265,8 @@ Module 1 ids resolve through a copy of its `normalize_skill`. Tests cover all 17
 **Module 2 → Module 3.** `UserProfile` is a superset of the INTEGRATION.md profile (`skills[].name/level/evidence`, `experience_years`, `education: list[str]`, `location`, `preferred_locations`, `target_occupation`), with additive fields. Evidence values are Module 2 tags (`work_supported`, …); the integration layer can map them to free-text labels if needed.
 
 **Notes for the integration layer**
+- **Role suggestions.** When over-qualified, module 2 only suggests the next seniority rung (`suggested_role`, e.g. *Senior Data Analyst*). Lateral, higher-demand role suggestions belong to the integration layer, which has module 1's ranking (`POST /api/v1/career/rank`): it can take `verdict`, `strengths` and the profile and ask module 1 for related occupations.
+- **Experience bands.** Pass module 1's per-occupation experience band as `typical_experience` when it becomes available; the response's `experience_source` shows which was used.
 - Modules 1 and 2 both use a top-level `src` package, so they clash if loaded into one Python process. Call them over REST (8001, 8002), as agreed.
 - Module 2 doesn't need MongoDB, so there's nothing to provision.
 
@@ -275,16 +284,16 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**209 passed, 0 failed, 0 skipped** (~40–80 s, mostly OCR). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**232 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
-| `test_taxonomy.py` | 82 | fields, unique ids/aliases, no cycles, Module 1 id resolution, spec normalisation examples |
+| `test_taxonomy.py` | 98 | fields, unique ids/aliases, no cycles, Module 1 id resolution, spec normalisation examples, product-variant aliases |
 | `test_skill_extractor.py` | 34 | dictionary pass, ambiguous aliases, longest match, LLM off / no key / timeout / rate limit / bad JSON / grounding / cache |
 | `test_parsers.py` | 29 | PDF, scanned PDF, DOCX, TXT, all error codes, sections, date formats, overlaps, internships, education, OCR repair, OCR page cap |
 | `test_profile.py` | 12 | evidence tags, levels, OCR parity with the text PDF, manual entry, verification flags, INTEGRATION profile shape, privacy |
-| `test_gap_analyzer.py` | 24 | worked example, each matching reason (incl. semantic and the TF-IDF fallback), importance sources, all verdicts + 1-year control, advice, validation |
-| `test_roadmap.py` | 7 | prerequisites before dependants, pulled-in prerequisites, implied knowledge, hour ranges, weekly milestones, whole-taxonomy ordering |
+| `test_gap_analyzer.py` | 30 | worked example, each matching reason (incl. semantic matched/adjacent and the TF-IDF fallback), relation wording, adjacent levels, importance sources, experience source, all verdicts + 1-year control, advice, validation |
+| `test_roadmap.py` | 8 | prerequisites before dependants, pulled-in prerequisites, implied knowledge, hour ranges, adjacent < missing estimate, per-skill and cumulative weeks, whole-taxonomy ordering |
 | `test_api.py` | 20 | health, upload formats, every error status, gap analysis, resume → gap round trip, schema export, OpenAPI paths |
 | `test_llm_live.py` | 1 | real Groq call, grounded output, cache |
 
@@ -293,3 +302,19 @@ pytest module-2-skill-gap/tests/ -v
 - OCR is slow on CPU and still misreads uncommon names; `ocr_repair` only fixes taxonomy aliases.
 - Without importance weights or experience bands from Module 1, weights come from list order and the experience band from the title.
 - MiniLM must be downloaded once (~80 MB). Without it, the TF-IDF fallback is less semantic.
+
+---
+
+## 10. Integration readiness (context/AGENTS.md §18)
+
+| # | Gate criterion | Status | Evidence |
+|---|---|---|---|
+| 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-2-skill-gap && uvicorn src.api.main:app --port 8002`; verified over HTTP (`/api/v1/health` → `status: ok`). No database or other module needed |
+| 2 | Contract compliance | ✅ | `UserProfile` is a superset of INTEGRATION.md's common profile (tested in `test_integration_profile_shape`); input takes module 1's `occupation`, `top_skills`, `knowledge_graph` as plain data; errors use `{"error": {"code", "message"}}`. JSON Schema: `src/models/schema_m2.json` (drift-tested) |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **232 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
+| 4 | Error handling | ✅ | Corrupt, encrypted, oversized, too many pages, empty, wrong type and legacy files → 400/413/415 with codes; invalid JSON → 422 `INVALID_REQUEST`; LLM timeout, rate limit, missing key or unknown model → dictionary fallback; MiniLM unavailable → TF-IDF fallback; unexpected errors → 500 `INTERNAL_ERROR` without a stack trace |
+| 5 | Zero cross-module imports | ✅ | `src/` and `tests/` import only `src.*` and third-party packages; the only module-1 references are comments, test names and a documented replica of its `normalize_skill` |
+| 6 | Documentation | ✅ | `README.md`: install, run, test, example request/response payloads. This file: architecture, formulas, contracts, results. `HANDOFF_TO_M3.md` for module 3 |
+| 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap`, one change per commit, author Chaitanya Sharma |
+
+Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analysis`, `GET /api/v1/health` on port **8002** (OpenAPI at `/docs`).

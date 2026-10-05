@@ -29,7 +29,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 209 tests; the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 232 tests; the live Groq test is skipped without a key
 ```
 
 ## Endpoints
@@ -79,6 +79,7 @@ curl -X POST http://localhost:8002/api/v1/skills/gap_analysis -H "Content-Type: 
   "target_role": "Data Engineer",
   "required_skills": ["python", "sql", "spark", "cloud"],
   "manual_profile": {"skills": ["python", "excel"], "experience_years": 1},
+  "typical_experience": {"min": 0, "max": 3},
   "hours_per_week": 8
 }'
 ```
@@ -94,16 +95,22 @@ Abridged response:
   "skills": {"matched": [], "weak": ["python"], "adjacent": ["spark"], "critical_missing": ["sql", "cloud"], "above_requirement": []},
   "roadmap": {
     "milestones": [
-      {"order": 1, "skill": "python", "kind": "weak", "estimated_hours": {"low": 15, "high": 30}, "estimated_weeks": {"low": 2, "high": 4}},
-      {"order": 2, "skill": "sql", "kind": "missing", "estimated_hours": {"low": 30, "high": 60}, "estimated_weeks": {"low": 6, "high": 12}},
-      {"order": 3, "skill": "spark", "kind": "adjacent", "reason": "Builds on your Python.", "prerequisites": ["python", "sql"],
-       "estimated_hours": {"low": 30, "high": 60}, "estimated_weeks": {"low": 10, "high": 19}},
-      {"order": 4, "skill": "cloud", "kind": "missing", "estimated_hours": {"low": 30, "high": 60}, "estimated_weeks": {"low": 14, "high": 27}}
+      {"order": 1, "skill": "python", "kind": "weak", "hours_factor": 0.5, "estimated_hours": {"low": 15, "high": 30},
+       "weeks": {"low": 2, "high": 4}, "cumulative_weeks": {"low": 2, "high": 4}},
+      {"order": 2, "skill": "sql", "kind": "missing", "hours_factor": 1.0, "estimated_hours": {"low": 30, "high": 60},
+       "weeks": {"low": 4, "high": 8}, "cumulative_weeks": {"low": 6, "high": 12}},
+      {"order": 3, "skill": "spark", "kind": "adjacent", "reason": "Apache Spark builds on Python, which you know.",
+       "prerequisites": ["python", "sql"], "hours_factor": 0.5, "estimated_hours": {"low": 30, "high": 60},
+       "weeks": {"low": 4, "high": 8}, "cumulative_weeks": {"low": 10, "high": 19}},
+      {"order": 4, "skill": "cloud", "kind": "missing", "hours_factor": 1.0, "estimated_hours": {"low": 30, "high": 60},
+       "weeks": {"low": 4, "high": 8}, "cumulative_weeks": {"low": 14, "high": 27}}
     ],
     "note": "Hours and weeks are estimated ranges based on each skill's difficulty tier, not guarantees. ..."
   }
 }
 ```
+
+`typical_experience` is optional; without it the band comes from the job title, and `experience_source` in the response says which was used. Module 3 integration notes: [HANDOFF_TO_M3.md](HANDOFF_TO_M3.md).
 
 A full response for Module 1's Data Scientists target (from `/analyze_resume` profile) is in WORKING.md §5.4 and the test `test_worked_example_data_scientist`.
 
