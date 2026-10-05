@@ -37,9 +37,10 @@ class SalaryPercentileBand(BaseModel):
 
 
 class MarketSalaryPercentiles(BaseModel):
-    overall_inr_lpa: Optional[SalaryPercentileBand] = None
+    overall_inr_lpa: Optional[SalaryPercentileBand] = Field(None, description="On-site and hybrid India salary percentiles (excluding pure remote)")
+    remote_inr_lpa: Optional[SalaryPercentileBand] = Field(None, description="Pure remote India salary percentiles")
     overall_usd: Optional[SalaryPercentileBand] = None
-    by_experience_inr_lpa: Dict[str, SalaryPercentileBand] = Field(default_factory=dict, description="Percentiles by tier: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)")
+    by_experience_inr_lpa: Dict[str, SalaryPercentileBand] = Field(default_factory=dict, description="Percentiles by tier for on-site/hybrid: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)")
     by_city_inr_lpa: Dict[str, SalaryPercentileBand] = Field(default_factory=dict, description="Percentiles by metro: 'Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR'")
 
 

@@ -387,7 +387,8 @@ class CareerDatabase:
                 """, (last_word,))
                 rows = cursor.fetchall()
 
-            all_inr_lpa = []
+            onsite_inr_lpa = []
+            remote_inr_lpa = []
             exp_tiers = {"entry": [], "mid": [], "senior": []}
             cities_data = {"Bengaluru": [], "Hyderabad": [], "Pune": [], "Mumbai": [], "Delhi NCR": []}
 
@@ -395,28 +396,31 @@ class CareerDatabase:
                 sal = r["sal_inr"]
                 sal_lpa = sal / 100000.0
                 if 2.0 <= sal_lpa <= 120.0:
-                    all_inr_lpa.append(sal_lpa)
+                    c_name = str(r["city"] or "").strip().lower()
+                    if c_name == "remote":
+                        remote_inr_lpa.append(sal_lpa)
+                    else:
+                        onsite_inr_lpa.append(sal_lpa)
 
-                    e_min = r["experience_min"]
-                    exp = e_min if e_min is not None else 3.0
-                    if exp <= 2.5:
-                        exp_tiers["entry"].append(sal_lpa)
-                    elif 2.0 <= exp <= 6.0:
-                        exp_tiers["mid"].append(sal_lpa)
-                    if exp >= 5.0:
-                        exp_tiers["senior"].append(sal_lpa)
+                        e_min = r["experience_min"]
+                        exp = e_min if e_min is not None else 3.0
+                        if exp <= 2.5:
+                            exp_tiers["entry"].append(sal_lpa)
+                        elif 2.0 <= exp <= 6.0:
+                            exp_tiers["mid"].append(sal_lpa)
+                        if exp >= 5.0:
+                            exp_tiers["senior"].append(sal_lpa)
 
-                    c_name = str(r["city"] or "").lower()
-                    if "bengaluru" in c_name or "bangalore" in c_name:
-                        cities_data["Bengaluru"].append(sal_lpa)
-                    elif "hyderabad" in c_name:
-                        cities_data["Hyderabad"].append(sal_lpa)
-                    elif "pune" in c_name:
-                        cities_data["Pune"].append(sal_lpa)
-                    elif "mumbai" in c_name:
-                        cities_data["Mumbai"].append(sal_lpa)
-                    elif "delhi" in c_name or "gurgaon" in c_name or "noida" in c_name or "ncr" in c_name:
-                        cities_data["Delhi NCR"].append(sal_lpa)
+                        if "bengaluru" in c_name or "bangalore" in c_name:
+                            cities_data["Bengaluru"].append(sal_lpa)
+                        elif "hyderabad" in c_name:
+                            cities_data["Hyderabad"].append(sal_lpa)
+                        elif "pune" in c_name:
+                            cities_data["Pune"].append(sal_lpa)
+                        elif "mumbai" in c_name:
+                            cities_data["Mumbai"].append(sal_lpa)
+                        elif "delhi" in c_name or "gurgaon" in c_name or "noida" in c_name or "ncr" in c_name:
+                            cities_data["Delhi NCR"].append(sal_lpa)
 
             def _calc_band(data_list, currency):
                 if not data_list:
@@ -434,9 +438,13 @@ class CareerDatabase:
                     "sample_size": n
                 }
 
-            overall_inr = _calc_band(all_inr_lpa, "INR_LPA")
+            overall_inr = _calc_band(onsite_inr_lpa, "INR_LPA")
             if not overall_inr:
-                overall_inr = {"p25": 8.5, "p50": 14.5, "p75": 22.0, "currency": "INR_LPA", "sample_size": 25}
+                overall_inr = _calc_band(remote_inr_lpa, "INR_LPA") or {
+                    "p25": 8.5, "p50": 14.5, "p75": 22.0, "currency": "INR_LPA", "sample_size": 25
+                }
+
+            remote_band = _calc_band(remote_inr_lpa, "INR_LPA")
 
             by_exp = {}
             for tier, vals in exp_tiers.items():
@@ -474,6 +482,7 @@ class CareerDatabase:
 
             return {
                 "overall_inr_lpa": overall_inr,
+                "remote_inr_lpa": remote_band,
                 "overall_usd": overall_usd,
                 "by_experience_inr_lpa": by_exp,
                 "by_city_inr_lpa": by_city,
