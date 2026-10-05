@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import AliasChoices, BaseModel, Field, model_validator
 
 Evidence = Literal["self_reported", "resume_mentioned", "project_supported", "work_supported"]
 DocumentFormat = Literal["pdf", "docx", "text", "manual"]
@@ -131,8 +131,9 @@ class GapAnalysisRequest(BaseModel):
     skill_importance: dict[str, float] | None = Field(default=None, description="Optional id -> weight in [0, 1]")
     profile: UserProfile | None = Field(default=None, description="From /analyze_resume")
     manual_profile: ManualProfileInput | None = Field(default=None, description="Typed skills, if there's no resume")
-    typical_experience_years: ExperienceRange | None = Field(
-        default=None, description="Role's usual experience band; derived from the title's seniority if absent")
+    typical_experience: ExperienceRange | None = Field(
+        default=None, validation_alias=AliasChoices("typical_experience", "typical_experience_years"),
+        description="Role's usual experience band, e.g. from module 1; derived from the title's seniority if absent")
     hours_per_week: float | None = Field(default=None, gt=0, le=80, description="For weekly roadmap milestones")
 
     @model_validator(mode="after")
@@ -224,7 +225,9 @@ class GapAnalysisResult(BaseModel):
     score_breakdown: ScoreBreakdown
     importance_source: ImportanceSource
     experience_years: float
-    typical_experience_years: ExperienceRange
+    typical_experience: ExperienceRange = Field(description="Role experience band used for scoring and over-qualification")
+    experience_source: Literal["request", "title_heuristic"] = Field(
+        description="'request' when typical_experience was sent, else derived from the job title")
     gap_matrix: list[SkillGap]
     skills: SkillBuckets
     strengths: list[str] = Field(default_factory=list)

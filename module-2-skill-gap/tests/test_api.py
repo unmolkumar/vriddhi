@@ -81,6 +81,11 @@ def test_gap_analysis_manual():
     assert resp.status_code == 200, resp.text
     body = GapAnalysisResult.model_validate(resp.json())
     assert body.verdict == "under_skilled" and body.roadmap.hours_per_week == 8
+    assert body.experience_source == "title_heuristic"
+    resp = client.post("/api/v1/skills/gap_analysis", json={
+        "target_role": "Data Engineer", "required_skills": ["python"], "typical_experience": {"min": 2, "max": 6},
+        "manual_profile": {"skills": ["python"], "experience_years": 1}})
+    assert resp.json()["experience_source"] == "request" and resp.json()["typical_experience"] == {"min": 2.0, "max": 6.0}
 
 
 def test_profile_round_trip_from_resume_to_gap_analysis():

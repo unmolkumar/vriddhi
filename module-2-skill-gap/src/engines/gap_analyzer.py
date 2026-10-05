@@ -214,8 +214,10 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
         total += r["w"]
 
     coverage = credit / total if total else 0.0
-    lo, hi = ((req.typical_experience_years.min, req.typical_experience_years.max) if req.typical_experience_years
-              else typical_experience(req.target_role))
+    if req.typical_experience:
+        lo, hi, experience_source = req.typical_experience.min, req.typical_experience.max, "request"
+    else:
+        (lo, hi), experience_source = typical_experience(req.target_role), "title_heuristic"
     years = profile.experience_years
     exp_factor = min(1.0, (years + EXPERIENCE_SMOOTHING) / (lo + EXPERIENCE_SMOOTHING))
     score = round(COVERAGE_WEIGHT * coverage + EXPERIENCE_WEIGHT * exp_factor, 4)
@@ -255,7 +257,7 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
                      "credit = min(1, current/required) if matched, 0.40 if adjacent, 0 if missing; "
                      "experience_factor = min(1, (years + 1) / (role_min + 1))")),
         importance_source=importance_source, experience_years=years,
-        typical_experience_years=ExperienceRange(min=lo, max=hi),
+        typical_experience=ExperienceRange(min=lo, max=hi), experience_source=experience_source,
         gap_matrix=gaps,
         skills=SkillBuckets(
             matched=by_importance(g for g in matched if g.gap <= 0),

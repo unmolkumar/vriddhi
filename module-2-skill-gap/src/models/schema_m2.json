@@ -300,7 +300,7 @@
           "default": null,
           "description": "Typed skills, if there's no resume"
         },
-        "typical_experience_years": {
+        "typical_experience": {
           "anyOf": [
             {
               "$ref": "#/$defs/ExperienceRange"
@@ -310,7 +310,7 @@
             }
           ],
           "default": null,
-          "description": "Role's usual experience band; derived from the title's seniority if absent"
+          "description": "Role's usual experience band, e.g. from module 1; derived from the title's seniority if absent"
         },
         "hours_per_week": {
           "anyOf": [
@@ -395,8 +395,18 @@
           "title": "Experience Years",
           "type": "number"
         },
-        "typical_experience_years": {
-          "$ref": "#/$defs/ExperienceRange"
+        "typical_experience": {
+          "$ref": "#/$defs/ExperienceRange",
+          "description": "Role experience band used for scoring and over-qualification"
+        },
+        "experience_source": {
+          "description": "'request' when typical_experience was sent, else derived from the job title",
+          "enum": [
+            "request",
+            "title_heuristic"
+          ],
+          "title": "Experience Source",
+          "type": "string"
         },
         "gap_matrix": {
           "items": {
@@ -457,7 +467,8 @@
         "score_breakdown",
         "importance_source",
         "experience_years",
-        "typical_experience_years",
+        "typical_experience",
+        "experience_source",
         "gap_matrix",
         "skills",
         "roadmap",

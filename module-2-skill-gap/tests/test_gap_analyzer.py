@@ -202,7 +202,8 @@ ANALYST = ["sql", "excel", "tableau", "power_bi", "statistics"]
 
 def test_over_qualified(resume_profile):
     r = analyze_gap(GapAnalysisRequest(target_role="Data Analyst", required_skills=ANALYST, profile=resume_profile))
-    assert r.match_score >= 0.85 and r.experience_years > r.typical_experience_years.max
+    assert r.match_score >= 0.85 and r.experience_years > r.typical_experience.max
+    assert r.experience_source == "title_heuristic"
     assert r.verdict == "over_qualified" and r.suggested_role == "Senior Data Analyst"
     assert "Python" in r.verdict_message and "pandas" in r.verdict_message
 
@@ -215,13 +216,26 @@ def test_one_year_control_is_good_fit(resume_profile):
 
 def test_explicit_experience_range_changes_verdict(resume_profile):
     r = analyze_gap(GapAnalysisRequest(target_role="Data Analyst", required_skills=ANALYST, profile=resume_profile,
+                                       typical_experience={"min": 3, "max": 10}))
+    assert r.verdict == "good_fit" and r.experience_source == "request"
+    assert (r.typical_experience.min, r.typical_experience.max) == (3, 10)
+
+
+def test_old_typical_experience_years_name_still_accepted(resume_profile):
+    r = analyze_gap(GapAnalysisRequest(target_role="Data Analyst", required_skills=ANALYST, profile=resume_profile,
                                        typical_experience_years={"min": 3, "max": 10}))
-    assert r.verdict == "good_fit"
+    assert r.experience_source == "request" and r.typical_experience.max == 10
+
+
+def test_invalid_experience_band_rejected(resume_profile):
+    with pytest.raises(ValidationError):
+        GapAnalysisRequest(target_role="X", required_skills=["python"], profile=resume_profile,
+                           typical_experience={"min": 8, "max": 2})
 
 
 def test_experience_factor_below_role_minimum():
     r = analyze_gap(manual(["python"], years=1, target_role="Senior Data Engineer", required_skills=["python"]))
-    assert r.typical_experience_years.min == 4 and r.score_breakdown.experience_factor == 0.4  # (1+1)/(4+1)
+    assert r.typical_experience.min == 4 and r.score_breakdown.experience_factor == 0.4  # (1+1)/(4+1)
 
 
 def test_seniority_helpers():
