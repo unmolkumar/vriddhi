@@ -128,6 +128,10 @@ EXPERIENCE_BUCKETS = [(1, "LESS_THAN_ONE"), (4, "ONE_TO_THREE"), (7, "FOUR_TO_SI
                       (15, "TEN_TO_FOURTEEN")]  # upper bound (exclusive) -> JSearch bucket; 15+ -> ABOVE_FIFTEEN
 
 
+BUCKET_BANDS = {"LESS_THAN_ONE": (0.0, 1.0), "ONE_TO_THREE": (1.0, 3.0), "FOUR_TO_SIX": (4.0, 6.0),
+                "SEVEN_TO_NINE": (7.0, 9.0), "TEN_TO_FOURTEEN": (10.0, 14.0), "ABOVE_FIFTEEN": (15.0, 25.0)}
+
+
 def experience_bucket(years: float | None) -> str:
     if years is None:
         return "ALL"

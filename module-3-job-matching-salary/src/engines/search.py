@@ -180,10 +180,15 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
             rank=i + 1, rank_score=score, rank_components={k: round(v, 4) for k, v in comps.items()},
         ))
 
+    # Position the candidate within the band the salary data describes, so experience isn't counted twice:
+    # percentiles carry their own band, and a JSearch estimate is already for one experience bucket.
     band = _role_band(req)
     if req.market_salary_percentiles and req.market_salary_percentiles.experience_band and \
             market.sources_used == ["module_1_percentiles"]:
-        band = req.market_salary_percentiles.experience_band     # the band the percentiles describe
+        band = req.market_salary_percentiles.experience_band
+    elif market.sources_used == ["jsearch_salary_estimate"] and js_salary and js_salary.get("bucket") in jsearch.BUCKET_BANDS:
+        lo, hi = jsearch.BUCKET_BANDS[js_salary["bucket"]]
+        band = ExperienceBand(min=lo, max=hi)
     top_matches = [r[2].overall for r in results[:VALUE_TOP_JOBS]]
     mean_match = sum(top_matches) / len(top_matches) if top_matches else 0.0
     value = candidate_value(market, match_score=mean_match, years=candidate.experience_years, band=band, city=city)
