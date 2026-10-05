@@ -56,6 +56,7 @@ class Job(BaseModel):
         "'m2' = extracted by module 2 from this listing; 'jsearch_full' = taken from the same job's full JSearch "
         "description; 'unavailable' = module 2 unreachable"))
     skill_parents: dict[str, str] = Field(default_factory=dict, description="Coarser id per skill, from module 2 (postgresql -> sql)")
+    skill_display: dict[str, str] = Field(default_factory=dict, description="Display name per skill id, from module 2 (pytorch -> PyTorch)")
     skills_inferred: bool = Field(default=False, description="Some skills were filled from the role market profile")
     inferred_skills: list[str] = Field(default_factory=list, description="Which skills were inferred (also listed in skills)")
     salary_min: int | None = Field(default=None, description="INR per year")
@@ -149,6 +150,22 @@ class ExperienceBand(BaseModel):
         return self
 
 
+class MarketPercentiles(BaseModel):
+    """Optional: module 1's salary percentiles for the role (INR per year), e.g. from its INR salary points."""
+    model_config = ConfigDict(extra="ignore")
+    p25: int = Field(gt=0)
+    p50: int = Field(gt=0)
+    p75: int = Field(gt=0)
+    sample_size: int = Field(ge=0)
+    experience_band: ExperienceBand | None = Field(default=None, description="The band these percentiles describe")
+
+    @model_validator(mode="after")
+    def _ordered(self) -> "MarketPercentiles":
+        if not self.p25 <= self.p50 <= self.p75:
+            raise ValueError("percentiles must satisfy p25 <= p50 <= p75")
+        return self
+
+
 class MatchWeights(BaseModel):
     """Overrides for the spec's starting weights; normalised to sum to 1."""
     skills: float = Field(default=0.40, ge=0)
@@ -187,6 +204,10 @@ class JobSearchRequest(BaseModel):
     typical_experience: ExperienceBand | None = Field(
         default=None, description="Role's usual experience band (module 1); used for jobs that don't state one")
     weights: MatchWeights | None = Field(default=None, description="Optional match weight overrides")
+    market_salary_percentiles: MarketPercentiles | None = Field(
+        default=None, description="Module 1's salary percentiles; the primary market source when the sample is big enough")
+    jsearch_salary: bool = Field(
+        default=False, description="Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)")
     jsearch_enrichment: bool = Field(
         default=False, description="Also query JSearch for full descriptions (uses the 200/month JSearch quota)")
     limit: int = Field(default=20, ge=1, le=100, description="Jobs to return after ranking")
@@ -257,6 +278,9 @@ class JobResult(BaseModel):
     missing_skills: list[str]
     inferred_skills: list[str] = Field(default_factory=list, description="Job skills filled from the market profile")
     skills_source: SkillsSource
+    skills_confidence: Literal["extracted", "partly_inferred", "inferred"] = Field(
+        description="How much of this job's skill list came from the listing itself")
+    skills_note: str | None = Field(default=None, description="e.g. 'Skills inferred from similar Data Scientist jobs in Bengaluru'")
     experience_required: ExperienceBand | None = None
     experience_source: ExperienceSource
     rank: int
@@ -295,7 +319,8 @@ class CandidateValue(BaseModel):
     estimated_max: int | None
     currency: Literal["INR"] = "INR"
     confidence: float
-    adjustment: float = Field(description="Multiplier applied to the market range")
+    adjustment: float = Field(description="Match multiplier applied to the candidate's position in the market range")
+    market_position: float | None = Field(default=None, description="0 = bottom of the market range, 1 = top; from experience within the band")
     display: str | None = None
     reasons: list[str]
 

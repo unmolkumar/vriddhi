@@ -155,9 +155,22 @@
           "type": "number"
         },
         "adjustment": {
-          "description": "Multiplier applied to the market range",
+          "description": "Match multiplier applied to the candidate's position in the market range",
           "title": "Adjustment",
           "type": "number"
+        },
+        "market_position": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 = bottom of the market range, 1 = top; from experience within the band",
+          "title": "Market Position"
         },
         "display": {
           "anyOf": [
@@ -474,6 +487,14 @@
           "title": "Skill Parents",
           "type": "object"
         },
+        "skill_display": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Display name per skill id, from module 2 (pytorch -> PyTorch)",
+          "title": "Skill Display",
+          "type": "object"
+        },
         "skills_inferred": {
           "default": false,
           "description": "Some skills were filled from the role market profile",
@@ -756,6 +777,29 @@
           "title": "Skills Source",
           "type": "string"
         },
+        "skills_confidence": {
+          "description": "How much of this job's skill list came from the listing itself",
+          "enum": [
+            "extracted",
+            "partly_inferred",
+            "inferred"
+          ],
+          "title": "Skills Confidence",
+          "type": "string"
+        },
+        "skills_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Skills inferred from similar Data Scientist jobs in Bengaluru'",
+          "title": "Skills Note"
+        },
         "experience_required": {
           "anyOf": [
             {
@@ -812,6 +856,7 @@
         "matched_skills",
         "missing_skills",
         "skills_source",
+        "skills_confidence",
         "experience_source",
         "rank",
         "rank_score",
@@ -974,6 +1019,24 @@
           ],
           "default": null,
           "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
         },
         "jsearch_enrichment": {
           "default": false,
@@ -1160,6 +1223,51 @@
         }
       },
       "title": "MarketBaseline",
+      "type": "object"
+    },
+    "MarketPercentiles": {
+      "description": "Optional: module 1's salary percentiles for the role (INR per year), e.g. from its INR salary points.",
+      "properties": {
+        "p25": {
+          "exclusiveMinimum": 0,
+          "title": "P25",
+          "type": "integer"
+        },
+        "p50": {
+          "exclusiveMinimum": 0,
+          "title": "P50",
+          "type": "integer"
+        },
+        "p75": {
+          "exclusiveMinimum": 0,
+          "title": "P75",
+          "type": "integer"
+        },
+        "sample_size": {
+          "minimum": 0,
+          "title": "Sample Size",
+          "type": "integer"
+        },
+        "experience_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The band these percentiles describe"
+        }
+      },
+      "required": [
+        "p25",
+        "p50",
+        "p75",
+        "sample_size"
+      ],
+      "title": "MarketPercentiles",
       "type": "object"
     },
     "MatchBreakdown": {
@@ -1415,6 +1523,24 @@
           ],
           "default": null,
           "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
         },
         "jsearch_enrichment": {
           "default": false,
@@ -2007,6 +2133,24 @@
           ],
           "default": null,
           "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
         },
         "jsearch_enrichment": {
           "default": false,
