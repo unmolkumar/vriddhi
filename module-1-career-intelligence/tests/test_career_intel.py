@@ -252,3 +252,42 @@ def test_domain_search_endpoint(client):
     assert "relevance_score" in first
     assert "growth_score" in first
 
+
+# 10. Integration Contract Compliance Test (context/INTEGRATION.md)
+def test_integration_contract_compliance_m1_to_m2(service):
+    """
+    Verifies that CareerAnalysisResponse satisfies the exact M1 -> M2
+    contract specified in context/INTEGRATION.md:
+    - occupation (str)
+    - outlook (str)
+    - growth_score (float)
+    - current_demand_score (float)
+    - ai_exposure_score (float)
+    - confidence_score (float)
+    - top_skills (List[str])
+    """
+    analysis = service.analyze_career("Data Engineer")
+    data = analysis.model_dump()
+
+    # Required contract keys from context/INTEGRATION.md
+    contract_keys = [
+        "occupation",
+        "outlook",
+        "growth_score",
+        "current_demand_score",
+        "ai_exposure_score",
+        "confidence_score",
+        "top_skills",
+    ]
+    for key in contract_keys:
+        assert key in data, f"Missing integration contract field: {key}"
+
+    assert isinstance(data["occupation"], str)
+    assert isinstance(data["outlook"], str)
+    assert 0.0 <= data["growth_score"] <= 1.0
+    assert 0.0 <= data["current_demand_score"] <= 1.0
+    assert 0.0 <= data["ai_exposure_score"] <= 1.0
+    assert 0.0 <= data["confidence_score"] <= 1.0
+    assert isinstance(data["top_skills"], list)
+    assert len(data["top_skills"]) > 0
+

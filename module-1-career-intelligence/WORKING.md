@@ -353,24 +353,58 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
 
 ---
 
-## 5. Downstream Integration Contract (M1 → M2 & M3)
+## 5. Downstream Integration Contract & Schema Usage (M1 → M2 & M3)
 
-Per `context/INTEGRATION.md`:
-* **M1 does not inspect user resumes or calculate personal gaps.**
-* **M1 produces the target career profile:**
-  * `top_skills` $\rightarrow$ Passed to **Module 2 (Skill Gap)** to benchmark against candidate experience and detect missing competencies.
-  * `regional_breakdown.salary` and `current_demand_score` $\rightarrow$ Passed to **Module 3 (Job Matching & Salary)** to validate live salary offers against domestic and global market baselines.
+Per `context/INTEGRATION.md`, Module 1 is the foundational source of truth for occupations, demand trends, AI exposure, and required competencies. Other modules (and the root integration orchestrator) can consume this in two ways:
+
+### 5.1. Direct In-Process Python Import
+Other modules can import the Pydantic models and service directly from `src`:
+
+```python
+# In Module 2 (Skill Gap) or Integration Orchestrator:
+from src import (
+    CareerIntelligenceService,
+    CareerAnalysisResponse,
+    CareerAnalysisRequest,
+    DomainSearchResponse,
+)
+
+service = CareerIntelligenceService()
+result: CareerAnalysisResponse = service.analyze_career("Data Engineer", region="all")
+
+# Access strictly validated contract fields:
+target_role = result.occupation          # "Data Engineer"
+growth = result.growth_score             # 0.76
+demand = result.current_demand_score     # 0.91
+ai_exposure = result.ai_exposure_score   # 0.45
+required_skills = result.top_skills      # ['python', 'sql', 'spark', 'cloud']
+
+# Feed directly into Module 2 skill gap matrix!
+```
+
+### 5.2. Language-Agnostic JSON Schema
+For external services, TypeScript frontends, or cross-language validation, an exportable JSON Schema is provided at:
+- **File**: `module-1-career-intelligence/src/models/schema_m1.json`
+- **Dynamic OpenAPI endpoint**: `GET /openapi.json` and interactive Swagger docs at `GET /docs`.
+
+### 5.3. Field Mapping to Downstream Modules
+* **To Module 2 (Skill Gap)**:
+  * `result.top_skills` $\rightarrow$ Target skill set to benchmark against user resume/profile to detect missing competencies.
+  * `result.knowledge_graph` $\rightarrow$ Competency taxonomy graph for skill gap hierarchy and prerequisite planning.
+* **To Module 3 (Job Matching & Salary)**:
+  * `result.regional_breakdown` $\rightarrow$ India (LPA) and Global (USD) salary baselines and hiring cities to validate live job listings.
+  * `result.current_demand_score` $\rightarrow$ Weight multiplier for job opportunity matching.
 
 ---
 
 ## 6. Verification & Automated Test Suite
 
-All algorithms and endpoints are tested using `pytest` in `tests/test_career_intel.py`:
+All algorithms, models, and integration contracts are continuously verified using `pytest` in `tests/test_career_intel.py`:
 ```bash
 pytest module-1-career-intelligence/tests/ -v
 ```
 
-* **17/17 tests passing**:
+* **18/18 tests passing**:
   * Known occupation matching & unknown occupation graceful fallbacks.
   * Sparse data & zero-data handling.
   * Granular task-level AI exposure differentiation (automation vs augmentation vs human discretion).
@@ -379,3 +413,4 @@ pytest module-1-career-intelligence/tests/ -v
   * Dynamic ranker score ordering and custom weight normalization.
   * Semantic domain search endpoint.
   * API health and compare endpoints.
+  * **Integration Contract Compliance (context/INTEGRATION.md M1 → M2 contract test)**.

@@ -1,0 +1,411 @@
+{
+  "$defs": {
+    "GraphEdge": {
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "relationship": {
+          "title": "Relationship",
+          "type": "string"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "relationship",
+        "weight"
+      ],
+      "title": "GraphEdge",
+      "type": "object"
+    },
+    "GraphNode": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "occupation",
+            "task",
+            "skill",
+            "technology",
+            "domain"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "number"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "type",
+        "weight"
+      ],
+      "title": "GraphNode",
+      "type": "object"
+    },
+    "KnowledgeGraph": {
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/GraphNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/GraphEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "title": "KnowledgeGraph",
+      "type": "object"
+    },
+    "RegionMetricDetail": {
+      "properties": {
+        "region": {
+          "title": "Region",
+          "type": "string"
+        },
+        "posting_volume": {
+          "title": "Posting Volume",
+          "type": "integer"
+        },
+        "posting_growth_yoy_pct": {
+          "title": "Posting Growth Yoy Pct",
+          "type": "number"
+        },
+        "median_salary_usd": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Median Salary Usd"
+        },
+        "median_salary_inr_lpa": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Median Salary Inr Lpa"
+        },
+        "top_locations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Top Locations",
+          "type": "array"
+        },
+        "top_skills": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Top Skills",
+          "type": "array"
+        }
+      },
+      "required": [
+        "region",
+        "posting_volume",
+        "posting_growth_yoy_pct"
+      ],
+      "title": "RegionMetricDetail",
+      "type": "object"
+    },
+    "TaskExposureDetail": {
+      "properties": {
+        "task_description": {
+          "title": "Task Description",
+          "type": "string"
+        },
+        "ai_impact_score": {
+          "title": "Ai Impact Score",
+          "type": "number"
+        },
+        "transformation_type": {
+          "title": "Transformation Type",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_description",
+        "ai_impact_score",
+        "transformation_type",
+        "rationale"
+      ],
+      "title": "TaskExposureDetail",
+      "type": "object"
+    },
+    "YearlyDataPoint": {
+      "properties": {
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "historical",
+            "forecast"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "india_index": {
+          "description": "Normalized demand index for India (0-100 base)",
+          "title": "India Index",
+          "type": "number"
+        },
+        "global_index": {
+          "description": "Normalized demand index for Global (0-100 base)",
+          "title": "Global Index",
+          "type": "number"
+        },
+        "india_lower_bound": {
+          "title": "India Lower Bound",
+          "type": "number"
+        },
+        "india_upper_bound": {
+          "title": "India Upper Bound",
+          "type": "number"
+        },
+        "global_lower_bound": {
+          "title": "Global Lower Bound",
+          "type": "number"
+        },
+        "global_upper_bound": {
+          "title": "Global Upper Bound",
+          "type": "number"
+        }
+      },
+      "required": [
+        "year",
+        "status",
+        "india_index",
+        "global_index",
+        "india_lower_bound",
+        "india_upper_bound",
+        "global_lower_bound",
+        "global_upper_bound"
+      ],
+      "title": "YearlyDataPoint",
+      "type": "object"
+    },
+    "YearlyTrajectory": {
+      "properties": {
+        "historical_years": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Historical Years",
+          "type": "array"
+        },
+        "forecast_years": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Forecast Years",
+          "type": "array"
+        },
+        "cutoff_year": {
+          "title": "Cutoff Year",
+          "type": "integer"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/YearlyDataPoint"
+          },
+          "title": "Series",
+          "type": "array"
+        }
+      },
+      "required": [
+        "historical_years",
+        "forecast_years",
+        "cutoff_year",
+        "series"
+      ],
+      "title": "YearlyTrajectory",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "occupation": {
+      "description": "Target occupation name",
+      "title": "Occupation",
+      "type": "string"
+    },
+    "soc_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Standard O*NET SOC code if mapped",
+      "title": "Soc Code"
+    },
+    "current_demand_score": {
+      "description": "Normalized current market demand (0-1)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Current Demand Score",
+      "type": "number"
+    },
+    "growth_score": {
+      "description": "Projected 5-year growth trajectory score (0-1)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Growth Score",
+      "type": "number"
+    },
+    "ai_exposure_score": {
+      "description": "AI automation/transformation exposure score (0-1)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Ai Exposure Score",
+      "type": "number"
+    },
+    "confidence_score": {
+      "description": "Statistical confidence in predictions (0-1)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence Score",
+      "type": "number"
+    },
+    "outlook": {
+      "description": "Summary outlook (e.g. 'Strong Growth', 'Moderate Growth', 'Stable', 'Transforming')",
+      "title": "Outlook",
+      "type": "string"
+    },
+    "top_skills": {
+      "description": "Top skills in demand for this occupation",
+      "items": {
+        "type": "string"
+      },
+      "title": "Top Skills",
+      "type": "array"
+    },
+    "drivers": {
+      "description": "Supporting evidence drivers explaining the outlook",
+      "items": {
+        "type": "string"
+      },
+      "title": "Drivers",
+      "type": "array"
+    },
+    "tasks_analyzed": {
+      "default": 0,
+      "description": "Count of granular O*NET tasks evaluated",
+      "title": "Tasks Analyzed",
+      "type": "integer"
+    },
+    "sample_tasks": {
+      "description": "Sample task transformation breakdown",
+      "items": {
+        "$ref": "#/$defs/TaskExposureDetail"
+      },
+      "title": "Sample Tasks",
+      "type": "array"
+    },
+    "regional_breakdown": {
+      "additionalProperties": {
+        "$ref": "#/$defs/RegionMetricDetail"
+      },
+      "description": "Side-by-side India vs Global metrics",
+      "title": "Regional Breakdown",
+      "type": "object"
+    },
+    "yearly_trajectory": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YearlyTrajectory"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Past year-wise trend + 5-year forecast points"
+    },
+    "knowledge_graph": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KnowledgeGraph"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Career knowledge graph (nodes and edges)"
+    }
+  },
+  "required": [
+    "occupation",
+    "current_demand_score",
+    "growth_score",
+    "ai_exposure_score",
+    "confidence_score",
+    "outlook"
+  ],
+  "title": "CareerAnalysisResponse",
+  "type": "object"
+}
