@@ -1,5 +1,5 @@
 {
- "version": 3,
+ "version": 4,
  "note": "Curated tech skill taxonomy, ESCO-aligned (mapping in progress: esco_uri is null). ids follow module 1's skill normalisation so its top_skills resolve directly.",
  "difficulty_tiers": {
   "1": "foundational tool or syntax",
@@ -5055,6 +5055,27 @@
    }
   },
   {
+   "id": "automation",
+   "display": "Automation",
+   "aliases": [
+    "automation",
+    "infrastructure automation",
+    "it automation",
+    "automation scripting",
+    "scripting automation"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [
+    "shell_scripting"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "automation": "list"
+   }
+  },
+  {
    "id": "vagrant",
    "display": "Vagrant",
    "aliases": [
@@ -6760,7 +6781,7 @@
    }
   },
   {
-   "id": "backend_development",
+   "id": "backend",
    "display": "Backend Development",
    "aliases": [
     "backend development",
@@ -7006,5 +7027,8 @@
    "difficulty_tier": 2,
    "esco_uri": null
   }
- ]
+ ],
+ "non_skill_ids": {
+  "data": "Broad category emitted by module 1 (e.g. 'Data' as a posting tag), not a learnable skill. Gap analysis skips it with a warning instead of scoring or recommending it."
+ }
 }

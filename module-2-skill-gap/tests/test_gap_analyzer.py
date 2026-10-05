@@ -284,3 +284,36 @@ def test_empty_profile_is_all_missing():
     r = analyze_gap(manual([], target_role="Data Engineer", required_skills=DE["top_skills"]))
     assert r.match_score == round(0.15 * 1.0, 4) and r.verdict == "under_skilled"
     assert r.skills.critical_missing == ["python", "sql", "spark", "cloud"]
+
+
+# --- module 1 top_skill_weights and non-skill ids --------------------------------------------
+
+# Pinned from module 1's first 7-role export (it has since changed) so these tests don't drift with module 1.
+DS_EXPORT = {
+    "top_skills": ["python", "sql", "machine_learning", "data_analysis", "data_modeling", "data"],
+    "top_skill_weights": {"python": 1.0, "sql": 0.8907, "machine_learning": 0.541, "data_analysis": 0.4299,
+                          "data_modeling": 0.3333, "data": 0.3124},
+}
+
+
+def test_m1_top_skill_weights_drive_importance():
+    r = analyze_gap(manual(["python", "sql"], target_role="Data Scientist", required_skills=DS_EXPORT["top_skills"],
+                           top_skill_weights=DS_EXPORT["top_skill_weights"]))
+    assert r.importance_source == "m1_weights"
+    assert [(g.skill, g.importance) for g in r.gap_matrix] == [
+        ("python", 1.0), ("sql", 0.8907), ("machine_learning", 0.541), ("data_analysis", 0.4299), ("data_modeling", 0.3333)]
+    assert [g.required_level for g in r.gap_matrix] == [4, 4, 2, 2, 2]  # IMPORTANCE_TO_LEVEL
+
+
+def test_skill_importance_beats_m1_weights():
+    r = analyze_gap(manual(["python"], target_role="X", required_skills=["python", "sql"],
+                           skill_importance={"sql": 0.9}, top_skill_weights={"python": 0.1, "sql": 0.1}))
+    assert r.importance_source == "skill_importance" and row(r, "sql").importance == 0.9
+
+
+def test_broad_category_is_skipped_with_warning():
+    r = analyze_gap(manual(["python"], target_role="Data Scientist", required_skills=DS_EXPORT["top_skills"]))
+    assert "data" not in [g.skill for g in r.gap_matrix]
+    assert any("'data' is a broad category" in w for w in r.warnings)
+    with pytest.raises(ValueError):
+        analyze_gap(manual(["python"], target_role="X", required_skills=["data"]))

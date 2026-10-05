@@ -123,3 +123,59 @@ def test_product_variant_ids_resolve(m1_id, expected):
     assert resolve_skill(m1_id)["id"] == expected
     if expected.startswith(("amazon_", "aws_")):
         assert coarser_ids(expected) == ["aws", "cloud"]
+
+
+# --- module 1's exported skill vocabulary (m1_target_roles_skills_export.json) -----------------
+
+_LIVE_EXPORT = Path(__file__).resolve().parents[2] / "module-1-career-intelligence" / "data" / "m1_target_roles_skills_export.json"
+_VENDORED_EXPORT = Path(__file__).parent / "mocks" / "m1_target_roles_skills_export.json"
+
+
+def _export_ids() -> list[str]:
+    """Every id module 1 emits, from its live export when present, else the vendored copy (module stays standalone)."""
+    ids = set()
+    for path in (_LIVE_EXPORT, _VENDORED_EXPORT):
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            ids.update(data["all_emitted_skill_ids"])
+            for role in data["target_roles"].values():
+                ids.update(role["top_skills"])
+                ids.update(role.get("top_skill_weights", {}))
+    return sorted(ids)
+
+
+def test_export_is_available():
+    assert _VENDORED_EXPORT.exists() and len(_export_ids()) >= 21
+
+
+@pytest.mark.parametrize("m1_id", _export_ids())
+def test_every_exported_m1_id_is_covered(m1_id):
+    """100% coverage: each id resolves to a taxonomy entry (exact id or alias, e.g. pyspark -> spark),
+    or is a documented non-skill category."""
+    from src.engines.skill_extractor import non_skill_reason
+    assert resolve_skill(m1_id) is not None or non_skill_reason(m1_id), m1_id
+
+
+def test_exported_alias_ids_resolve_to_the_right_skill():
+    assert resolve_skill("pyspark")["id"] == "spark"
+
+
+def test_non_skill_ids_are_documented_and_not_skills():
+    non_skill = taxonomy()["non_skill_ids"]
+    assert set(non_skill) == {"data"} and all(reason for reason in non_skill.values())
+    assert all(sid not in IDS for sid in non_skill)
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("Infrastructure automation with Ansible", {"automation", "ansible"}),
+    ("Skills: Python, Bash, Automation", {"python", "shell_scripting", "automation"}),
+    ("Automation testing with Selenium", {"automation_testing", "selenium"}),  # longest match wins
+    ("automation of monthly reports", set()),                                   # bare word in prose: not a skill
+])
+def test_automation_skill(text, expected):
+    assert {h.id for h in extract_skills(text, use_llm=False)} == expected
+
+
+def test_automation_and_backend_relations():
+    assert resolve_skill("automation")["maps_to"] == "devops"
+    assert resolve_skill("backend")["id"] == "backend" and resolve_skill("Backend Development")["id"] == "backend"

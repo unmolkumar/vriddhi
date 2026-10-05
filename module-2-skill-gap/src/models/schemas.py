@@ -109,7 +109,7 @@ class ManualProfileInput(BaseModel):
 MatchStatus = Literal["matched", "adjacent", "missing"]
 MatchReason = Literal["exact", "maps_to", "prerequisite", "semantic"]
 Verdict = Literal["under_skilled", "good_fit", "over_qualified"]
-ImportanceSource = Literal["skill_importance", "knowledge_graph", "rank_decay"]
+ImportanceSource = Literal["skill_importance", "m1_weights", "knowledge_graph", "rank_decay"]
 
 
 class ExperienceRange(BaseModel):
@@ -129,6 +129,8 @@ class GapAnalysisRequest(BaseModel):
     required_skills: list[str] = Field(min_length=1, max_length=50, description="Module 1 top_skills ids, most important first")
     knowledge_graph: dict | None = Field(default=None, description="Module 1 knowledge_graph (nodes, edges), optional")
     skill_importance: dict[str, float] | None = Field(default=None, description="Optional id -> weight in [0, 1]")
+    top_skill_weights: dict[str, float] | None = Field(
+        default=None, description="Module 1's top_skill_weights (id -> normalised demand 0-1), passed through unchanged")
     profile: UserProfile | None = Field(default=None, description="From /analyze_resume")
     manual_profile: ManualProfileInput | None = Field(default=None, description="Typed skills, if there's no resume")
     typical_experience: ExperienceRange | None = Field(
@@ -238,6 +240,27 @@ class GapAnalysisResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class SkillExtractRequest(BaseModel):
+    """Plain text such as a job description. Skills only: no evidence or levels."""
+    text: str = Field(description="Job description or other text, up to 50,000 characters")
+    use_llm: bool = Field(default=False, description="Also run the Groq pass for skills the dictionary misses")
+
+
+class ExtractedTextSkill(BaseModel):
+    id: str = Field(description="Taxonomy id (module-1 compatible), or a slug when not in the taxonomy")
+    display: str
+    category: str | None = None
+    maps_to: str | None = Field(default=None, description="Coarser taxonomy id, e.g. postgresql -> sql")
+    in_taxonomy: bool
+    source: Literal["dictionary", "llm"]
+    matches: list[str] = Field(default_factory=list, description="Surface forms found in the text")
+
+
+class SkillExtractResponse(BaseModel):
+    skills: list[ExtractedTextSkill] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
 class AnalyzeResumeResponse(BaseModel):
     profile: UserProfile
     gap_analysis: GapAnalysisResult | None = None
@@ -253,7 +276,7 @@ class HealthResponse(BaseModel):
 
 
 EXPORTED_MODELS = [UserProfile, ManualProfileInput, GapAnalysisRequest, GapAnalysisResult,
-                   AnalyzeResumeResponse, HealthResponse, ErrorResponse]
+                   AnalyzeResumeResponse, SkillExtractRequest, SkillExtractResponse, HealthResponse, ErrorResponse]
 
 
 def export_json_schema() -> dict:

@@ -3,7 +3,7 @@
 **Branch:** `feat/module-2-skill-gap` · **Owner:** Chaitanya Sharma · **API port:** 8002
 **Question answered:** *"Where is this person now, how well do they match the target role, and what should they learn next?"*
 
-Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 232 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
+Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 278 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
 
 ---
 
@@ -79,13 +79,14 @@ The format is detected from the bytes; the filename only breaks ties. Every erro
 ## 3. Skill taxonomy and extraction
 
 ### 3.1 Taxonomy (`data/taxonomy/skills.json`)
-482 curated tech skills in 9 categories. Fields:
+483 curated tech skills in 9 categories. Fields:
 - `id`: Module 1-compatible snake_case.
 - `display`, `aliases`, `category`.
 - `maps_to`: coarser id (378 skills).
 - `prerequisites`: 139 skills; acyclic.
 - `difficulty_tier`: 1 foundational tool/syntax · 2 working skill · 3 deep specialisation.
 - `context`: rules for ambiguous aliases.
+- `non_skill_ids` (top level): ids module 1 can emit that aren't learnable skills. Today only `data`, a broad posting tag. Gap analysis skips them with a warning instead of scoring or recommending them; a request with only such ids returns 422.
 - Product variants are aliases of their base skill (Tableau Desktop/Server/Public/Prep → Tableau, Power BI Desktop/Service → Power BI, MS Excel → Excel, Google Colab → Jupyter, Docker Desktop → Docker, MySQL Workbench → MySQL, SSMS → SQL Server). AWS EC2, S3 and Lambda are their own skills with `maps_to` aws → cloud.
 - `esco_uri`: `null`. This is an **ESCO-aligned taxonomy, mapping in progress**, not ESCO.
 
@@ -128,8 +129,9 @@ Per context/AGENTS.md §14, a mentioned skill is not an expert skill. The scale 
 ### 5.1 Importance `w` (per required skill)
 Priority order:
 1. `skill_importance` from the request (clamped to [0, 1]).
-2. `knowledge_graph` node weight, for `skill`/`technology` nodes whose label (or id without `skill_`/`tech_`) resolves to the required id.
-3. Rank decay over the `required_skills` order: **w_i = 1 / (1 + 0.15 · i)** (`RANK_DECAY`).
+2. `top_skill_weights` from module 1's response, passed through unchanged (`importance_source: "m1_weights"`).
+3. `knowledge_graph` node weight, for `skill`/`technology` nodes whose label (or id without `skill_`/`tech_`) resolves to the required id.
+4. Rank decay over the `required_skills` order: **w_i = 1 / (1 + 0.15 · i)** (`RANK_DECAY`).
 
 Skills without an explicit value fall back to rank decay, and `importance_source` records which source applied. Priority labels: High if w ≥ 0.80, Medium if w ≥ 0.60, Low otherwise.
 
@@ -226,7 +228,7 @@ The wording follows AGENTS.md §12: every figure is an "estimated" range, and th
 | `verdict_message` | str | Plain-language summary |
 | `suggested_role` | str \| null | Next seniority rung when over-qualified |
 | `score_breakdown` | object | `coverage`, `experience_factor`, weights, formula text |
-| `importance_source` | `skill_importance` · `knowledge_graph` · `rank_decay` | Where the weights came from |
+| `importance_source` | `skill_importance` · `m1_weights` · `knowledge_graph` · `rank_decay` | Where the weights came from |
 | `typical_experience` | {min, max} | Role band used for the experience factor and over-qualification |
 | `experience_source` | `request` · `title_heuristic` | Whether the band came from the request or the job title |
 | `gap_matrix[]` | SkillGap | Per required skill: `status`, `reason` (`exact`/`maps_to`/`prerequisite`/`semantic`), `via`, `similarity`, `relation` (adjacent only), `importance`, `priority`, `required_level`, `current_level` (0 unless matched), `related_level` (adjacent only), `gap`, `evidence`, `advice` |
@@ -252,15 +254,18 @@ Profile fields (`UserProfile`) are described in §4 and the schema.
 |---|---|---|
 | `POST /api/v1/skills/analyze_resume` | multipart: `file` (PDF/DOCX/TXT ≤ 5 MB), optional `target_role`, `required_skills` (comma-separated), `location`, `use_llm` | `AnalyzeResumeResponse` = `{profile, gap_analysis \| null}` |
 | `POST /api/v1/skills/gap_analysis` | `GapAnalysisRequest` JSON: `target_role`, `required_skills`, optional `knowledge_graph`, `skill_importance`, `typical_experience` (`{min, max}`; the old name `typical_experience_years` is still accepted), `hours_per_week`, and exactly one of `profile` / `manual_profile` | `GapAnalysisResult` |
+| `POST /api/v1/skills/extract` | `{"text": str, "use_llm": false}` (≤ 50,000 chars) | `SkillExtractResponse` = `{skills: [{id, display, category, maps_to, in_taxonomy, source, matches}], warnings}`. For job descriptions: no evidence or levels. Errors: 422 `EMPTY_TEXT`, 413 `TEXT_TOO_LARGE` |
 | `GET /api/v1/health` | — | status, version, taxonomy size, similarity backend, whether an LLM key is configured |
 
 **Module 1 → Module 2** (team decision with the Module 1 owner). Module 2 is self-contained and never imports Module 1: the hyphenated folder isn't importable, and AGENTS.md §3/§7 forbid it. The integration layer calls Module 1 over REST and passes:
 - `occupation` → `target_role`
 - `top_skills` → `required_skills`
+- `top_skill_weights` → `top_skill_weights`
+- `typical_experience` (per role, from postings) → `typical_experience` (`experience_source: "request"`)
 - `knowledge_graph`, unchanged
 - `skill_importance`, when available
 
-Module 1 ids resolve through a copy of its `normalize_skill`. Tests cover all 17 documented ids, its alias targets and 32 derived ids, using mocks in `tests/mocks/m1_contract.json` shaped like `schema_m1.json`.
+Module 1 ids resolve through a copy of its `normalize_skill`. **Every id in module 1's `m1_target_roles_skills_export.json` is covered: each resolves to a taxonomy entry, as an exact id (incl. `backend` and `automation`) or through an alias (`pyspark` → `spark`), or is a documented non-skill (`data`).** The coverage test reads module 1's live export when present and a vendored copy (`tests/mocks/m1_target_roles_skills_export.json`) otherwise. Tests also cover the 17 documented ids, its alias targets and 32 derived ids, using mocks in `tests/mocks/m1_contract.json` shaped like `schema_m1.json`.
 
 **Module 2 → Module 3.** `UserProfile` is a superset of the INTEGRATION.md profile (`skills[].name/level/evidence`, `experience_years`, `education: list[str]`, `location`, `preferred_locations`, `target_occupation`), with additive fields. Evidence values are Module 2 tags (`work_supported`, …); the integration layer can map them to free-text labels if needed.
 
@@ -270,9 +275,7 @@ Module 1 ids resolve through a copy of its `normalize_skill`. Tests cover all 17
 - Modules 1 and 2 both use a top-level `src` package, so they clash if loaded into one Python process. Call them over REST (8001, 8002), as agreed.
 - Module 2 doesn't need MongoDB, so there's nothing to provision.
 
-**Open items with Module 1** (requested by the team lead):
-- `top_skill_weights` per occupation, which would replace rank decay.
-- Dropping `normalize_skill`'s `len > 1` filter, so C and R demand reaches `top_skills`.
+**Module 1 items now delivered:** `top_skill_weights` (consumed as `m1_weights`), the C/R `len > 1` fix, and the 7-role id export.
 - Module 1's own WORKING.md §5.1 still shows a direct-import example for other modules.
 
 ---
@@ -284,17 +287,17 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**232 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**278 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
-| `test_taxonomy.py` | 98 | fields, unique ids/aliases, no cycles, Module 1 id resolution, spec normalisation examples, product-variant aliases |
+| `test_taxonomy.py` | 133 | fields, unique ids/aliases, no cycles, Module 1 id resolution incl. 100% of the 7-role export, non-skill ids, automation/backend, spec normalisation examples, product-variant aliases |
 | `test_skill_extractor.py` | 34 | dictionary pass, ambiguous aliases, longest match, LLM off / no key / timeout / rate limit / bad JSON / grounding / cache |
 | `test_parsers.py` | 29 | PDF, scanned PDF, DOCX, TXT, all error codes, sections, date formats, overlaps, internships, education, OCR repair, OCR page cap |
 | `test_profile.py` | 12 | evidence tags, levels, OCR parity with the text PDF, manual entry, verification flags, INTEGRATION profile shape, privacy |
-| `test_gap_analyzer.py` | 30 | worked example, each matching reason (incl. semantic matched/adjacent and the TF-IDF fallback), relation wording, adjacent levels, importance sources, experience source, all verdicts + 1-year control, advice, validation |
+| `test_gap_analyzer.py` | 33 | worked example, module 1 weights, skipped categories, each matching reason (incl. semantic matched/adjacent and the TF-IDF fallback), relation wording, adjacent levels, importance sources, experience source, all verdicts + 1-year control, advice, validation |
 | `test_roadmap.py` | 8 | prerequisites before dependants, pulled-in prerequisites, implied knowledge, hour ranges, adjacent < missing estimate, per-skill and cumulative weeks, whole-taxonomy ordering |
-| `test_api.py` | 20 | health, upload formats, every error status, gap analysis, resume → gap round trip, schema export, OpenAPI paths |
+| `test_api.py` | 28 | health, upload formats, every error status, gap analysis, resume → gap round trip, `/skills/extract` (results, warnings, errors), module 1 weights, schema export, OpenAPI paths |
 | `test_llm_live.py` | 1 | real Groq call, grounded output, cache |
 
 **Known limitations**
@@ -311,10 +314,10 @@ pytest module-2-skill-gap/tests/ -v
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-2-skill-gap && uvicorn src.api.main:app --port 8002`; verified over HTTP (`/api/v1/health` → `status: ok`). No database or other module needed |
 | 2 | Contract compliance | ✅ | `UserProfile` is a superset of INTEGRATION.md's common profile (tested in `test_integration_profile_shape`); input takes module 1's `occupation`, `top_skills`, `knowledge_graph` as plain data; errors use `{"error": {"code", "message"}}`. JSON Schema: `src/models/schema_m2.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **232 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **278 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
 | 4 | Error handling | ✅ | Corrupt, encrypted, oversized, too many pages, empty, wrong type and legacy files → 400/413/415 with codes; invalid JSON → 422 `INVALID_REQUEST`; LLM timeout, rate limit, missing key or unknown model → dictionary fallback; MiniLM unavailable → TF-IDF fallback; unexpected errors → 500 `INTERNAL_ERROR` without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` and `tests/` import only `src.*` and third-party packages; the only module-1 references are comments, test names and a documented replica of its `normalize_skill` |
 | 6 | Documentation | ✅ | `README.md`: install, run, test, example request/response payloads. This file: architecture, formulas, contracts, results. `HANDOFF_TO_M3.md` for module 3 |
 | 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap`, one change per commit, author Chaitanya Sharma |
 
-Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analysis`, `GET /api/v1/health` on port **8002** (OpenAPI at `/docs`).
+Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analysis`, `POST /api/v1/skills/extract`, `GET /api/v1/health` on port **8002** (OpenAPI at `/docs`).

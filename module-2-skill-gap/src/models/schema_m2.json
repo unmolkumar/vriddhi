@@ -226,6 +226,72 @@
       "title": "ExtractedSkill",
       "type": "object"
     },
+    "ExtractedTextSkill": {
+      "properties": {
+        "id": {
+          "description": "Taxonomy id (module-1 compatible), or a slug when not in the taxonomy",
+          "title": "Id",
+          "type": "string"
+        },
+        "display": {
+          "title": "Display",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "maps_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Coarser taxonomy id, e.g. postgresql -> sql",
+          "title": "Maps To"
+        },
+        "in_taxonomy": {
+          "title": "In Taxonomy",
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "dictionary",
+            "llm"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "matches": {
+          "description": "Surface forms found in the text",
+          "items": {
+            "type": "string"
+          },
+          "title": "Matches",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "display",
+        "in_taxonomy",
+        "source"
+      ],
+      "title": "ExtractedTextSkill",
+      "type": "object"
+    },
     "GapAnalysisRequest": {
       "description": "Module 1 target (plain data, no import) + the user's profile or typed skills.",
       "properties": {
@@ -275,6 +341,22 @@
           "default": null,
           "description": "Optional id -> weight in [0, 1]",
           "title": "Skill Importance"
+        },
+        "top_skill_weights": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's top_skill_weights (id -> normalised demand 0-1), passed through unchanged",
+          "title": "Top Skill Weights"
         },
         "profile": {
           "anyOf": [
@@ -385,6 +467,7 @@
         "importance_source": {
           "enum": [
             "skill_importance",
+            "m1_weights",
             "knowledge_graph",
             "rank_decay"
           ],
@@ -863,6 +946,47 @@
         }
       },
       "title": "SkillBuckets",
+      "type": "object"
+    },
+    "SkillExtractRequest": {
+      "description": "Plain text such as a job description. Skills only: no evidence or levels.",
+      "properties": {
+        "text": {
+          "description": "Job description or other text, up to 50,000 characters",
+          "title": "Text",
+          "type": "string"
+        },
+        "use_llm": {
+          "default": false,
+          "description": "Also run the Groq pass for skills the dictionary misses",
+          "title": "Use Llm",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SkillExtractRequest",
+      "type": "object"
+    },
+    "SkillExtractResponse": {
+      "properties": {
+        "skills": {
+          "items": {
+            "$ref": "#/$defs/ExtractedTextSkill"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "title": "SkillExtractResponse",
       "type": "object"
     },
     "SkillGap": {

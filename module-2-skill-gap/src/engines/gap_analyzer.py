@@ -9,13 +9,13 @@ import re
 from src.engines import similarity
 from src.engines.profile_builder import profile_from_manual
 from src.engines.roadmap_generator import build_roadmap, known_ids
-from src.engines.skill_extractor import coarser_ids, m1_slug, resolve_skill
+from src.engines.skill_extractor import coarser_ids, m1_slug, non_skill_reason, resolve_skill
 from src.models.schemas import (
     ExperienceRange, ExtractedSkill, GapAnalysisRequest, GapAnalysisResult, ScoreBreakdown, SkillBuckets, SkillGap,
     UserProfile,
 )
 
-# Importance (priority: skill_importance -> knowledge_graph -> rank decay)
+# Importance (priority: skill_importance -> module 1 top_skill_weights -> knowledge_graph -> rank decay)
 RANK_DECAY = 0.15                     # w_i = 1 / (1 + RANK_DECAY * i), i = position in required_skills
 TOP_RANKED = 3                        # without explicit importance, the first 3 skills need level 3 ...
 TOP_REQUIRED_LEVEL = 3
@@ -83,6 +83,9 @@ def _importance(ids: list[str], req: GapAnalysisRequest, warnings: list[str]) ->
     if req.skill_importance:
         explicit = {_resolve(k)[0]: _clamp(v) for k, v in req.skill_importance.items()}
         source = "skill_importance"
+    elif req.top_skill_weights:
+        explicit = {_resolve(k)[0]: _clamp(v) for k, v in req.top_skill_weights.items()}
+        source = "m1_weights"
     elif req.knowledge_graph:
         explicit = _kg_importance(req.knowledge_graph, warnings)
         source = "knowledge_graph"
@@ -167,6 +170,9 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
 
     required: list[tuple[str, str, dict | None]] = []
     for raw in req.required_skills:
+        if non_skill_reason(raw):
+            warnings.append(f"'{raw}' is a broad category from module 1, not a skill; it was not scored.")
+            continue
         resolved = _resolve(raw)
         if any(resolved[0] == r[0] for r in required):
             warnings.append(f"'{raw}' duplicates an earlier required skill; counted once.")
@@ -174,6 +180,8 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
         required.append(resolved)
         if resolved[2] is None:
             warnings.append(f"'{raw}' is not in the skill taxonomy; matched by name and similarity only.")
+    if not required:
+        raise ValueError("required_skills has no scorable skills (only broad categories like 'data').")
     ids = [sid for sid, _, _ in required]
     weights, explicit, importance_source = _importance(ids, req, warnings)
 

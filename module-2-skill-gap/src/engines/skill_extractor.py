@@ -98,7 +98,7 @@ def taxonomy() -> dict:
                 # Two skills folding to the same key is ambiguous: drop the key rather than guess.
                 ocr_index[k] = entry["display"] if ocr_index.get(k, entry["display"]) == entry["display"] else None
     return {"skills": data["skills"], "by_id": by_id, "by_alias": by_alias, "by_slug": by_slug, "matchers": matchers,
-            "ocr_index": {k: v for k, v in ocr_index.items() if v}}
+            "ocr_index": {k: v for k, v in ocr_index.items() if v}, "non_skill_ids": data.get("non_skill_ids", {})}
 
 
 _OCR_FOLD = str.maketrans({"i": "l", "1": "l", "|": "l", "!": "l", "0": "o"})
@@ -141,6 +141,12 @@ def resolve_skill(name: str) -> dict | None:
     collapsed = re.sub(r"_+", "_", m1_slug(name))
     return (tax["by_id"].get(name) or tax["by_slug"].get(m1_slug(name)) or tax["by_id"].get(collapsed)
             or tax["by_alias"].get(_key(name)))
+
+
+def non_skill_reason(name: str) -> str | None:
+    """Why an id is not a skill ('data' is a broad module-1 category), or None for real skills."""
+    non_skill = taxonomy()["non_skill_ids"]
+    return non_skill.get(name) or non_skill.get(re.sub(r"_+", "_", m1_slug(name)))
 
 
 def coarser_ids(skill_id: str) -> list[str]:

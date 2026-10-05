@@ -29,7 +29,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 232 tests; the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 278 tests; the live Groq test is skipped without a key
 ```
 
 ## Endpoints
@@ -38,6 +38,7 @@ pytest module-2-skill-gap/tests/ -v      # 232 tests; the live Groq test is skip
 |---|---|---|
 | POST | `/api/v1/skills/analyze_resume` | Upload a resume → profile (+ gap analysis if `target_role` and `required_skills` are sent) |
 | POST | `/api/v1/skills/gap_analysis` | Profile or typed skills + Module 1 target → gap analysis |
+| POST | `/api/v1/skills/extract` | Skills in a job description or other text (no levels or evidence) |
 | GET | `/api/v1/health` | Status, taxonomy size, similarity backend |
 
 Errors always look like `{"error": {"code": "ENCRYPTED_FILE", "message": "..."}}`. Codes: `FILE_TOO_LARGE` (413), `TOO_MANY_PAGES` (413), `UNSUPPORTED_FORMAT` (415), `ENCRYPTED_FILE`, `CORRUPT_FILE`, `EMPTY_DOCUMENT`, `OCR_FAILED` (400), `INVALID_REQUEST` (422).
@@ -71,6 +72,26 @@ curl -X POST http://localhost:8002/api/v1/skills/analyze_resume \
 }
 ```
 (Abridged: 13 skills in full.)
+
+### Example: extract skills from a job description
+
+```bash
+curl -X POST http://localhost:8002/api/v1/skills/extract -H "Content-Type: application/json" \
+  -d '{"text": "Backend engineer: Java, Spring Boot, PostgreSQL, Docker. Infrastructure automation a plus."}'
+```
+
+```json
+{
+  "skills": [
+    {"id": "automation", "display": "Automation", "category": "devops", "maps_to": "devops", "in_taxonomy": true, "source": "dictionary", "matches": ["Infrastructure automation"]},
+    {"id": "docker", "display": "Docker", "category": "devops", "maps_to": "containerization", "in_taxonomy": true, "source": "dictionary", "matches": ["Docker"]},
+    {"id": "java", "display": "Java", "category": "language", "maps_to": null, "in_taxonomy": true, "source": "dictionary", "matches": ["Java"]},
+    {"id": "postgresql", "display": "PostgreSQL", "category": "database", "maps_to": "sql", "in_taxonomy": true, "source": "dictionary", "matches": ["PostgreSQL"]},
+    {"id": "spring_boot", "display": "Spring Boot", "category": "framework", "maps_to": "spring", "in_taxonomy": true, "source": "dictionary", "matches": ["Spring Boot"]}
+  ],
+  "warnings": []
+}
+```
 
 ### Example: gap analysis with typed skills
 
@@ -110,7 +131,7 @@ Abridged response:
 }
 ```
 
-`typical_experience` is optional; without it the band comes from the job title, and `experience_source` in the response says which was used. Module 3 integration notes: [HANDOFF_TO_M3.md](HANDOFF_TO_M3.md).
+Pass module 1's `top_skill_weights` unchanged to weight skills by real demand (`importance_source: "m1_weights"`). `typical_experience` is optional; without it the band comes from the job title, and `experience_source` in the response says which was used. Module 3 integration notes: [HANDOFF_TO_M3.md](HANDOFF_TO_M3.md).
 
 A full response for Module 1's Data Scientists target (from `/analyze_resume` profile) is in WORKING.md §5.4 and the test `test_worked_example_data_scientist`.
 
@@ -118,7 +139,7 @@ A full response for Module 1's Data Scientists target (from `/analyze_resume` pr
 
 ```text
 module-2-skill-gap/
-├── data/taxonomy/skills.json      482 skills: ids, aliases, maps_to, prerequisites, difficulty tiers
+├── data/taxonomy/skills.json      483 skills: ids, aliases, maps_to, prerequisites, difficulty tiers
 ├── src/
 │   ├── api/                       FastAPI app (main.py, routes.py)
 │   ├── engines/                   skill_extractor, profile_builder, similarity, gap_analyzer, roadmap_generator
