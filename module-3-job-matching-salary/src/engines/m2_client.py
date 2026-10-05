@@ -52,7 +52,8 @@ def enrich_skills(jobs: list[Job], *, client: httpx.Client | None = None) -> tup
                 out.append(job.model_copy(update={
                     "skills": [s["id"] for s in skills], "skills_source": "m2",
                     "skill_parents": {s["id"]: s["maps_to"] for s in skills if s.get("maps_to")},
-                    "skill_display": {s["id"]: s["display"] for s in skills if s.get("display")}}))
+                    "skill_display": {s["id"]: s["display"] for s in skills if s.get("display")},
+                    "skill_is_category": {s["id"]: bool(s["is_category"]) for s in skills if "is_category" in s}}))
                 continue
             except M2Unavailable:
                 available = False

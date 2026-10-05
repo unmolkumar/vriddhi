@@ -10,10 +10,10 @@ from src.engines.job_fetcher import fetch_jobs
 from src.engines.job_store import JobStore, role_key
 from src.engines.locations import normalise_city
 from src.engines.m2_client import M2Unavailable, resolve_typed_skills
-from src.engines.market_profile import build_profile, concrete_children, infer_skills, is_broad
+from src.engines.market_profile import build_profile, category_flags, concrete_children, infer_skills, is_broad
 from src.engines.matching import TITLE_EXPERIENCE, candidate_cities, classify, match_job, skills_confidence
 from src.engines.ranking import rank_components, rank_score, sort_key
-from src.engines.salary import candidate_value, estimate_market, negotiate
+from src.engines.salary import candidate_value, estimate_market, m1_salary, negotiate
 from src.models.schemas import (
     MANUAL_SKILL_LEVEL, CandidateProfile, CandidateSkill, ExperienceBand, Job, JobResult, JobSearchRequest,
     JobSearchResponse, SalaryRange, SkillUnlock, slug,
@@ -103,10 +103,11 @@ def _unlock_skills(req: JobSearchRequest, candidate: CandidateProfile, jobs: lis
     if req.gap_analysis:
         wanted += list(req.gap_analysis.critical_missing) + [slug(s) for s in req.gap_analysis.learning_priorities]
     wanted += [p.skill for p in profile.top_skills]
-    out = []
+    out, flags = [], category_flags(jobs)
     for skill in dict.fromkeys(wanted):
-        options = [c for c in concrete_children(skill, jobs, profile) if c not in have] if is_broad(skill) else [skill]
-        pick = next((o for o in options if o and o not in have and o not in out and not is_broad(o)), None)
+        broad = is_broad(skill, flags)
+        options = [c for c in concrete_children(skill, jobs, profile) if c not in have] if broad else [skill]
+        pick = next((o for o in options if o and o not in have and o not in out and not is_broad(o, flags)), None)
         if pick:
             out.append(pick)
         if len(out) == UNLOCK_SKILLS:
@@ -142,8 +143,10 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         histogram_fn = lambda: adzuna.histogram(req.target_role, fetched.cities[0], client=client)  # noqa: E731
     js_salary = _jsearch_salary(req, fetched.cities[0] if fetched.cities else city, candidate.experience_years,
                                 store, client, now, warnings)
+    m1 = (m1_salary(req.market_salary_percentiles, candidate.experience_years, city)
+          if req.market_salary_percentiles else None)
     market = estimate_market(jobs, histogram_fn=histogram_fn, baseline=req.market_baseline,
-                             percentiles=req.market_salary_percentiles, jsearch_estimate=js_salary)
+                             percentiles=m1, jsearch_estimate=js_salary)
     if market.estimated_median is None:
         warnings.append("No salary estimate: not enough posted salaries, percentiles, estimates or histogram data.")
 
@@ -181,11 +184,10 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         ))
 
     # Position the candidate within the band the salary data describes, so experience isn't counted twice:
-    # percentiles carry their own band, and a JSearch estimate is already for one experience bucket.
+    # module 1's percentiles describe one experience tier, and a JSearch estimate one experience bucket.
     band = _role_band(req)
-    if req.market_salary_percentiles and req.market_salary_percentiles.experience_band and \
-            market.sources_used == ["module_1_percentiles"]:
-        band = req.market_salary_percentiles.experience_band
+    if "module_1_percentiles" in market.sources_used and m1 and m1.band:
+        band = m1.band
     elif market.sources_used == ["jsearch_salary_estimate"] and js_salary and js_salary.get("bucket") in jsearch.BUCKET_BANDS:
         lo, hi = jsearch.BUCKET_BANDS[js_salary["bucket"]]
         band = ExperienceBand(min=lo, max=hi)

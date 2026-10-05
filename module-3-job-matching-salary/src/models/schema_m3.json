@@ -495,6 +495,14 @@
           "title": "Skill Display",
           "type": "object"
         },
+        "skill_is_category": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "description": "Module 2's is_category per skill id; empty when module 2 didn't send it",
+          "title": "Skill Is Category",
+          "type": "object"
+        },
         "skills_inferred": {
           "default": false,
           "description": "Some skills were filled from the role market profile",
@@ -1226,47 +1234,36 @@
       "type": "object"
     },
     "MarketPercentiles": {
-      "description": "Optional: module 1's salary percentiles for the role (INR per year), e.g. from its INR salary points.",
+      "description": "Module 1's market_salary_percentiles object, as POST /api/v1/career/analyze returns it (values in LPA).\noverall_usd is accepted and ignored.",
       "properties": {
-        "p25": {
-          "exclusiveMinimum": 0,
-          "title": "P25",
-          "type": "integer"
-        },
-        "p50": {
-          "exclusiveMinimum": 0,
-          "title": "P50",
-          "type": "integer"
-        },
-        "p75": {
-          "exclusiveMinimum": 0,
-          "title": "P75",
-          "type": "integer"
-        },
-        "sample_size": {
-          "minimum": 0,
-          "title": "Sample Size",
-          "type": "integer"
-        },
-        "experience_band": {
+        "overall_inr_lpa": {
           "anyOf": [
             {
-              "$ref": "#/$defs/ExperienceBand"
+              "$ref": "#/$defs/PercentileBand"
             },
             {
               "type": "null"
             }
           ],
-          "default": null,
-          "description": "The band these percentiles describe"
+          "default": null
+        },
+        "by_experience_inr_lpa": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PercentileBand"
+          },
+          "description": "'entry' (<3 years), 'mid' (3-5), 'senior' (>5)",
+          "title": "By Experience Inr Lpa",
+          "type": "object"
+        },
+        "by_city_inr_lpa": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PercentileBand"
+          },
+          "description": "'Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR'",
+          "title": "By City Inr Lpa",
+          "type": "object"
         }
       },
-      "required": [
-        "p25",
-        "p50",
-        "p75",
-        "sample_size"
-      ],
       "title": "MarketPercentiles",
       "type": "object"
     },
@@ -1768,6 +1765,39 @@
       "title": "Negotiation",
       "type": "object"
     },
+    "PercentileBand": {
+      "description": "One of module 1's salary percentile bands, in INR lakh per annum (LPA).",
+      "properties": {
+        "p25": {
+          "exclusiveMinimum": 0,
+          "title": "P25",
+          "type": "number"
+        },
+        "p50": {
+          "exclusiveMinimum": 0,
+          "title": "P50",
+          "type": "number"
+        },
+        "p75": {
+          "exclusiveMinimum": 0,
+          "title": "P75",
+          "type": "number"
+        },
+        "sample_size": {
+          "minimum": 0,
+          "title": "Sample Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "p25",
+        "p50",
+        "p75",
+        "sample_size"
+      ],
+      "title": "PercentileBand",
+      "type": "object"
+    },
     "ProfileSkill": {
       "properties": {
         "skill": {
@@ -1948,6 +1978,36 @@
           "description": "Salaries left out and why",
           "title": "Excluded",
           "type": "object"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "experience_bucket",
+                "experience_x_city_ratio",
+                "overall"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How module 1's percentiles were applied, when they were used",
+          "title": "Method"
+        },
+        "source_check": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceCheck"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1 vs JSearch medians, when both were available"
         },
         "display": {
           "anyOf": [
@@ -2325,6 +2385,37 @@
         "message"
       ],
       "title": "SkillUnlock",
+      "type": "object"
+    },
+    "SourceCheck": {
+      "description": "Module 1's percentile median against JSearch's estimate, when both were available.",
+      "properties": {
+        "module_1_median": {
+          "title": "Module 1 Median",
+          "type": "integer"
+        },
+        "jsearch_median": {
+          "title": "Jsearch Median",
+          "type": "integer"
+        },
+        "gap_pct": {
+          "description": "(JSearch - module 1) / module 1 x 100",
+          "title": "Gap Pct",
+          "type": "number"
+        },
+        "agree": {
+          "description": "Within SALARY_SOURCE_TOLERANCE",
+          "title": "Agree",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "module_1_median",
+        "jsearch_median",
+        "gap_pct",
+        "agree"
+      ],
+      "title": "SourceCheck",
       "type": "object"
     }
   },
