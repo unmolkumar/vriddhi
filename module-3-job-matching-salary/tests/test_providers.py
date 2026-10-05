@@ -87,7 +87,7 @@ def test_adzuna_histogram(fake_http):
 # --- JSearch (constructed from documented fields) --------------------------------------------
 
 def test_jsearch_normalisation():
-    jobs = {r["job_id"]: jsearch.normalise(r, NOW) for r in JS["data"]}
+    jobs = {r["job_id"]: jsearch.normalise(r, NOW) for r in JS["data"]["jobs"]}
     senior = jobs["js-001"]
     assert senior.job_id == "jsearch:js-001" and senior.publisher == "LinkedIn" and senior.location == "Bengaluru"
     assert (senior.salary_min, senior.salary_max) == (2400000, 3600000)
@@ -102,14 +102,32 @@ def test_jsearch_normalisation():
     assert jobs["js-004"] is None                                                     # expired listing
 
 
+def test_jsearch_normalises_recorded_v2_response():
+    rec = load_mock("jsearch_search_v2_sample.json")
+    jobs = [jsearch.normalise(r, NOW) for r in rec["data"]["jobs"]]
+    assert all(j is not None for j in jobs) and all(j.source == "jsearch" and j.location == "Pune" for j in jobs)
+    first = jobs[0]
+    assert first.title == "Hiring for Pharma Data Analyst, Pune." and first.publisher == "LinkedIn"
+    assert first.employment_type == "full_time"                      # from job_employment_types ["FULLTIME"]
+    assert first.posted_at.isoformat().startswith("2026-10-02") and first.description_quality == "ok"
+    assert (first.salary_min, first.salary_max) == (None, None)
+
+
+def test_jsearch_currency_from_salary_string():
+    raw = dict(JS["data"]["jobs"][0], job_salary_currency=None, job_salary_string="$80K-$120K a year")
+    assert jsearch.normalise(raw, NOW).salary_min is None
+    raw["job_salary_string"] = "₹24,00,000 - ₹36,00,000 a year"
+    assert jsearch.normalise(raw, NOW).salary_min == 2400000
+
+
 def test_jsearch_request_headers(fake_http):
     fake_http.on("jsearch.p.rapidapi.com", json_response(JS))
     jobs, total = jsearch.search("data scientist", "Bengaluru", client=fake_http.client(), now=NOW)
     assert len(jobs) == 4 and total is None
     req = fake_http.requests[0]
     assert req.headers["X-RapidAPI-Key"] == "test-rapid" and req.headers["X-RapidAPI-Host"] == "jsearch.p.rapidapi.com"
-    assert dict(req.url.params) == {"query": "data scientist in Bangalore", "page": "1", "num_pages": "1",
-                                    "country": "in", "date_posted": "month"}
+    assert req.url.path == "/search-v2"
+    assert dict(req.url.params) == {"query": "data scientist in Bangalore", "country": "in", "date_posted": "month"}
 
 
 def test_jsearch_not_subscribed(fake_http):

@@ -104,7 +104,7 @@ def test_delhi_ncr_expands_to_three_cities(fake_http, store):
 def test_cross_provider_dedupe_keeps_posted_salary():
     from src.providers import adzuna, jsearch
     adz = [adzuna.normalise(r, NOW) for r in ADZ["results"]]
-    js = [j for j in (jsearch.normalise(r, NOW) for r in JS["data"]) if j]
+    js = [j for j in (jsearch.normalise(r, NOW) for r in JS["data"]["jobs"]) if j]
     merged = dedupe(js + adz)
     vy = [j for j in merged if j.title == "Data Scientist" and "VY" in (j.company or "").upper()]
     assert len(vy) == 1 and vy[0].source == "adzuna" and vy[0].salary_min == 1000000   # the copy with a posted salary
