@@ -81,7 +81,7 @@ Every source maps to the spec's shape: `job_id, title, company, description, loc
 
 - A (role, city) query younger than `LIVE_CACHE_TTL_HOURS` (default 6) is served from SQLite with no network call.
 - When it's older, providers are tried again. If all fail, the old jobs come back as a snapshot with `stale: true`, their `age_hours`, a warning and slightly lower recency in ranking. Stale data is never presented as fresh.
-- `scripts/prewarm.py` fills the cache for 7 roles × 5 cities: at most 49 Adzuna calls, and no JSearch unless `--with-jsearch` is passed.
+- `scripts/prewarm.py` fills the cache for 7 roles × 5 cities: at most 49 Adzuna calls, and no JSearch unless `--with-jsearch` is passed. `--roles`/`--cities` limit the JSearch calls (search and salary) to those pairs. The script prints the most JSearch calls it can make (one per leaf city per pair for search, Delhi-NCR = 3, plus one per pair for salary) and refuses a plan above 20 without `--yes`. The demo-day commands are in the README runbook.
 
 ---
 
@@ -92,7 +92,7 @@ Every source maps to the spec's shape: `job_id, title, company, description, loc
 3. **Role market profile.** `share(skill)` = jobs mentioning the skill ÷ jobs with extracted skills, for the role and city. It is returned as `role_market_profile` (useful to module 2 and integration).
 4. **Inference.** A job with fewer than `MIN_JOB_SKILLS = 3` of its own skills is topped up to `INFER_FILL_TO = 5` from profile skills with share ≥ `MIN_PROFILE_SHARE = 0.15`. It is marked `skills_inferred: true` with `inferred_skills` listed. Inferred skills count at `INFERRED_SKILL_WEIGHT = 0.5`, and the job's skill score is also penalised (§6.1).
 5. **Confidence label.** Each result carries `skills_confidence`: `extracted` (no inferred skills), `partly_inferred` or `inferred` (none of its own). Inferred results get a `skills_note` such as *"Skills inferred from similar Data Scientist jobs in Bengaluru; the listing's text was too short."*
-6. **Broad categories.** `BROAD_SKILL_IDS` lists module 2 taxonomy ids that name a field rather than a skill: `ai`, `data`, `data_science`, `big_data`, `data_engineering`, `generative_ai`, `backend`, `frontend`, `full_stack_development`, `web_development`, `mobile_development`, `api_development`, `devops`, `cloud`, `software_testing`, `cybersecurity`. They:
+6. **Broad categories.** Module 2's `is_category` flag on each extracted skill is the source of truth. It is stored per job as `skill_is_category`, and `is_broad(skill, flags)` reads it. `BROAD_SKILL_IDS` is the fallback for skills without the flag (jobs cached before module 2 sent it, or an older module 2): `ai`, `data`, `data_science`, `big_data`, `data_engineering`, `generative_ai`, `backend`, `frontend`, `frontend_development`, `full_stack_development`, `web_development`, `mobile_development`, `api_development`, `devops`, `automation`, `cloud`, `software_testing`, `cybersecurity`. Broad categories:
    - stay in the market profile as demand signals;
    - are never inferred into a job;
    - count at half weight in a job's skill list (`BROAD_SKILL_WEIGHT`);
@@ -166,7 +166,28 @@ rank_score = **0.55** × match + **0.15** × location + **0.10** × experience +
    - Tukey outliers beyond 1.5 × IQR (`outlier`).
 
    With ≥ `MIN_POSTED_SAMPLE = 5` left: estimated_min/median/max = P25/P50/P75. Confidence = min(0.85, 0.45 + 0.03 × n), minus 0.1 if the IQR is wider than the median.
-2. **Module 1 percentiles** (`market_salary_percentiles: {p25, p50, p75, sample_size, experience_band}`, INR per year), when `sample_size ≥ MIN_PERCENTILE_SAMPLE = 30`. Confidence = min(0.85, 0.55 + 0.05 × log10 n), e.g. 0.70 for 1,200 points.
+2. **Module 1 percentiles.** `market_salary_percentiles` is module 1's object from `POST /api/v1/career/analyze`, passed unchanged. It has `overall_inr_lpa`, `by_experience_inr_lpa` (`entry` <3 years, `mid` 3–5, `senior` >5) and `by_city_inr_lpa` (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR). Each band holds p25/p50/p75 in LPA plus `sample_size`; `overall_usd` is ignored. Module 3 never calls module 1. The adapter `salary.m1_salary` works as follows:
+   - **Tier.** Take the candidate's experience tier. If the tier is missing or has fewer than `MIN_PERCENTILE_SAMPLE = 30` points, use `overall_inr_lpa` instead (`method: "overall"`).
+   - **City.** When the candidate's city band has at least `MIN_CITY_SAMPLES = 50` points, scale the tier by city p50 ÷ overall p50 (`method: "experience_x_city_ratio"`). Otherwise use the tier alone (`method: "experience_bucket"`). Delhi, Noida and Gurugram map to module 1's "Delhi NCR".
+   - **Output.** Convert LPA × 100,000 to INR. Confidence = min(0.85, 0.55 + 0.05 × log10 n), minus `SMALL_SAMPLE_PENALTY = 0.1` below `SMALL_SAMPLE = 100` points.
+   - **Cross-check with JSearch.** When a JSearch estimate is also available, `source_check` reports both medians and the gap.
+     - Within `SALARY_SOURCE_TOLERANCE = 25%`: module 1 stays primary and the note says JSearch agrees.
+     - Otherwise: both go in `sources_used`. The range stretches to cover both medians, the median is their midpoint, and confidence drops by `DISAGREE_PENALTY = 0.15`. Neither source is silently dropped.
+
+   Module 1's documented Data Scientist example (test `test_documented_data_scientist_example_small_city_band_is_ignored`) at 4 years in Bengaluru:
+   - mid tier 15.0/22.1/30.0 (n = 188);
+   - Bengaluru 15.0 has only 39 points, so it is not used: `experience_bucket`, 15–30 LPA, confidence 0.55 + 0.05 × log10 188 = 0.66.
+
+   **Module 1 vs JSearch, real data (October 2026).** Module 1 could not be run locally: `data/career_intel.db` isn't in the repo, and building it needs Kaggle credentials and multi-GB downloads. Module 1's figures are therefore its documented ones (its WORKING.md §7.7), against live JSearch estimates:
+
+   | Role / city / years | Module 1 p25/p50/p75 LPA (n, method) | JSearch min/median/max LPA (n, bucket) | Gap | Result |
+   |---|---|---|---|---|
+   | Data Scientist / Bengaluru / 7.5 | 22.5/36.0/55.9 (108, senior tier) | 15.2/22.0/31.7 (466, 7–9 y) | −38.9% | disagree: 22.0–55.9, median 29.0, conf 0.50 |
+   | Data Engineer / Bengaluru / 4 | 16.0/20.6/25.7 (360, mid × Bengaluru 20.0/17.5) | 9.9/13.8/20.0 (2,055, 4–6 y) | −32.7% | disagree: 13.9–25.7, median 17.2, conf 0.53 |
+   | Data Scientist / Hyderabad / 4 | 15.0/22.1/30.0 (188, mid tier; Hyderabad n = 28) | 9.4/15.5/22.4 (551, 4–6 y) | −29.9% | disagree: 15.0–30.0, median 18.8, conf 0.51 |
+   | Data Scientist / Bengaluru / 4 | 15.0/22.1/30.0 (188, mid tier) | 12.0/17.7/24.1 (2,070, 4–6 y, recorded) | −19.9% | agree: module 1 primary, 15–30, conf 0.66 |
+
+   Module 1 runs 20–39% above Glassdoor in every pair. Its senior tier (>5 years, open-ended) is broader than JSearch's 7–9 bucket, and its salary points mix several datasets. So the cross-check stays on, and disagreement is reported rather than resolved.
 3. **JSearch salary estimate** (`GET /estimated-salary`: Glassdoor-backed, INR, with a sample count and its own confidence label) for role × city × experience bucket. Its min/median/max are used as given. Confidence comes from JSearch's label: VERY_HIGH 0.70, HIGH 0.60, MEDIUM 0.50, LOW 0.35.
    - Cached 7 days (`SALARY_CACHE_TTL_DAYS`), keyed by role × city × bucket, falling back to the bucket `ALL`.
    - A fresh call is made only when the request sets `jsearch_salary: true`. Otherwise a cached estimate is used if there is one.
@@ -191,7 +212,7 @@ range      = centre ± half_width, rounded to ₹10k
 ```
 
 **Which band:** the one the salary data describes, so experience isn't counted twice:
-- Module 1 percentiles use their `experience_band`.
+- Module 1 percentiles use their experience tier: entry 0–3, mid 3–5, senior 5–12 years (senior is open-ended in module 1; 12 is our cap for positioning).
 - A JSearch estimate uses its bucket (e.g. 7–9 years).
 - Otherwise the role band applies (the request's `typical_experience`, else the title).
 
@@ -265,7 +286,7 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 - `profile`: module 2's `UserProfile`, unchanged (`skills[].name/level/evidence/maps_to/needs_verification`, `experience_years`, `education`, `location`, `preferred_locations`; extra fields ignored). Standalone alternative: `skills` + `experience_years` + `location` (typed skills become id-style slugs at level 2).
 - `gap_analysis`: module 2's `match_score`, `verdict`, `learning_priorities`, `critical_missing`. It drives the unlock candidates.
 - `typical_experience`: module 1's per-role band (its export now has one per role; e.g. Data Scientist 3.4–7.4).
-- `market_salary_percentiles`: module 1's salary percentiles for the role (`p25`, `p50`, `p75`, `sample_size`, `experience_band`). It's the primary market source after posted salaries.
+- `market_salary_percentiles`: module 1's `market_salary_percentiles` object, unchanged (§8.1 item 2). It's the primary market source after posted salaries, cross-checked against JSearch.
 - `market_baseline`: module 1's `regional_breakdown.india` (`median_salary_inr_lpa`, …). It's the last salary fallback.
 - `jsearch_salary`, `jsearch_enrichment`: opt-in flags that spend JSearch quota.
 
@@ -281,7 +302,7 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-3-job-matching-salary && uvicorn src.api.main:app --port 8003`. Module-local SQLite, no database to provision; runs without provider keys (snapshot) and without module 2 (keyword matching) |
 | 2 | Contract compliance | ✅ | Spec job shape and `/api/v1/jobs/search` input/output; accepts module 2's profile and module 1's baseline and band as plain data; integration error shape; `src/models/schema_m3.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **138 passed**, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call and never touch the real cache |
+| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **154 passed**, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call and never touch the real cache |
 | 4 | Error handling | ✅ | Provider timeout, HTTP error, bad JSON, missing key and unsubscribed key → next provider, then snapshot; JSearch salary failure → next salary source with a warning; module 2 down → keyword matching for jobs and typed skills; no salary data → null estimate with a note; invalid input → 422; unknown job → 404; unexpected → 500 without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` imports only `src.*` and third-party packages; module 2 via HTTP, module 1 via request fields |
 | 6 | Documentation | ✅ | `README.md` (install, keys, run, test, payloads); this file (formulas, worked example, contracts) |
@@ -295,7 +316,7 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 pytest module-3-job-matching-salary/tests/ -v
 ```
 
-**138 passed** (~15 s, or ~3 s without the two live calls).
+**154 passed** (~15 s, or ~3 s without the two live calls).
 
 | File | Tests | Covers |
 |---|---|---|
@@ -306,6 +327,7 @@ pytest module-3-job-matching-salary/tests/ -v
 | `test_salary_ranking.py` | 12 | the 4–25 LPA exclusion, predicted salaries, outliers, posted / histogram / baseline / none, candidate value, negotiation (low, generous, none, predicted posted salary), ranking order |
 | `test_search_api.py` | 14 | search end to end, unlocks-N-jobs, unlocks from the market profile, employment filter, module 2 down, salary estimate, negotiate (by job, by offer, no salary, unknown job), invalid requests, readable names, schema drift, OpenAPI paths |
 | `test_polish.py` | 25 | inferred penalty worked example, skills confidence, broad ids never inferred or first, broad skills at half weight, unlocks without categories or zero counts, typed 'Postgres' via module 2 and keyword fallback, percentiles tightening the range, source order, positioning worked example, experience counted once, JSearch salary normalisation, buckets, opt-in and 7-day cache |
+| `test_followups.py` | 16 | module 2's `is_category` stored and preferred, fallback list when absent, matching by the job's flag; module 1 tiers, its documented Data Scientist payload (small Bengaluru band ignored), city ratio and Delhi NCR, small-sample confidence, overall fallback, sources agreeing and disagreeing, end to end via `/salary/estimate`; pre-warm quota plan |
 | `test_live_providers.py` | 2 | one real call each to Adzuna and JSearch (skipped without keys) |
 
 **Known limitations**
@@ -313,4 +335,5 @@ pytest module-3-job-matching-salary/tests/ -v
 - Few Indian listings post a salary (1 usable in 41 in the live Bengaluru run). Module 1 percentiles or JSearch's Glassdoor estimate (14–28 LPA at 0.70 live) are much tighter than Adzuna's histogram (5–25 LPA at 0.50); without them, the histogram is used.
 - JSearch is slow (10–20+ s) and has 200 calls a month, so it is kept to fallback and opt-in enrichment.
 - Typed skills resolve through module 2; if module 2 is down they're matched as keywords ("Postgres" then won't match `postgresql`).
-- `BROAD_SKILL_IDS` is a curated list; a new broad id in module 2's taxonomy needs adding there.
+- `BROAD_SKILL_IDS` is only a fallback now; jobs extracted by the current module 2 carry its `is_category` flag.
+- Module 1's percentiles were checked against its documented figures, not a running module 1 (no local database).
