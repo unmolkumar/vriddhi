@@ -1,5 +1,5 @@
 {
- "version": 2,
+ "version": 3,
  "note": "Curated tech skill taxonomy, ESCO-aligned (mapping in progress: esco_uri is null). ids follow module 1's skill normalisation so its top_skills resolve directly.",
  "difficulty_tiers": {
   "1": "foundational tool or syntax",
@@ -1960,7 +1960,8 @@
    "aliases": [
     "hadoop",
     "apache hadoop",
-    "hdfs"
+    "hdfs",
+    "hadoop ecosystem"
    ],
    "category": "data",
    "maps_to": "big_data",
@@ -2556,7 +2557,9 @@
     "ms excel",
     "microsoft excel",
     "advanced excel",
-    "excel formulas"
+    "excel formulas",
+    "excel 365",
+    "ms office excel"
    ],
    "category": "data",
    "maps_to": "data_analysis",
@@ -2599,7 +2602,10 @@
     "power bi",
     "powerbi",
     "power-bi",
-    "microsoft power bi"
+    "microsoft power bi",
+    "power bi desktop",
+    "power bi service",
+    "ms power bi"
    ],
    "category": "data",
    "maps_to": "data_visualization",
@@ -2613,7 +2619,11 @@
    "id": "tableau",
    "display": "Tableau",
    "aliases": [
-    "tableau"
+    "tableau",
+    "tableau desktop",
+    "tableau server",
+    "tableau public",
+    "tableau prep"
    ],
    "category": "data",
    "maps_to": "data_visualization",
@@ -2710,7 +2720,9 @@
    "display": "SAS",
    "aliases": [
     "sas",
-    "sas programming"
+    "sas programming",
+    "base sas",
+    "sas base"
    ],
    "category": "data",
    "maps_to": "statistics",
@@ -2753,7 +2765,9 @@
     "jupyter",
     "jupyter notebook",
     "jupyter notebooks",
-    "jupyterlab"
+    "jupyterlab",
+    "google colab",
+    "colab"
    ],
    "category": "data",
    "maps_to": "python",
@@ -2761,7 +2775,10 @@
     "python"
    ],
    "difficulty_tier": 1,
-   "esco_uri": null
+   "esco_uri": null,
+   "context": {
+    "colab": "list"
+   }
   },
   {
    "id": "polars",
@@ -4074,7 +4091,8 @@
    "aliases": [
     "aws",
     "amazon web services",
-    "aws cloud"
+    "aws cloud",
+    "amazon aws"
    ],
    "category": "cloud",
    "maps_to": "cloud",
@@ -4590,7 +4608,9 @@
    "aliases": [
     "docker",
     "dockerfile",
-    "docker containers"
+    "docker containers",
+    "docker desktop",
+    "docker engine"
    ],
    "category": "devops",
    "maps_to": "containerization",
@@ -5275,7 +5295,8 @@
    "display": "MySQL",
    "aliases": [
     "mysql",
-    "my sql"
+    "my sql",
+    "mysql workbench"
    ],
    "category": "database",
    "maps_to": "sql",
@@ -5294,7 +5315,9 @@
     "postgre",
     "psql",
     "postgre sql",
-    "postgress"
+    "postgress",
+    "postgresql db",
+    "pgadmin"
    ],
    "category": "database",
    "maps_to": "sql",
@@ -5312,7 +5335,9 @@
     "sql server",
     "mssql",
     "ms sql",
-    "ms sql server"
+    "ms sql server",
+    "ssms",
+    "sql server management studio"
    ],
    "category": "database",
    "maps_to": "sql",

@@ -104,3 +104,22 @@ def test_coarser_chain():
     assert coarser_ids("amazon_s3") == ["aws", "cloud"]
     assert coarser_ids("postgresql") == ["sql"]
     assert coarser_ids("tensorflow")[:2] == ["deep_learning", "machine_learning"]
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("Tableau Desktop and Tableau Server", "tableau"), ("Power BI Desktop", "power_bi"), ("MS Excel", "excel"),
+    ("Microsoft Excel", "excel"), ("Jupyter Notebook", "jupyter"), ("Docker Desktop", "docker"),
+    ("Amazon AWS", "aws"), ("MySQL Workbench", "mysql"), ("SSMS", "microsoft_sql_server"),
+])
+def test_product_variant_aliases(text, expected):
+    assert [h.id for h in extract_skills(text, use_llm=False)] == [expected]
+
+
+@pytest.mark.parametrize("m1_id, expected", [
+    ("tableau_desktop", "tableau"), ("power_bi_desktop", "power_bi"), ("ms_excel", "excel"),
+    ("google_colab", "jupyter"), ("aws_ec2", "amazon_ec2"), ("aws_s3", "amazon_s3"), ("aws_lambda", "aws_lambda"),
+])
+def test_product_variant_ids_resolve(m1_id, expected):
+    assert resolve_skill(m1_id)["id"] == expected
+    if expected.startswith(("amazon_", "aws_")):
+        assert coarser_ids(expected) == ["aws", "cloud"]
