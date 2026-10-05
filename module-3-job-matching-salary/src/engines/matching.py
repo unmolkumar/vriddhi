@@ -8,6 +8,7 @@ import re
 from dataclasses import dataclass
 
 from src.engines.locations import REGIONS, expand_cities
+from src.engines.market_profile import is_broad
 from src.models.schemas import CandidateProfile, CandidateSkill, ExperienceBand, Job, MatchBreakdown, MatchWeights
 
 DEFAULT_WEIGHTS = MatchWeights().normalised()      # skills .40, experience .20, education/location/seniority/preference .10
@@ -16,7 +17,8 @@ DEFAULT_WEIGHTS = MatchWeights().normalised()      # skills .40, experience .20,
 LEVEL_CREDIT = {0: 0.0, 1: 0.6, 2: 0.8}             # candidate level -> credit; level 3+ (work-supported) = 1.0
 NEEDS_VERIFICATION_FACTOR = 0.5                    # module 2 flagged the claim as unsupported by the resume
 RELATED_SKILL_CREDIT = 0.5                         # candidate has the job skill's parent (SQL for a PostgreSQL job)
-INFERRED_SKILL_WEIGHT = 0.5                        # job skills filled from the market profile count half
+INFERRED_SKILL_WEIGHT = 0.5                        # job skills filled from the market profile count half ...
+INFERRED_PENALTY = 0.3                             # ... and the skill score shrinks by 30% x share of inferred skills
 KEYWORD_TOP_N = 8                                  # keyword fallback: candidate's top skills searched in job text
 
 # Experience
@@ -101,8 +103,17 @@ def skill_component(job: Job, candidate: CandidateProfile) -> tuple[float, list[
         total += weight
         credit += weight * c
         (matched if c > 0 else missing).append(s)
-    missing.sort(key=lambda s: s in job.inferred_skills)  # the job's own skills first
-    return credit / total, matched, missing, "skills"
+    # Concrete skills first (the job's own before inferred); broad categories (ai, data_science) always last.
+    missing.sort(key=lambda s: (is_broad(s), s in job.inferred_skills))
+    inferred_fraction = len([s for s in job.skills if s in job.inferred_skills]) / len(job.skills)
+    # A job whose skills are mostly inferred can't outrank comparable jobs with real skills.
+    return credit / total * (1 - INFERRED_PENALTY * inferred_fraction), matched, missing, "skills"
+
+
+def skills_confidence(job: Job) -> str:
+    if not job.inferred_skills:
+        return "extracted"
+    return "inferred" if len(job.inferred_skills) == len(job.skills) else "partly_inferred"
 
 
 # --- experience and seniority -----------------------------------------------------------------
