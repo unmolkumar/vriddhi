@@ -9,6 +9,8 @@ from ..models.schemas import (
     CareerAnalysisResponse,
     CareerRankRequest,
     CareerRankResponse,
+    DomainSearchRequest,
+    DomainSearchResponse,
 )
 from ..engines.service import CareerIntelligenceService
 
@@ -76,3 +78,20 @@ async def list_occupations(
     List available standard O*NET occupations.
     """
     return service.db.list_occupations(limit=limit)
+
+
+@router.post("/search_by_domain", response_model=DomainSearchResponse)
+async def search_by_domain(
+    request: DomainSearchRequest,
+    service: CareerIntelligenceService = Depends(get_service)
+) -> DomainSearchResponse:
+    """
+    Search career pathways by entering an interest domain or keywords
+    (e.g., 'Artificial Intelligence', 'FinTech', 'Cloud', 'Data Analytics').
+    """
+    if not request.domain_query or not request.domain_query.strip():
+        raise HTTPException(status_code=400, detail="Domain query cannot be empty.")
+    try:
+        return service.search_by_domain(request.domain_query, top_k=request.top_k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Domain search failed: {str(e)}")

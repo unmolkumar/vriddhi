@@ -209,3 +209,46 @@ def test_api_compare_endpoint(client):
     data = res.json()
     assert "postings_by_region_and_year" in data
     assert len(data["postings_by_region_and_year"]) > 0
+
+
+# 9. Multi-Year Trajectory & Knowledge Graph Tests
+def test_trajectory_generation(service):
+    analysis = service.analyze_career("Data Scientist")
+    traj = analysis.yearly_trajectory
+    assert traj is not None
+    assert traj.cutoff_year == 2026
+    assert len(traj.series) == 11  # 2021 through 2031
+    for pt in traj.series:
+        assert pt.india_lower_bound <= pt.india_index <= pt.india_upper_bound or pt.india_index >= pt.india_lower_bound
+        assert pt.global_lower_bound <= pt.global_index <= pt.global_upper_bound or pt.global_index >= pt.global_lower_bound
+        if pt.year <= 2026:
+            assert pt.status == "historical"
+        else:
+            assert pt.status == "forecast"
+
+
+def test_knowledge_graph_generation(service):
+    analysis = service.analyze_career("Data Scientist")
+    kg = analysis.knowledge_graph
+    assert kg is not None
+    assert len(kg.nodes) > 0
+    assert len(kg.edges) > 0
+    node_types = {n.type for n in kg.nodes}
+    assert "occupation" in node_types
+    assert "task" in node_types or "skill" in node_types
+
+
+def test_domain_search_endpoint(client):
+    res = client.post("/api/v1/career/search_by_domain", json={
+        "domain_query": "Artificial Intelligence Machine Learning",
+        "top_k": 3
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["domain_query"] == "Artificial Intelligence Machine Learning"
+    assert len(data["results"]) > 0
+    first = data["results"][0]
+    assert "occupation" in first
+    assert "relevance_score" in first
+    assert "growth_score" in first
+

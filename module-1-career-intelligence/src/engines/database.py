@@ -232,3 +232,90 @@ class CareerDatabase:
                 india_skills = [row[0] for row in cursor.fetchall()]
 
             return {"global": global_skills, "india": india_skills}
+
+    def get_yearly_breakdown(self, title: str) -> Dict[str, Dict[int, int]]:
+        """
+        Query actual historical postings counts grouped by year for both India and Global.
+        """
+        clean_title = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
+        words = [w for w in clean_title.split() if len(w) > 2]
+        like_pattern = f"%{words[0]}%" if words else f"%{clean_title}%"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # Global yearly counts
+            cursor.execute("""
+                SELECT listed_year, COUNT(*) as cnt
+                FROM job_postings_global
+                WHERE LOWER(title) LIKE ? AND listed_year IS NOT NULL
+                GROUP BY listed_year
+                ORDER BY listed_year ASC
+            """, (like_pattern,))
+            global_yearly = {row["listed_year"]: row["cnt"] for row in cursor.fetchall()}
+
+            # India yearly counts
+            cursor.execute("""
+                SELECT listed_year, COUNT(*) as cnt
+                FROM job_postings_india
+                WHERE LOWER(title) LIKE ? AND listed_year IS NOT NULL
+                GROUP BY listed_year
+                ORDER BY listed_year ASC
+            """, (like_pattern,))
+            india_yearly = {row["listed_year"]: row["cnt"] for row in cursor.fetchall()}
+
+            return {"global": global_yearly, "india": india_yearly}
+
+    def search_occupations_by_domain(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        Semantic and keyword domain search finding matching occupations and career pathways.
+        Matches against occupation title, description, domain, and associated skills.
+        """
+        clean_q = re.sub(r'[^a-z0-9\s]', '', query.lower()).strip()
+        tokens = [t for t in clean_q.split() if len(t) > 2]
+        if not tokens:
+            return self.list_occupations(limit=limit)
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            results = []
+
+            # Match on title and description
+            title_likes = " OR ".join(["LOWER(title) LIKE ?" for _ in tokens])
+            desc_likes = " OR ".join(["LOWER(description) LIKE ?" for _ in tokens])
+            params = [f"%{t}%" for t in tokens] * 2
+
+            query_sql = f"""
+                SELECT soc_code, title, description, domain,
+                    (CASE WHEN LOWER(title) LIKE ? THEN 3.0 ELSE 1.0 END) as relevance
+                FROM occupations
+                WHERE ({title_likes}) OR ({desc_likes})
+                ORDER BY relevance DESC, LENGTH(title) ASC
+                LIMIT ?
+            """
+            cursor.execute(query_sql, [f"%{tokens[0]}%"] + params + [limit])
+            rows = cursor.fetchall()
+
+            for r in rows:
+                soc = r["soc_code"]
+                # Fetch matching skills
+                cursor.execute("""
+                    SELECT skill_name FROM occupation_skills 
+                    WHERE soc_code = ? ORDER BY importance DESC LIMIT 4
+                """, (soc,))
+                skills = [s[0] for s in cursor.fetchall()]
+
+                results.append({
+                    "soc_code": soc,
+                    "title": r["title"],
+                    "description": r["description"],
+                    "domain": r["domain"] or "Technology / Engineering",
+                    "matching_skills": skills,
+                    "relevance_score": min(round(float(r["relevance"]) * 0.35 + 0.50, 2), 0.98)
+                })
+
+            if not results:
+                # Fallback to top occupations
+                return self.list_occupations(limit=limit)
+
+            return results

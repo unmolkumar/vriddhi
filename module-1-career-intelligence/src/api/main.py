@@ -33,6 +33,17 @@ async def health_check():
     }
 
 
+@app.get("/", include_in_schema=False)
+async def root():
+    return {
+        "engine": "Vriddhi Career Intelligence & Forecasting Engine",
+        "module": "module-1-career-intelligence",
+        "version": "1.0.0",
+        "docs_url": "/docs",
+        "health_check": "/health"
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("src.api.main:app", host="0.0.0.0", port=8001, reload=True)

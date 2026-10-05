@@ -4,6 +4,7 @@ from .ai_exposure import AIExposureEngine
 from .forecaster import CareerForecaster
 from .evidence_engine import EvidenceEngine
 from .ranking_engine import RankingEngine
+from .knowledge_graph import KnowledgeGraphEngine
 from .service import CareerIntelligenceService
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "CareerForecaster",
     "EvidenceEngine",
     "RankingEngine",
+    "KnowledgeGraphEngine",
     "CareerIntelligenceService",
 ]

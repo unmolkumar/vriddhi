@@ -7,6 +7,14 @@ from .schemas import (
     RankingWeightConfig,
     RegionMetricDetail,
     TaskExposureDetail,
+    YearlyDataPoint,
+    YearlyTrajectory,
+    GraphNode,
+    GraphEdge,
+    KnowledgeGraph,
+    DomainSearchRequest,
+    DomainSearchItem,
+    DomainSearchResponse,
 )
 
 __all__ = [
@@ -18,4 +26,12 @@ __all__ = [
     "RankingWeightConfig",
     "RegionMetricDetail",
     "TaskExposureDetail",
+    "YearlyDataPoint",
+    "YearlyTrajectory",
+    "GraphNode",
+    "GraphEdge",
+    "KnowledgeGraph",
+    "DomainSearchRequest",
+    "DomainSearchItem",
+    "DomainSearchResponse",
 ]

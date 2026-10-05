@@ -24,3 +24,7 @@ dist/
 build/
 *.log
 ~$*
+
+# Temporary Demo UI (local verification only)
+demo-ui/
+module-1-career-intelligence/demo-ui/

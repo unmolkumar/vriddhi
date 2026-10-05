@@ -1,6 +1,7 @@
 """
 Pydantic Data Models & Schemas for Module 1 (Career Intelligence Engine).
 Complies with INTEGRATION.md and MODULE-1-CAREER-INTELLIGENCE.md specifications.
+Enhanced with multi-year historical + 5-year forecast trajectory and knowledge graph schemas.
 """
 from typing import List, Dict, Optional, Any, Literal
 from pydantic import BaseModel, Field
@@ -14,7 +15,7 @@ class CareerAnalysisRequest(BaseModel):
 class TaskExposureDetail(BaseModel):
     task_description: str
     ai_impact_score: float
-    transformation_type: str  # e.g., 'Augmentation', 'Automation', 'Human-Centric'
+    transformation_type: str  # 'Direct Automation', 'AI Augmentation', 'Human-Centric / High Discretion'
     rationale: str
 
 
@@ -26,6 +27,44 @@ class RegionMetricDetail(BaseModel):
     median_salary_inr_lpa: Optional[float] = None
     top_locations: List[str] = []
     top_skills: List[str] = []
+
+
+class YearlyDataPoint(BaseModel):
+    year: int
+    status: Literal["historical", "forecast"]
+    india_index: float = Field(..., description="Normalized demand index for India (0-100 base)")
+    global_index: float = Field(..., description="Normalized demand index for Global (0-100 base)")
+    india_lower_bound: float
+    india_upper_bound: float
+    global_lower_bound: float
+    global_upper_bound: float
+
+
+class YearlyTrajectory(BaseModel):
+    historical_years: List[int]
+    forecast_years: List[int]
+    cutoff_year: int
+    series: List[YearlyDataPoint]
+
+
+class GraphNode(BaseModel):
+    id: str
+    label: str
+    type: Literal["occupation", "task", "skill", "technology", "domain"]
+    weight: float
+    metadata: Optional[Dict[str, Any]] = None
+
+
+class GraphEdge(BaseModel):
+    source: str
+    target: str
+    relationship: str
+    weight: float
+
+
+class KnowledgeGraph(BaseModel):
+    nodes: List[GraphNode]
+    edges: List[GraphEdge]
 
 
 class CareerAnalysisResponse(BaseModel):
@@ -41,6 +80,8 @@ class CareerAnalysisResponse(BaseModel):
     tasks_analyzed: int = Field(0, description="Count of granular O*NET tasks evaluated")
     sample_tasks: List[TaskExposureDetail] = Field(default_factory=list, description="Sample task transformation breakdown")
     regional_breakdown: Dict[str, RegionMetricDetail] = Field(default_factory=dict, description="Side-by-side India vs Global metrics")
+    yearly_trajectory: Optional[YearlyTrajectory] = Field(None, description="Past year-wise trend + 5-year forecast points")
+    knowledge_graph: Optional[KnowledgeGraph] = Field(None, description="Career knowledge graph (nodes and edges)")
 
 
 class RankingWeightConfig(BaseModel):
@@ -75,3 +116,23 @@ class CareerRankResponse(BaseModel):
     rankings: List[RankedCareerItem]
     weights_applied: Dict[str, float]
     total_evaluated: int
+
+
+class DomainSearchRequest(BaseModel):
+    domain_query: str = Field(..., min_length=2, description="User interest domain or keywords (e.g. 'Artificial Intelligence', 'FinTech', 'Cloud Cybersecurity')")
+    top_k: int = Field(6, ge=1, le=25, description="Number of relevant career pathways to return")
+
+
+class DomainSearchItem(BaseModel):
+    occupation: str
+    soc_code: str
+    domain: str
+    relevance_score: float
+    matching_skills: List[str]
+    outlook: str
+    growth_score: float
+
+
+class DomainSearchResponse(BaseModel):
+    domain_query: str
+    results: List[DomainSearchItem]
