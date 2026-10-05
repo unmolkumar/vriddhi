@@ -51,9 +51,25 @@ def enrich_skills(jobs: list[Job], *, client: httpx.Client | None = None) -> tup
                 skills = extract_skills(f"{job.title}\n{job.description}", client=client)
                 out.append(job.model_copy(update={
                     "skills": [s["id"] for s in skills], "skills_source": "m2",
-                    "skill_parents": {s["id"]: s["maps_to"] for s in skills if s.get("maps_to")}}))
+                    "skill_parents": {s["id"]: s["maps_to"] for s in skills if s.get("maps_to")},
+                    "skill_display": {s["id"]: s["display"] for s in skills if s.get("display")}}))
                 continue
             except M2Unavailable:
                 available = False
         out.append(job.model_copy(update={"skills": [], "skills_source": "unavailable"}))
     return out, available
+
+
+def resolve_typed_skills(typed: list[str], *, client: httpx.Client | None = None) -> tuple[list[dict], list[str]]:
+    """Typed skill names -> module 2 skills ("Postgres" -> postgresql, with maps_to sql).
+
+    One call with the names as a comma-separated list, so ambiguous names like Go or R are read as list
+    items. Returns (skills, names module 2 didn't recognise). Raises M2Unavailable if module 2 is down.
+    """
+    names = [t.strip() for t in typed if t and t.strip()]
+    if not names:
+        return [], []
+    skills = extract_skills(", ".join(names), client=client)
+    surfaces = [m.lower() for s in skills for m in s.get("matches", [])] + [s["id"].replace("_", " ") for s in skills]
+    unknown = [n for n in names if not any(n.lower() in m or m in n.lower() for m in surfaces)]
+    return skills, unknown
