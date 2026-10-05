@@ -27,7 +27,7 @@ from src.providers.common import (
 URL = "https://jsearch.p.rapidapi.com/search-v2"
 HOST = "jsearch.p.rapidapi.com"
 DATE_POSTED = "month"
-TIMEOUT_S = 20.0  # measured 12.6 s for one /search-v2 call (it runs a Google for Jobs search); Adzuna keeps 5 s
+TIMEOUT_S = 30.0  # /search-v2 runs a Google for Jobs search: measured 12.6 s, and over 20 s once; Adzuna keeps 5 s
 NAME = "jsearch"
 EMPLOYMENT = {"FULLTIME": "full_time", "PARTTIME": "part_time", "CONTRACTOR": "contract", "INTERN": "internship",
               "TEMPORARY": "temporary"}
