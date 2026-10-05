@@ -1,0 +1,1244 @@
+{
+  "$defs": {
+    "AnalyzeResumeResponse": {
+      "properties": {
+        "profile": {
+          "$ref": "#/$defs/UserProfile"
+        },
+        "gap_analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GapAnalysisResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "AnalyzeResumeResponse",
+      "type": "object"
+    },
+    "EducationEntry": {
+      "properties": {
+        "degree": {
+          "title": "Degree",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "institution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Institution"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        }
+      },
+      "required": [
+        "degree"
+      ],
+      "title": "EducationEntry",
+      "type": "object"
+    },
+    "ErrorDetail": {
+      "properties": {
+        "code": {
+          "description": "UPPER_SNAKE error code, e.g. CORRUPT_FILE",
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/ErrorDetail"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "ExperienceRange": {
+      "properties": {
+        "min": {
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "ExperienceRange",
+      "type": "object"
+    },
+    "ExtractedSkill": {
+      "description": "A skill in the user's profile, with evidence and an evidence-based level.",
+      "properties": {
+        "name": {
+          "description": "Taxonomy id, e.g. 'python' (INTEGRATION.md skills[].name)",
+          "title": "Name",
+          "type": "string"
+        },
+        "display": {
+          "title": "Display",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "in_taxonomy": {
+          "default": true,
+          "title": "In Taxonomy",
+          "type": "boolean"
+        },
+        "maps_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Coarser taxonomy id, e.g. postgresql -> sql",
+          "title": "Maps To"
+        },
+        "level": {
+          "description": "0 not demonstrated \u2026 5 expert; derived from evidence",
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Level",
+          "type": "integer"
+        },
+        "confidence": {
+          "description": "How strongly the evidence supports this skill",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence": {
+          "items": {
+            "enum": [
+              "self_reported",
+              "resume_mentioned",
+              "project_supported",
+              "work_supported"
+            ],
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "claimed_level": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Level the user typed, if any",
+          "title": "Claimed Level"
+        },
+        "needs_verification": {
+          "default": false,
+          "description": "Claimed level is above what the evidence supports",
+          "title": "Needs Verification",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "display",
+        "level",
+        "confidence",
+        "evidence"
+      ],
+      "title": "ExtractedSkill",
+      "type": "object"
+    },
+    "GapAnalysisRequest": {
+      "description": "Module 1 target (plain data, no import) + the user's profile or typed skills.",
+      "properties": {
+        "target_role": {
+          "description": "Module 1 occupation",
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Role",
+          "type": "string"
+        },
+        "required_skills": {
+          "description": "Module 1 top_skills ids, most important first",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Required Skills",
+          "type": "array"
+        },
+        "knowledge_graph": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1 knowledge_graph (nodes, edges), optional",
+          "title": "Knowledge Graph"
+        },
+        "skill_importance": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional id -> weight in [0, 1]",
+          "title": "Skill Importance"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UserProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "From /analyze_resume"
+        },
+        "manual_profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ManualProfileInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Typed skills, if there's no resume"
+        },
+        "typical_experience_years": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role's usual experience band; derived from the title's seniority if absent"
+        },
+        "hours_per_week": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 80,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For weekly roadmap milestones",
+          "title": "Hours Per Week"
+        }
+      },
+      "required": [
+        "target_role",
+        "required_skills"
+      ],
+      "title": "GapAnalysisRequest",
+      "type": "object"
+    },
+    "GapAnalysisResult": {
+      "properties": {
+        "target_role": {
+          "title": "Target Role",
+          "type": "string"
+        },
+        "match_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Match Score",
+          "type": "number"
+        },
+        "match_percent": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Match Percent",
+          "type": "integer"
+        },
+        "verdict": {
+          "enum": [
+            "under_skilled",
+            "good_fit",
+            "over_qualified"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "verdict_message": {
+          "title": "Verdict Message",
+          "type": "string"
+        },
+        "suggested_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Higher-level role when over-qualified",
+          "title": "Suggested Role"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "importance_source": {
+          "enum": [
+            "skill_importance",
+            "knowledge_graph",
+            "rank_decay"
+          ],
+          "title": "Importance Source",
+          "type": "string"
+        },
+        "experience_years": {
+          "title": "Experience Years",
+          "type": "number"
+        },
+        "typical_experience_years": {
+          "$ref": "#/$defs/ExperienceRange"
+        },
+        "gap_matrix": {
+          "items": {
+            "$ref": "#/$defs/SkillGap"
+          },
+          "title": "Gap Matrix",
+          "type": "array"
+        },
+        "skills": {
+          "$ref": "#/$defs/SkillBuckets"
+        },
+        "strengths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Strengths",
+          "type": "array"
+        },
+        "learning_priorities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Learning Priorities",
+          "type": "array"
+        },
+        "advice": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Advice",
+          "type": "array"
+        },
+        "roadmap": {
+          "$ref": "#/$defs/Roadmap"
+        },
+        "similarity_backend": {
+          "enum": [
+            "minilm",
+            "tfidf"
+          ],
+          "title": "Similarity Backend",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_role",
+        "match_score",
+        "match_percent",
+        "verdict",
+        "verdict_message",
+        "score_breakdown",
+        "importance_source",
+        "experience_years",
+        "typical_experience_years",
+        "gap_matrix",
+        "skills",
+        "roadmap",
+        "similarity_backend"
+      ],
+      "title": "GapAnalysisResult",
+      "type": "object"
+    },
+    "HealthResponse": {
+      "properties": {
+        "status": {
+          "const": "ok",
+          "title": "Status",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "taxonomy_skills": {
+          "title": "Taxonomy Skills",
+          "type": "integer"
+        },
+        "similarity_backend": {
+          "enum": [
+            "minilm",
+            "tfidf"
+          ],
+          "title": "Similarity Backend",
+          "type": "string"
+        },
+        "llm_configured": {
+          "title": "Llm Configured",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "module",
+        "version",
+        "taxonomy_skills",
+        "similarity_backend",
+        "llm_configured"
+      ],
+      "title": "HealthResponse",
+      "type": "object"
+    },
+    "HourRange": {
+      "properties": {
+        "low": {
+          "title": "Low",
+          "type": "integer"
+        },
+        "high": {
+          "title": "High",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "low",
+        "high"
+      ],
+      "title": "HourRange",
+      "type": "object"
+    },
+    "ManualProfileInput": {
+      "description": "Typed-in profile (no resume).",
+      "properties": {
+        "skills": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/ManualSkill"
+              }
+            ]
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "default": 0.0,
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Experience Years",
+          "type": "number"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "target_occupation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Occupation"
+        },
+        "education": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        }
+      },
+      "title": "ManualProfileInput",
+      "type": "object"
+    },
+    "ManualSkill": {
+      "properties": {
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ManualSkill",
+      "type": "object"
+    },
+    "Milestone": {
+      "properties": {
+        "order": {
+          "title": "Order",
+          "type": "integer"
+        },
+        "skill": {
+          "title": "Skill",
+          "type": "string"
+        },
+        "display": {
+          "title": "Display",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "missing",
+            "adjacent",
+            "weak",
+            "prerequisite"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "importance": {
+          "title": "Importance",
+          "type": "number"
+        },
+        "difficulty_tier": {
+          "title": "Difficulty Tier",
+          "type": "integer"
+        },
+        "prerequisites": {
+          "description": "Ids learned earlier in this roadmap",
+          "items": {
+            "type": "string"
+          },
+          "title": "Prerequisites",
+          "type": "array"
+        },
+        "required_for": {
+          "description": "For pulled-in prerequisites",
+          "items": {
+            "type": "string"
+          },
+          "title": "Required For",
+          "type": "array"
+        },
+        "estimated_hours": {
+          "$ref": "#/$defs/HourRange"
+        },
+        "estimated_weeks": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HourRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cumulative week range when hours_per_week is given"
+        }
+      },
+      "required": [
+        "order",
+        "skill",
+        "display",
+        "kind",
+        "reason",
+        "importance",
+        "difficulty_tier",
+        "estimated_hours"
+      ],
+      "title": "Milestone",
+      "type": "object"
+    },
+    "Roadmap": {
+      "properties": {
+        "milestones": {
+          "items": {
+            "$ref": "#/$defs/Milestone"
+          },
+          "title": "Milestones",
+          "type": "array"
+        },
+        "total_estimated_hours": {
+          "$ref": "#/$defs/HourRange"
+        },
+        "hours_per_week": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hours Per Week"
+        },
+        "estimated_total_weeks": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HourRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "total_estimated_hours",
+        "note"
+      ],
+      "title": "Roadmap",
+      "type": "object"
+    },
+    "ScoreBreakdown": {
+      "properties": {
+        "coverage": {
+          "description": "Importance-weighted credit over required skills, 0-1",
+          "title": "Coverage",
+          "type": "number"
+        },
+        "experience_factor": {
+          "description": "1 when experience reaches the role's minimum, lower below it",
+          "title": "Experience Factor",
+          "type": "number"
+        },
+        "coverage_weight": {
+          "title": "Coverage Weight",
+          "type": "number"
+        },
+        "experience_weight": {
+          "title": "Experience Weight",
+          "type": "number"
+        },
+        "adjacent_credit": {
+          "title": "Adjacent Credit",
+          "type": "number"
+        },
+        "formula": {
+          "title": "Formula",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coverage",
+        "experience_factor",
+        "coverage_weight",
+        "experience_weight",
+        "adjacent_credit",
+        "formula"
+      ],
+      "title": "ScoreBreakdown",
+      "type": "object"
+    },
+    "SkillBuckets": {
+      "properties": {
+        "matched": {
+          "description": "Requirement met (gap <= 0)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Matched",
+          "type": "array"
+        },
+        "weak": {
+          "description": "Matched but below the required level",
+          "items": {
+            "type": "string"
+          },
+          "title": "Weak",
+          "type": "array"
+        },
+        "adjacent": {
+          "description": "Related skill present; quick win",
+          "items": {
+            "type": "string"
+          },
+          "title": "Adjacent",
+          "type": "array"
+        },
+        "critical_missing": {
+          "description": "Not present, most important first",
+          "items": {
+            "type": "string"
+          },
+          "title": "Critical Missing",
+          "type": "array"
+        },
+        "above_requirement": {
+          "description": "Matched above the required level",
+          "items": {
+            "type": "string"
+          },
+          "title": "Above Requirement",
+          "type": "array"
+        }
+      },
+      "title": "SkillBuckets",
+      "type": "object"
+    },
+    "SkillGap": {
+      "description": "One required skill compared with the profile.",
+      "properties": {
+        "skill": {
+          "description": "Required skill id (taxonomy id when it resolves)",
+          "title": "Skill",
+          "type": "string"
+        },
+        "display": {
+          "title": "Display",
+          "type": "string"
+        },
+        "in_taxonomy": {
+          "title": "In Taxonomy",
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "matched",
+            "adjacent",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "exact",
+                "maps_to",
+                "prerequisite",
+                "semantic"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why it matched / is adjacent; null when missing",
+          "title": "Reason"
+        },
+        "via": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's skill that matched or is adjacent",
+          "title": "Via"
+        },
+        "via_display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Via Display"
+        },
+        "similarity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cosine, only when reason = semantic",
+          "title": "Similarity"
+        },
+        "importance": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Importance",
+          "type": "number"
+        },
+        "priority": {
+          "enum": [
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "required_level": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Required Level",
+          "type": "integer"
+        },
+        "current_level": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Current Level",
+          "type": "integer"
+        },
+        "gap": {
+          "description": "required_level - current_level (>0 gap, 0 met, <0 above)",
+          "title": "Gap",
+          "type": "integer"
+        },
+        "evidence": {
+          "description": "Evidence behind the user's skill",
+          "items": {
+            "enum": [
+              "self_reported",
+              "resume_mentioned",
+              "project_supported",
+              "work_supported"
+            ],
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "advice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advice"
+        }
+      },
+      "required": [
+        "skill",
+        "display",
+        "in_taxonomy",
+        "status",
+        "importance",
+        "priority",
+        "required_level",
+        "current_level",
+        "gap"
+      ],
+      "title": "SkillGap",
+      "type": "object"
+    },
+    "SourceInfo": {
+      "properties": {
+        "format": {
+          "enum": [
+            "pdf",
+            "docx",
+            "text",
+            "manual"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "pages": {
+          "default": 0,
+          "title": "Pages",
+          "type": "integer"
+        },
+        "ocr_used": {
+          "default": false,
+          "title": "Ocr Used",
+          "type": "boolean"
+        },
+        "ocr_pages": {
+          "description": "1-based pages read with OCR",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Ocr Pages",
+          "type": "array"
+        },
+        "ocr_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time spent on OCR, for 'scanned resume' UI hints",
+          "title": "Ocr Seconds"
+        },
+        "ocr_repairs": {
+          "description": "OCR confusions fixed, e.g. 'Power Bl -> Power BI'",
+          "items": {
+            "type": "string"
+          },
+          "title": "Ocr Repairs",
+          "type": "array"
+        },
+        "text_sha1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hash of the text for caching; the text itself is not kept",
+          "title": "Text Sha1"
+        },
+        "sections_found": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sections Found",
+          "type": "array"
+        }
+      },
+      "required": [
+        "format"
+      ],
+      "title": "SourceInfo",
+      "type": "object"
+    },
+    "UserProfile": {
+      "properties": {
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "skills": {
+          "items": {
+            "$ref": "#/$defs/ExtractedSkill"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "default": 0.0,
+          "description": "Merged full-time work spans, rounded to 0.5",
+          "minimum": 0.0,
+          "title": "Experience Years",
+          "type": "number"
+        },
+        "internship_years": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Internship Years",
+          "type": "number"
+        },
+        "education": {
+          "description": "e.g. 'B.Tech Computer Science'",
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        },
+        "education_details": {
+          "items": {
+            "$ref": "#/$defs/EducationEntry"
+          },
+          "title": "Education Details",
+          "type": "array"
+        },
+        "work_history": {
+          "items": {
+            "$ref": "#/$defs/WorkEntry"
+          },
+          "title": "Work History",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "target_occupation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Occupation"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceInfo"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "UserProfile",
+      "type": "object"
+    },
+    "WorkEntry": {
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM; null when current",
+          "title": "End"
+        },
+        "current": {
+          "default": false,
+          "title": "Current",
+          "type": "boolean"
+        },
+        "internship": {
+          "default": false,
+          "title": "Internship",
+          "type": "boolean"
+        }
+      },
+      "title": "WorkEntry",
+      "type": "object"
+    }
+  },
+  "title": "Module 2 Skill Gap contracts"
+}
