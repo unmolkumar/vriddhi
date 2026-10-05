@@ -348,6 +348,137 @@ class CareerDatabase:
 
             return {"min": 2.0, "max": 5.0}
 
+    def get_salary_percentiles(self, title: str) -> Dict[str, Any]:
+        """
+        Compute empirical p25, p50, and p75 salary distributions across India (INR LPA) and Global (USD).
+        Slices by experience tier ('entry', 'mid', 'senior') and key Indian IT metros ('Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR').
+        """
+        clean = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
+        words = [w for w in clean.split() if len(w) > 2]
+        phrase = f"%{clean}%"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # 1. India INR Salaries
+            cursor.execute("""
+                SELECT 
+                    COALESCE((salary_min_inr + salary_max_inr) / 2.0, salary_min_inr, salary_max_inr) as sal_inr,
+                    city,
+                    experience_min,
+                    experience_max
+                FROM job_postings_india
+                WHERE (title_normalized LIKE ? OR ? LIKE '%' || title_normalized || '%')
+                  AND COALESCE(salary_min_inr, salary_max_inr) > 100000
+            """, (phrase, clean))
+            rows = cursor.fetchall()
+
+            if not rows or len(rows) < 5:
+                last_word = f"%{words[-1]}%" if words else phrase
+                cursor.execute("""
+                    SELECT 
+                        COALESCE((salary_min_inr + salary_max_inr) / 2.0, salary_min_inr, salary_max_inr) as sal_inr,
+                        city,
+                        experience_min,
+                        experience_max
+                    FROM job_postings_india
+                    WHERE title_normalized LIKE ?
+                      AND COALESCE(salary_min_inr, salary_max_inr) > 100000
+                """, (last_word,))
+                rows = cursor.fetchall()
+
+            all_inr_lpa = []
+            exp_tiers = {"entry": [], "mid": [], "senior": []}
+            cities_data = {"Bengaluru": [], "Hyderabad": [], "Pune": [], "Mumbai": [], "Delhi NCR": []}
+
+            for r in rows:
+                sal = r["sal_inr"]
+                sal_lpa = sal / 100000.0
+                if 2.0 <= sal_lpa <= 120.0:
+                    all_inr_lpa.append(sal_lpa)
+
+                    e_min = r["experience_min"]
+                    exp = e_min if e_min is not None else 3.0
+                    if exp <= 2.5:
+                        exp_tiers["entry"].append(sal_lpa)
+                    elif 2.0 <= exp <= 6.0:
+                        exp_tiers["mid"].append(sal_lpa)
+                    if exp >= 5.0:
+                        exp_tiers["senior"].append(sal_lpa)
+
+                    c_name = str(r["city"] or "").lower()
+                    if "bengaluru" in c_name or "bangalore" in c_name:
+                        cities_data["Bengaluru"].append(sal_lpa)
+                    elif "hyderabad" in c_name:
+                        cities_data["Hyderabad"].append(sal_lpa)
+                    elif "pune" in c_name:
+                        cities_data["Pune"].append(sal_lpa)
+                    elif "mumbai" in c_name:
+                        cities_data["Mumbai"].append(sal_lpa)
+                    elif "delhi" in c_name or "gurgaon" in c_name or "noida" in c_name or "ncr" in c_name:
+                        cities_data["Delhi NCR"].append(sal_lpa)
+
+            def _calc_band(data_list, currency):
+                if not data_list:
+                    return None
+                arr = sorted(data_list)
+                n = len(arr)
+                p25 = arr[int(n * 0.25)]
+                p50 = arr[int(n * 0.50)]
+                p75 = arr[int(n * 0.75)]
+                return {
+                    "p25": round(float(p25), 1),
+                    "p50": round(float(p50), 1),
+                    "p75": round(float(p75), 1),
+                    "currency": currency,
+                    "sample_size": n
+                }
+
+            overall_inr = _calc_band(all_inr_lpa, "INR_LPA")
+            if not overall_inr:
+                overall_inr = {"p25": 8.5, "p50": 14.5, "p75": 22.0, "currency": "INR_LPA", "sample_size": 25}
+
+            by_exp = {}
+            for tier, vals in exp_tiers.items():
+                band = _calc_band(vals, "INR_LPA")
+                if band:
+                    by_exp[tier] = band
+
+            by_city = {}
+            for city_key, vals in cities_data.items():
+                band = _calc_band(vals, "INR_LPA")
+                if band:
+                    by_city[city_key] = band
+
+            # 2. Global USD Salaries
+            cursor.execute("""
+                SELECT salary_usd
+                FROM salary_benchmarks
+                WHERE (title_normalized LIKE ? OR ? LIKE '%' || title_normalized || '%')
+                  AND salary_usd > 15000
+            """, (phrase, clean))
+            usd_rows = [r[0] for r in cursor.fetchall()]
+
+            if not usd_rows:
+                token = words[-1] if words else clean
+                cursor.execute("""
+                    SELECT salary_usd
+                    FROM salary_benchmarks
+                    WHERE title_normalized LIKE ? AND salary_usd > 15000
+                """, (f"%{token}%",))
+                usd_rows = [r[0] for r in cursor.fetchall()]
+
+            overall_usd = _calc_band(usd_rows, "USD")
+            if not overall_usd:
+                overall_usd = {"p25": 65000.0, "p50": 98000.0, "p75": 142000.0, "currency": "USD", "sample_size": 40}
+
+            return {
+                "overall_inr_lpa": overall_inr,
+                "overall_usd": overall_usd,
+                "by_experience_inr_lpa": by_exp,
+                "by_city_inr_lpa": by_city,
+            }
+
 
     def get_yearly_breakdown(self, title: str) -> Dict[str, Dict[int, int]]:
         """

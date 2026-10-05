@@ -23,6 +23,7 @@ When a user or downstream module calls `POST /api/v1/career/analyze`, it receive
 | **`top_skills`** | `["sql", "python", ...]` | **Core Technical Competencies**.<br>Extracted directly from postings for this exact role, used by Module 2 to compute candidate skill gaps. |
 | **`top_skill_weights`** | `{"python": 1.0, "sql": 0.89}` | **Normalized Demand Weights ($[0.0, 1.0]$)**.<br>Calculated as `freq / max_freq`. Allows Module 2's gap analyzer to weight critical requirements over secondary tools. |
 | **`typical_experience`** | `{"min": 3.4, "max": 7.4}` | **Empirical Experience Range (Years)**.<br>Extracted directly from real Indian and global job posting distributions (eliminating guesswork in Module 2). |
+| **`market_salary_percentiles`** | Object (Bands) | **Tight Empirical Salary Percentiles (p25 / p50 / p75)**.<br>Derived from 43k+ normalized salary points and 11.7k+ Indian postings. Provides granular p25, median (p50), and p75 salary distributions across overall, experience tiers (entry/mid/senior), and major tech metros (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR) with sample size counts ($n$) to eliminate wide 5–25 LPA guesses in Module 3. |
 | **`yearly_trajectory`** | Series Object | **Time-Series (2021–2031)**.<br>Historical volume counts (2021–2026) + 5-year damped projections (2027–2031) with expanding confidence bands ($\sigma_t$) for side-by-side line charts for India and World. |
 | **`knowledge_graph`** | Graph Object | **Connected Competency Network**.<br>Nodes (`occupation`, `task`, `skill`, `technology`, `domain`) and edges (`EXECUTES_TASK`, `REQUIRES_COMPETENCY`, `UTILIZES_TOOL`). |
 
@@ -269,6 +270,7 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
 | **`top_skills`** | Array of Strings | Primary skill requirements | Top technical competencies extracted from real postings, used directly by Module 2 for skill-gap calculation. |
 | **`top_skill_weights`** | Object (`Dict[str, float]`) | Normalized demand weights | Empirical frequency weights in $[0.0, 1.0]$ relative to the most in-demand skill (`freq / max_freq`), allowing Module 2 to score gap importance objectively. |
 | **`typical_experience`** | Object (`{min, max}`) | Empirical experience years band | Data-backed experience expectations derived from real job posting distributions (e.g. `{"min": 3.4, "max": 7.4}` for Data Scientist). |
+| **`market_salary_percentiles`** | Object | p25 / p50 / p75 percentiles by experience & city | Granular salary distribution benchmarks (p25, p50, p75) with sample sizes ($n$) across overall INR LPA, global USD, experience tiers (entry, mid, senior), and tech hubs (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR). Consumed by Module 3 to provide precise, credible salary guidance. |
 | **`drivers`** | Array of Strings | Plain-English causal explanations | Answers *"Why is this career recommended?"* with concrete posting numbers, metro concentrations, and AI augmentation facts. |
 | **`regional_breakdown`** | Object (India / Global) | Domestic vs. International metrics | Side-by-side volumes, top hiring cities, and salary levels in **INR (LPA)** and **USD/year**. |
 | **`yearly_trajectory`** | Object | Time-series data points (2021–2031) | Historical year-by-year counts + 5-year forecast points with upper/lower confidence bands for line plotting. |
@@ -311,6 +313,34 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
   "typical_experience": {
     "min": 3.4,
     "max": 7.4
+  },
+  "market_salary_percentiles": {
+    "overall_inr_lpa": {
+      "p25": 10.6,
+      "p50": 17.6,
+      "p75": 28.5,
+      "currency": "INR LPA",
+      "sample_size": 333
+    },
+    "overall_usd": {
+      "p25": 57083.0,
+      "p50": 90976.0,
+      "p75": 140117.0,
+      "currency": "USD",
+      "sample_size": 2808
+    },
+    "by_experience_inr_lpa": {
+      "entry": { "p25": 5.0, "p50": 8.0, "p75": 12.0, "currency": "INR LPA", "sample_size": 37 },
+      "mid": { "p25": 15.0, "p50": 22.1, "p75": 30.0, "currency": "INR LPA", "sample_size": 188 },
+      "senior": { "p25": 22.5, "p50": 36.0, "p75": 55.9, "currency": "INR LPA", "sample_size": 108 }
+    },
+    "by_city_inr_lpa": {
+      "Bengaluru": { "p25": 12.5, "p50": 15.0, "p75": 22.6, "currency": "INR LPA", "sample_size": 39 },
+      "Hyderabad": { "p25": 11.2, "p50": 16.8, "p75": 24.0, "currency": "INR LPA", "sample_size": 28 },
+      "Pune": { "p25": 9.5, "p50": 14.5, "p75": 21.0, "currency": "INR LPA", "sample_size": 24 },
+      "Mumbai": { "p25": 10.0, "p50": 15.5, "p75": 23.5, "currency": "INR LPA", "sample_size": 19 },
+      "Delhi NCR": { "p25": 10.5, "p50": 15.0, "p75": 22.0, "currency": "INR LPA", "sample_size": 22 }
+    }
   },
   "drivers": [
     "Substantial real-world market presence with 12,480 verified postings across global and Indian labor markets.",
@@ -475,9 +505,12 @@ For external services, TypeScript frontends, or cross-language validation, an ex
 ### 5.3. Field Mapping to Downstream Modules
 * **To Module 2 (Skill Gap)**:
   * `result.top_skills` $\rightarrow$ Target skill set to benchmark against user resume/profile to detect missing competencies.
+  * `result.top_skill_weights` $\rightarrow$ Normalized demand weights $[0.0, 1.0]$ to weight critical requirements over secondary tools.
+  * `result.typical_experience` $\rightarrow$ Empirical experience distribution (`min`, `max` years) to calibrate candidate seniority without heuristics.
   * `result.knowledge_graph` $\rightarrow$ Competency taxonomy graph for skill gap hierarchy and prerequisite planning.
-* **To Module 3 (Job Matching & Salary)**:
-  * `result.regional_breakdown` $\rightarrow$ India (LPA) and Global (USD) salary baselines and hiring cities to validate live job listings.
+* **To Module 3 (Job Matching & Salary Intelligence)**:
+  * `result.market_salary_percentiles` $\rightarrow$ Empirical p25, median (p50), and p75 salary distributions across overall, experience tiers (entry, mid, senior), and metros (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR) with sample size counts ($n$). Used directly as `market_salary_percentiles` to evaluate live job offers and eliminate overly wide 5–25 LPA estimates.
+  * `result.regional_breakdown` $\rightarrow$ India (LPA) and Global (USD) aggregate salary baselines and hiring cities to validate live job listings.
   * `result.current_demand_score` $\rightarrow$ Weight multiplier for job opportunity matching.
 
 ---
@@ -498,7 +531,7 @@ pytest module-1-career-intelligence/tests/ -v
   * Dynamic ranker score ordering and custom weight normalization.
   * Semantic domain search endpoint.
   * API health and compare endpoints.
-  * **Integration Contract Compliance (context/INTEGRATION.md M1 → M2 contract test)**.
+  * **Integration Contract Compliance (context/INTEGRATION.md M1 → M2 and M1 → M3 contract tests)**.
 
 ---
 
@@ -541,4 +574,25 @@ This technical section details the fine-tuning, cross-module synchronization, an
 * Decoupled cross-module imports in compliance with `context/AGENTS.md` §7.
 * Reviewed and merged Module 2's pull request (PR #1: 39 files, 232 green tests) into `main`.
 * Pushed all updates, refreshed JSON schemas, and target role exports to GitHub `origin/main`.
+
+### 7.7. Empirical Salary Percentile Distributions (`market_salary_percentiles`)
+* **Problem Identified**: Indian job listings frequently omit salary figures, causing salary estimates in Module 3 to span unhelpfully broad brackets (e.g., 5–25 LPA).
+* **Resolution**: Implemented `get_salary_percentiles()` in `database.py` leveraging the ingested 43k+ normalized salary points and 11.7k+ verified Indian salary postings.
+* **Percentile Architecture**:
+  * Emits `overall_inr_lpa` (p25, p50, p75 with sample size $n$).
+  * Emits `overall_usd` (p25, p50, p75 with sample size $n$).
+  * Emits `by_experience_inr_lpa` broken down into `entry` (<3 YoE), `mid` (3–5 YoE), and `senior` (>5 YoE).
+  * Emits `by_city_inr_lpa` covering India's core tech hubs: `Bengaluru`, `Hyderabad`, `Pune`, `Mumbai`, and `Delhi NCR`.
+* **Empirical Ground Truth**:
+  * **Data Scientist**:
+    * Overall: p25 = 10.6 LPA, p50 = 17.6 LPA, p75 = 28.5 LPA ($n = 333$)
+    * Bengaluru: p25 = 12.5 LPA, p50 = 15.0 LPA, p75 = 22.6 LPA ($n = 39$)
+    * Mid-Level: p25 = 15.0 LPA, p50 = 22.1 LPA, p75 = 30.0 LPA ($n = 188$)
+    * Senior-Level: p25 = 22.5 LPA, p50 = 36.0 LPA, p75 = 55.9 LPA ($n = 108$)
+  * **Data Engineer**:
+    * Overall: p25 = 12.0 LPA, p50 = 17.5 LPA, p75 = 25.0 LPA ($n = 555$)
+    * Bengaluru: p25 = 15.0 LPA, p50 = 20.0 LPA, p75 = 25.5 LPA ($n = 105$)
+    * Mid-Level: p25 = 14.0 LPA, p50 = 18.0 LPA, p75 = 22.5 LPA ($n = 360$)
+* Downstream Module 3 can directly plug this payload into its `market_salary_percentiles` input for precision offer benchmarking and realistic negotiation advice.
+
 

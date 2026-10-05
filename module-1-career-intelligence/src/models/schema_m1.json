@@ -100,6 +100,50 @@
       "title": "KnowledgeGraph",
       "type": "object"
     },
+    "MarketSalaryPercentiles": {
+      "properties": {
+        "overall_inr_lpa": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPercentileBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "overall_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPercentileBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "by_experience_inr_lpa": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SalaryPercentileBand"
+          },
+          "description": "Percentiles by tier: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)",
+          "title": "By Experience Inr Lpa",
+          "type": "object"
+        },
+        "by_city_inr_lpa": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SalaryPercentileBand"
+          },
+          "description": "Percentiles by metro: 'Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR'",
+          "title": "By City Inr Lpa",
+          "type": "object"
+        }
+      },
+      "title": "MarketSalaryPercentiles",
+      "type": "object"
+    },
     "RegionMetricDetail": {
       "properties": {
         "region": {
@@ -161,6 +205,44 @@
         "posting_growth_yoy_pct"
       ],
       "title": "RegionMetricDetail",
+      "type": "object"
+    },
+    "SalaryPercentileBand": {
+      "properties": {
+        "p25": {
+          "description": "25th percentile salary",
+          "title": "P25",
+          "type": "number"
+        },
+        "p50": {
+          "description": "50th percentile (median) salary",
+          "title": "P50",
+          "type": "number"
+        },
+        "p75": {
+          "description": "75th percentile salary",
+          "title": "P75",
+          "type": "number"
+        },
+        "currency": {
+          "description": "'INR_LPA' or 'USD'",
+          "title": "Currency",
+          "type": "string"
+        },
+        "sample_size": {
+          "description": "Count of empirical salary observations",
+          "title": "Sample Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "p25",
+        "p50",
+        "p75",
+        "currency",
+        "sample_size"
+      ],
+      "title": "SalaryPercentileBand",
       "type": "object"
     },
     "TaskExposureDetail": {
@@ -388,6 +470,18 @@
       "description": "Typical experience years band {min, max} derived from empirical postings",
       "title": "Typical Experience",
       "type": "object"
+    },
+    "market_salary_percentiles": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketSalaryPercentiles"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Empirical salary percentiles (p25, p50, p75) by experience tier and top metros"
     },
     "yearly_trajectory": {
       "anyOf": [

@@ -28,6 +28,20 @@ class RegionMetricDetail(BaseModel):
     top_locations: List[str] = []
     top_skills: List[str] = []
 
+class SalaryPercentileBand(BaseModel):
+    p25: float = Field(..., description="25th percentile salary")
+    p50: float = Field(..., description="50th percentile (median) salary")
+    p75: float = Field(..., description="75th percentile salary")
+    currency: str = Field(..., description="'INR_LPA' or 'USD'")
+    sample_size: int = Field(..., description="Count of empirical salary observations")
+
+
+class MarketSalaryPercentiles(BaseModel):
+    overall_inr_lpa: Optional[SalaryPercentileBand] = None
+    overall_usd: Optional[SalaryPercentileBand] = None
+    by_experience_inr_lpa: Dict[str, SalaryPercentileBand] = Field(default_factory=dict, description="Percentiles by tier: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)")
+    by_city_inr_lpa: Dict[str, SalaryPercentileBand] = Field(default_factory=dict, description="Percentiles by metro: 'Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR'")
+
 
 class YearlyDataPoint(BaseModel):
     year: int
@@ -82,6 +96,7 @@ class CareerAnalysisResponse(BaseModel):
     sample_tasks: List[TaskExposureDetail] = Field(default_factory=list, description="Sample task transformation breakdown")
     regional_breakdown: Dict[str, RegionMetricDetail] = Field(default_factory=dict, description="Side-by-side India vs Global metrics")
     typical_experience: Dict[str, float] = Field(default_factory=dict, description="Typical experience years band {min, max} derived from empirical postings")
+    market_salary_percentiles: Optional[MarketSalaryPercentiles] = Field(None, description="Empirical salary percentiles (p25, p50, p75) by experience tier and top metros")
     yearly_trajectory: Optional[YearlyTrajectory] = Field(None, description="Past year-wise trend + 5-year forecast points")
     knowledge_graph: Optional[KnowledgeGraph] = Field(None, description="Career knowledge graph (nodes and edges)")
 

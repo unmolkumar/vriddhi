@@ -123,8 +123,9 @@ class CareerIntelligenceService:
             top_market_skills=all_skills
         )
 
-        # 8. Derive empirical experience band
+        # 8. Derive empirical experience band & market salary percentiles
         exp_band = self.db.get_experience_band(target_name)
+        salary_percentiles = self.db.get_salary_percentiles(target_name)
 
         return CareerAnalysisResponse(
             occupation=target_name,
@@ -141,6 +142,7 @@ class CareerIntelligenceService:
             sample_tasks=sample_task_details,
             regional_breakdown=regional_breakdown,
             typical_experience=exp_band,
+            market_salary_percentiles=salary_percentiles,
             yearly_trajectory=forecast.get("trajectory"),
             knowledge_graph=kg
         )

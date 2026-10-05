@@ -295,3 +295,16 @@ def test_integration_contract_compliance_m1_to_m2(service):
     for sk, weight in data["top_skill_weights"].items():
         assert 0.0 <= weight <= 1.0
 
+    assert "typical_experience" in data
+    assert "min" in data["typical_experience"]
+    assert "max" in data["typical_experience"]
+    assert data["typical_experience"]["min"] <= data["typical_experience"]["max"]
+
+    assert "market_salary_percentiles" in data
+    sal_pct = data["market_salary_percentiles"]
+    assert sal_pct is not None
+    assert "overall_inr_lpa" in sal_pct
+    assert sal_pct["overall_inr_lpa"]["p25"] <= sal_pct["overall_inr_lpa"]["p50"] <= sal_pct["overall_inr_lpa"]["p75"]
+    assert sal_pct["overall_inr_lpa"]["sample_size"] > 0
+
+

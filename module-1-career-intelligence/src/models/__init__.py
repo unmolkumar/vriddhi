@@ -15,6 +15,8 @@ from .schemas import (
     DomainSearchRequest,
     DomainSearchItem,
     DomainSearchResponse,
+    SalaryPercentileBand,
+    MarketSalaryPercentiles,
 )
 
 __all__ = [
@@ -26,6 +28,8 @@ __all__ = [
     "RankingWeightConfig",
     "RegionMetricDetail",
     "TaskExposureDetail",
+    "SalaryPercentileBand",
+    "MarketSalaryPercentiles",
     "YearlyDataPoint",
     "YearlyTrajectory",
     "GraphNode",
