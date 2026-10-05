@@ -133,3 +133,25 @@ def test_search_accepts_module_1_object_and_reports_method(wired):
     assert market["sources_used"] == ["module_1_percentiles"] and market["method"] == "experience_bucket"
     assert market["estimated_median"] == 36 * L                                  # senior tier, Bengaluru too small
     assert body["candidate_value"]["market_position"] == pytest.approx(2.5 / 7, abs=1e-3)   # 7.5 in 5-12
+
+
+# --- demo-scoped pre-warm ----------------------------------------------------------------------------
+
+def _prewarm():
+    import importlib.util
+    from pathlib import Path
+    path = Path(__file__).parent.parent / "scripts" / "prewarm.py"
+    spec = importlib.util.spec_from_file_location("prewarm", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_prewarm_quota_plan():
+    pw = _prewarm()
+    demo = [(r, c) for r in ("Data Scientist", "Data Analyst", "Backend Developer") for c in ("Bengaluru", "Pune")]
+    assert pw.jsearch_plan(demo, with_jsearch=True, with_salary=False) == {"search": 6, "salary": 0}
+    every = [(r, c) for r in pw.ROLES for c in pw.CITIES]
+    assert pw.jsearch_plan(every, with_jsearch=False, with_salary=True) == {"search": 0, "salary": 35}
+    assert pw.jsearch_plan([("X", "Delhi-NCR")], with_jsearch=True, with_salary=True) == {"search": 3, "salary": 1}
+    assert pw._list(" Pune, ,Bengaluru ", []) == ["Pune", "Bengaluru"] and pw._list(None, ["a"]) == ["a"]
