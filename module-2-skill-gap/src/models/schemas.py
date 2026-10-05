@@ -240,6 +240,27 @@ class GapAnalysisResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class SkillExtractRequest(BaseModel):
+    """Plain text such as a job description. Skills only: no evidence or levels."""
+    text: str = Field(description="Job description or other text, up to 50,000 characters")
+    use_llm: bool = Field(default=False, description="Also run the Groq pass for skills the dictionary misses")
+
+
+class ExtractedTextSkill(BaseModel):
+    id: str = Field(description="Taxonomy id (module-1 compatible), or a slug when not in the taxonomy")
+    display: str
+    category: str | None = None
+    maps_to: str | None = Field(default=None, description="Coarser taxonomy id, e.g. postgresql -> sql")
+    in_taxonomy: bool
+    source: Literal["dictionary", "llm"]
+    matches: list[str] = Field(default_factory=list, description="Surface forms found in the text")
+
+
+class SkillExtractResponse(BaseModel):
+    skills: list[ExtractedTextSkill] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
 class AnalyzeResumeResponse(BaseModel):
     profile: UserProfile
     gap_analysis: GapAnalysisResult | None = None
@@ -255,7 +276,7 @@ class HealthResponse(BaseModel):
 
 
 EXPORTED_MODELS = [UserProfile, ManualProfileInput, GapAnalysisRequest, GapAnalysisResult,
-                   AnalyzeResumeResponse, HealthResponse, ErrorResponse]
+                   AnalyzeResumeResponse, SkillExtractRequest, SkillExtractResponse, HealthResponse, ErrorResponse]
 
 
 def export_json_schema() -> dict:

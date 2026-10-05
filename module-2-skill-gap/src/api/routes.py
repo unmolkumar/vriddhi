@@ -9,14 +9,16 @@ from fastapi.responses import JSONResponse
 from src.engines import similarity
 from src.engines.gap_analyzer import analyze_gap
 from src.engines.profile_builder import build_profile
-from src.engines.skill_extractor import taxonomy
+from src.engines.skill_extractor import extract_skills, resolve_skill, taxonomy
 from src.models.schemas import (
-    AnalyzeResumeResponse, ErrorResponse, GapAnalysisRequest, GapAnalysisResult, HealthResponse,
+    AnalyzeResumeResponse, ErrorResponse, ExtractedTextSkill, GapAnalysisRequest, GapAnalysisResult, HealthResponse,
+    SkillExtractRequest, SkillExtractResponse,
 )
 from src.parsers.resume_parser import MAX_FILE_BYTES, ResumeParseError, parse_document
 
 VERSION = "1.0.0"
 ERROR_STATUS = {"FILE_TOO_LARGE": 413, "UNSUPPORTED_FORMAT": 415, "TOO_MANY_PAGES": 413}
+MAX_EXTRACT_CHARS = 50_000  # a long job description is ~10k characters
 
 router = APIRouter(prefix="/api/v1")
 _errors = {400: {"model": ErrorResponse}, 413: {"model": ErrorResponse}, 415: {"model": ErrorResponse},
@@ -66,3 +68,22 @@ def gap_analysis(request: GapAnalysisRequest):
         return analyze_gap(request)
     except ValueError as e:
         return error(422, "INVALID_REQUEST", str(e))
+
+
+@router.post("/skills/extract", response_model=SkillExtractResponse, responses=_errors)
+def extract(request: SkillExtractRequest):
+    """Skills in a job description or other plain text. No evidence or levels: that's for resumes."""
+    if not request.text.strip():
+        return error(422, "EMPTY_TEXT", "text is empty.")
+    if len(request.text) > MAX_EXTRACT_CHARS:
+        return error(413, "TEXT_TOO_LARGE", f"text is longer than {MAX_EXTRACT_CHARS:,} characters.")
+    warnings = []
+    if request.use_llm and not os.getenv("GROQ_API_KEY", "").strip():
+        warnings.append("use_llm was requested but no GROQ_API_KEY is configured; dictionary results only.")
+    skills = []
+    for hit in extract_skills(request.text, use_llm=request.use_llm):
+        entry = resolve_skill(hit.id) if hit.in_taxonomy else None
+        skills.append(ExtractedTextSkill(**hit.model_dump(), maps_to=entry.get("maps_to") if entry else None))
+    if not skills:
+        warnings.append("No known skills found in the text.")
+    return SkillExtractResponse(skills=skills, warnings=warnings)

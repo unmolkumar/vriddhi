@@ -119,6 +119,39 @@ def test_openapi_lists_endpoints():
     assert {"/api/v1/skills/analyze_resume", "/api/v1/skills/gap_analysis", "/api/v1/health"} <= set(paths)
 
 
+# --- /skills/extract ---------------------------------------------------------------------------
+
+JD = ("Backend engineer: Java, Spring Boot, PostgreSQL, Docker and Kubernetes. "
+      "Infrastructure automation with Terraform is a plus.")
+
+
+def test_extract_job_description():
+    resp = client.post("/api/v1/skills/extract", json={"text": JD})
+    assert resp.status_code == 200
+    skills = {s["id"]: s for s in resp.json()["skills"]}
+    assert {"java", "spring_boot", "postgresql", "docker", "kubernetes", "automation", "terraform"} <= set(skills)
+    assert skills["postgresql"]["maps_to"] == "sql" and skills["postgresql"]["in_taxonomy"]
+    assert skills["java"]["source"] == "dictionary" and skills["java"]["matches"] == ["Java"]
+    assert "level" not in skills["java"] and "evidence" not in skills["java"]  # text, not a resume
+    assert resp.json()["warnings"] == []
+
+
+def test_extract_warnings():
+    body = client.post("/api/v1/skills/extract", json={"text": "We value teamwork.", "use_llm": True}).json()
+    assert body["skills"] == []
+    assert any("GROQ_API_KEY" in w for w in body["warnings"]) and any("No known skills" in w for w in body["warnings"])
+
+
+@pytest.mark.parametrize("payload, status, code", [
+    ({"text": "   "}, 422, "EMPTY_TEXT"),
+    ({"text": "x" * 50_001}, 413, "TEXT_TOO_LARGE"),
+    ({}, 422, "INVALID_REQUEST"),
+    ({"text": 42}, 422, "INVALID_REQUEST"),
+], ids=["empty", "too_large", "missing", "wrong_type"])
+def test_extract_errors(payload, status, code):
+    assert_error(client.post("/api/v1/skills/extract", json=payload), status, code)
+
+
 def test_gap_analysis_with_only_categories_is_422():
     resp = client.post("/api/v1/skills/gap_analysis", json={
         "target_role": "X", "required_skills": ["data"], "manual_profile": {"skills": ["python"]}})
