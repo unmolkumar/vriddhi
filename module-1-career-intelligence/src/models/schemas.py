@@ -76,6 +76,7 @@ class CareerAnalysisResponse(BaseModel):
     confidence_score: float = Field(..., ge=0.0, le=1.0, description="Statistical confidence in predictions (0-1)")
     outlook: str = Field(..., description="Summary outlook (e.g. 'Strong Growth', 'Moderate Growth', 'Stable', 'Transforming')")
     top_skills: List[str] = Field(default_factory=list, description="Top skills in demand for this occupation")
+    top_skill_weights: Dict[str, float] = Field(default_factory=dict, description="Normalized demand weights (0.0-1.0) for top skills based on posting frequency")
     drivers: List[str] = Field(default_factory=list, description="Supporting evidence drivers explaining the outlook")
     tasks_analyzed: int = Field(0, description="Count of granular O*NET tasks evaluated")
     sample_tasks: List[TaskExposureDetail] = Field(default_factory=list, description="Sample task transformation breakdown")

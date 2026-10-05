@@ -357,30 +357,29 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
 
 Per `context/INTEGRATION.md`, Module 1 is the foundational source of truth for occupations, demand trends, AI exposure, and required competencies. Other modules (and the root integration orchestrator) can consume this in two ways:
 
-### 5.1. Direct In-Process Python Import
-Other modules can import the Pydantic models and service directly from `src`:
+### 5.1. Decoupled Contract Consumption (Strict AGENTS.md §7 Isolation)
+Per `context/AGENTS.md`, modules maintain strict boundary isolation during independent development. There are **no cross-module private Python imports** across hyphenated directory names.
 
-```python
-# In Module 2 (Skill Gap) or Integration Orchestrator:
-from src import (
-    CareerIntelligenceService,
-    CareerAnalysisResponse,
-    CareerAnalysisRequest,
-    DomainSearchResponse,
-)
+Instead, downstream modules and integration orchestrators consume Module 1 via its standard contracts:
 
-service = CareerIntelligenceService()
-result: CareerAnalysisResponse = service.analyze_career("Data Engineer", region="all")
+1. **REST API Interface (Live Services)**:
+   Module 1 serves on `http://localhost:8001` (run via `uvicorn src.api.main:app --port 8001` inside `module-1-career-intelligence`):
+   ```python
+   import httpx
 
-# Access strictly validated contract fields:
-target_role = result.occupation          # "Data Engineer"
-growth = result.growth_score             # 0.76
-demand = result.current_demand_score     # 0.91
-ai_exposure = result.ai_exposure_score   # 0.45
-required_skills = result.top_skills      # ['python', 'sql', 'spark', 'cloud']
+   # In Integration Orchestrator:
+   resp = httpx.post("http://localhost:8001/api/v1/career/analyze", json={
+       "occupation": "Data Engineer",
+       "region": "all"
+   })
+   target = resp.json()
+   # target["top_skills"] -> ["python", "sql", "spark", "cloud"]
+   # target["top_skill_weights"] -> {"python": 1.0, "sql": 0.85, ...}
+   ```
 
-# Feed directly into Module 2 skill gap matrix!
-```
+2. **Schema-Compliant Mock Fixtures (Isolated Unit Testing)**:
+   Module 2 and Module 3 test against static JSON mock fixtures conforming to `src/models/schema_m1.json`, ensuring zero test coupling and 100% independent CI.
+
 
 ### 5.2. Language-Agnostic JSON Schema
 For external services, TypeScript frontends, or cross-language validation, an exportable JSON Schema is provided at:

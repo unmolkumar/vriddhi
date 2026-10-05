@@ -192,8 +192,8 @@ class CareerDatabase:
                 }
             }
 
-    def get_top_skills(self, title: str, limit: int = 8) -> Dict[str, List[str]]:
-        """Retrieve top extracted skills for an occupation in India and Global markets."""
+    def get_top_skills(self, title: str, limit: int = 8) -> Dict[str, Any]:
+        """Retrieve top extracted skills and normalized frequency weights for an occupation in India and Global markets."""
         clean_title = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
         words = [w for w in clean_title.split() if len(w) > 2]
         like_pattern = f"%{words[0]}%" if words else f"%{clean_title}%"
@@ -210,7 +210,8 @@ class CareerDatabase:
                 ORDER BY freq DESC
                 LIMIT ?
             """, (like_pattern, clean_title, limit))
-            global_skills = [row["skill_normalized"] for row in cursor.fetchall()]
+            global_rows = cursor.fetchall()
+            global_skills = [row["skill_normalized"] for row in global_rows]
 
             # India top skills
             cursor.execute("""
@@ -221,17 +222,41 @@ class CareerDatabase:
                 ORDER BY freq DESC
                 LIMIT ?
             """, (like_pattern, clean_title, limit))
-            india_skills = [row["skill_normalized"] for row in cursor.fetchall()]
+            india_rows = cursor.fetchall()
+            india_skills = [row["skill_normalized"] for row in india_rows]
 
             # If empty context, fall back to aggregate top skills
             if not global_skills:
-                cursor.execute("SELECT skill_normalized FROM skill_demand WHERE region = 'global' GROUP BY skill_normalized ORDER BY SUM(frequency) DESC LIMIT ?", (limit,))
-                global_skills = [row[0] for row in cursor.fetchall()]
+                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'global' GROUP BY skill_normalized ORDER BY freq DESC LIMIT ?", (limit,))
+                global_rows = cursor.fetchall()
+                global_skills = [row["skill_normalized"] for row in global_rows]
             if not india_skills:
-                cursor.execute("SELECT skill_normalized FROM skill_demand WHERE region = 'india' GROUP BY skill_normalized ORDER BY SUM(frequency) DESC LIMIT ?", (limit,))
-                india_skills = [row[0] for row in cursor.fetchall()]
+                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'india' GROUP BY skill_normalized ORDER BY freq DESC LIMIT ?", (limit,))
+                india_rows = cursor.fetchall()
+                india_skills = [row["skill_normalized"] for row in india_rows]
 
-            return {"global": global_skills, "india": india_skills}
+            # Compute combined frequencies and normalized weights
+            combined_freqs: Dict[str, int] = {}
+            for row in global_rows:
+                sk = row["skill_normalized"]
+                fr = row["freq"] or 1
+                combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
+            for row in india_rows:
+                sk = row["skill_normalized"]
+                fr = row["freq"] or 1
+                combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
+
+            max_freq = max(combined_freqs.values()) if combined_freqs else 1
+            weights = {
+                sk: round(freq / max_freq, 4)
+                for sk, freq in combined_freqs.items()
+            }
+
+            return {
+                "global": global_skills,
+                "india": india_skills,
+                "weights": weights,
+            }
 
     def get_yearly_breakdown(self, title: str) -> Dict[str, Dict[int, int]]:
         """

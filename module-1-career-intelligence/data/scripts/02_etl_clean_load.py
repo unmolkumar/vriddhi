@@ -896,7 +896,7 @@ def extract_skill_demand(conn: sqlite3.Connection) -> int:
         skills_raw, year, month, title = row
         for skill in _split_skills(skills_raw):
             ns = normalize_skill(skill)
-            if ns and len(ns) > 1 and len(ns) < 50:
+            if ns and (len(ns) > 1 or ns in ('c', 'r')) and len(ns) < 50:
                 batch.append((skill, ns, 'global', 'linkedin', year or 2024, month or 1, 1, title))
                 total += 1
         if len(batch) >= 10000:
@@ -919,7 +919,7 @@ def extract_skill_demand(conn: sqlite3.Connection) -> int:
         skills_raw, year, month, title = row
         for skill in _split_skills(skills_raw):
             ns = normalize_skill(skill)
-            if ns and len(ns) > 1 and len(ns) < 50:
+            if ns and (len(ns) > 1 or ns in ('c', 'r')) and len(ns) < 50:
                 batch.append((skill, ns, 'india', 'naukri', year or 2024, month or 1, 1, title))
                 total += 1
         if len(batch) >= 10000:

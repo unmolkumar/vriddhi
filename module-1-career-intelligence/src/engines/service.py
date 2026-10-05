@@ -132,6 +132,7 @@ class CareerIntelligenceService:
             confidence_score=forecast["confidence_score"],
             outlook=forecast["outlook"],
             top_skills=all_skills[:6],
+            top_skill_weights={sk: skills_data.get("weights", {}).get(sk, 1.0) for sk in all_skills[:6]},
             drivers=drivers,
             tasks_analyzed=ai_metrics.get("task_count", 0),
             sample_tasks=sample_task_details,
