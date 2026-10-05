@@ -29,7 +29,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 278 tests; the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 285 tests; the live Groq test is skipped without a key
 ```
 
 ## Endpoints
@@ -83,8 +83,8 @@ curl -X POST http://localhost:8002/api/v1/skills/extract -H "Content-Type: appli
 ```json
 {
   "skills": [
-    {"id": "automation", "display": "Automation", "category": "devops", "maps_to": "devops", "in_taxonomy": true, "source": "dictionary", "matches": ["Infrastructure automation"]},
-    {"id": "docker", "display": "Docker", "category": "devops", "maps_to": "containerization", "in_taxonomy": true, "source": "dictionary", "matches": ["Docker"]},
+    {"id": "automation", "display": "Automation", "category": "devops", "maps_to": "devops", "in_taxonomy": true, "is_category": true, "source": "dictionary", "matches": ["Infrastructure automation"]},
+    {"id": "docker", "display": "Docker", "category": "devops", "maps_to": "containerization", "in_taxonomy": true, "is_category": false, "source": "dictionary", "matches": ["Docker"]},
     {"id": "java", "display": "Java", "category": "language", "maps_to": null, "in_taxonomy": true, "source": "dictionary", "matches": ["Java"]},
     {"id": "postgresql", "display": "PostgreSQL", "category": "database", "maps_to": "sql", "in_taxonomy": true, "source": "dictionary", "matches": ["PostgreSQL"]},
     {"id": "spring_boot", "display": "Spring Boot", "category": "framework", "maps_to": "spring", "in_taxonomy": true, "source": "dictionary", "matches": ["Spring Boot"]}
@@ -131,7 +131,7 @@ Abridged response:
 }
 ```
 
-Pass module 1's `top_skill_weights` unchanged to weight skills by real demand (`importance_source: "m1_weights"`). `typical_experience` is optional; without it the band comes from the job title, and `experience_source` in the response says which was used. Module 3 integration notes: [HANDOFF_TO_M3.md](HANDOFF_TO_M3.md).
+Skills carry `is_category`: broad fields like `cloud` or `devops` are explained (with concrete `category_children`) but never put on the roadmap. Pass module 1's `top_skill_weights` unchanged to weight skills by real demand (`importance_source: "m1_weights"`). `typical_experience` is optional; without it the band comes from the job title, and `experience_source` in the response says which was used. Module 3 integration notes: [HANDOFF_TO_M3.md](HANDOFF_TO_M3.md).
 
 A full response for Module 1's Data Scientists target (from `/analyze_resume` profile) is in WORKING.md §5.4 and the test `test_worked_example_data_scientist`.
 
