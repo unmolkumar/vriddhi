@@ -276,6 +276,22 @@
           "description": "Optional id -> weight in [0, 1]",
           "title": "Skill Importance"
         },
+        "top_skill_weights": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's top_skill_weights (id -> normalised demand 0-1), passed through unchanged",
+          "title": "Top Skill Weights"
+        },
         "profile": {
           "anyOf": [
             {
@@ -385,6 +401,7 @@
         "importance_source": {
           "enum": [
             "skill_importance",
+            "m1_weights",
             "knowledge_graph",
             "rank_decay"
           ],

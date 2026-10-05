@@ -109,7 +109,7 @@ class ManualProfileInput(BaseModel):
 MatchStatus = Literal["matched", "adjacent", "missing"]
 MatchReason = Literal["exact", "maps_to", "prerequisite", "semantic"]
 Verdict = Literal["under_skilled", "good_fit", "over_qualified"]
-ImportanceSource = Literal["skill_importance", "knowledge_graph", "rank_decay"]
+ImportanceSource = Literal["skill_importance", "m1_weights", "knowledge_graph", "rank_decay"]
 
 
 class ExperienceRange(BaseModel):
@@ -129,6 +129,8 @@ class GapAnalysisRequest(BaseModel):
     required_skills: list[str] = Field(min_length=1, max_length=50, description="Module 1 top_skills ids, most important first")
     knowledge_graph: dict | None = Field(default=None, description="Module 1 knowledge_graph (nodes, edges), optional")
     skill_importance: dict[str, float] | None = Field(default=None, description="Optional id -> weight in [0, 1]")
+    top_skill_weights: dict[str, float] | None = Field(
+        default=None, description="Module 1's top_skill_weights (id -> normalised demand 0-1), passed through unchanged")
     profile: UserProfile | None = Field(default=None, description="From /analyze_resume")
     manual_profile: ManualProfileInput | None = Field(default=None, description="Typed skills, if there's no resume")
     typical_experience: ExperienceRange | None = Field(

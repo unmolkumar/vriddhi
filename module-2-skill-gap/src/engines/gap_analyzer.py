@@ -15,7 +15,7 @@ from src.models.schemas import (
     UserProfile,
 )
 
-# Importance (priority: skill_importance -> knowledge_graph -> rank decay)
+# Importance (priority: skill_importance -> module 1 top_skill_weights -> knowledge_graph -> rank decay)
 RANK_DECAY = 0.15                     # w_i = 1 / (1 + RANK_DECAY * i), i = position in required_skills
 TOP_RANKED = 3                        # without explicit importance, the first 3 skills need level 3 ...
 TOP_REQUIRED_LEVEL = 3
@@ -83,6 +83,9 @@ def _importance(ids: list[str], req: GapAnalysisRequest, warnings: list[str]) ->
     if req.skill_importance:
         explicit = {_resolve(k)[0]: _clamp(v) for k, v in req.skill_importance.items()}
         source = "skill_importance"
+    elif req.top_skill_weights:
+        explicit = {_resolve(k)[0]: _clamp(v) for k, v in req.top_skill_weights.items()}
+        source = "m1_weights"
     elif req.knowledge_graph:
         explicit = _kg_importance(req.knowledge_graph, warnings)
         source = "knowledge_graph"

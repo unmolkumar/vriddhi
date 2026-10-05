@@ -123,3 +123,11 @@ def test_gap_analysis_with_only_categories_is_422():
     resp = client.post("/api/v1/skills/gap_analysis", json={
         "target_role": "X", "required_skills": ["data"], "manual_profile": {"skills": ["python"]}})
     assert_error(resp, 422, "INVALID_REQUEST")
+
+
+def test_gap_analysis_accepts_m1_top_skill_weights():
+    resp = client.post("/api/v1/skills/gap_analysis", json={
+        "target_role": "DevOps Engineer", "required_skills": ["devops", "linux", "kubernetes", "automation", "docker", "aws"],
+        "top_skill_weights": {"devops": 1.0, "linux": 0.8, "kubernetes": 0.7, "automation": 0.5, "docker": 0.6, "aws": 0.4},
+        "manual_profile": {"skills": ["Linux", "Docker"], "experience_years": 2}})
+    assert resp.status_code == 200 and resp.json()["importance_source"] == "m1_weights"
