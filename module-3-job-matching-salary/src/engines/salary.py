@@ -2,8 +2,10 @@
 
 Ranges, never false precision (spec: Salary Intelligence; AGENTS.md §13). Sources, in order:
   1. posted salaries of the fetched jobs (Adzuna-predicted ones and absurd ranges excluded, outliers trimmed);
-  2. Adzuna's salary histogram for role + city;
-  3. module 1's regional median (market_baseline.median_salary_inr_lpa).
+  2. module 1's salary percentiles for the role (market_salary_percentiles), when the sample is big enough;
+  3. JSearch's (Glassdoor-backed) salary estimate, when cached or opted in;
+  4. Adzuna's salary histogram for role + city;
+  5. module 1's regional median (market_baseline.median_salary_inr_lpa).
 Formulas in WORKING.md §8.
 """
 from __future__ import annotations
@@ -12,13 +14,18 @@ import logging
 import math
 from collections.abc import Callable
 
-from src.models.schemas import CandidateValue, ExperienceBand, Job, MarketBaseline, Negotiation, SalaryEstimate
+from src.models.schemas import (
+    CandidateValue, ExperienceBand, Job, MarketBaseline, MarketPercentiles, Negotiation, SalaryEstimate,
+)
 
 log = logging.getLogger(__name__)
 
 MAX_RANGE_RATIO = 4.0          # a posted max/min above this is noise ("4-25 LPA") and left out
 MIN_POSTED_SAMPLE = 5          # fewer usable posted salaries -> next source
 MIN_HISTOGRAM_SAMPLE = 20      # vacancies behind the histogram
+MIN_PERCENTILE_SAMPLE = 30     # module 1 salary points behind its percentiles
+JSEARCH_CONFIDENCE = {"VERY_HIGH": 0.70, "HIGH": 0.60, "MEDIUM": 0.50, "LOW": 0.35}  # JSearch's own label
+JSEARCH_DEFAULT_CONFIDENCE = 0.45
 IQR_K = 1.5                    # Tukey fences for outliers
 ROUND_TO = 10_000              # ₹10k: no false precision
 TARGET_ROUND_TO = 50_000       # negotiation figures to the nearest 0.5 LPA
@@ -28,8 +35,9 @@ WIDE_IQR_PENALTY = 0.1         # IQR wider than the median itself: a less certai
 
 MATCH_ADJUSTMENT = 0.20        # candidate value: ±20% across the match range ...
 MATCH_PIVOT = 0.70             # ... centred on a 70% match
-EXPERIENCE_ADJUSTMENT = 0.08   # ±8% for experience above or below the role band
 ADJUSTMENT_BOUNDS = (0.80, 1.20)
+NARROW_BASE = 0.15             # candidate range half-width = market width x (0.15 ...
+NARROW_UNCERTAINTY = 0.35      # ... + 0.35 x (1 - confidence)): narrow with good data, wider when thin
 NO_POSTED_CONFIDENCE_FACTOR = 0.85
 
 NOTE = ("Estimated, market-based range from current listings and market data. It is indicative, "
@@ -121,7 +129,8 @@ def _estimate(lo: float, mid: float, hi: float, confidence: float, n: int, sourc
 
 
 def estimate_market(jobs: list[Job], *, histogram_fn: Callable[[], dict[int, int]] | None = None,
-                    baseline: MarketBaseline | None = None) -> SalaryEstimate:
+                    baseline: MarketBaseline | None = None, percentiles: MarketPercentiles | None = None,
+                    jsearch_estimate: dict | None = None) -> SalaryEstimate:
     points, excluded = posted_salary_points(jobs)
     kept, outliers = trim_outliers(points)
     excluded["outlier"] = outliers
@@ -133,6 +142,23 @@ def estimate_market(jobs: list[Job], *, histogram_fn: Callable[[], dict[int, int
             conf -= WIDE_IQR_PENALTY
         return _estimate(q1, med, q3, conf, len(kept), ["posted_salaries"], excluded)
     tried.append(f"posted_salaries (only {len(kept)} usable, need {MIN_POSTED_SAMPLE})")
+
+    if percentiles is not None:
+        if percentiles.sample_size >= MIN_PERCENTILE_SAMPLE:
+            conf = min(CONFIDENCE["posted_cap"], 0.55 + 0.05 * math.log10(percentiles.sample_size))
+            est = _estimate(percentiles.p25, percentiles.p50, percentiles.p75, conf, percentiles.sample_size,
+                            ["module_1_percentiles"], excluded)
+            est.note += f" Based on module 1's {percentiles.sample_size:,} salary points for the role."
+            return est
+        tried.append(f"module_1_percentiles ({percentiles.sample_size} points, need {MIN_PERCENTILE_SAMPLE})")
+
+    if jsearch_estimate:
+        conf = JSEARCH_CONFIDENCE.get(jsearch_estimate.get("confidence", ""), JSEARCH_DEFAULT_CONFIDENCE)
+        est = _estimate(jsearch_estimate["min"], jsearch_estimate["median"], jsearch_estimate["max"], conf,
+                        jsearch_estimate.get("sample_size", 0), ["jsearch_salary_estimate"], excluded)
+        est.note += (f" From JSearch's salary estimate ({jsearch_estimate.get('publisher') or 'aggregated'} data, "
+                     f"{jsearch_estimate.get('sample_size', 0):,} salaries).")
+        return est
 
     if histogram_fn is not None:
         try:
@@ -162,32 +188,41 @@ def estimate_market(jobs: list[Job], *, histogram_fn: Callable[[], dict[int, int
 
 def candidate_value(market: SalaryEstimate, *, match_score: float, years: float,
                     band: ExperienceBand | None, city: str | None) -> CandidateValue:
+    """Where the candidate likely sits inside the market range.
+
+    position = experience within the band (0 = band minimum, 1 = maximum; 0.5 without a band) places the
+    centre between the market's low and high; the match multiplier moves it; the half-width shrinks with
+    confidence. So a 5-year engineer in a 2-6 band with a strong match gets a narrow range near the top.
+    """
     if market.estimated_median is None:
         return CandidateValue(estimated_min=None, estimated_max=None, confidence=0.0, adjustment=1.0, display=None,
                               reasons=["Not enough salary data to estimate your market value."])
     reasons = []
-    adj = 1 + MATCH_ADJUSTMENT * (match_score - MATCH_PIVOT)
+    adj = max(ADJUSTMENT_BOUNDS[0], min(ADJUSTMENT_BOUNDS[1], 1 + MATCH_ADJUSTMENT * (match_score - MATCH_PIVOT)))
     pct = round(match_score * 100)
     reasons.append(f"Strong skill and profile match ({pct}%)" if match_score >= 0.8 else
                    f"Good match ({pct}%)" if match_score >= 0.65 else f"Partial match ({pct}%) lowers the estimate")
+    position = 0.5
     if band is not None:
-        half = max((band.max - band.min) / 2, 1.0)
-        position = max(-1.0, min(1.0, (years - (band.min + band.max) / 2) / half))
-        adj += EXPERIENCE_ADJUSTMENT * position
+        position = 1.0 if band.max <= band.min else max(0.0, min(1.0, (years - band.min) / (band.max - band.min)))
         if years > band.max:
             reasons.append(f"Experience above the typical {band.min:g}-{band.max:g} years for the role")
         elif years >= band.min:
             reasons.append(f"Relevant experience ({years:g} years, typical {band.min:g}-{band.max:g})")
         else:
             reasons.append(f"Less experience than the typical {band.min:g}-{band.max:g} years")
-    adj = max(ADJUSTMENT_BOUNDS[0], min(ADJUSTMENT_BOUNDS[1], adj))
     source = {"posted_salaries": f"{market.sample_size} comparable posted salaries",
+              "module_1_percentiles": f"{market.sample_size:,} salary points from module 1",
+              "jsearch_salary_estimate": f"{market.sample_size:,} salaries via JSearch",
               "adzuna_histogram": "the current salary distribution", "module_1_baseline": "the regional median"}
     reasons.append(f"Location market: {city or 'India'}, based on " + ", ".join(source[s] for s in market.sources_used))
-    lo = _round((market.estimated_min + market.estimated_median) / 2 * adj)
-    hi = _round((market.estimated_median + market.estimated_max) / 2 * adj)
+    width = market.estimated_max - market.estimated_min
+    centre = (market.estimated_min + position * width) * adj
+    half = width * (NARROW_BASE + NARROW_UNCERTAINTY * (1 - market.confidence))
+    lo, hi = _round(centre - half), _round(centre + half)
     return CandidateValue(estimated_min=lo, estimated_max=hi, confidence=round(market.confidence * 0.9, 2),
-                          adjustment=round(adj, 3), display=f"Your estimated range: {range_text(lo, hi)}", reasons=reasons)
+                          adjustment=round(adj, 3), market_position=round(position, 3),
+                          display=f"Your estimated range: {range_text(lo, hi)}", reasons=reasons)
 
 
 def negotiate(*, market: SalaryEstimate, candidate: CandidateValue, job_id: str | None = None,
