@@ -80,7 +80,7 @@ def _sorted(skills: list[ExtractedSkill]) -> list[ExtractedSkill]:
 def build_profile(doc: ParsedDocument, *, use_llm: bool = True, location: str | None = None,
                   target_occupation: str | None = None, today: date | None = None) -> UserProfile:
     sections = segment(doc.text)
-    warnings = []
+    warnings = list(doc.warnings)
     for needed in ("experience", "skills"):
         if needed not in sections:
             warnings.append(f"No {needed.title()} section found.")
@@ -114,7 +114,8 @@ def build_profile(doc: ParsedDocument, *, use_llm: bool = True, location: str | 
         work_history=work_history,
         location=normalise_location(location),
         target_occupation=target_occupation,
-        source=SourceInfo(format=doc.format, pages=doc.pages, ocr_pages=doc.ocr_pages,
+        source=SourceInfo(format=doc.format, pages=doc.pages, ocr_used=bool(doc.ocr_pages), ocr_pages=doc.ocr_pages,
+                          ocr_seconds=doc.ocr_seconds, ocr_repairs=doc.ocr_repairs,
                           text_sha1=hashlib.sha1(doc.text.encode("utf-8")).hexdigest(),
                           sections_found=[s for s in sections if s != "header"]),
         warnings=warnings,

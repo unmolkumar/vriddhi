@@ -6,15 +6,18 @@ from __future__ import annotations
 
 import io
 import re
+import time
 import zipfile
 from dataclasses import dataclass, field
 
+from src.engines.skill_extractor import ocr_repair
 from src.models.schemas import DocumentFormat, ErrorDetail, ErrorResponse
 
 MAX_FILE_BYTES = 5 * 1024 * 1024
 MAX_PAGES = 10
 MIN_TEXT_CHARS = 30   # a PDF page with fewer non-space characters is treated as scanned
 OCR_DPI = 200
+MAX_OCR_PAGES = 3     # OCR is ~10 s/page on CPU; scanned pages beyond this are skipped with a warning
 
 _PDF_MAGIC = b"%PDF"
 _ZIP_MAGIC = b"PK\x03\x04"
@@ -39,6 +42,9 @@ class ParsedDocument:
     format: DocumentFormat
     pages: int = 1
     ocr_pages: list[int] = field(default_factory=list)
+    ocr_seconds: float | None = None
+    ocr_repairs: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
 
 def parse_document(data: bytes, filename: str | None = None) -> ParsedDocument:
@@ -107,12 +113,17 @@ def _parse_pdf(data: bytes) -> ParsedDocument:
             raise ResumeParseError("CORRUPT_FILE", "The PDF has no pages.")
         if doc.page_count > MAX_PAGES:
             raise ResumeParseError("TOO_MANY_PAGES", f"The PDF has more than {MAX_PAGES} pages.")
-        texts, ocr_pages = [], []
+        texts, ocr_pages, skipped, repairs = [], [], [], []
+        started = time.perf_counter()
         try:
             for number, page in enumerate(doc, start=1):
                 text = page.get_text("text", sort=True)
                 if len(re.sub(r"\s", "", text)) < MIN_TEXT_CHARS:
-                    text = _ocr_page(page)
+                    if len(ocr_pages) >= MAX_OCR_PAGES:
+                        skipped.append(number)
+                        continue
+                    text, fixed = ocr_repair(_ocr_page(page))
+                    repairs += fixed
                     ocr_pages.append(number)
                 texts.append(text)
         except ResumeParseError:
@@ -123,7 +134,15 @@ def _parse_pdf(data: bytes) -> ParsedDocument:
     full = "\n".join(texts)
     if len(re.sub(r"\s", "", full)) < MIN_TEXT_CHARS:
         raise ResumeParseError("EMPTY_DOCUMENT", "No readable text found in the PDF, even with OCR.")
-    return ParsedDocument(text=full, format="pdf", pages=pages, ocr_pages=ocr_pages)
+    warnings = []
+    ocr_seconds = round(time.perf_counter() - started, 1) if ocr_pages else None
+    if ocr_pages:
+        warnings.append(f"Scanned resume: read {len(ocr_pages)} page(s) with OCR in {ocr_seconds} s. "
+                        "Check the extracted skills.")
+    if skipped:
+        warnings.append(f"Scanned pages {skipped} were not read (OCR limit is {MAX_OCR_PAGES} pages).")
+    return ParsedDocument(text=full, format="pdf", pages=pages, ocr_pages=ocr_pages, ocr_seconds=ocr_seconds,
+                          ocr_repairs=repairs, warnings=warnings)
 
 
 _reader = None

@@ -19,10 +19,12 @@ from src.models.schemas import SkillHit
 MODULE_ROOT = Path(__file__).resolve().parents[2]
 TAXONOMY_PATH = MODULE_ROOT / "data" / "taxonomy" / "skills.json"
 LLM_CACHE_DIR = MODULE_ROOT / "data" / "cache" / "llm_skills"
-LLM_MODEL = "llama-3.3-70b-versatile"
+# llama-3.3-70b-versatile (the original plan) is no longer served by Groq; override with GROQ_MODEL.
+DEFAULT_LLM_MODEL = "openai/gpt-oss-120b"
 LLM_TIMEOUT_S = 10
 LLM_MAX_CHARS = 6000
 PROMPT_VERSION = 1
+OCR_MIN_ALIAS_CHARS = 4  # shorter aliases ("ml", "aws") are too easy to hit by accident
 
 log = logging.getLogger(__name__)
 
@@ -87,7 +89,47 @@ def taxonomy() -> dict:
             matchers.append((re.compile(f"{_LEFT}(?:{alts}){_RIGHT}", re.IGNORECASE), entry, None))
         for alias, rule in context.items():
             matchers.append((re.compile(f"{_LEFT}{_alias_regex(alias)}{_RIGHT}", re.IGNORECASE), entry, rule))
-    return {"skills": data["skills"], "by_id": by_id, "by_alias": by_alias, "by_slug": by_slug, "matchers": matchers}
+    ocr_index: dict[str, str | None] = {}
+    for entry in data["skills"]:
+        context = entry.get("context", {})
+        for alias in entry["aliases"]:
+            if len(alias) >= OCR_MIN_ALIAS_CHARS and alias not in context:
+                k = _ocr_key(alias)
+                # Two skills folding to the same key is ambiguous: drop the key rather than guess.
+                ocr_index[k] = entry["display"] if ocr_index.get(k, entry["display"]) == entry["display"] else None
+    return {"skills": data["skills"], "by_id": by_id, "by_alias": by_alias, "by_slug": by_slug, "matchers": matchers,
+            "ocr_index": {k: v for k, v in ocr_index.items() if v}}
+
+
+_OCR_FOLD = str.maketrans({"i": "l", "1": "l", "|": "l", "!": "l", "0": "o"})
+
+
+def _ocr_key(s: str) -> str:
+    """Fold characters OCR confuses: i/l/1/| -> l, 0 -> o, rn -> m, vv -> w."""
+    return _key(s).translate(_OCR_FOLD).replace("rn", "m").replace("vv", "w")
+
+
+def ocr_repair(text: str) -> tuple[str, list[str]]:
+    """Fix OCR misreads of skill names ("Power Bl" -> "Power BI"). For OCR'd text only.
+
+    A 1-3 word phrase is replaced only when it isn't already a known alias and its folded form
+    equals exactly one taxonomy alias of OCR_MIN_ALIAS_CHARS+ characters.
+    """
+    tax = taxonomy()
+    repairs: dict[str, str] = {}
+    for line in text.splitlines():
+        tokens = line.split()
+        for n in (3, 2, 1):
+            for i in range(len(tokens) - n + 1):
+                raw = " ".join(tokens[i:i + n]).strip(".,;:()[]")
+                if len(raw) < OCR_MIN_ALIAS_CHARS or _key(raw) in tax["by_alias"] or raw in repairs:
+                    continue
+                fixed = tax["ocr_index"].get(_ocr_key(raw))
+                if fixed:
+                    repairs[raw] = fixed
+    for raw, fixed in repairs.items():
+        text = re.sub(rf"(?<![\w]){re.escape(raw)}(?![\w])", fixed, text)
+    return text, [f"{raw} -> {fixed}" for raw, fixed in repairs.items()]
 
 
 def resolve_skill(name: str) -> dict | None:
@@ -175,7 +217,7 @@ def _call_llm(text: str, found: list[str], api_key: str) -> list[str]:
 
     client = Groq(api_key=api_key, timeout=LLM_TIMEOUT_S, max_retries=0)
     resp = client.chat.completions.create(
-        model=LLM_MODEL,
+        model=llm_model(),
         temperature=0,
         response_format={"type": "json_object"},
         messages=[
@@ -193,6 +235,10 @@ def _call_llm(text: str, found: list[str], api_key: str) -> list[str]:
     return [s for s in skills if isinstance(s, str)]
 
 
+def llm_model() -> str:
+    return os.getenv("GROQ_MODEL", "").strip() or DEFAULT_LLM_MODEL
+
+
 def _llm_names(text: str, found: list[str]) -> list[str]:
     """Raw skill names from Groq, cached on disk by text hash. [] on any failure."""
     from dotenv import load_dotenv
@@ -201,7 +247,7 @@ def _llm_names(text: str, found: list[str]) -> list[str]:
     api_key = os.getenv("GROQ_API_KEY", "").strip()
     if not api_key:
         return []
-    digest = hashlib.sha1(f"{PROMPT_VERSION}|{LLM_MODEL}|{text}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha1(f"{PROMPT_VERSION}|{llm_model()}|{text}".encode("utf-8")).hexdigest()
     cache_file = LLM_CACHE_DIR / f"{digest}.json"
     if cache_file.exists():
         return json.loads(cache_file.read_text(encoding="utf-8"))
