@@ -150,3 +150,32 @@ def test_education():
     assert (out[0].degree, out[0].field, out[0].institution, out[0].year) == ("M.Sc", "Statistics", "University of Delhi", 2019)
     assert extract_education("MCA, Anna University")[0].degree == "MCA"
     assert extract_education("No degree here") == []
+
+
+# --- OCR confusions and limits ------------------------------------------------------------
+
+def test_ocr_repair_fixes_confusions_only():
+    from src.engines.skill_extractor import ocr_repair
+    fixed, repairs = ocr_repair("Python; SQL; Power Bl, Kubemetes, Pyth0n, rnongodb\nGo the extra mile. Mi phone. Data Analyst")
+    assert "Power BI" in fixed and "Kubernetes" in fixed and "Pyth0n" not in fixed and "MongoDB" in fixed
+    assert "Go the extra mile. Mi phone. Data Analyst" in fixed   # ordinary words untouched
+    assert "Power Bl -> Power BI" in repairs
+
+
+def test_scanned_pdf_reports_ocr_metadata():
+    doc = parse_document(fixture("resume_scanned.pdf"))
+    assert doc.ocr_seconds and doc.ocr_seconds > 0
+    assert "Power Bl -> Power BI" in doc.ocr_repairs and "Power BI" in doc.text
+    assert doc.warnings and doc.warnings[0].startswith("Scanned resume: read 1 page(s) with OCR")
+
+
+def test_ocr_page_cap(monkeypatch):
+    import src.parsers.resume_parser as rp
+    monkeypatch.setattr(rp, "MAX_OCR_PAGES", 1)
+    monkeypatch.setattr(rp, "_ocr_page", lambda page: "Skills\nPython, SQL, Docker and more text for OCR")
+    doc = pymupdf.open()
+    for _ in range(3):
+        doc.new_page()  # blank pages look scanned
+    parsed = parse_document(doc.tobytes())
+    assert parsed.ocr_pages == [1]
+    assert any("Scanned pages [2, 3] were not read" in w for w in parsed.warnings)

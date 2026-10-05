@@ -98,7 +98,89 @@
         "deep_learning",
         "cloud",
         "docker"
-      ]
+      ],
+      "knowledge_graph": {
+        "_note": "Shape from module 1 WORKING.md §4.1 and knowledge_graph.py: tech_* nodes weigh 1.0 (hot) or 0.65, skill_* nodes are O*NET skills with importance/100.",
+        "nodes": [
+          {
+            "id": "occ_15-2051.00",
+            "label": "Data Scientists",
+            "type": "occupation",
+            "weight": 1.0
+          },
+          {
+            "id": "dom_technology",
+            "label": "Technology & Applied Sciences",
+            "type": "domain",
+            "weight": 0.85
+          },
+          {
+            "id": "tech_python",
+            "label": "Python",
+            "type": "technology",
+            "weight": 1.0,
+            "metadata": {
+              "is_hot_tech": true
+            }
+          },
+          {
+            "id": "tech_sql",
+            "label": "SQL",
+            "type": "technology",
+            "weight": 1.0,
+            "metadata": {
+              "is_hot_tech": true
+            }
+          },
+          {
+            "id": "tech_docker",
+            "label": "Docker",
+            "type": "technology",
+            "weight": 0.65,
+            "metadata": {
+              "is_hot_tech": false
+            }
+          },
+          {
+            "id": "skill_programming",
+            "label": "Programming",
+            "type": "skill",
+            "weight": 0.72
+          },
+          {
+            "id": "skill_mathematics",
+            "label": "Mathematics",
+            "type": "skill",
+            "weight": 0.69
+          }
+        ],
+        "edges": [
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_python",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.9
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_sql",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.9
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "tech_docker",
+            "relationship": "UTILIZES_TOOL",
+            "weight": 0.65
+          },
+          {
+            "source": "occ_15-2051.00",
+            "target": "skill_programming",
+            "relationship": "REQUIRES_COMPETENCY",
+            "weight": 0.72
+          }
+        ]
+      }
     },
     "Data Engineer": {
       "occupation": "Data Engineer",

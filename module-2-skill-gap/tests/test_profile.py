@@ -93,8 +93,9 @@ def test_scanned_pdf_profile_close_to_text_version(text_profile):
     p = profile("resume_scanned.pdf")
     assert p.source.ocr_pages == [1]
     assert p.experience_years == text_profile.experience_years
-    text_ids, ocr_ids = {s.name for s in text_profile.skills}, {s.name for s in p.skills}
-    assert len(text_ids & ocr_ids) >= 0.9 * len(text_ids)  # OCR may misread a name (e.g. "Power Bl")
+    assert {s.name for s in p.skills} == {s.name for s in text_profile.skills}  # incl. power_bi after OCR repair
+    assert p.source.ocr_used and p.source.ocr_seconds and "Power Bl -> Power BI" in p.source.ocr_repairs
+    assert any(w.startswith("Scanned resume") for w in p.warnings)
 
 
 def test_missing_sections_warn():
