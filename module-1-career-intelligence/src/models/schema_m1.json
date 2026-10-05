@@ -343,6 +343,14 @@
       "title": "Top Skills",
       "type": "array"
     },
+    "top_skill_weights": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Normalized demand weights (0.0-1.0) for top skills based on posting frequency",
+      "title": "Top Skill Weights",
+      "type": "object"
+    },
     "drivers": {
       "description": "Supporting evidence drivers explaining the outlook",
       "items": {

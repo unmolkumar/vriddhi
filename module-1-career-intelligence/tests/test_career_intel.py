@@ -290,4 +290,8 @@ def test_integration_contract_compliance_m1_to_m2(service):
     assert 0.0 <= data["confidence_score"] <= 1.0
     assert isinstance(data["top_skills"], list)
     assert len(data["top_skills"]) > 0
+    assert "top_skill_weights" in data
+    assert len(data["top_skill_weights"]) > 0
+    for sk, weight in data["top_skill_weights"].items():
+        assert 0.0 <= weight <= 1.0
 
