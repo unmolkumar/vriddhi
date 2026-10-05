@@ -1,0 +1,22 @@
+{
+  "location": {
+    "area": [
+      "India",
+      "Karnataka",
+      "Bangalore"
+    ],
+    "display_name": "Bangalore, Karnataka",
+    "__CLASS__": "Adzuna::API::Response::Location"
+  },
+  "histogram": {
+    "3000000": 33,
+    "0": 117,
+    "5000000": 5,
+    "4000000": 12,
+    "1000000": 191,
+    "2000000": 88,
+    "6000000": 0
+  },
+  "__CLASS__": "Adzuna::API::Response::SalaryHistogram",
+  "_recorded": "Real Adzuna India histogram (what=data scientist, where=Bangalore), 2026-10-05."
+}

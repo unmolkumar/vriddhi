@@ -1,0 +1,2332 @@
+{
+  "$defs": {
+    "CandidateProfile": {
+      "description": "Module 2's UserProfile, the fields module 3 uses (see module-2-skill-gap/HANDOFF_TO_M3.md).",
+      "properties": {
+        "skills": {
+          "items": {
+            "$ref": "#/$defs/CandidateSkill"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "default": 0.0,
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Experience Years",
+          "type": "number"
+        },
+        "education": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "target_occupation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Occupation"
+        }
+      },
+      "title": "CandidateProfile",
+      "type": "object"
+    },
+    "CandidateSkill": {
+      "description": "Module 2's skills[] entry (extra fields allowed and ignored).",
+      "properties": {
+        "name": {
+          "description": "Module 2 skill id, e.g. 'python'",
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Level",
+          "type": "integer"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "maps_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maps To"
+        },
+        "needs_verification": {
+          "default": false,
+          "description": "Module 2: claimed level not backed by the resume",
+          "title": "Needs Verification",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CandidateSkill",
+      "type": "object"
+    },
+    "CandidateValue": {
+      "properties": {
+        "estimated_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Min"
+        },
+        "estimated_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Max"
+        },
+        "currency": {
+          "const": "INR",
+          "default": "INR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "adjustment": {
+          "description": "Match multiplier applied to the candidate's position in the market range",
+          "title": "Adjustment",
+          "type": "number"
+        },
+        "market_position": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 = bottom of the market range, 1 = top; from experience within the band",
+          "title": "Market Position"
+        },
+        "display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "estimated_min",
+        "estimated_max",
+        "confidence",
+        "adjustment",
+        "reasons"
+      ],
+      "title": "CandidateValue",
+      "type": "object"
+    },
+    "ErrorDetail": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/ErrorDetail"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "ExperienceBand": {
+      "properties": {
+        "min": {
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "maximum": 60.0,
+          "minimum": 0.0,
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "ExperienceBand",
+      "type": "object"
+    },
+    "GapSummary": {
+      "description": "Optional slice of module 2's GapAnalysisResult.",
+      "properties": {
+        "match_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Score"
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verdict"
+        },
+        "learning_priorities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Learning Priorities",
+          "type": "array"
+        },
+        "critical_missing": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Critical Missing",
+          "type": "array"
+        }
+      },
+      "title": "GapSummary",
+      "type": "object"
+    },
+    "HealthResponse": {
+      "properties": {
+        "status": {
+          "const": "ok",
+          "title": "Status",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "providers": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "description": "Whether each provider's key is configured",
+          "title": "Providers",
+          "type": "object"
+        },
+        "m2_base_url": {
+          "title": "M2 Base Url",
+          "type": "string"
+        },
+        "cache": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Cache",
+          "type": "object"
+        }
+      },
+      "required": [
+        "status",
+        "module",
+        "version",
+        "providers",
+        "m2_base_url",
+        "cache"
+      ],
+      "title": "HealthResponse",
+      "type": "object"
+    },
+    "Job": {
+      "description": "Every provider maps into this one shape (spec: Job Normalization).",
+      "properties": {
+        "job_id": {
+          "description": "'<source>:<provider id>'",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "description": {
+          "default": "",
+          "description": "As provided; Adzuna truncates to ~500 characters",
+          "title": "Description",
+          "type": "string"
+        },
+        "description_quality": {
+          "default": "ok",
+          "enum": [
+            "ok",
+            "short",
+            "missing"
+          ],
+          "title": "Description Quality",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Normalised city, e.g. 'Bengaluru'",
+          "title": "Location"
+        },
+        "location_raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Raw"
+        },
+        "employment_type": {
+          "default": "unknown",
+          "enum": [
+            "full_time",
+            "part_time",
+            "contract",
+            "internship",
+            "temporary",
+            "unknown"
+          ],
+          "title": "Employment Type",
+          "type": "string"
+        },
+        "work_mode": {
+          "default": "unknown",
+          "enum": [
+            "remote",
+            "hybrid",
+            "onsite",
+            "unknown"
+          ],
+          "title": "Work Mode",
+          "type": "string"
+        },
+        "experience_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Years, parsed from title/description",
+          "title": "Experience Min"
+        },
+        "experience_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Max"
+        },
+        "skills": {
+          "description": "Module 2 skill ids for this job",
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "skills_source": {
+          "default": "none",
+          "description": "'m2' = extracted by module 2 from this listing; 'jsearch_full' = taken from the same job's full JSearch description; 'unavailable' = module 2 unreachable",
+          "enum": [
+            "m2",
+            "jsearch_full",
+            "unavailable",
+            "none"
+          ],
+          "title": "Skills Source",
+          "type": "string"
+        },
+        "skill_parents": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Coarser id per skill, from module 2 (postgresql -> sql)",
+          "title": "Skill Parents",
+          "type": "object"
+        },
+        "skill_display": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Display name per skill id, from module 2 (pytorch -> PyTorch)",
+          "title": "Skill Display",
+          "type": "object"
+        },
+        "skills_inferred": {
+          "default": false,
+          "description": "Some skills were filled from the role market profile",
+          "title": "Skills Inferred",
+          "type": "boolean"
+        },
+        "inferred_skills": {
+          "description": "Which skills were inferred (also listed in skills)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inferred Skills",
+          "type": "array"
+        },
+        "salary_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "INR per year",
+          "title": "Salary Min"
+        },
+        "salary_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salary Max"
+        },
+        "currency": {
+          "const": "INR",
+          "default": "INR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "salary_is_predicted": {
+          "default": false,
+          "description": "Adzuna's own estimate, not the employer's figure",
+          "title": "Salary Is Predicted",
+          "type": "boolean"
+        },
+        "posted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Posted At"
+        },
+        "source": {
+          "enum": [
+            "adzuna",
+            "jsearch"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "publisher": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Underlying site for JSearch results (LinkedIn, Naukri, ...)",
+          "title": "Publisher"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "last_observed_at": {
+          "format": "date-time",
+          "title": "Last Observed At",
+          "type": "string"
+        },
+        "stale": {
+          "default": false,
+          "description": "Served from the snapshot after the cache TTL",
+          "title": "Stale",
+          "type": "boolean"
+        },
+        "age_hours": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hours since last_observed_at, when stale",
+          "title": "Age Hours"
+        }
+      },
+      "required": [
+        "job_id",
+        "title",
+        "source",
+        "last_observed_at"
+      ],
+      "title": "Job",
+      "type": "object"
+    },
+    "JobResult": {
+      "properties": {
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Location"
+        },
+        "work_mode": {
+          "enum": [
+            "remote",
+            "hybrid",
+            "onsite",
+            "unknown"
+          ],
+          "title": "Work Mode",
+          "type": "string"
+        },
+        "employment_type": {
+          "enum": [
+            "full_time",
+            "part_time",
+            "contract",
+            "internship",
+            "temporary",
+            "unknown"
+          ],
+          "title": "Employment Type",
+          "type": "string"
+        },
+        "posted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Posted At"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "publisher": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Publisher"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Url"
+        },
+        "stale": {
+          "title": "Stale",
+          "type": "boolean"
+        },
+        "salary": {
+          "$ref": "#/$defs/SalaryRange"
+        },
+        "match_score": {
+          "description": "Overall match, percent",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Match Score",
+          "type": "integer"
+        },
+        "classification": {
+          "enum": [
+            "Strong",
+            "Good",
+            "Partial",
+            "Weak"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "match": {
+          "$ref": "#/$defs/MatchBreakdown"
+        },
+        "matched_skills": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Matched Skills",
+          "type": "array"
+        },
+        "missing_skills": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Skills",
+          "type": "array"
+        },
+        "inferred_skills": {
+          "description": "Job skills filled from the market profile",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inferred Skills",
+          "type": "array"
+        },
+        "skills_source": {
+          "enum": [
+            "m2",
+            "jsearch_full",
+            "unavailable",
+            "none"
+          ],
+          "title": "Skills Source",
+          "type": "string"
+        },
+        "skills_confidence": {
+          "description": "How much of this job's skill list came from the listing itself",
+          "enum": [
+            "extracted",
+            "partly_inferred",
+            "inferred"
+          ],
+          "title": "Skills Confidence",
+          "type": "string"
+        },
+        "skills_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Skills inferred from similar Data Scientist jobs in Bengaluru'",
+          "title": "Skills Note"
+        },
+        "experience_required": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "experience_source": {
+          "enum": [
+            "posting",
+            "request",
+            "title_heuristic",
+            "unknown"
+          ],
+          "title": "Experience Source",
+          "type": "string"
+        },
+        "rank": {
+          "title": "Rank",
+          "type": "integer"
+        },
+        "rank_score": {
+          "title": "Rank Score",
+          "type": "number"
+        },
+        "rank_components": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Rank Components",
+          "type": "object"
+        }
+      },
+      "required": [
+        "job_id",
+        "title",
+        "company",
+        "location",
+        "work_mode",
+        "employment_type",
+        "posted_at",
+        "source",
+        "publisher",
+        "source_url",
+        "stale",
+        "salary",
+        "match_score",
+        "classification",
+        "match",
+        "matched_skills",
+        "missing_skills",
+        "skills_source",
+        "skills_confidence",
+        "experience_source",
+        "rank",
+        "rank_score",
+        "rank_components"
+      ],
+      "title": "JobResult",
+      "type": "object"
+    },
+    "JobSearchRequest": {
+      "description": "Spec 'Job Search Inputs'. Send module 2's `profile`, or the minimal manual fields.",
+      "properties": {
+        "target_role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Role",
+          "type": "string"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CandidateProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "skills": {
+          "description": "Manual input: skill ids or names",
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "anyOf": [
+            {
+              "maximum": 60.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Years"
+        },
+        "education": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "work_mode": {
+          "description": "Accepted modes; empty = any",
+          "items": {
+            "enum": [
+              "remote",
+              "hybrid",
+              "onsite",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Work Mode",
+          "type": "array"
+        },
+        "salary_preference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPreference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "employment_type": {
+          "description": "Accepted types; empty = any",
+          "items": {
+            "enum": [
+              "full_time",
+              "part_time",
+              "contract",
+              "internship",
+              "temporary",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Employment Type",
+          "type": "array"
+        },
+        "gap_analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GapSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "market_baseline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketBaseline"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "typical_experience": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role's usual experience band (module 1); used for jobs that don't state one"
+        },
+        "weights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchWeights"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
+        },
+        "jsearch_enrichment": {
+          "default": false,
+          "description": "Also query JSearch for full descriptions (uses the 200/month JSearch quota)",
+          "title": "Jsearch Enrichment",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Jobs to return after ranking",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target_role"
+      ],
+      "title": "JobSearchRequest",
+      "type": "object"
+    },
+    "JobSearchResponse": {
+      "properties": {
+        "target_role": {
+          "title": "Target Role",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Location"
+        },
+        "cities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cities",
+          "type": "array"
+        },
+        "total_found": {
+          "description": "Jobs considered after dedupe and filters",
+          "title": "Total Found",
+          "type": "integer"
+        },
+        "total_available": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Provider's total match count, when known",
+          "title": "Total Available"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/JobResult"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "role_market_profile": {
+          "$ref": "#/$defs/RoleMarketProfile"
+        },
+        "market_salary": {
+          "$ref": "#/$defs/SalaryEstimate"
+        },
+        "candidate_value": {
+          "$ref": "#/$defs/CandidateValue"
+        },
+        "negotiation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Negotiation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "For the top-ranked job"
+        },
+        "skill_unlocks": {
+          "items": {
+            "$ref": "#/$defs/SkillUnlock"
+          },
+          "title": "Skill Unlocks",
+          "type": "array"
+        },
+        "provider_trace": {
+          "items": {
+            "$ref": "#/$defs/ProviderAttempt"
+          },
+          "title": "Provider Trace",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "stale": {
+          "title": "Stale",
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_role",
+        "location",
+        "cities",
+        "total_found",
+        "total_available",
+        "jobs",
+        "role_market_profile",
+        "market_salary",
+        "candidate_value",
+        "negotiation",
+        "skill_unlocks",
+        "provider_trace",
+        "sources",
+        "stale",
+        "warnings"
+      ],
+      "title": "JobSearchResponse",
+      "type": "object"
+    },
+    "MarketBaseline": {
+      "description": "Optional: module 1's regional_breakdown.india, passed through by integration.",
+      "properties": {
+        "median_salary_inr_lpa": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Median Salary Inr Lpa"
+        },
+        "top_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Top Locations",
+          "type": "array"
+        },
+        "top_skills": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Top Skills",
+          "type": "array"
+        },
+        "posting_volume": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Posting Volume"
+        }
+      },
+      "title": "MarketBaseline",
+      "type": "object"
+    },
+    "MarketPercentiles": {
+      "description": "Optional: module 1's salary percentiles for the role (INR per year), e.g. from its INR salary points.",
+      "properties": {
+        "p25": {
+          "exclusiveMinimum": 0,
+          "title": "P25",
+          "type": "integer"
+        },
+        "p50": {
+          "exclusiveMinimum": 0,
+          "title": "P50",
+          "type": "integer"
+        },
+        "p75": {
+          "exclusiveMinimum": 0,
+          "title": "P75",
+          "type": "integer"
+        },
+        "sample_size": {
+          "minimum": 0,
+          "title": "Sample Size",
+          "type": "integer"
+        },
+        "experience_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The band these percentiles describe"
+        }
+      },
+      "required": [
+        "p25",
+        "p50",
+        "p75",
+        "sample_size"
+      ],
+      "title": "MarketPercentiles",
+      "type": "object"
+    },
+    "MatchBreakdown": {
+      "properties": {
+        "skills": {
+          "title": "Skills",
+          "type": "number"
+        },
+        "experience": {
+          "title": "Experience",
+          "type": "number"
+        },
+        "education": {
+          "title": "Education",
+          "type": "number"
+        },
+        "location": {
+          "title": "Location",
+          "type": "number"
+        },
+        "seniority": {
+          "title": "Seniority",
+          "type": "number"
+        },
+        "preference": {
+          "title": "Preference",
+          "type": "number"
+        },
+        "weights": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Weights",
+          "type": "object"
+        },
+        "skill_method": {
+          "description": "'keywords' when the job has no extracted skills",
+          "enum": [
+            "skills",
+            "keywords"
+          ],
+          "title": "Skill Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skills",
+        "experience",
+        "education",
+        "location",
+        "seniority",
+        "preference",
+        "weights",
+        "skill_method"
+      ],
+      "title": "MatchBreakdown",
+      "type": "object"
+    },
+    "MatchWeights": {
+      "description": "Overrides for the spec's starting weights; normalised to sum to 1.",
+      "properties": {
+        "skills": {
+          "default": 0.4,
+          "minimum": 0,
+          "title": "Skills",
+          "type": "number"
+        },
+        "experience": {
+          "default": 0.2,
+          "minimum": 0,
+          "title": "Experience",
+          "type": "number"
+        },
+        "education": {
+          "default": 0.1,
+          "minimum": 0,
+          "title": "Education",
+          "type": "number"
+        },
+        "location": {
+          "default": 0.1,
+          "minimum": 0,
+          "title": "Location",
+          "type": "number"
+        },
+        "seniority": {
+          "default": 0.1,
+          "minimum": 0,
+          "title": "Seniority",
+          "type": "number"
+        },
+        "preference": {
+          "default": 0.1,
+          "minimum": 0,
+          "title": "Preference",
+          "type": "number"
+        }
+      },
+      "title": "MatchWeights",
+      "type": "object"
+    },
+    "NegotiateRequest": {
+      "description": "Search inputs plus the offer to negotiate: a cached job_id, or a posted salary.",
+      "properties": {
+        "target_role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Role",
+          "type": "string"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CandidateProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "skills": {
+          "description": "Manual input: skill ids or names",
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "anyOf": [
+            {
+              "maximum": 60.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Years"
+        },
+        "education": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "work_mode": {
+          "description": "Accepted modes; empty = any",
+          "items": {
+            "enum": [
+              "remote",
+              "hybrid",
+              "onsite",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Work Mode",
+          "type": "array"
+        },
+        "salary_preference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPreference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "employment_type": {
+          "description": "Accepted types; empty = any",
+          "items": {
+            "enum": [
+              "full_time",
+              "part_time",
+              "contract",
+              "internship",
+              "temporary",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Employment Type",
+          "type": "array"
+        },
+        "gap_analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GapSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "market_baseline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketBaseline"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "typical_experience": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role's usual experience band (module 1); used for jobs that don't state one"
+        },
+        "weights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchWeights"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
+        },
+        "jsearch_enrichment": {
+          "default": false,
+          "description": "Also query JSearch for full descriptions (uses the 200/month JSearch quota)",
+          "title": "Jsearch Enrichment",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Jobs to return after ranking",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "posted_salary_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Posted Salary Min"
+        },
+        "posted_salary_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Posted Salary Max"
+        }
+      },
+      "required": [
+        "target_role"
+      ],
+      "title": "NegotiateRequest",
+      "type": "object"
+    },
+    "NegotiateResponse": {
+      "properties": {
+        "target_role": {
+          "title": "Target Role",
+          "type": "string"
+        },
+        "negotiation": {
+          "$ref": "#/$defs/Negotiation"
+        },
+        "market_salary": {
+          "$ref": "#/$defs/SalaryEstimate"
+        },
+        "candidate_value": {
+          "$ref": "#/$defs/CandidateValue"
+        },
+        "match_score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Match Score"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_role",
+        "negotiation",
+        "market_salary",
+        "candidate_value",
+        "match_score",
+        "warnings"
+      ],
+      "title": "NegotiateResponse",
+      "type": "object"
+    },
+    "Negotiation": {
+      "properties": {
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Job Id"
+        },
+        "posted_salary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Posted Salary"
+        },
+        "market_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Range"
+        },
+        "candidate_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Candidate Range"
+        },
+        "recommended_target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Recommended Target"
+        },
+        "reasonable_minimum": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reasonable Minimum"
+        },
+        "recommended_target_inr": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Recommended Target Inr"
+        },
+        "reasonable_minimum_inr": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reasonable Minimum Inr"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "posted_salary",
+        "market_range",
+        "candidate_range",
+        "recommended_target",
+        "reasonable_minimum",
+        "recommended_target_inr",
+        "reasonable_minimum_inr",
+        "confidence",
+        "reasons",
+        "note"
+      ],
+      "title": "Negotiation",
+      "type": "object"
+    },
+    "ProfileSkill": {
+      "properties": {
+        "skill": {
+          "title": "Skill",
+          "type": "string"
+        },
+        "share": {
+          "description": "Share of fetched jobs (with extracted skills) that ask for it",
+          "title": "Share",
+          "type": "number"
+        },
+        "jobs": {
+          "title": "Jobs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "skill",
+        "share",
+        "jobs"
+      ],
+      "title": "ProfileSkill",
+      "type": "object"
+    },
+    "ProviderAttempt": {
+      "properties": {
+        "provider": {
+          "enum": [
+            "adzuna",
+            "jsearch",
+            "snapshot"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "cache_hit",
+            "empty",
+            "not_configured",
+            "not_subscribed",
+            "timeout",
+            "error",
+            "used",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "jobs": {
+          "default": 0,
+          "title": "Jobs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "city",
+        "status"
+      ],
+      "title": "ProviderAttempt",
+      "type": "object"
+    },
+    "RoleMarketProfile": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "cities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cities",
+          "type": "array"
+        },
+        "jobs_analysed": {
+          "description": "Jobs whose skills were extracted (not inferred)",
+          "title": "Jobs Analysed",
+          "type": "integer"
+        },
+        "top_skills": {
+          "items": {
+            "$ref": "#/$defs/ProfileSkill"
+          },
+          "title": "Top Skills",
+          "type": "array"
+        }
+      },
+      "required": [
+        "role",
+        "cities",
+        "jobs_analysed",
+        "top_skills"
+      ],
+      "title": "RoleMarketProfile",
+      "type": "object"
+    },
+    "SalaryEstimate": {
+      "properties": {
+        "estimated_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Min"
+        },
+        "estimated_median": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Median"
+        },
+        "estimated_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Max"
+        },
+        "currency": {
+          "const": "INR",
+          "default": "INR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "sample_size": {
+          "title": "Sample Size",
+          "type": "integer"
+        },
+        "sources_used": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources Used",
+          "type": "array"
+        },
+        "excluded": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Salaries left out and why",
+          "title": "Excluded",
+          "type": "object"
+        },
+        "display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Estimated market range: 12-18 LPA'",
+          "title": "Display"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "estimated_min",
+        "estimated_median",
+        "estimated_max",
+        "confidence",
+        "sample_size",
+        "sources_used",
+        "note"
+      ],
+      "title": "SalaryEstimate",
+      "type": "object"
+    },
+    "SalaryEstimateRequest": {
+      "description": "Same inputs as a search; returns the market and candidate estimates only.",
+      "properties": {
+        "target_role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Role",
+          "type": "string"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CandidateProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "skills": {
+          "description": "Manual input: skill ids or names",
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills",
+          "type": "array"
+        },
+        "experience_years": {
+          "anyOf": [
+            {
+              "maximum": 60.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Years"
+        },
+        "education": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Education",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "work_mode": {
+          "description": "Accepted modes; empty = any",
+          "items": {
+            "enum": [
+              "remote",
+              "hybrid",
+              "onsite",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Work Mode",
+          "type": "array"
+        },
+        "salary_preference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPreference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "employment_type": {
+          "description": "Accepted types; empty = any",
+          "items": {
+            "enum": [
+              "full_time",
+              "part_time",
+              "contract",
+              "internship",
+              "temporary",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Employment Type",
+          "type": "array"
+        },
+        "gap_analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GapSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "market_baseline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketBaseline"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "typical_experience": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperienceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role's usual experience band (module 1); used for jobs that don't state one"
+        },
+        "weights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchWeights"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional match weight overrides"
+        },
+        "market_salary_percentiles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketPercentiles"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 1's salary percentiles; the primary market source when the sample is big enough"
+        },
+        "jsearch_salary": {
+          "default": false,
+          "description": "Also fetch JSearch's salary estimate when not cached (uses the 200/month JSearch quota)",
+          "title": "Jsearch Salary",
+          "type": "boolean"
+        },
+        "jsearch_enrichment": {
+          "default": false,
+          "description": "Also query JSearch for full descriptions (uses the 200/month JSearch quota)",
+          "title": "Jsearch Enrichment",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Jobs to return after ranking",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target_role"
+      ],
+      "title": "SalaryEstimateRequest",
+      "type": "object"
+    },
+    "SalaryEstimateResponse": {
+      "properties": {
+        "target_role": {
+          "title": "Target Role",
+          "type": "string"
+        },
+        "cities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cities",
+          "type": "array"
+        },
+        "market_salary": {
+          "$ref": "#/$defs/SalaryEstimate"
+        },
+        "candidate_value": {
+          "$ref": "#/$defs/CandidateValue"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_role",
+        "cities",
+        "market_salary",
+        "candidate_value",
+        "warnings"
+      ],
+      "title": "SalaryEstimateResponse",
+      "type": "object"
+    },
+    "SalaryPreference": {
+      "properties": {
+        "min_lpa": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Lpa"
+        },
+        "max_lpa": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Lpa"
+        }
+      },
+      "title": "SalaryPreference",
+      "type": "object"
+    },
+    "SalaryRange": {
+      "properties": {
+        "min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "currency": {
+          "const": "INR",
+          "default": "INR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "is_predicted": {
+          "default": false,
+          "description": "Adzuna's own estimate, not the employer's figure",
+          "title": "Is Predicted",
+          "type": "boolean"
+        }
+      },
+      "title": "SalaryRange",
+      "type": "object"
+    },
+    "SkillUnlock": {
+      "properties": {
+        "skill": {
+          "title": "Skill",
+          "type": "string"
+        },
+        "jobs_unlocked": {
+          "description": "Fetched jobs that would move to Good or Strong with this skill",
+          "title": "Jobs Unlocked",
+          "type": "integer"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "example_job_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Example Job Ids",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill",
+        "jobs_unlocked",
+        "city",
+        "message"
+      ],
+      "title": "SkillUnlock",
+      "type": "object"
+    }
+  },
+  "title": "Module 3 Job Matching & Salary contracts"
+}
