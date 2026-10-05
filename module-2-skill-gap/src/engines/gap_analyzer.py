@@ -9,7 +9,7 @@ import re
 from src.engines import similarity
 from src.engines.profile_builder import profile_from_manual
 from src.engines.roadmap_generator import build_roadmap, known_ids
-from src.engines.skill_extractor import coarser_ids, m1_slug, non_skill_reason, resolve_skill
+from src.engines.skill_extractor import category_children, coarser_ids, m1_slug, non_skill_reason, resolve_skill
 from src.models.schemas import (
     ExperienceRange, ExtractedSkill, GapAnalysisRequest, GapAnalysisResult, ScoreBreakdown, SkillBuckets, SkillGap,
     UserProfile,
@@ -151,12 +151,24 @@ def _match(sid: str, entry: dict | None, profile: UserProfile
     return "missing", None, None, None
 
 
-def _advice(gap: SkillGap, via: ExtractedSkill | None) -> str | None:
-    if via is None:
+def _category_note(gap: SkillGap) -> str | None:
+    if gap.status == "matched" and gap.gap <= 0:
         return None
-    if via.needs_verification:
+    names = [resolve_skill(c)["display"] for c in gap.category_children]
+    if names:
+        return (f"{gap.display} is a broad field, not a single skill. Concrete skills that build it: "
+                f"{', '.join(names)}.")
+    return f"{gap.display} is a broad field, not a single skill, so it isn't added to the roadmap."
+
+
+def _advice(gap: SkillGap, via: ExtractedSkill | None) -> str | None:
+    if via is not None and via.needs_verification:   # an unbacked claim matters more than anything else here
         return (f"You rate yourself level {via.claimed_level} in {via.display}, but your resume doesn't show it yet. "
                 f"A project or certificate with {gap.display} would back that up.")
+    if gap.is_category:
+        return _category_note(gap)
+    if via is None:
+        return None
     if not ({"work_supported", "project_supported"} & set(via.evidence)):
         return f"You list {via.display}, but nothing in your work or projects shows it. Build a project with {gap.display}."
     if gap.status == "adjacent":
@@ -209,7 +221,10 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
         # Only a match gives the user a level in this skill; an adjacent skill is related, not known.
         current = via.level if r["status"] == "matched" else 0
         gap = SkillGap(
-            skill=r["sid"], display=r["display"], in_taxonomy=r["entry"] is not None, status=r["status"],
+            skill=r["sid"], display=r["display"], in_taxonomy=r["entry"] is not None,
+            is_category=bool(r["entry"] and r["entry"].get("is_category")),
+            category_children=category_children(r["sid"]) if r["entry"] and r["entry"].get("is_category") else [],
+            status=r["status"],
             reason=r["reason"], via=via.name if via else None, via_display=via.display if via else None,
             similarity=r["sim"], relation=r["relation"], importance=round(r["w"], 4), priority=_priority(r["w"]),
             required_level=r["req_level"], current_level=current, gap=r["req_level"] - current,
@@ -234,7 +249,7 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
     used = set(ids) | {g.via for g in gaps if g.via}
     unused_strong = [s.display for s in profile.skills if s.level >= STRONG_LEVEL and s.name not in used]
     pct = round(score * 100)
-    critical = sorted((g for g in gaps if g.status == "missing"), key=lambda g: -g.importance)
+    critical = sorted((g for g in gaps if g.status == "missing"), key=lambda g: (g.is_category, -g.importance))
     suggested = None
     if score >= OVER_QUALIFIED_SCORE and years > hi and len(unused_strong) >= OVER_EXTRA_STRONG:
         verdict = "over_qualified"
@@ -244,14 +259,15 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
                    + (f"Consider {suggested} roles." if suggested else "Consider a more senior role."))
     elif score < UNDER_SKILLED_BELOW:
         verdict = "under_skilled"
-        todo = [m.display for m in roadmap.milestones if m.kind != "weak"][:3] or [g.display for g in critical[:3]]
+        todo = ([m.display for m in roadmap.milestones if m.kind != "weak"][:3]
+                or [g.display for g in critical if not g.is_category][:3])
         message = (f"You cover an estimated {pct}% of what {req.target_role} asks for. "
                    + (f"You're yet to learn {', '.join(todo)}." if todo else "Strengthen the skills below."))
     else:
         verdict = "good_fit"
         message = f"You're a good fit for {req.target_role} (estimated {pct}% match). Apply now"
-        message += (f", and close {', '.join(g.display for g in critical[:2])} to strengthen your profile."
-                    if critical else ".")
+        concrete = [g.display for g in critical if not g.is_category]
+        message += (f", and close {', '.join(concrete[:2])} to strengthen your profile." if concrete else ".")
 
     matched = [g for g in gaps if g.status == "matched"]
     by_importance = lambda gs: [g.skill for g in sorted(gs, key=lambda g: -g.importance)]
