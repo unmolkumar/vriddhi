@@ -9,6 +9,14 @@ from typing import List, Dict, Optional, Tuple, Any
 
 DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "career_intel.db"
 
+GENERIC_SKILL_STOPWORDS = {
+    "data", "backend", "frontend", "front_end", "automation", "coding", "software",
+    "development", "it software - application programming", "it software", "sales",
+    "analytical", "computer science", "data_analyst", "data_science", "data_engineering",
+    "devops", "marketing", "production", "accounts", "management", "business",
+    "information technology", "engineering", "technical", "consulting", "operations"
+}
+
 
 class CareerDatabase:
     def __init__(self, db_path: Optional[Path] = None):
@@ -193,58 +201,104 @@ class CareerDatabase:
             }
 
     def get_top_skills(self, title: str, limit: int = 8) -> Dict[str, Any]:
-        """Retrieve top extracted skills and normalized frequency weights for an occupation in India and Global markets."""
+        """
+        Retrieve top extracted skills and normalized demand weights for an occupation in India and Global markets.
+        Applies multi-word phrase matching and filters out generic category stopwords.
+        """
         clean_title = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
         words = [w for w in clean_title.split() if len(w) > 2]
-        like_pattern = f"%{words[0]}%" if words else f"%{clean_title}%"
 
         with self.get_connection() as conn:
             cursor = conn.cursor()
 
-            # Global top skills
+            # Global top skills: try multi-word specific context match first
             cursor.execute("""
                 SELECT skill_normalized, SUM(frequency) as freq
                 FROM skill_demand
-                WHERE region = 'global' AND (LOWER(occupation_context) LIKE ? OR ? LIKE '%' || LOWER(occupation_context) || '%')
+                WHERE region = 'global' AND (occupation_context LIKE ? OR ? LIKE '%' || occupation_context || '%')
                 GROUP BY skill_normalized
                 ORDER BY freq DESC
-                LIMIT ?
-            """, (like_pattern, clean_title, limit))
+                LIMIT 40
+            """, (f"%{clean_title}%", clean_title))
             global_rows = cursor.fetchall()
-            global_skills = [row["skill_normalized"] for row in global_rows]
 
-            # India top skills
+            if not global_rows or len(global_rows) < 4:
+                token = words[-1] if words else clean_title
+                cursor.execute("""
+                    SELECT skill_normalized, SUM(frequency) as freq
+                    FROM skill_demand
+                    WHERE region = 'global' AND occupation_context LIKE ?
+                    GROUP BY skill_normalized
+                    ORDER BY freq DESC
+                    LIMIT 40
+                """, (f"%{token}%",))
+                global_rows = cursor.fetchall()
+
+            # India top skills: try multi-word specific context match first
             cursor.execute("""
                 SELECT skill_normalized, SUM(frequency) as freq
                 FROM skill_demand
-                WHERE region = 'india' AND (LOWER(occupation_context) LIKE ? OR ? LIKE '%' || LOWER(occupation_context) || '%')
+                WHERE region = 'india' AND (occupation_context LIKE ? OR ? LIKE '%' || occupation_context || '%')
                 GROUP BY skill_normalized
                 ORDER BY freq DESC
-                LIMIT ?
-            """, (like_pattern, clean_title, limit))
+                LIMIT 40
+            """, (f"%{clean_title}%", clean_title))
             india_rows = cursor.fetchall()
-            india_skills = [row["skill_normalized"] for row in india_rows]
+
+            if not india_rows or len(india_rows) < 4:
+                token = words[-1] if words else clean_title
+                cursor.execute("""
+                    SELECT skill_normalized, SUM(frequency) as freq
+                    FROM skill_demand
+                    WHERE region = 'india' AND occupation_context LIKE ?
+                    GROUP BY skill_normalized
+                    ORDER BY freq DESC
+                    LIMIT 40
+                """, (f"%{token}%",))
+                india_rows = cursor.fetchall()
+
+            # Filter generic stopwords and retain top skills
+            filtered_global = [
+                row["skill_normalized"]
+                for row in global_rows
+                if row["skill_normalized"] not in GENERIC_SKILL_STOPWORDS and len(row["skill_normalized"]) >= 1
+            ][:limit]
+
+            filtered_india = [
+                row["skill_normalized"]
+                for row in india_rows
+                if row["skill_normalized"] not in GENERIC_SKILL_STOPWORDS and len(row["skill_normalized"]) >= 1
+            ][:limit]
 
             # If empty context, fall back to aggregate top skills
-            if not global_skills:
-                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'global' GROUP BY skill_normalized ORDER BY freq DESC LIMIT ?", (limit,))
-                global_rows = cursor.fetchall()
-                global_skills = [row["skill_normalized"] for row in global_rows]
-            if not india_skills:
-                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'india' GROUP BY skill_normalized ORDER BY freq DESC LIMIT ?", (limit,))
-                india_rows = cursor.fetchall()
-                india_skills = [row["skill_normalized"] for row in india_rows]
+            if not filtered_global:
+                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'global' GROUP BY skill_normalized ORDER BY freq DESC LIMIT 40")
+                filtered_global = [
+                    row["skill_normalized"]
+                    for row in cursor.fetchall()
+                    if row["skill_normalized"] not in GENERIC_SKILL_STOPWORDS
+                ][:limit]
+
+            if not filtered_india:
+                cursor.execute("SELECT skill_normalized, SUM(frequency) as freq FROM skill_demand WHERE region = 'india' GROUP BY skill_normalized ORDER BY freq DESC LIMIT 40")
+                filtered_india = [
+                    row["skill_normalized"]
+                    for row in cursor.fetchall()
+                    if row["skill_normalized"] not in GENERIC_SKILL_STOPWORDS
+                ][:limit]
 
             # Compute combined frequencies and normalized weights
             combined_freqs: Dict[str, int] = {}
             for row in global_rows:
                 sk = row["skill_normalized"]
-                fr = row["freq"] or 1
-                combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
+                if sk not in GENERIC_SKILL_STOPWORDS:
+                    fr = row["freq"] or 1
+                    combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
             for row in india_rows:
                 sk = row["skill_normalized"]
-                fr = row["freq"] or 1
-                combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
+                if sk not in GENERIC_SKILL_STOPWORDS:
+                    fr = row["freq"] or 1
+                    combined_freqs[sk] = combined_freqs.get(sk, 0) + fr
 
             max_freq = max(combined_freqs.values()) if combined_freqs else 1
             weights = {
@@ -253,10 +307,47 @@ class CareerDatabase:
             }
 
             return {
-                "global": global_skills,
-                "india": india_skills,
+                "global": filtered_global,
+                "india": filtered_india,
                 "weights": weights,
             }
+
+    def get_experience_band(self, title: str) -> Dict[str, float]:
+        """
+        Derive typical experience years band {min, max} from empirical job postings.
+        Falls back to standard professional range if posting data is sparse.
+        """
+        clean = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
+        words = [w for w in clean.split() if len(w) > 2]
+        phrase = f"%{clean}%"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT AVG(experience_min) as avg_min, AVG(experience_max) as avg_max,
+                       COUNT(*) as count
+                FROM job_postings_india
+                WHERE title_normalized LIKE ? AND experience_min IS NOT NULL
+            """, (phrase,))
+            row = cursor.fetchone()
+
+            if not row or row["count"] < 5:
+                last_word = f"%{words[-1]}%" if words else phrase
+                cursor.execute("""
+                    SELECT AVG(experience_min) as avg_min, AVG(experience_max) as avg_max,
+                           COUNT(*) as count
+                    FROM job_postings_india
+                    WHERE title_normalized LIKE ? AND experience_min IS NOT NULL
+                """, (last_word,))
+                row = cursor.fetchone()
+
+            if row and row["count"] >= 5 and row["avg_min"] is not None:
+                lo = max(0.0, round(row["avg_min"], 1))
+                hi = max(lo + 1.0, round(row["avg_max"], 1))
+                return {"min": lo, "max": hi}
+
+            return {"min": 2.0, "max": 5.0}
+
 
     def get_yearly_breakdown(self, title: str) -> Dict[str, Dict[int, int]]:
         """

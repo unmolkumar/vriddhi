@@ -381,6 +381,14 @@
       "title": "Regional Breakdown",
       "type": "object"
     },
+    "typical_experience": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Typical experience years band {min, max} derived from empirical postings",
+      "title": "Typical Experience",
+      "type": "object"
+    },
     "yearly_trajectory": {
       "anyOf": [
         {
