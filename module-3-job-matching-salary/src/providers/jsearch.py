@@ -120,3 +120,52 @@ def normalise(raw: dict, now: datetime) -> Job | None:
         source=NAME, publisher=raw.get("job_publisher"), source_url=raw.get("job_apply_link"),
         last_observed_at=now,
     )
+
+
+SALARY_URL = "https://jsearch.p.rapidapi.com/estimated-salary"
+SALARY_TIMEOUT_S = 15.0  # measured 3.2 s
+EXPERIENCE_BUCKETS = [(1, "LESS_THAN_ONE"), (4, "ONE_TO_THREE"), (7, "FOUR_TO_SIX"), (10, "SEVEN_TO_NINE"),
+                      (15, "TEN_TO_FOURTEEN")]  # upper bound (exclusive) -> JSearch bucket; 15+ -> ABOVE_FIFTEEN
+
+
+def experience_bucket(years: float | None) -> str:
+    if years is None:
+        return "ALL"
+    return next((name for upper, name in EXPERIENCE_BUCKETS if years < upper), "ABOVE_FIFTEEN")
+
+
+def estimated_salary(role: str, city: str, bucket: str, *, client: httpx.Client | None = None) -> dict | None:
+    """Glassdoor-backed salary estimate (GET /estimated-salary). Checked against a recorded response
+    (tests/mocks/jsearch_salary_sample.json): data[].min_salary, median_salary, max_salary, salary_period,
+    salary_currency, salary_count, publisher_name, confidence, salaries_updated_at.
+    Returns a normalised dict in INR per year, or None when JSearch has no usable figure."""
+    if not configured():
+        raise ProviderError("not_configured", "RAPIDAPI_KEY not set")
+    try:
+        resp = (client or httpx).get(
+            SALARY_URL, timeout=SALARY_TIMEOUT_S,
+            headers={"X-RapidAPI-Key": os.environ["RAPIDAPI_KEY"].strip(), "X-RapidAPI-Host": HOST},
+            params={"job_title": role, "location": f"{provider_query_name(city)}, India", "location_type": "CITY",
+                    "years_of_experience": bucket})
+    except httpx.TimeoutException:
+        raise ProviderError("timeout", f"no response in {SALARY_TIMEOUT_S:g} s") from None
+    except httpx.HTTPError as e:
+        raise ProviderError("error", type(e).__name__) from None
+    if resp.status_code == 403 and "not subscribed" in resp.text.lower():
+        raise ProviderError("not_subscribed", "subscribe this RapidAPI key to JSearch")
+    if resp.status_code != 200:
+        raise ProviderError("error", f"HTTP {resp.status_code}")
+    try:
+        rows = resp.json().get("data") or []
+    except ValueError:
+        raise ProviderError("error", "response was not JSON") from None
+    for row in rows:
+        factor = PERIOD_TO_YEAR.get((row.get("salary_period") or "").upper())
+        if (row.get("salary_currency") or "").upper() != "INR" or factor is None:
+            continue
+        lo, mid, hi = (plausible_salary((row.get(k) or 0) * factor) for k in ("min_salary", "median_salary", "max_salary"))
+        if lo and mid and hi and lo <= mid <= hi:
+            return {"min": lo, "median": mid, "max": hi, "sample_size": int(row.get("salary_count") or 0),
+                    "publisher": row.get("publisher_name"), "confidence": (row.get("confidence") or "").upper(),
+                    "updated_at": row.get("salaries_updated_at"), "bucket": bucket}
+    return None

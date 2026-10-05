@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS queries (
     fetched_at TEXT NOT NULL, total_count INTEGER,
     PRIMARY KEY (role, city)
 );
+CREATE TABLE IF NOT EXISTS salary_estimates (
+    key TEXT PRIMARY KEY, payload TEXT NOT NULL, fetched_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS jobs (
     role TEXT NOT NULL, city TEXT NOT NULL, job_id TEXT NOT NULL, job_json TEXT NOT NULL,
     PRIMARY KEY (role, city, job_id)
@@ -82,7 +85,21 @@ class JobStore:
         return CachedQuery(jobs=[Job.model_validate(json.loads(r[0])) for r in rows], fetched_at=fetched_at,
                            source=row[0], total_count=row[2])
 
+    def save_salary(self, key: str, payload: dict, fetched_at: datetime) -> None:
+        with closing(self._connect()) as conn, conn:
+            conn.execute("INSERT OR REPLACE INTO salary_estimates VALUES (?, ?, ?)",
+                         (key, json.dumps(payload), fetched_at.isoformat()))
+
+    def load_salary(self, key: str) -> tuple[dict, datetime] | None:
+        with closing(self._connect()) as conn:
+            row = conn.execute("SELECT payload, fetched_at FROM salary_estimates WHERE key = ?", (key,)).fetchone()
+        if row is None:
+            return None
+        fetched_at = datetime.fromisoformat(row[1])
+        return json.loads(row[0]), fetched_at if fetched_at.tzinfo else fetched_at.replace(tzinfo=timezone.utc)
+
     def stats(self) -> dict[str, int]:
         with closing(self._connect()) as conn:
             return {"queries": conn.execute("SELECT COUNT(*) FROM queries").fetchone()[0],
-                    "jobs": conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]}
+                    "jobs": conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0],
+                    "salary_estimates": conn.execute("SELECT COUNT(*) FROM salary_estimates").fetchone()[0]}
