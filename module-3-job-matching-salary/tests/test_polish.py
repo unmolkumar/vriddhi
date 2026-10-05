@@ -14,7 +14,8 @@ from src.engines.job_store import JobStore
 from src.engines.market_profile import BROAD_SKILL_IDS, build_profile, concrete_children
 from src.engines.matching import INFERRED_PENALTY, match_job, skill_component, skills_confidence
 from src.engines.salary import candidate_value, estimate_market
-from src.models.schemas import CandidateProfile, CandidateSkill, ExperienceBand, JobSearchRequest, MarketPercentiles
+from src.engines.salary import M1Salary
+from src.models.schemas import CandidateProfile, CandidateSkill, ExperienceBand, JobSearchRequest
 from src.providers import adzuna, jsearch
 from src.providers.common import ProviderError
 
@@ -136,8 +137,7 @@ def test_typed_skills_fall_back_to_keywords_when_module_2_is_down(wired):
 
 # --- salary sources ----------------------------------------------------------------------------------
 
-PERCENTILES = MarketPercentiles(p25=14 * L, p50=17 * L, p75=21 * L, sample_size=1200,
-                                experience_band=ExperienceBand(min=3, max=7))
+PERCENTILES = M1Salary(14 * L, 17 * L, 21 * L, 1200, "experience_bucket", ExperienceBand(min=3, max=7), "mid tier")
 
 
 def test_module_1_percentiles_are_primary_and_tighter_than_histogram():
@@ -156,7 +156,7 @@ def test_module_1_percentiles_are_primary_and_tighter_than_histogram():
 
 
 def test_small_percentile_sample_falls_through():
-    thin = MarketPercentiles(p25=14 * L, p50=17 * L, p75=21 * L, sample_size=10)
+    thin = PERCENTILES._replace(sample_size=10)
     est = estimate_market([], histogram_fn=lambda: HIST, percentiles=thin)
     assert est.sources_used == ["adzuna_histogram"]
 
@@ -239,12 +239,14 @@ def test_salary_cache_expires_after_7_days(store):
 def test_percentiles_accepted_by_search_and_estimate(wired):
     wired.on("api.adzuna.com", json_response(ADZ)).on("127.0.0.1", m2_extract_handler)
     body = TestClient(app).post("/api/v1/salary/estimate", json={
-        "target_role": "Data Scientist", "location": "Bengaluru", "skills": ["python"], "experience_years": 5,
-        "market_salary_percentiles": PERCENTILES.model_dump()}).json()
+        "target_role": "Data Scientist", "location": "Bengaluru", "skills": ["python"], "experience_years": 4,
+        "market_salary_percentiles": {"by_experience_inr_lpa": {
+            "mid": {"p25": 14, "p50": 17, "p75": 21, "currency": "INR LPA", "sample_size": 1200}}}}).json()
     assert body["market_salary"]["sources_used"] == ["module_1_percentiles"]
-    assert body["candidate_value"]["market_position"] == 0.5             # 5 years in the percentiles' 3-7 band
+    assert body["candidate_value"]["market_position"] == 0.5             # 4 years in module 1's 3-5 mid tier
     bad = TestClient(app).post("/api/v1/jobs/search", json={
-        "target_role": "X", "location": "Pune", "market_salary_percentiles": {"p25": 5, "p50": 3, "p75": 9, "sample_size": 50}})
+        "target_role": "X", "location": "Pune",
+        "market_salary_percentiles": {"overall_inr_lpa": {"p25": 5, "p50": 3, "p75": 9, "sample_size": 50}}})
     assert bad.status_code == 422
 
 
