@@ -1,0 +1,56 @@
+"""Job skill extraction via module 2's REST API (POST /api/v1/skills/extract). No module 2 imports."""
+from __future__ import annotations
+
+import os
+
+import httpx
+
+from src.models.schemas import Job
+
+DEFAULT_M2_BASE_URL = "http://127.0.0.1:8002"  # not "localhost": avoids a slow IPv6 attempt on Windows
+TIMEOUT = httpx.Timeout(5.0, connect=1.0)     # fail fast when module 2 is down
+MAX_TEXT_CHARS = 50_000  # module 2's limit
+
+
+class M2Unavailable(Exception):
+    pass
+
+
+def base_url() -> str:
+    return os.getenv("M2_BASE_URL", "").strip().rstrip("/") or DEFAULT_M2_BASE_URL
+
+
+def extract_skill_ids(text: str, *, client: httpx.Client | None = None) -> list[str]:
+    try:
+        resp = (client or httpx).post(f"{base_url()}/api/v1/skills/extract", timeout=TIMEOUT,
+                                      json={"text": text[:MAX_TEXT_CHARS], "use_llm": False})
+    except httpx.HTTPError as e:
+        raise M2Unavailable(type(e).__name__) from None
+    if resp.status_code == 422 and "EMPTY_TEXT" in resp.text:
+        return []
+    if resp.status_code != 200:
+        raise M2Unavailable(f"HTTP {resp.status_code}")
+    return [s["id"] for s in resp.json().get("skills", [])]
+
+
+def enrich_skills(jobs: list[Job], *, client: httpx.Client | None = None) -> tuple[list[Job], bool]:
+    """Fill job.skills from module 2. Returns (jobs, module_2_available).
+
+    Jobs already enriched are skipped. On the first failure the rest are marked 'unavailable'
+    (no point hammering a module that's down); they are retried on the next search.
+    """
+    available = True
+    out = []
+    for job in jobs:
+        if job.skills_source == "m2":
+            out.append(job)
+            continue
+        if available:
+            try:
+                ids = extract_skill_ids(f"{job.title}\n{job.description}", client=client)
+                out.append(job.model_copy(update={"skills": ids, "skills_source": "m2"}))
+                continue
+            except M2Unavailable:
+                available = False
+        out.append(job.model_copy(update={"skills": [], "skills_source": "unavailable"}))
+    return out, available
