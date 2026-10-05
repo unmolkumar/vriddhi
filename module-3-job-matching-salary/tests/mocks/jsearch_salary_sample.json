@@ -1,0 +1,33 @@
+{
+  "status": "OK",
+  "request_id": "REDACTED",
+  "parameters": {
+    "job_title": "data scientist",
+    "location": "bangalore, india",
+    "location_type": "CITY",
+    "years_of_experience": "FOUR_TO_SIX"
+  },
+  "data": [
+    {
+      "location": "Bengaluru",
+      "job_title": "Data Scientist",
+      "min_salary": 1200000,
+      "max_salary": 2407000,
+      "median_salary": 1770000,
+      "min_base_salary": 1100000,
+      "max_base_salary": 2207000,
+      "median_base_salary": 1620000,
+      "min_additional_pay": 100000,
+      "max_additional_pay": 200000,
+      "median_additional_pay": 150000,
+      "salary_period": "YEAR",
+      "salary_currency": "INR",
+      "salary_count": 2070,
+      "salaries_updated_at": "2026-08-15T07:32:17.000Z",
+      "publisher_name": "Glassdoor",
+      "publisher_link": "https://www.glassdoor.com/Salaries/company-salaries.htm?suggestCount=0&suggestChosen=false&sc.keyword=Data%20Scientist&locT=C&locId=2940587",
+      "confidence": "VERY_HIGH"
+    }
+  ],
+  "_recorded": "Real JSearch /estimated-salary response (Data Scientist, Bangalore, FOUR_TO_SIX), 2026-10-05."
+}

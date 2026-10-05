@@ -4,7 +4,7 @@ import pytest
 from conftest import make_job
 from src.engines.market_profile import MIN_JOB_SKILLS, build_profile, infer_skills
 from src.engines.matching import (
-    INFERRED_SKILL_WEIGHT, RELATED_SKILL_CREDIT, classify, education_component, experience_band, experience_component,
+    INFERRED_PENALTY, INFERRED_SKILL_WEIGHT, RELATED_SKILL_CREDIT, classify, skills_confidence, education_component, experience_band, experience_component,
     location_component, match_job, preference_component, seniority_component, skill_component,
 )
 from src.models.schemas import CandidateProfile, CandidateSkill, ExperienceBand, JobSearchRequest, MatchWeights
@@ -46,7 +46,8 @@ def test_skill_credit_by_level_evidence_and_parents():
 def test_inferred_skills_count_less_and_come_last():
     job = make_job(skills=["python", "spark"], inferred_skills=["spark"], skills_inferred=True)
     score, _, missing, _ = skill_component(job, cand(["python"]))
-    assert score == pytest.approx(1 / (1 + INFERRED_SKILL_WEIGHT))
+    # weighted credit 1 / (1 + 0.5), then x (1 - 0.3 x 1/2 inferred)
+    assert score == pytest.approx(1 / (1 + INFERRED_SKILL_WEIGHT) * (1 - INFERRED_PENALTY * 0.5))
     job = make_job(skills=["spark", "python", "sql"], inferred_skills=["spark"])
     assert skill_component(job, cand([]))[2] == ["python", "sql", "spark"]
 

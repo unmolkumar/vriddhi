@@ -39,6 +39,9 @@ def wired(monkeypatch, store, fake_http):
         kw.update(store=store, client=fake_http.client(), m2_client=fake_http.client(), now=NOW)
         return real(role, location, **kw)
     monkeypatch.setattr(search_module, "fetch_jobs", fetch)
+    real_resolve = search_module.resolve_typed_skills
+    monkeypatch.setattr(search_module, "resolve_typed_skills",
+                        lambda typed, client=None: real_resolve(typed, client=fake_http.client()))
     monkeypatch.setattr(adzuna, "histogram", lambda role, city, client=None: HIST)
     fake_http.on("127.0.0.1", m2_extract_handler)
     return fake_http
@@ -80,7 +83,7 @@ def test_unlocks_n_jobs(wired):
     ml = unlocks["machine_learning"]
     before = {j["job_id"]: j["classification"] for j in body["jobs"]}
     assert ml["jobs_unlocked"] == 2 and all(before[j] not in ("Good", "Strong") for j in ml["example_job_ids"])
-    assert ml["message"].startswith("Learning machine learning would move") and "in Bengaluru" in ml["message"]
+    assert ml["message"].startswith("Learning Machine Learning would move") and "in Bengaluru" in ml["message"]
     assert body["skill_unlocks"][0]["jobs_unlocked"] >= body["skill_unlocks"][-1]["jobs_unlocked"]
 
 

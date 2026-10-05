@@ -28,7 +28,7 @@ def test_adzuna_first_and_saved(fake_http, store):
     assert statuses(r) == [("adzuna", "ok")] and r.sources == ["adzuna"] and not r.from_cache
     assert r.total_available == ADZ["count"] and len(r.jobs) == 3 and fake_http.calls(JS_HOST) == 0
     assert all(j.skills_source == "m2" for j in r.jobs)
-    assert store.stats() == {"queries": 1, "jobs": 3}
+    assert store.stats() == {"queries": 1, "jobs": 3, "salary_estimates": 0}
 
 
 def test_cache_hit_needs_no_network(fake_http, store):

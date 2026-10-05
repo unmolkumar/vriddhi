@@ -18,9 +18,10 @@ def load_mock(name: str) -> dict:
 
 
 @pytest.fixture(autouse=True)
-def offline(monkeypatch, request):
+def offline(monkeypatch, request, tmp_path):
     """Fake provider keys, and no real network: module-level httpx calls fail loudly.
     Tests pass an httpx.Client with a MockTransport instead. Live tests opt out with @pytest.mark.live."""
+    monkeypatch.setenv("M3_CACHE_PATH", str(tmp_path / "default-cache.sqlite"))  # never touch the real cache
     if request.node.get_closest_marker("live"):
         return
     monkeypatch.setenv("ADZUNA_APP_ID", "test-id")
@@ -74,13 +75,24 @@ def raises(exc_type):
     return handler
 
 
+# surface -> (id, display, maps_to): a small slice of module 2's taxonomy for the stand-in below
+M2_VOCAB = {
+    "python": ("python", "Python", None), "sql": ("sql", "SQL", None), "postgres": ("postgresql", "PostgreSQL", "sql"),
+    "machine learning": ("machine_learning", "Machine Learning", "ai"), "aws": ("aws", "AWS", "cloud"),
+    "power bi": ("power_bi", "Power BI", "data_visualization"), "excel": ("excel", "Excel", "data_analysis"),
+    "pytorch": ("pytorch", "PyTorch", "deep_learning"), "kubernetes": ("kubernetes", "Kubernetes", None),
+    "data analysis": ("data_analysis", "Data Analysis", None), "statistical": ("statistics", "Statistics", None),
+    "generative ai": ("generative_ai", "Generative AI", "ai"), " ai ": ("ai", "Artificial Intelligence", None),
+    "data science": ("data_science", "Data Science", "machine_learning"),
+}
+
+
 def m2_extract_handler(request: httpx.Request) -> httpx.Response:
-    """Stand-in for module 2's /skills/extract: a few keyword hits, like the real dictionary pass."""
-    text = json.loads(request.content)["text"].lower()
-    known = {"python": "python", "sql": "sql", "machine learning": "machine_learning", "aws": "aws",
-             "power bi": "power_bi", "excel": "excel", "pytorch": "pytorch", "kubernetes": "kubernetes",
-             "data analysis": "data_analysis", "statistical": "statistics"}
-    return httpx.Response(200, json={"skills": [{"id": v} for k, v in known.items() if k in text], "warnings": []})
+    """Stand-in for module 2's /skills/extract: keyword hits with id, display, maps_to and matches."""
+    text = f" {json.loads(request.content)['text'].lower()} "
+    skills = [{"id": i, "display": d, "maps_to": p, "in_taxonomy": True, "source": "dictionary", "matches": [k.strip()]}
+              for k, (i, d, p) in M2_VOCAB.items() if k in text]
+    return httpx.Response(200, json={"skills": skills, "warnings": []})
 
 
 @pytest.fixture
