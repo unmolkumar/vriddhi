@@ -152,6 +152,10 @@ class SkillGap(BaseModel):
     via: str | None = Field(default=None, description="The user's skill that matched or is adjacent")
     via_display: str | None = None
     similarity: float | None = Field(default=None, description="Cosine, only when reason = semantic")
+    relation: str | None = Field(default=None, description=(
+        "For adjacent skills, how the required skill relates to the user's: 'is related to X' (shared maps_to "
+        "parent), 'builds on X' (X is its prerequisite), 'is a foundation of X' (it is X's prerequisite), "
+        "'is similar to X' (semantic)"))
     importance: float = Field(ge=0.0, le=1.0)
     priority: Literal["High", "Medium", "Low"]
     required_level: int = Field(ge=0, le=5)

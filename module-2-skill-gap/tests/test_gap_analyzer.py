@@ -87,7 +87,23 @@ def test_adjacent_via_maps_to_sibling_and_broader():
 def test_adjacent_via_prerequisite():
     r = analyze_gap(manual(["Docker"], target_role="DevOps Engineer", required_skills=["kubernetes"]))
     g = row(r, "kubernetes")
-    assert (g.status, g.reason, g.via) == ("adjacent", "prerequisite", "docker")
+    assert (g.status, g.reason, g.via, g.relation) == ("adjacent", "prerequisite", "docker", "builds on Docker")
+    r = analyze_gap(manual(["Kubernetes"], target_role="DevOps Engineer", required_skills=["docker"]))
+    g = row(r, "docker")
+    assert (g.status, g.reason, g.via, g.relation) == ("adjacent", "prerequisite", "kubernetes", "is a foundation of Kubernetes")
+
+
+@pytest.mark.parametrize("skills, required, relation", [
+    (["MySQL"], "postgresql", "is related to MySQL"),                        # shared maps_to parent
+    (["Docker"], "kubernetes", "builds on Docker"),                          # prerequisite
+    (["Data Visualization"], "data_visualisation_tools", "is similar to Data Visualization"),  # semantic
+])
+def test_adjacent_wording_follows_reason(skills, required, relation):
+    r = analyze_gap(manual(skills, target_role="X", required_skills=[required]))
+    g = row(r, required)
+    assert g.relation == relation
+    milestone = next(m for m in r.roadmap.milestones if m.skill == required)
+    assert milestone.reason == f"{g.display} {relation}, which you know."
 
 
 def test_adjacent_via_semantic_similarity():
@@ -224,7 +240,7 @@ def test_evidence_based_advice(resume_profile):
     assert row(r, "docker").advice == ("You list Docker, but nothing in your work or projects shows it. "
                                        "Build a project with Docker.")
     assert row(r, "python").advice is None  # work-supported
-    assert "quick win" in row(r, "deep_learning").advice
+    assert row(r, "deep_learning").advice == "Deep Learning is related to scikit-learn, which you know, so it's a quick win."
 
 
 def test_unverified_claim_advice():

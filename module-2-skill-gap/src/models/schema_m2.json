@@ -918,6 +918,19 @@
           "description": "Cosine, only when reason = semantic",
           "title": "Similarity"
         },
+        "relation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For adjacent skills, how the required skill relates to the user's: 'is related to X' (shared maps_to parent), 'builds on X' (X is its prerequisite), 'is a foundation of X' (it is X's prerequisite), 'is similar to X' (semantic)",
+          "title": "Relation"
+        },
         "importance": {
           "maximum": 1.0,
           "minimum": 0.0,

@@ -124,26 +124,28 @@ def _best(skills: list[ExtractedSkill]) -> ExtractedSkill | None:
     return max(skills, key=lambda s: (s.level, s.confidence), default=None)
 
 
-def _match(sid: str, entry: dict | None, profile: UserProfile) -> tuple[str, str | None, ExtractedSkill | None]:
-    """(status, reason, via) without the semantic step."""
+def _match(sid: str, entry: dict | None, profile: UserProfile
+           ) -> tuple[str, str | None, ExtractedSkill | None, str | None]:
+    """(status, reason, via, relation) without the semantic step."""
     user = {s.name: s for s in profile.skills}
     if sid in user:
-        return "matched", "exact", user[sid]
+        return "matched", "exact", user[sid], None
     finer = _best([s for s in profile.skills if sid in coarser_ids(s.name)])
     if finer:                                   # PostgreSQL covers SQL, AWS covers cloud
-        return "matched", "maps_to", finer
+        return "matched", "maps_to", finer, None
     parent = entry.get("maps_to") if entry else None
     if parent:                                  # sibling (MySQL for PostgreSQL) or broader (SQL for PostgreSQL)
         related = _best([s for s in profile.skills if parent == s.name or parent in coarser_ids(s.name)])
         if related:
-            return "adjacent", "maps_to", related
+            return "adjacent", "maps_to", related, f"is related to {related.display}"
     prereqs = set(entry.get("prerequisites", [])) if entry else set()
-    providers = [s for s in profile.skills if s.name in prereqs or prereqs & set(coarser_ids(s.name))]
-    builds_on = [s for s in profile.skills if sid in (resolve_skill(s.name) or {}).get("prerequisites", [])]
-    related = _best(providers + builds_on)
-    if related:                                 # knows what it builds on, or something built on it
-        return "adjacent", "prerequisite", related
-    return "missing", None, None
+    provider = _best([s for s in profile.skills if s.name in prereqs or prereqs & set(coarser_ids(s.name))])
+    if provider:                                # the user knows what it builds on (Docker -> Kubernetes)
+        return "adjacent", "prerequisite", provider, f"builds on {provider.display}"
+    dependant = _best([s for s in profile.skills if sid in (resolve_skill(s.name) or {}).get("prerequisites", [])])
+    if dependant:                               # the user knows something built on it (Kubernetes -> Docker)
+        return "adjacent", "prerequisite", dependant, f"is a foundation of {dependant.display}"
+    return "missing", None, None, None
 
 
 def _advice(gap: SkillGap, via: ExtractedSkill | None) -> str | None:
@@ -155,7 +157,7 @@ def _advice(gap: SkillGap, via: ExtractedSkill | None) -> str | None:
     if not ({"work_supported", "project_supported"} & set(via.evidence)):
         return f"You list {via.display}, but nothing in your work or projects shows it. Build a project with {gap.display}."
     if gap.status == "adjacent":
-        return f"You already know {via.display}; {gap.display} builds on it, so this is a quick win."
+        return f"{gap.display} {gap.relation}, which you know, so it's a quick win."
     return None
 
 
@@ -177,9 +179,9 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
 
     rows = []
     for rank, ((sid, display, entry), w, has_w) in enumerate(zip(required, weights, explicit)):
-        status, reason, via = _match(sid, entry, profile)
+        status, reason, via, relation = _match(sid, entry, profile)
         rows.append({"sid": sid, "display": display, "entry": entry, "w": w, "status": status, "reason": reason,
-                     "via": via, "sim": None, "req_level": _required_level(rank, w, has_w)})
+                     "via": via, "relation": relation, "sim": None, "req_level": _required_level(rank, w, has_w)})
 
     # Semantic step for what is still missing: MiniLM (or TF-IDF) cosine against the user's skill names.
     # >= match threshold (0.92): the same skill worded differently; >= threshold (0.82): adjacent.
@@ -190,7 +192,8 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
             best = max(range(len(sims)), key=sims.__getitem__)
             if sims[best] >= similarity.threshold():
                 status = "matched" if sims[best] >= similarity.match_threshold() else "adjacent"
-                r.update(status=status, reason="semantic", via=profile.skills[best], sim=round(sims[best], 3))
+                r.update(status=status, reason="semantic", via=profile.skills[best], sim=round(sims[best], 3),
+                         relation=None if status == "matched" else f"is similar to {profile.skills[best].display}")
 
     gaps, credit, total = [], 0.0, 0.0
     for r in rows:
@@ -199,7 +202,7 @@ def analyze_gap(req: GapAnalysisRequest) -> GapAnalysisResult:
         gap = SkillGap(
             skill=r["sid"], display=r["display"], in_taxonomy=r["entry"] is not None, status=r["status"],
             reason=r["reason"], via=via.name if via else None, via_display=via.display if via else None,
-            similarity=r["sim"], importance=round(r["w"], 4), priority=_priority(r["w"]),
+            similarity=r["sim"], relation=r["relation"], importance=round(r["w"], 4), priority=_priority(r["w"]),
             required_level=r["req_level"], current_level=current, gap=r["req_level"] - current,
             evidence=via.evidence if via else [])
         gap.advice = _advice(gap, via)

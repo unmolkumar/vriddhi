@@ -35,7 +35,7 @@ def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: fl
         if g.status == "missing":
             kind, reason = "missing", f"Asked for by the role ({g.priority.lower()} priority)."
         elif g.status == "adjacent":
-            kind, reason = "adjacent", f"Builds on your {g.via_display}."
+            kind, reason = "adjacent", f"{g.display} {g.relation}, which you know."
         elif g.gap > 0:
             kind, reason = "weak", f"Raise from level {g.current_level} to {g.required_level}."
         else:
