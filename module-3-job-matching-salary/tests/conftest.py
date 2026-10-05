@@ -90,3 +90,13 @@ def fake_http():
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "live: calls a real provider; skipped when its key is missing")
+
+
+def make_job(**kw):
+    """A Job with sensible defaults for unit tests."""
+    from src.models.schemas import Job
+    base = dict(job_id="adzuna:1", title="Data Scientist", company="Acme", description="", location="Bengaluru",
+                employment_type="full_time", work_mode="unknown", skills=[], skills_source="m2", source="adzuna",
+                last_observed_at=NOW, posted_at=NOW)
+    base.update(kw)
+    return Job(**base)
