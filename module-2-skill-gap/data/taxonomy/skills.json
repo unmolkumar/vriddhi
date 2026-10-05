@@ -1,0 +1,6985 @@
+{
+ "version": 2,
+ "note": "Curated tech skill taxonomy, ESCO-aligned (mapping in progress: esco_uri is null). ids follow module 1's skill normalisation so its top_skills resolve directly.",
+ "difficulty_tiers": {
+  "1": "foundational tool or syntax",
+  "2": "working skill",
+  "3": "deep specialisation"
+ },
+ "skills": [
+  {
+   "id": "python",
+   "display": "Python",
+   "aliases": [
+    "python",
+    "py",
+    "python3",
+    "python 3",
+    "pyhton",
+    "python programming"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "java",
+   "display": "Java",
+   "aliases": [
+    "java",
+    "core java",
+    "java 8",
+    "java 11",
+    "java 17",
+    "j2se",
+    "java programming"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "javascript",
+   "display": "JavaScript",
+   "aliases": [
+    "javascript",
+    "js",
+    "es6",
+    "ecmascript",
+    "java script",
+    "javascipt",
+    "javscript",
+    "vanilla js"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "js": "list"
+   }
+  },
+  {
+   "id": "typescript",
+   "display": "TypeScript",
+   "aliases": [
+    "typescript",
+    "ts",
+    "type script"
+   ],
+   "category": "language",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "javascript"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "ts": "list"
+   }
+  },
+  {
+   "id": "c",
+   "display": "C",
+   "aliases": [
+    "c",
+    "c language",
+    "c programming",
+    "ansi c"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "c": "list"
+   }
+  },
+  {
+   "id": "cpp",
+   "display": "C++",
+   "aliases": [
+    "c++",
+    "cpp",
+    "c plus plus",
+    "cplusplus"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "csharp",
+   "display": "C#",
+   "aliases": [
+    "c#",
+    "c sharp",
+    "csharp"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "go",
+   "display": "Go",
+   "aliases": [
+    "go",
+    "golang",
+    "go lang",
+    "go language",
+    "go programming"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "go": "list"
+   }
+  },
+  {
+   "id": "rust",
+   "display": "Rust",
+   "aliases": [
+    "rust",
+    "rust lang",
+    "rustlang"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "rust": "case"
+   }
+  },
+  {
+   "id": "kotlin",
+   "display": "Kotlin",
+   "aliases": [
+    "kotlin"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "swift",
+   "display": "Swift",
+   "aliases": [
+    "swift",
+    "swift programming"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "swift": "case"
+   }
+  },
+  {
+   "id": "objective_c",
+   "display": "Objective-C",
+   "aliases": [
+    "objective-c",
+    "objective c",
+    "objc",
+    "obj-c"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ruby",
+   "display": "Ruby",
+   "aliases": [
+    "ruby",
+    "ruby programming"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "ruby": "case"
+   }
+  },
+  {
+   "id": "php",
+   "display": "PHP",
+   "aliases": [
+    "php",
+    "php7",
+    "php 8"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "scala",
+   "display": "Scala",
+   "aliases": [
+    "scala"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "r",
+   "display": "R",
+   "aliases": [
+    "r",
+    "r programming",
+    "r language"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "r": "case"
+   }
+  },
+  {
+   "id": "matlab",
+   "display": "MATLAB",
+   "aliases": [
+    "matlab"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "perl",
+   "display": "Perl",
+   "aliases": [
+    "perl"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "perl": "case"
+   }
+  },
+  {
+   "id": "shell_scripting",
+   "display": "Shell Scripting",
+   "aliases": [
+    "shell scripting",
+    "bash",
+    "bash scripting",
+    "shell script",
+    "shell scripts",
+    "unix shell scripting",
+    "linux shell scripting",
+    "shell"
+   ],
+   "category": "language",
+   "maps_to": "linux",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "shell": "list"
+   }
+  },
+  {
+   "id": "powershell",
+   "display": "PowerShell",
+   "aliases": [
+    "powershell",
+    "powershell scripting"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "sql",
+   "display": "SQL",
+   "aliases": [
+    "sql",
+    "structured query language",
+    "sql queries"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "pl_sql",
+   "display": "PL/SQL",
+   "aliases": [
+    "pl/sql",
+    "plsql",
+    "pl sql"
+   ],
+   "category": "language",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "t_sql",
+   "display": "T-SQL",
+   "aliases": [
+    "t-sql",
+    "tsql",
+    "transact-sql",
+    "transact sql"
+   ],
+   "category": "language",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dart",
+   "display": "Dart",
+   "aliases": [
+    "dart"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "dart": "case"
+   }
+  },
+  {
+   "id": "julia",
+   "display": "Julia",
+   "aliases": [
+    "julia"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "julia": "case"
+   }
+  },
+  {
+   "id": "lua",
+   "display": "Lua",
+   "aliases": [
+    "lua"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "lua": "case"
+   }
+  },
+  {
+   "id": "haskell",
+   "display": "Haskell",
+   "aliases": [
+    "haskell"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "elixir",
+   "display": "Elixir",
+   "aliases": [
+    "elixir"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "elixir": "case"
+   }
+  },
+  {
+   "id": "erlang",
+   "display": "Erlang",
+   "aliases": [
+    "erlang"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "clojure",
+   "display": "Clojure",
+   "aliases": [
+    "clojure"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "fsharp",
+   "display": "F#",
+   "aliases": [
+    "f#",
+    "f sharp",
+    "fsharp"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vba",
+   "display": "VBA",
+   "aliases": [
+    "vba",
+    "excel vba",
+    "vba macros"
+   ],
+   "category": "language",
+   "maps_to": "excel",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "visual_basic",
+   "display": "Visual Basic",
+   "aliases": [
+    "visual basic",
+    "vb.net",
+    "vb"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "vb": "list"
+   }
+  },
+  {
+   "id": "cobol",
+   "display": "COBOL",
+   "aliases": [
+    "cobol"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "fortran",
+   "display": "Fortran",
+   "aliases": [
+    "fortran"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "assembly_language",
+   "display": "Assembly Language",
+   "aliases": [
+    "assembly language",
+    "assembly",
+    "asm",
+    "x86 assembly"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "assembly": "list",
+    "asm": "list"
+   }
+  },
+  {
+   "id": "solidity",
+   "display": "Solidity",
+   "aliases": [
+    "solidity"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "html",
+   "display": "HTML",
+   "aliases": [
+    "html",
+    "html5",
+    "html 5"
+   ],
+   "category": "language",
+   "maps_to": "web_development",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "css",
+   "display": "CSS",
+   "aliases": [
+    "css",
+    "css3",
+    "css 3"
+   ],
+   "category": "language",
+   "maps_to": "web_development",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "sass",
+   "display": "Sass",
+   "aliases": [
+    "sass",
+    "scss"
+   ],
+   "category": "language",
+   "maps_to": "css",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "sass": "case"
+   }
+  },
+  {
+   "id": "graphql",
+   "display": "GraphQL",
+   "aliases": [
+    "graphql",
+    "graph ql"
+   ],
+   "category": "language",
+   "maps_to": "api_development",
+   "prerequisites": [
+    "rest_apis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "groovy",
+   "display": "Groovy",
+   "aliases": [
+    "groovy"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "groovy": "case"
+   }
+  },
+  {
+   "id": "verilog",
+   "display": "Verilog",
+   "aliases": [
+    "verilog",
+    "systemverilog"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vhdl",
+   "display": "VHDL",
+   "aliases": [
+    "vhdl"
+   ],
+   "category": "language",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "apex",
+   "display": "Apex",
+   "aliases": [
+    "apex",
+    "salesforce apex"
+   ],
+   "category": "language",
+   "maps_to": "salesforce",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "apex": "case"
+   }
+  },
+  {
+   "id": "abap",
+   "display": "ABAP",
+   "aliases": [
+    "abap",
+    "sap abap"
+   ],
+   "category": "language",
+   "maps_to": "sap",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "embedded_c",
+   "display": "Embedded C",
+   "aliases": [
+    "embedded c"
+   ],
+   "category": "language",
+   "maps_to": "c",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "react",
+   "display": "React",
+   "aliases": [
+    "react",
+    "react.js",
+    "reactjs",
+    "react js",
+    "react 18"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "javascript",
+    "html",
+    "css"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "react_native",
+   "display": "React Native",
+   "aliases": [
+    "react native",
+    "react-native",
+    "reactnative"
+   ],
+   "category": "framework",
+   "maps_to": "react",
+   "prerequisites": [
+    "react"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "angular",
+   "display": "Angular",
+   "aliases": [
+    "angular",
+    "angular 2+",
+    "angular2"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "typescript",
+    "html",
+    "css"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "angularjs",
+   "display": "AngularJS",
+   "aliases": [
+    "angularjs",
+    "angular.js",
+    "angular js"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vue",
+   "display": "Vue.js",
+   "aliases": [
+    "vue.js",
+    "vue",
+    "vuejs",
+    "vue js",
+    "vue 3"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "javascript",
+    "html",
+    "css"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "next_js",
+   "display": "Next.js",
+   "aliases": [
+    "next.js",
+    "nextjs",
+    "next js"
+   ],
+   "category": "framework",
+   "maps_to": "react",
+   "prerequisites": [
+    "react"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "nuxt_js",
+   "display": "Nuxt.js",
+   "aliases": [
+    "nuxt.js",
+    "nuxtjs",
+    "nuxt"
+   ],
+   "category": "framework",
+   "maps_to": "vue",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "svelte",
+   "display": "Svelte",
+   "aliases": [
+    "svelte",
+    "sveltekit"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "nodejs",
+   "display": "Node.js",
+   "aliases": [
+    "node.js",
+    "nodejs",
+    "node js",
+    "node"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "javascript"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "node": "list"
+   }
+  },
+  {
+   "id": "express_js",
+   "display": "Express.js",
+   "aliases": [
+    "express.js",
+    "expressjs",
+    "express js",
+    "express"
+   ],
+   "category": "framework",
+   "maps_to": "nodejs",
+   "prerequisites": [
+    "nodejs"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "express": "list"
+   }
+  },
+  {
+   "id": "nestjs",
+   "display": "NestJS",
+   "aliases": [
+    "nestjs",
+    "nest.js",
+    "nest js"
+   ],
+   "category": "framework",
+   "maps_to": "nodejs",
+   "prerequisites": [
+    "nodejs",
+    "typescript"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "django",
+   "display": "Django",
+   "aliases": [
+    "django"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "django_rest_framework",
+   "display": "Django REST Framework",
+   "aliases": [
+    "django rest framework",
+    "drf",
+    "django rest"
+   ],
+   "category": "framework",
+   "maps_to": "django",
+   "prerequisites": [
+    "django",
+    "rest_apis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "flask",
+   "display": "Flask",
+   "aliases": [
+    "flask"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "fastapi",
+   "display": "FastAPI",
+   "aliases": [
+    "fastapi",
+    "fast api"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "spring",
+   "display": "Spring",
+   "aliases": [
+    "spring",
+    "spring framework",
+    "spring mvc"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [
+    "java"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "spring": "list"
+   }
+  },
+  {
+   "id": "spring_boot",
+   "display": "Spring Boot",
+   "aliases": [
+    "spring boot",
+    "springboot",
+    "spring-boot"
+   ],
+   "category": "framework",
+   "maps_to": "spring",
+   "prerequisites": [
+    "spring"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "hibernate",
+   "display": "Hibernate",
+   "aliases": [
+    "hibernate"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [
+    "java",
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "struts",
+   "display": "Struts",
+   "aliases": [
+    "struts",
+    "apache struts"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dotnet",
+   "display": ".NET",
+   "aliases": [
+    ".net",
+    "dotnet",
+    "dot net",
+    ".net framework"
+   ],
+   "category": "framework",
+   "maps_to": "csharp",
+   "prerequisites": [
+    "csharp"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "asp_net",
+   "display": "ASP.NET",
+   "aliases": [
+    "asp.net",
+    "asp.net mvc",
+    "asp net",
+    "aspnet"
+   ],
+   "category": "framework",
+   "maps_to": "csharp",
+   "prerequisites": [
+    "dotnet"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dotnet_core",
+   "display": ".NET Core",
+   "aliases": [
+    ".net core",
+    "dotnet core",
+    "asp.net core",
+    ".net 6"
+   ],
+   "category": "framework",
+   "maps_to": "csharp",
+   "prerequisites": [
+    "dotnet"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "laravel",
+   "display": "Laravel",
+   "aliases": [
+    "laravel"
+   ],
+   "category": "framework",
+   "maps_to": "php",
+   "prerequisites": [
+    "php"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "symfony",
+   "display": "Symfony",
+   "aliases": [
+    "symfony"
+   ],
+   "category": "framework",
+   "maps_to": "php",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "codeigniter",
+   "display": "CodeIgniter",
+   "aliases": [
+    "codeigniter"
+   ],
+   "category": "framework",
+   "maps_to": "php",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ruby_on_rails",
+   "display": "Ruby on Rails",
+   "aliases": [
+    "ruby on rails",
+    "rails",
+    "ror"
+   ],
+   "category": "framework",
+   "maps_to": "ruby",
+   "prerequisites": [
+    "ruby"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "ror": "list"
+   }
+  },
+  {
+   "id": "jquery",
+   "display": "jQuery",
+   "aliases": [
+    "jquery"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [
+    "javascript"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "bootstrap",
+   "display": "Bootstrap",
+   "aliases": [
+    "bootstrap"
+   ],
+   "category": "framework",
+   "maps_to": "css",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "tailwind_css",
+   "display": "Tailwind CSS",
+   "aliases": [
+    "tailwind css",
+    "tailwind",
+    "tailwindcss"
+   ],
+   "category": "framework",
+   "maps_to": "css",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "material_ui",
+   "display": "Material UI",
+   "aliases": [
+    "material ui",
+    "mui",
+    "material-ui"
+   ],
+   "category": "framework",
+   "maps_to": "react",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "mui": "list"
+   }
+  },
+  {
+   "id": "redux",
+   "display": "Redux",
+   "aliases": [
+    "redux",
+    "redux toolkit"
+   ],
+   "category": "framework",
+   "maps_to": "react",
+   "prerequisites": [
+    "react"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "flutter",
+   "display": "Flutter",
+   "aliases": [
+    "flutter"
+   ],
+   "category": "framework",
+   "maps_to": "dart",
+   "prerequisites": [
+    "dart"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "swiftui",
+   "display": "SwiftUI",
+   "aliases": [
+    "swiftui",
+    "swift ui"
+   ],
+   "category": "framework",
+   "maps_to": "swift",
+   "prerequisites": [
+    "swift"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "jetpack_compose",
+   "display": "Jetpack Compose",
+   "aliases": [
+    "jetpack compose"
+   ],
+   "category": "framework",
+   "maps_to": "kotlin",
+   "prerequisites": [
+    "kotlin"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "android",
+   "display": "Android",
+   "aliases": [
+    "android",
+    "android sdk",
+    "android development"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ios",
+   "display": "iOS",
+   "aliases": [
+    "ios",
+    "ios development"
+   ],
+   "category": "framework",
+   "maps_to": "swift",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "xamarin",
+   "display": "Xamarin",
+   "aliases": [
+    "xamarin"
+   ],
+   "category": "framework",
+   "maps_to": "csharp",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ionic",
+   "display": "Ionic",
+   "aliases": [
+    "ionic"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "ionic": "case"
+   }
+  },
+  {
+   "id": "electron",
+   "display": "Electron",
+   "aliases": [
+    "electron",
+    "electron.js"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "electron": "case"
+   }
+  },
+  {
+   "id": "gin",
+   "display": "Gin",
+   "aliases": [
+    "gin",
+    "gin gonic"
+   ],
+   "category": "framework",
+   "maps_to": "go",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "gin": "list"
+   }
+  },
+  {
+   "id": "micronaut",
+   "display": "Micronaut",
+   "aliases": [
+    "micronaut"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "quarkus",
+   "display": "Quarkus",
+   "aliases": [
+    "quarkus"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "play_framework",
+   "display": "Play Framework",
+   "aliases": [
+    "play framework"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "akka",
+   "display": "Akka",
+   "aliases": [
+    "akka"
+   ],
+   "category": "framework",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "celery",
+   "display": "Celery",
+   "aliases": [
+    "celery"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "grpc",
+   "display": "gRPC",
+   "aliases": [
+    "grpc"
+   ],
+   "category": "framework",
+   "maps_to": "api_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "rest_apis",
+   "display": "REST APIs",
+   "aliases": [
+    "rest apis",
+    "rest api",
+    "restful api",
+    "restful apis",
+    "rest",
+    "restful services",
+    "rest services",
+    "restful web services"
+   ],
+   "category": "framework",
+   "maps_to": "api_development",
+   "prerequisites": [
+    "web_development"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "rest": "list"
+   }
+  },
+  {
+   "id": "soap",
+   "display": "SOAP",
+   "aliases": [
+    "soap",
+    "soap api",
+    "soap web services"
+   ],
+   "category": "framework",
+   "maps_to": "api_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "soap": "case"
+   }
+  },
+  {
+   "id": "websockets",
+   "display": "WebSockets",
+   "aliases": [
+    "websockets",
+    "websocket",
+    "web sockets"
+   ],
+   "category": "framework",
+   "maps_to": "api_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "microservices",
+   "display": "Microservices",
+   "aliases": [
+    "microservices",
+    "microservice",
+    "micro services",
+    "microservice architecture"
+   ],
+   "category": "framework",
+   "maps_to": "system_design",
+   "prerequisites": [
+    "rest_apis",
+    "docker"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "three_js",
+   "display": "Three.js",
+   "aliases": [
+    "three.js",
+    "threejs"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "d3_js",
+   "display": "D3.js",
+   "aliases": [
+    "d3.js",
+    "d3",
+    "d3js"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "d3": "list"
+   }
+  },
+  {
+   "id": "webpack",
+   "display": "Webpack",
+   "aliases": [
+    "webpack"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vite",
+   "display": "Vite",
+   "aliases": [
+    "vite"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "vite": "case"
+   }
+  },
+  {
+   "id": "babel",
+   "display": "Babel",
+   "aliases": [
+    "babel"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "babel": "case"
+   }
+  },
+  {
+   "id": "storybook",
+   "display": "Storybook",
+   "aliases": [
+    "storybook"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "jest",
+   "display": "Jest",
+   "aliases": [
+    "jest"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mocha",
+   "display": "Mocha",
+   "aliases": [
+    "mocha"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "mocha": "case"
+   }
+  },
+  {
+   "id": "cypress",
+   "display": "Cypress",
+   "aliases": [
+    "cypress"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "cypress": "case"
+   }
+  },
+  {
+   "id": "selenium",
+   "display": "Selenium",
+   "aliases": [
+    "selenium",
+    "selenium webdriver"
+   ],
+   "category": "framework",
+   "maps_to": "automation_testing",
+   "prerequisites": [
+    "automation_testing"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "playwright",
+   "display": "Playwright",
+   "aliases": [
+    "playwright"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "junit",
+   "display": "JUnit",
+   "aliases": [
+    "junit",
+    "junit5",
+    "junit 5"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [
+    "java"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "testng",
+   "display": "TestNG",
+   "aliases": [
+    "testng"
+   ],
+   "category": "framework",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "pytest",
+   "display": "pytest",
+   "aliases": [
+    "pytest",
+    "py.test"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "puppeteer",
+   "display": "Puppeteer",
+   "aliases": [
+    "puppeteer"
+   ],
+   "category": "framework",
+   "maps_to": "javascript",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "appium",
+   "display": "Appium",
+   "aliases": [
+    "appium"
+   ],
+   "category": "framework",
+   "maps_to": "automation_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "unity",
+   "display": "Unity",
+   "aliases": [
+    "unity",
+    "unity3d",
+    "unity 3d"
+   ],
+   "category": "framework",
+   "maps_to": "csharp",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "unity": "case"
+   }
+  },
+  {
+   "id": "unreal_engine",
+   "display": "Unreal Engine",
+   "aliases": [
+    "unreal engine",
+    "unreal"
+   ],
+   "category": "framework",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "opengl",
+   "display": "OpenGL",
+   "aliases": [
+    "opengl"
+   ],
+   "category": "framework",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "qt",
+   "display": "Qt",
+   "aliases": [
+    "qt"
+   ],
+   "category": "framework",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "qt": "list"
+   }
+  },
+  {
+   "id": "streamlit",
+   "display": "Streamlit",
+   "aliases": [
+    "streamlit"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "gradio",
+   "display": "Gradio",
+   "aliases": [
+    "gradio"
+   ],
+   "category": "framework",
+   "maps_to": "python",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "langchain",
+   "display": "LangChain",
+   "aliases": [
+    "langchain",
+    "lang chain"
+   ],
+   "category": "framework",
+   "maps_to": "llm",
+   "prerequisites": [
+    "python",
+    "llm"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "langgraph",
+   "display": "LangGraph",
+   "aliases": [
+    "langgraph"
+   ],
+   "category": "framework",
+   "maps_to": "llm",
+   "prerequisites": [
+    "langchain"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "llamaindex",
+   "display": "LlamaIndex",
+   "aliases": [
+    "llamaindex",
+    "llama index",
+    "gpt index"
+   ],
+   "category": "framework",
+   "maps_to": "llm",
+   "prerequisites": [
+    "python",
+    "llm"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "hugging_face",
+   "display": "Hugging Face",
+   "aliases": [
+    "hugging face",
+    "huggingface",
+    "hugging face transformers",
+    "hf"
+   ],
+   "category": "framework",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "hf": "list"
+   }
+  },
+  {
+   "id": "pandas",
+   "display": "pandas",
+   "aliases": [
+    "pandas"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "numpy",
+   "display": "NumPy",
+   "aliases": [
+    "numpy"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "scipy",
+   "display": "SciPy",
+   "aliases": [
+    "scipy"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "numpy"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "matplotlib",
+   "display": "Matplotlib",
+   "aliases": [
+    "matplotlib",
+    "matplot lib"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "seaborn",
+   "display": "Seaborn",
+   "aliases": [
+    "seaborn"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "matplotlib"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "plotly",
+   "display": "Plotly",
+   "aliases": [
+    "plotly",
+    "plotly dash"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "spark",
+   "display": "Apache Spark",
+   "aliases": [
+    "apache spark",
+    "spark",
+    "pyspark",
+    "spark sql",
+    "spark streaming"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [
+    "python",
+    "sql"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "spark": "case"
+   }
+  },
+  {
+   "id": "hadoop",
+   "display": "Hadoop",
+   "aliases": [
+    "hadoop",
+    "apache hadoop",
+    "hdfs"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "mapreduce",
+   "display": "MapReduce",
+   "aliases": [
+    "mapreduce",
+    "map reduce"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "hive",
+   "display": "Hive",
+   "aliases": [
+    "hive",
+    "apache hive",
+    "hiveql"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [
+    "sql",
+    "hadoop"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "hive": "case"
+   }
+  },
+  {
+   "id": "pig",
+   "display": "Pig",
+   "aliases": [
+    "pig",
+    "apache pig"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "pig": "list"
+   }
+  },
+  {
+   "id": "hbase",
+   "display": "HBase",
+   "aliases": [
+    "hbase"
+   ],
+   "category": "data",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "kafka",
+   "display": "Kafka",
+   "aliases": [
+    "kafka",
+    "apache kafka",
+    "kafka streams"
+   ],
+   "category": "data",
+   "maps_to": "message_queues",
+   "prerequisites": [
+    "distributed_systems"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_flink",
+   "display": "Apache Flink",
+   "aliases": [
+    "apache flink",
+    "flink"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_beam",
+   "display": "Apache Beam",
+   "aliases": [
+    "apache beam"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "airflow",
+   "display": "Airflow",
+   "aliases": [
+    "airflow",
+    "apache airflow"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [
+    "python",
+    "etl"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dbt",
+   "display": "dbt",
+   "aliases": [
+    "dbt",
+    "data build tool",
+    "dbt core"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "snowflake",
+   "display": "Snowflake",
+   "aliases": [
+    "snowflake"
+   ],
+   "category": "data",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "snowflake": "case"
+   }
+  },
+  {
+   "id": "databricks",
+   "display": "Databricks",
+   "aliases": [
+    "databricks"
+   ],
+   "category": "data",
+   "maps_to": "spark",
+   "prerequisites": [
+    "spark"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "bigquery",
+   "display": "BigQuery",
+   "aliases": [
+    "bigquery",
+    "google bigquery",
+    "big query"
+   ],
+   "category": "data",
+   "maps_to": "gcp",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_redshift",
+   "display": "Amazon Redshift",
+   "aliases": [
+    "amazon redshift",
+    "redshift",
+    "aws redshift"
+   ],
+   "category": "data",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_synapse",
+   "display": "Azure Synapse",
+   "aliases": [
+    "azure synapse",
+    "synapse analytics",
+    "azure synapse analytics"
+   ],
+   "category": "data",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_data_factory",
+   "display": "Azure Data Factory",
+   "aliases": [
+    "azure data factory",
+    "adf"
+   ],
+   "category": "data",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "adf": "list"
+   }
+  },
+  {
+   "id": "aws_glue",
+   "display": "AWS Glue",
+   "aliases": [
+    "aws glue",
+    "glue"
+   ],
+   "category": "data",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "glue": "list"
+   }
+  },
+  {
+   "id": "informatica",
+   "display": "Informatica",
+   "aliases": [
+    "informatica",
+    "informatica powercenter"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "talend",
+   "display": "Talend",
+   "aliases": [
+    "talend"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ssis",
+   "display": "SSIS",
+   "aliases": [
+    "ssis",
+    "sql server integration services"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ssrs",
+   "display": "SSRS",
+   "aliases": [
+    "ssrs",
+    "sql server reporting services"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ssas",
+   "display": "SSAS",
+   "aliases": [
+    "ssas",
+    "sql server analysis services"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "etl",
+   "display": "ETL",
+   "aliases": [
+    "etl",
+    "etl pipelines",
+    "extract transform load",
+    "elt"
+   ],
+   "category": "data",
+   "maps_to": "data_engineering",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_warehousing",
+   "display": "Data Warehousing",
+   "aliases": [
+    "data warehousing",
+    "data warehouse",
+    "dwh"
+   ],
+   "category": "data",
+   "maps_to": "data_engineering",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_modeling",
+   "display": "Data Modeling",
+   "aliases": [
+    "data modeling",
+    "data modelling",
+    "dimensional modeling",
+    "dimensional modelling"
+   ],
+   "category": "data",
+   "maps_to": "data_engineering",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_lake",
+   "display": "Data Lake",
+   "aliases": [
+    "data lake",
+    "data lakes"
+   ],
+   "category": "data",
+   "maps_to": "data_engineering",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "delta_lake",
+   "display": "Delta Lake",
+   "aliases": [
+    "delta lake"
+   ],
+   "category": "data",
+   "maps_to": "spark",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_iceberg",
+   "display": "Apache Iceberg",
+   "aliases": [
+    "apache iceberg",
+    "iceberg"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "iceberg": "list"
+   }
+  },
+  {
+   "id": "data_pipelines",
+   "display": "Data Pipelines",
+   "aliases": [
+    "data pipelines",
+    "data pipeline"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_engineering",
+   "display": "Data Engineering",
+   "aliases": [
+    "data engineering"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [
+    "sql",
+    "python"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "data_analysis",
+   "display": "Data Analysis",
+   "aliases": [
+    "data analysis",
+    "data analytics"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [
+    "excel"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_visualization",
+   "display": "Data Visualization",
+   "aliases": [
+    "data visualization",
+    "data visualisation",
+    "data viz",
+    "dataviz"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [
+    "data_analysis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_cleaning",
+   "display": "Data Cleaning",
+   "aliases": [
+    "data cleaning",
+    "data cleansing",
+    "data wrangling",
+    "data preprocessing",
+    "data preparation"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "exploratory_data_analysis",
+   "display": "Exploratory Data Analysis",
+   "aliases": [
+    "exploratory data analysis",
+    "eda"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [
+    "pandas"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "eda": "list"
+   }
+  },
+  {
+   "id": "statistics",
+   "display": "Statistics",
+   "aliases": [
+    "statistics",
+    "statistical analysis",
+    "statistical modeling",
+    "statistical modelling",
+    "stats",
+    "inferential statistics",
+    "descriptive statistics"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [
+    "probability"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "a_b_testing",
+   "display": "A/B Testing",
+   "aliases": [
+    "a/b testing",
+    "ab testing",
+    "a/b tests",
+    "a/b test",
+    "split testing"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [
+    "statistics"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "hypothesis_testing",
+   "display": "Hypothesis Testing",
+   "aliases": [
+    "hypothesis testing"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [
+    "statistics"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "regression_analysis",
+   "display": "Regression Analysis",
+   "aliases": [
+    "regression analysis",
+    "regression",
+    "linear regression",
+    "logistic regression"
+   ],
+   "category": "data",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "statistics"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "regression": "list"
+   }
+  },
+  {
+   "id": "time_series_analysis",
+   "display": "Time Series Analysis",
+   "aliases": [
+    "time series analysis",
+    "time series",
+    "time-series analysis"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [
+    "statistics"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "excel",
+   "display": "Excel",
+   "aliases": [
+    "excel",
+    "ms excel",
+    "microsoft excel",
+    "advanced excel",
+    "excel formulas"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "excel": "case"
+   }
+  },
+  {
+   "id": "pivot_tables",
+   "display": "Pivot Tables",
+   "aliases": [
+    "pivot tables",
+    "pivot table"
+   ],
+   "category": "data",
+   "maps_to": "excel",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "google_sheets",
+   "display": "Google Sheets",
+   "aliases": [
+    "google sheets"
+   ],
+   "category": "data",
+   "maps_to": "excel",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "power_bi",
+   "display": "Power BI",
+   "aliases": [
+    "power bi",
+    "powerbi",
+    "power-bi",
+    "microsoft power bi"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [
+    "data_analysis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "tableau",
+   "display": "Tableau",
+   "aliases": [
+    "tableau"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [
+    "data_analysis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "looker",
+   "display": "Looker",
+   "aliases": [
+    "looker"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "looker_studio",
+   "display": "Looker Studio",
+   "aliases": [
+    "looker studio",
+    "google data studio",
+    "data studio"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "qlik",
+   "display": "Qlik",
+   "aliases": [
+    "qlik",
+    "qlikview",
+    "qlik sense"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "metabase",
+   "display": "Metabase",
+   "aliases": [
+    "metabase"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_superset",
+   "display": "Apache Superset",
+   "aliases": [
+    "apache superset",
+    "superset"
+   ],
+   "category": "data",
+   "maps_to": "data_visualization",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "superset": "list"
+   }
+  },
+  {
+   "id": "alteryx",
+   "display": "Alteryx",
+   "aliases": [
+    "alteryx"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "sas",
+   "display": "SAS",
+   "aliases": [
+    "sas",
+    "sas programming"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "sas": "case"
+   }
+  },
+  {
+   "id": "spss",
+   "display": "SPSS",
+   "aliases": [
+    "spss",
+    "ibm spss"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "stata",
+   "display": "Stata",
+   "aliases": [
+    "stata"
+   ],
+   "category": "data",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "jupyter",
+   "display": "Jupyter",
+   "aliases": [
+    "jupyter",
+    "jupyter notebook",
+    "jupyter notebooks",
+    "jupyterlab"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "polars",
+   "display": "Polars",
+   "aliases": [
+    "polars"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dask",
+   "display": "Dask",
+   "aliases": [
+    "dask"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "pandas"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "web_scraping",
+   "display": "Web Scraping",
+   "aliases": [
+    "web scraping",
+    "web scraper"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "beautifulsoup",
+   "display": "BeautifulSoup",
+   "aliases": [
+    "beautifulsoup",
+    "beautiful soup",
+    "bs4"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "scrapy",
+   "display": "Scrapy",
+   "aliases": [
+    "scrapy"
+   ],
+   "category": "data",
+   "maps_to": "python",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "business_intelligence",
+   "display": "Business Intelligence",
+   "aliases": [
+    "business intelligence",
+    "bi"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "bi": "list"
+   }
+  },
+  {
+   "id": "google_analytics",
+   "display": "Google Analytics",
+   "aliases": [
+    "google analytics",
+    "ga4"
+   ],
+   "category": "data",
+   "maps_to": "data_analysis",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "data_governance",
+   "display": "Data Governance",
+   "aliases": [
+    "data governance"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_quality",
+   "display": "Data Quality",
+   "aliases": [
+    "data quality"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "master_data_management",
+   "display": "Master Data Management",
+   "aliases": [
+    "master data management",
+    "mdm"
+   ],
+   "category": "data",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "mdm": "list"
+   }
+  },
+  {
+   "id": "big_data",
+   "display": "Big Data",
+   "aliases": [
+    "big data"
+   ],
+   "category": "data",
+   "maps_to": "data_engineering",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_nifi",
+   "display": "Apache NiFi",
+   "aliases": [
+    "apache nifi",
+    "nifi"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "presto",
+   "display": "Presto",
+   "aliases": [
+    "presto",
+    "prestodb"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "presto": "case"
+   }
+  },
+  {
+   "id": "trino",
+   "display": "Trino",
+   "aliases": [
+    "trino"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "clickhouse",
+   "display": "ClickHouse",
+   "aliases": [
+    "clickhouse"
+   ],
+   "category": "data",
+   "maps_to": "big_data",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "fivetran",
+   "display": "Fivetran",
+   "aliases": [
+    "fivetran"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "airbyte",
+   "display": "Airbyte",
+   "aliases": [
+    "airbyte"
+   ],
+   "category": "data",
+   "maps_to": "etl",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_kinesis",
+   "display": "Amazon Kinesis",
+   "aliases": [
+    "amazon kinesis",
+    "kinesis",
+    "aws kinesis"
+   ],
+   "category": "data",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "google_pub_sub",
+   "display": "Google Pub/Sub",
+   "aliases": [
+    "google pub/sub",
+    "pub/sub",
+    "pubsub"
+   ],
+   "category": "data",
+   "maps_to": "gcp",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "data_science",
+   "display": "Data Science",
+   "aliases": [
+    "data science"
+   ],
+   "category": "data",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "python",
+    "statistics"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "machine_learning",
+   "display": "Machine Learning",
+   "aliases": [
+    "machine learning",
+    "ml",
+    "m.l.",
+    "machine-learning",
+    "machinelearning",
+    "machine learning (ml)"
+   ],
+   "category": "ml",
+   "maps_to": "ai",
+   "prerequisites": [
+    "python",
+    "statistics",
+    "linear_algebra"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "m.l.": "list"
+   }
+  },
+  {
+   "id": "deep_learning",
+   "display": "Deep Learning",
+   "aliases": [
+    "deep learning",
+    "dl",
+    "deep-learning"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "dl": "list"
+   }
+  },
+  {
+   "id": "ai",
+   "display": "Artificial Intelligence",
+   "aliases": [
+    "artificial intelligence",
+    "ai"
+   ],
+   "category": "ml",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "ai": "case"
+   }
+  },
+  {
+   "id": "natural_language_processing",
+   "display": "Natural Language Processing",
+   "aliases": [
+    "natural language processing",
+    "nlp",
+    "natural-language processing"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "computer_vision",
+   "display": "Computer Vision",
+   "aliases": [
+    "computer vision"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [
+    "deep_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "tensorflow",
+   "display": "TensorFlow",
+   "aliases": [
+    "tensorflow",
+    "tensor flow",
+    "tf",
+    "tensorflow 2",
+    "tf2",
+    "tenserflow"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [
+    "deep_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "tf": "list"
+   }
+  },
+  {
+   "id": "pytorch",
+   "display": "PyTorch",
+   "aliases": [
+    "pytorch",
+    "torch",
+    "py torch"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [
+    "deep_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "torch": "list"
+   }
+  },
+  {
+   "id": "keras",
+   "display": "Keras",
+   "aliases": [
+    "keras"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [
+    "deep_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "scikit_learn",
+   "display": "scikit-learn",
+   "aliases": [
+    "scikit-learn",
+    "sklearn",
+    "scikit learn",
+    "scikitlearn",
+    "sci-kit learn"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "python",
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "xgboost",
+   "display": "XGBoost",
+   "aliases": [
+    "xgboost",
+    "xgb"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "lightgbm",
+   "display": "LightGBM",
+   "aliases": [
+    "lightgbm",
+    "lgbm",
+    "light gbm"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "catboost",
+   "display": "CatBoost",
+   "aliases": [
+    "catboost"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "opencv",
+   "display": "OpenCV",
+   "aliases": [
+    "opencv",
+    "open cv",
+    "cv2"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "spacy",
+   "display": "spaCy",
+   "aliases": [
+    "spacy"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "nltk",
+   "display": "NLTK",
+   "aliases": [
+    "nltk"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [
+    "python"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "gensim",
+   "display": "Gensim",
+   "aliases": [
+    "gensim"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "transformers",
+   "display": "Transformers",
+   "aliases": [
+    "transformers",
+    "transformer models",
+    "transformer architecture"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "transformers": "list"
+   }
+  },
+  {
+   "id": "llm",
+   "display": "Large Language Models",
+   "aliases": [
+    "large language models",
+    "llm",
+    "llms",
+    "large language model"
+   ],
+   "category": "ml",
+   "maps_to": "generative_ai",
+   "prerequisites": [
+    "deep_learning",
+    "natural_language_processing"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "generative_ai",
+   "display": "Generative AI",
+   "aliases": [
+    "generative ai",
+    "genai",
+    "gen ai",
+    "generative artificial intelligence"
+   ],
+   "category": "ml",
+   "maps_to": "ai",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "prompt_engineering",
+   "display": "Prompt Engineering",
+   "aliases": [
+    "prompt engineering"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [
+    "llm"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "rag",
+   "display": "RAG",
+   "aliases": [
+    "rag",
+    "retrieval augmented generation",
+    "retrieval-augmented generation"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [
+    "llm",
+    "vector_databases"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "rag": "case"
+   }
+  },
+  {
+   "id": "fine_tuning",
+   "display": "Fine-tuning",
+   "aliases": [
+    "fine-tuning",
+    "fine tuning",
+    "finetuning",
+    "llm fine-tuning"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [
+    "llm"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "fine-tuning": "list",
+    "fine tuning": "list"
+   }
+  },
+  {
+   "id": "lora",
+   "display": "LoRA",
+   "aliases": [
+    "lora",
+    "qlora"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "lora": "case"
+   }
+  },
+  {
+   "id": "vector_databases",
+   "display": "Vector Databases",
+   "aliases": [
+    "vector databases",
+    "vector database",
+    "vector db",
+    "vector store"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "embeddings",
+   "display": "Embeddings",
+   "aliases": [
+    "embeddings",
+    "word embeddings",
+    "text embeddings",
+    "sentence embeddings"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "openai_api",
+   "display": "OpenAI API",
+   "aliases": [
+    "openai api",
+    "openai",
+    "gpt-4",
+    "gpt api",
+    "chatgpt api"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "automl",
+   "display": "AutoML",
+   "aliases": [
+    "automl"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mlops",
+   "display": "MLOps",
+   "aliases": [
+    "mlops",
+    "ml ops",
+    "machine learning operations"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning",
+    "docker"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "ml_pipelines",
+   "display": "ML Pipelines",
+   "aliases": [
+    "ml pipelines",
+    "ml pipeline",
+    "machine learning pipelines",
+    "machine learning pipeline"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mlflow",
+   "display": "MLflow",
+   "aliases": [
+    "mlflow",
+    "ml flow"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "kubeflow",
+   "display": "Kubeflow",
+   "aliases": [
+    "kubeflow"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "kubernetes",
+    "machine_learning"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "weights_biases",
+   "display": "Weights & Biases",
+   "aliases": [
+    "weights & biases",
+    "wandb",
+    "w&b"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "dvc",
+   "display": "DVC",
+   "aliases": [
+    "dvc",
+    "data version control"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_sagemaker",
+   "display": "Amazon SageMaker",
+   "aliases": [
+    "amazon sagemaker",
+    "sagemaker",
+    "aws sagemaker"
+   ],
+   "category": "ml",
+   "maps_to": "aws",
+   "prerequisites": [
+    "machine_learning",
+    "aws"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "vertex_ai",
+   "display": "Vertex AI",
+   "aliases": [
+    "vertex ai",
+    "google vertex ai"
+   ],
+   "category": "ml",
+   "maps_to": "gcp",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_machine_learning",
+   "display": "Azure Machine Learning",
+   "aliases": [
+    "azure machine learning",
+    "azure ml",
+    "azureml"
+   ],
+   "category": "ml",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "feature_engineering",
+   "display": "Feature Engineering",
+   "aliases": [
+    "feature engineering"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "pandas"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "model_deployment",
+   "display": "Model Deployment",
+   "aliases": [
+    "model deployment",
+    "model serving"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "reinforcement_learning",
+   "display": "Reinforcement Learning",
+   "aliases": [
+    "reinforcement learning",
+    "rl"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "rl": "list"
+   }
+  },
+  {
+   "id": "neural_networks",
+   "display": "Neural Networks",
+   "aliases": [
+    "neural networks",
+    "neural network",
+    "ann",
+    "artificial neural networks"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "ann": "list"
+   }
+  },
+  {
+   "id": "cnn",
+   "display": "CNN",
+   "aliases": [
+    "cnn",
+    "convolutional neural networks",
+    "convolutional neural network"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "cnn": "case"
+   }
+  },
+  {
+   "id": "rnn",
+   "display": "RNN",
+   "aliases": [
+    "rnn",
+    "recurrent neural networks",
+    "recurrent neural network"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "lstm",
+   "display": "LSTM",
+   "aliases": [
+    "lstm"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "gans",
+   "display": "GANs",
+   "aliases": [
+    "gans",
+    "gan",
+    "generative adversarial networks"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "gan": "list"
+   }
+  },
+  {
+   "id": "recommendation_systems",
+   "display": "Recommendation Systems",
+   "aliases": [
+    "recommendation systems",
+    "recommender systems",
+    "recommendation engine",
+    "recommender system",
+    "recommendation engines",
+    "recommendation system"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "clustering",
+   "display": "Clustering",
+   "aliases": [
+    "clustering",
+    "k-means",
+    "kmeans",
+    "k means clustering"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "anomaly_detection",
+   "display": "Anomaly Detection",
+   "aliases": [
+    "anomaly detection",
+    "outlier detection"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "predictive_modeling",
+   "display": "Predictive Modeling",
+   "aliases": [
+    "predictive modeling",
+    "predictive modelling",
+    "predictive analytics"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "sentiment_analysis",
+   "display": "Sentiment Analysis",
+   "aliases": [
+    "sentiment analysis"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "named_entity_recognition",
+   "display": "Named Entity Recognition",
+   "aliases": [
+    "named entity recognition",
+    "ner"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "ner": "list"
+   }
+  },
+  {
+   "id": "text_classification",
+   "display": "Text Classification",
+   "aliases": [
+    "text classification"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "object_detection",
+   "display": "Object Detection",
+   "aliases": [
+    "object detection"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "yolo",
+   "display": "YOLO",
+   "aliases": [
+    "yolo",
+    "yolov5",
+    "yolov8"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "yolo": "case"
+   }
+  },
+  {
+   "id": "image_processing",
+   "display": "Image Processing",
+   "aliases": [
+    "image processing"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "speech_recognition",
+   "display": "Speech Recognition",
+   "aliases": [
+    "speech recognition",
+    "asr"
+   ],
+   "category": "ml",
+   "maps_to": "natural_language_processing",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "asr": "list"
+   }
+  },
+  {
+   "id": "ocr",
+   "display": "OCR",
+   "aliases": [
+    "ocr",
+    "optical character recognition"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "tesseract",
+   "display": "Tesseract",
+   "aliases": [
+    "tesseract"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "time_series_forecasting",
+   "display": "Time Series Forecasting",
+   "aliases": [
+    "time series forecasting",
+    "forecasting models"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [
+    "time_series_analysis"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "arima",
+   "display": "ARIMA",
+   "aliases": [
+    "arima",
+    "sarima"
+   ],
+   "category": "ml",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "prophet",
+   "display": "Prophet",
+   "aliases": [
+    "prophet",
+    "fbprophet"
+   ],
+   "category": "ml",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "prophet": "case"
+   }
+  },
+  {
+   "id": "bayesian_statistics",
+   "display": "Bayesian Statistics",
+   "aliases": [
+    "bayesian statistics",
+    "bayesian"
+   ],
+   "category": "ml",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "onnx",
+   "display": "ONNX",
+   "aliases": [
+    "onnx"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "tensorrt",
+   "display": "TensorRT",
+   "aliases": [
+    "tensorrt"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "jax",
+   "display": "JAX",
+   "aliases": [
+    "jax"
+   ],
+   "category": "ml",
+   "maps_to": "deep_learning",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "jax": "case"
+   }
+  },
+  {
+   "id": "shap",
+   "display": "SHAP",
+   "aliases": [
+    "shap",
+    "shap values"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "shap": "case"
+   }
+  },
+  {
+   "id": "explainable_ai",
+   "display": "Explainable AI",
+   "aliases": [
+    "explainable ai",
+    "xai",
+    "model explainability",
+    "model interpretability"
+   ],
+   "category": "ml",
+   "maps_to": "machine_learning",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ollama",
+   "display": "Ollama",
+   "aliases": [
+    "ollama"
+   ],
+   "category": "ml",
+   "maps_to": "llm",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "stable_diffusion",
+   "display": "Stable Diffusion",
+   "aliases": [
+    "stable diffusion"
+   ],
+   "category": "ml",
+   "maps_to": "computer_vision",
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "aws",
+   "display": "AWS",
+   "aliases": [
+    "aws",
+    "amazon web services",
+    "aws cloud"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "azure",
+   "display": "Microsoft Azure",
+   "aliases": [
+    "microsoft azure",
+    "azure",
+    "ms azure",
+    "azure cloud"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "gcp",
+   "display": "Google Cloud Platform",
+   "aliases": [
+    "google cloud platform",
+    "gcp",
+    "google cloud"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "aws_lambda",
+   "display": "AWS Lambda",
+   "aliases": [
+    "aws lambda",
+    "lambda functions",
+    "aws lambda functions",
+    "lambda"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [
+    "aws"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "lambda": "list"
+   }
+  },
+  {
+   "id": "amazon_ec2",
+   "display": "Amazon EC2",
+   "aliases": [
+    "amazon ec2",
+    "ec2",
+    "aws ec2"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [
+    "aws"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_s3",
+   "display": "Amazon S3",
+   "aliases": [
+    "amazon s3",
+    "s3",
+    "aws s3"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [
+    "aws"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_rds",
+   "display": "Amazon RDS",
+   "aliases": [
+    "amazon rds",
+    "rds",
+    "aws rds"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_ecs",
+   "display": "Amazon ECS",
+   "aliases": [
+    "amazon ecs",
+    "ecs",
+    "aws ecs"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_eks",
+   "display": "Amazon EKS",
+   "aliases": [
+    "amazon eks",
+    "eks",
+    "aws eks"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [
+    "aws",
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "aws_cloudformation",
+   "display": "AWS CloudFormation",
+   "aliases": [
+    "aws cloudformation",
+    "cloudformation"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_cloudwatch",
+   "display": "Amazon CloudWatch",
+   "aliases": [
+    "amazon cloudwatch",
+    "cloudwatch"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "iam",
+   "display": "IAM",
+   "aliases": [
+    "iam",
+    "identity and access management",
+    "aws iam"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "iam": "case"
+   }
+  },
+  {
+   "id": "amazon_api_gateway",
+   "display": "Amazon API Gateway",
+   "aliases": [
+    "amazon api gateway",
+    "api gateway"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_sqs",
+   "display": "Amazon SQS",
+   "aliases": [
+    "amazon sqs",
+    "sqs",
+    "aws sqs"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "amazon_sns",
+   "display": "Amazon SNS",
+   "aliases": [
+    "amazon sns",
+    "sns",
+    "aws sns"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "sns": "case"
+   }
+  },
+  {
+   "id": "aws_step_functions",
+   "display": "AWS Step Functions",
+   "aliases": [
+    "aws step functions",
+    "step functions"
+   ],
+   "category": "cloud",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_functions",
+   "display": "Azure Functions",
+   "aliases": [
+    "azure functions"
+   ],
+   "category": "cloud",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_devops",
+   "display": "Azure DevOps",
+   "aliases": [
+    "azure devops",
+    "vsts"
+   ],
+   "category": "cloud",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "azure_kubernetes_service",
+   "display": "Azure Kubernetes Service",
+   "aliases": [
+    "azure kubernetes service",
+    "aks"
+   ],
+   "category": "cloud",
+   "maps_to": "azure",
+   "prerequisites": [
+    "azure",
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "aks": "list"
+   }
+  },
+  {
+   "id": "azure_blob_storage",
+   "display": "Azure Blob Storage",
+   "aliases": [
+    "azure blob storage",
+    "blob storage"
+   ],
+   "category": "cloud",
+   "maps_to": "azure",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "google_kubernetes_engine",
+   "display": "Google Kubernetes Engine",
+   "aliases": [
+    "google kubernetes engine",
+    "gke"
+   ],
+   "category": "cloud",
+   "maps_to": "gcp",
+   "prerequisites": [
+    "gcp",
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "google_cloud_functions",
+   "display": "Google Cloud Functions",
+   "aliases": [
+    "google cloud functions",
+    "cloud functions"
+   ],
+   "category": "cloud",
+   "maps_to": "gcp",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "cloud_run",
+   "display": "Cloud Run",
+   "aliases": [
+    "cloud run",
+    "google cloud run"
+   ],
+   "category": "cloud",
+   "maps_to": "gcp",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "firebase",
+   "display": "Firebase",
+   "aliases": [
+    "firebase"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "heroku",
+   "display": "Heroku",
+   "aliases": [
+    "heroku"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vercel",
+   "display": "Vercel",
+   "aliases": [
+    "vercel"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "netlify",
+   "display": "Netlify",
+   "aliases": [
+    "netlify"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "digitalocean",
+   "display": "DigitalOcean",
+   "aliases": [
+    "digitalocean",
+    "digital ocean"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "oracle_cloud",
+   "display": "Oracle Cloud",
+   "aliases": [
+    "oracle cloud",
+    "oci",
+    "oracle cloud infrastructure"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "oci": "list"
+   }
+  },
+  {
+   "id": "ibm_cloud",
+   "display": "IBM Cloud",
+   "aliases": [
+    "ibm cloud"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "serverless",
+   "display": "Serverless",
+   "aliases": [
+    "serverless",
+    "serverless architecture",
+    "serverless computing"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "cloud",
+   "display": "Cloud Computing",
+   "aliases": [
+    "cloud computing",
+    "cloud"
+   ],
+   "category": "cloud",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "cloud": "list"
+   }
+  },
+  {
+   "id": "cloudflare",
+   "display": "Cloudflare",
+   "aliases": [
+    "cloudflare"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "openstack",
+   "display": "OpenStack",
+   "aliases": [
+    "openstack"
+   ],
+   "category": "cloud",
+   "maps_to": "cloud",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "vmware",
+   "display": "VMware",
+   "aliases": [
+    "vmware",
+    "vsphere",
+    "esxi"
+   ],
+   "category": "cloud",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "hyper_v",
+   "display": "Hyper-V",
+   "aliases": [
+    "hyper-v",
+    "hyperv"
+   ],
+   "category": "cloud",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "docker",
+   "display": "Docker",
+   "aliases": [
+    "docker",
+    "dockerfile",
+    "docker containers"
+   ],
+   "category": "devops",
+   "maps_to": "containerization",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "docker_compose",
+   "display": "Docker Compose",
+   "aliases": [
+    "docker compose",
+    "docker-compose"
+   ],
+   "category": "devops",
+   "maps_to": "docker",
+   "prerequisites": [
+    "docker"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "kubernetes",
+   "display": "Kubernetes",
+   "aliases": [
+    "kubernetes",
+    "k8s",
+    "kube",
+    "kubernetes cluster",
+    "kubernets",
+    "kubernates"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [
+    "docker",
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "kube": "list"
+   }
+  },
+  {
+   "id": "helm",
+   "display": "Helm",
+   "aliases": [
+    "helm",
+    "helm charts"
+   ],
+   "category": "devops",
+   "maps_to": "kubernetes",
+   "prerequisites": [
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "helm": "case"
+   }
+  },
+  {
+   "id": "openshift",
+   "display": "OpenShift",
+   "aliases": [
+    "openshift",
+    "red hat openshift"
+   ],
+   "category": "devops",
+   "maps_to": "kubernetes",
+   "prerequisites": [
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "terraform",
+   "display": "Terraform",
+   "aliases": [
+    "terraform"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [
+    "cloud"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ansible",
+   "display": "Ansible",
+   "aliases": [
+    "ansible"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [
+    "linux"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "chef",
+   "display": "Chef",
+   "aliases": [
+    "chef"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "chef": "case"
+   }
+  },
+  {
+   "id": "puppet",
+   "display": "Puppet",
+   "aliases": [
+    "puppet"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "puppet": "case"
+   }
+  },
+  {
+   "id": "jenkins",
+   "display": "Jenkins",
+   "aliases": [
+    "jenkins",
+    "jenkins pipelines"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "github_actions",
+   "display": "GitHub Actions",
+   "aliases": [
+    "github actions",
+    "gh actions"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "gitlab_ci",
+   "display": "GitLab CI",
+   "aliases": [
+    "gitlab ci",
+    "gitlab ci/cd",
+    "gitlab-ci"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "circleci",
+   "display": "CircleCI",
+   "aliases": [
+    "circleci",
+    "circle ci"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "travis_ci",
+   "display": "Travis CI",
+   "aliases": [
+    "travis ci",
+    "travis"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "travis": "list"
+   }
+  },
+  {
+   "id": "argo_cd",
+   "display": "Argo CD",
+   "aliases": [
+    "argo cd",
+    "argocd"
+   ],
+   "category": "devops",
+   "maps_to": "kubernetes",
+   "prerequisites": [
+    "kubernetes",
+    "git"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "spinnaker",
+   "display": "Spinnaker",
+   "aliases": [
+    "spinnaker"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ci_cd",
+   "display": "CI/CD",
+   "aliases": [
+    "ci/cd",
+    "ci cd",
+    "cicd",
+    "continuous integration",
+    "continuous delivery",
+    "continuous deployment",
+    "ci/cd pipelines"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "linux",
+   "display": "Linux",
+   "aliases": [
+    "linux",
+    "linux administration"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "unix",
+   "display": "Unix",
+   "aliases": [
+    "unix"
+   ],
+   "category": "devops",
+   "maps_to": "linux",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "nginx",
+   "display": "Nginx",
+   "aliases": [
+    "nginx"
+   ],
+   "category": "devops",
+   "maps_to": "linux",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "apache_http_server",
+   "display": "Apache HTTP Server",
+   "aliases": [
+    "apache http server",
+    "apache httpd",
+    "apache web server"
+   ],
+   "category": "devops",
+   "maps_to": "linux",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "prometheus",
+   "display": "Prometheus",
+   "aliases": [
+    "prometheus"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "prometheus": "case"
+   }
+  },
+  {
+   "id": "grafana",
+   "display": "Grafana",
+   "aliases": [
+    "grafana"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "elk_stack",
+   "display": "ELK Stack",
+   "aliases": [
+    "elk stack",
+    "elk",
+    "elastic stack"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "elk": "list"
+   }
+  },
+  {
+   "id": "splunk",
+   "display": "Splunk",
+   "aliases": [
+    "splunk"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "datadog",
+   "display": "Datadog",
+   "aliases": [
+    "datadog"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "new_relic",
+   "display": "New Relic",
+   "aliases": [
+    "new relic",
+    "newrelic"
+   ],
+   "category": "devops",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "monitoring",
+   "display": "Monitoring",
+   "aliases": [
+    "monitoring",
+    "observability",
+    "system monitoring",
+    "application monitoring"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "site_reliability_engineering",
+   "display": "Site Reliability Engineering",
+   "aliases": [
+    "site reliability engineering",
+    "sre"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [
+    "linux",
+    "monitoring"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null,
+   "context": {
+    "sre": "case"
+   }
+  },
+  {
+   "id": "infrastructure_as_code",
+   "display": "Infrastructure as Code",
+   "aliases": [
+    "infrastructure as code",
+    "iac"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "iac": "list"
+   }
+  },
+  {
+   "id": "vagrant",
+   "display": "Vagrant",
+   "aliases": [
+    "vagrant"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "packer",
+   "display": "Packer",
+   "aliases": [
+    "packer"
+   ],
+   "category": "devops",
+   "maps_to": "infrastructure_as_code",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "packer": "case"
+   }
+  },
+  {
+   "id": "istio",
+   "display": "Istio",
+   "aliases": [
+    "istio"
+   ],
+   "category": "devops",
+   "maps_to": "kubernetes",
+   "prerequisites": [
+    "kubernetes"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "service_mesh",
+   "display": "Service Mesh",
+   "aliases": [
+    "service mesh"
+   ],
+   "category": "devops",
+   "maps_to": "kubernetes",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "containerization",
+   "display": "Containerization",
+   "aliases": [
+    "containerization",
+    "containerisation",
+    "containers"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "containers": "list"
+   }
+  },
+  {
+   "id": "load_balancing",
+   "display": "Load Balancing",
+   "aliases": [
+    "load balancing",
+    "load balancer",
+    "load balancers"
+   ],
+   "category": "devops",
+   "maps_to": "system_design",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "devops",
+   "display": "DevOps",
+   "aliases": [
+    "devops",
+    "dev ops"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [
+    "linux",
+    "ci_cd"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "devsecops",
+   "display": "DevSecOps",
+   "aliases": [
+    "devsecops"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "gitops",
+   "display": "GitOps",
+   "aliases": [
+    "gitops"
+   ],
+   "category": "devops",
+   "maps_to": "devops",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "sonarqube",
+   "display": "SonarQube",
+   "aliases": [
+    "sonarqube",
+    "sonar"
+   ],
+   "category": "devops",
+   "maps_to": "ci_cd",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "sonar": "list"
+   }
+  },
+  {
+   "id": "maven",
+   "display": "Maven",
+   "aliases": [
+    "maven",
+    "apache maven"
+   ],
+   "category": "devops",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "gradle",
+   "display": "Gradle",
+   "aliases": [
+    "gradle"
+   ],
+   "category": "devops",
+   "maps_to": "java",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "npm",
+   "display": "npm",
+   "aliases": [
+    "npm"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "yarn",
+   "display": "Yarn",
+   "aliases": [
+    "yarn"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "yarn": "case"
+   }
+  },
+  {
+   "id": "hashicorp_vault",
+   "display": "HashiCorp Vault",
+   "aliases": [
+    "hashicorp vault",
+    "vault"
+   ],
+   "category": "devops",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "vault": "list"
+   }
+  },
+  {
+   "id": "rabbitmq",
+   "display": "RabbitMQ",
+   "aliases": [
+    "rabbitmq",
+    "rabbit mq"
+   ],
+   "category": "devops",
+   "maps_to": "message_queues",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "message_queues",
+   "display": "Message Queues",
+   "aliases": [
+    "message queues",
+    "message queue",
+    "message brokers",
+    "message broker"
+   ],
+   "category": "devops",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mysql",
+   "display": "MySQL",
+   "aliases": [
+    "mysql",
+    "my sql"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "postgresql",
+   "display": "PostgreSQL",
+   "aliases": [
+    "postgresql",
+    "postgres",
+    "postgre",
+    "psql",
+    "postgre sql",
+    "postgress"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "microsoft_sql_server",
+   "display": "Microsoft SQL Server",
+   "aliases": [
+    "microsoft sql server",
+    "sql server",
+    "mssql",
+    "ms sql",
+    "ms sql server"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "oracle_database",
+   "display": "Oracle Database",
+   "aliases": [
+    "oracle database",
+    "oracle db",
+    "oracle",
+    "oracle sql",
+    "oracle 11g",
+    "oracle 12c"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "oracle": "list"
+   }
+  },
+  {
+   "id": "sqlite",
+   "display": "SQLite",
+   "aliases": [
+    "sqlite"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "mongodb",
+   "display": "MongoDB",
+   "aliases": [
+    "mongodb",
+    "mongo",
+    "mongo db"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "cassandra",
+   "display": "Cassandra",
+   "aliases": [
+    "cassandra",
+    "apache cassandra"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "redis",
+   "display": "Redis",
+   "aliases": [
+    "redis"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "elasticsearch",
+   "display": "Elasticsearch",
+   "aliases": [
+    "elasticsearch",
+    "elastic search"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "opensearch",
+   "display": "OpenSearch",
+   "aliases": [
+    "opensearch"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "dynamodb",
+   "display": "DynamoDB",
+   "aliases": [
+    "dynamodb",
+    "amazon dynamodb",
+    "dynamo db"
+   ],
+   "category": "database",
+   "maps_to": "aws",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "couchbase",
+   "display": "Couchbase",
+   "aliases": [
+    "couchbase"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "couchdb",
+   "display": "CouchDB",
+   "aliases": [
+    "couchdb"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "neo4j",
+   "display": "Neo4j",
+   "aliases": [
+    "neo4j"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mariadb",
+   "display": "MariaDB",
+   "aliases": [
+    "mariadb"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "supabase",
+   "display": "Supabase",
+   "aliases": [
+    "supabase"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "pinecone",
+   "display": "Pinecone",
+   "aliases": [
+    "pinecone"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "chromadb",
+   "display": "ChromaDB",
+   "aliases": [
+    "chromadb",
+    "chroma"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "chroma": "list"
+   }
+  },
+  {
+   "id": "faiss",
+   "display": "FAISS",
+   "aliases": [
+    "faiss"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "milvus",
+   "display": "Milvus",
+   "aliases": [
+    "milvus"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "weaviate",
+   "display": "Weaviate",
+   "aliases": [
+    "weaviate"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "qdrant",
+   "display": "Qdrant",
+   "aliases": [
+    "qdrant"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "influxdb",
+   "display": "InfluxDB",
+   "aliases": [
+    "influxdb"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "timescaledb",
+   "display": "TimescaleDB",
+   "aliases": [
+    "timescaledb"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "memcached",
+   "display": "Memcached",
+   "aliases": [
+    "memcached"
+   ],
+   "category": "database",
+   "maps_to": "nosql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "teradata",
+   "display": "Teradata",
+   "aliases": [
+    "teradata"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "db2",
+   "display": "DB2",
+   "aliases": [
+    "db2",
+    "ibm db2"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "nosql",
+   "display": "NoSQL",
+   "aliases": [
+    "nosql",
+    "no sql"
+   ],
+   "category": "database",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "rdbms",
+   "display": "RDBMS",
+   "aliases": [
+    "rdbms",
+    "relational databases",
+    "relational database"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "database_design",
+   "display": "Database Design",
+   "aliases": [
+    "database design",
+    "database modeling",
+    "schema design"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "query_optimization",
+   "display": "Query Optimization",
+   "aliases": [
+    "query optimization",
+    "sql optimization",
+    "query tuning"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "stored_procedures",
+   "display": "Stored Procedures",
+   "aliases": [
+    "stored procedures",
+    "stored procedure"
+   ],
+   "category": "database",
+   "maps_to": "sql",
+   "prerequisites": [
+    "sql"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "git",
+   "display": "Git",
+   "aliases": [
+    "git"
+   ],
+   "category": "tool",
+   "maps_to": "version_control",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "github",
+   "display": "GitHub",
+   "aliases": [
+    "github"
+   ],
+   "category": "tool",
+   "maps_to": "git",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "gitlab",
+   "display": "GitLab",
+   "aliases": [
+    "gitlab"
+   ],
+   "category": "tool",
+   "maps_to": "git",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "bitbucket",
+   "display": "Bitbucket",
+   "aliases": [
+    "bitbucket"
+   ],
+   "category": "tool",
+   "maps_to": "git",
+   "prerequisites": [
+    "git"
+   ],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "jira",
+   "display": "Jira",
+   "aliases": [
+    "jira",
+    "atlassian jira"
+   ],
+   "category": "tool",
+   "maps_to": "agile",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "confluence",
+   "display": "Confluence",
+   "aliases": [
+    "confluence"
+   ],
+   "category": "tool",
+   "maps_to": "agile",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "postman",
+   "display": "Postman",
+   "aliases": [
+    "postman"
+   ],
+   "category": "tool",
+   "maps_to": "api_testing",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "swagger",
+   "display": "Swagger",
+   "aliases": [
+    "swagger",
+    "openapi",
+    "swagger ui"
+   ],
+   "category": "tool",
+   "maps_to": "api_development",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "figma",
+   "display": "Figma",
+   "aliases": [
+    "figma"
+   ],
+   "category": "tool",
+   "maps_to": "ui_ux_design",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "adobe_xd",
+   "display": "Adobe XD",
+   "aliases": [
+    "adobe xd"
+   ],
+   "category": "tool",
+   "maps_to": "ui_ux_design",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "photoshop",
+   "display": "Photoshop",
+   "aliases": [
+    "photoshop",
+    "adobe photoshop"
+   ],
+   "category": "tool",
+   "maps_to": "ui_ux_design",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "illustrator",
+   "display": "Illustrator",
+   "aliases": [
+    "illustrator",
+    "adobe illustrator"
+   ],
+   "category": "tool",
+   "maps_to": "ui_ux_design",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "illustrator": "case"
+   }
+  },
+  {
+   "id": "visual_studio_code",
+   "display": "Visual Studio Code",
+   "aliases": [
+    "visual studio code",
+    "vs code",
+    "vscode"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "visual_studio",
+   "display": "Visual Studio",
+   "aliases": [
+    "visual studio"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "intellij_idea",
+   "display": "IntelliJ IDEA",
+   "aliases": [
+    "intellij idea",
+    "intellij"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "eclipse",
+   "display": "Eclipse",
+   "aliases": [
+    "eclipse"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "eclipse": "case"
+   }
+  },
+  {
+   "id": "pycharm",
+   "display": "PyCharm",
+   "aliases": [
+    "pycharm"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "android_studio",
+   "display": "Android Studio",
+   "aliases": [
+    "android studio"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "xcode",
+   "display": "Xcode",
+   "aliases": [
+    "xcode"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "trello",
+   "display": "Trello",
+   "aliases": [
+    "trello"
+   ],
+   "category": "tool",
+   "maps_to": "agile",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "sap",
+   "display": "SAP",
+   "aliases": [
+    "sap",
+    "sap erp"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "sap": "case"
+   }
+  },
+  {
+   "id": "salesforce",
+   "display": "Salesforce",
+   "aliases": [
+    "salesforce",
+    "sfdc"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "servicenow",
+   "display": "ServiceNow",
+   "aliases": [
+    "servicenow"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "power_automate",
+   "display": "Power Automate",
+   "aliases": [
+    "power automate",
+    "microsoft flow"
+   ],
+   "category": "tool",
+   "maps_to": "rpa",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "power_apps",
+   "display": "Power Apps",
+   "aliases": [
+    "power apps",
+    "powerapps"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "uipath",
+   "display": "UiPath",
+   "aliases": [
+    "uipath"
+   ],
+   "category": "tool",
+   "maps_to": "rpa",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "automation_anywhere",
+   "display": "Automation Anywhere",
+   "aliases": [
+    "automation anywhere"
+   ],
+   "category": "tool",
+   "maps_to": "rpa",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "blue_prism",
+   "display": "Blue Prism",
+   "aliases": [
+    "blue prism"
+   ],
+   "category": "tool",
+   "maps_to": "rpa",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "rpa",
+   "display": "RPA",
+   "aliases": [
+    "rpa",
+    "robotic process automation"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "sharepoint",
+   "display": "SharePoint",
+   "aliases": [
+    "sharepoint"
+   ],
+   "category": "tool",
+   "maps_to": "microsoft_office",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "microsoft_office",
+   "display": "Microsoft Office",
+   "aliases": [
+    "microsoft office",
+    "ms office",
+    "ms-office",
+    "office 365",
+    "microsoft 365"
+   ],
+   "category": "tool",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "powerpoint",
+   "display": "PowerPoint",
+   "aliases": [
+    "powerpoint",
+    "ms powerpoint"
+   ],
+   "category": "tool",
+   "maps_to": "microsoft_office",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "jmeter",
+   "display": "JMeter",
+   "aliases": [
+    "jmeter",
+    "apache jmeter"
+   ],
+   "category": "tool",
+   "maps_to": "performance_testing",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "loadrunner",
+   "display": "LoadRunner",
+   "aliases": [
+    "loadrunner"
+   ],
+   "category": "tool",
+   "maps_to": "performance_testing",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "wireshark",
+   "display": "Wireshark",
+   "aliases": [
+    "wireshark"
+   ],
+   "category": "tool",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "burp_suite",
+   "display": "Burp Suite",
+   "aliases": [
+    "burp suite"
+   ],
+   "category": "tool",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "metasploit",
+   "display": "Metasploit",
+   "aliases": [
+    "metasploit"
+   ],
+   "category": "tool",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "nmap",
+   "display": "Nmap",
+   "aliases": [
+    "nmap"
+   ],
+   "category": "tool",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "kali_linux",
+   "display": "Kali Linux",
+   "aliases": [
+    "kali linux"
+   ],
+   "category": "tool",
+   "maps_to": "linux",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "kibana",
+   "display": "Kibana",
+   "aliases": [
+    "kibana"
+   ],
+   "category": "tool",
+   "maps_to": "monitoring",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "data_structures",
+   "display": "Data Structures",
+   "aliases": [
+    "data structures",
+    "data structures and algorithms",
+    "dsa",
+    "ds&a"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "algorithms",
+   "display": "Algorithms",
+   "aliases": [
+    "algorithms",
+    "algorithm design"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [
+    "data_structures"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "object_oriented_programming",
+   "display": "Object-Oriented Programming",
+   "aliases": [
+    "object-oriented programming",
+    "oop",
+    "oops",
+    "object oriented programming",
+    "object oriented design",
+    "ood"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "oops": "list",
+    "ood": "list"
+   }
+  },
+  {
+   "id": "functional_programming",
+   "display": "Functional Programming",
+   "aliases": [
+    "functional programming"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "system_design",
+   "display": "System Design",
+   "aliases": [
+    "system design",
+    "systems design",
+    "high level design",
+    "low level design",
+    "hld",
+    "lld"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [
+    "data_structures",
+    "dbms"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "design_patterns",
+   "display": "Design Patterns",
+   "aliases": [
+    "design patterns",
+    "software design patterns"
+   ],
+   "category": "concept",
+   "maps_to": "object_oriented_programming",
+   "prerequisites": [
+    "object_oriented_programming"
+   ],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "distributed_systems",
+   "display": "Distributed Systems",
+   "aliases": [
+    "distributed systems"
+   ],
+   "category": "concept",
+   "maps_to": "system_design",
+   "prerequisites": [
+    "operating_systems",
+    "computer_networks"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "operating_systems",
+   "display": "Operating Systems",
+   "aliases": [
+    "operating systems"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "computer_networks",
+   "display": "Computer Networks",
+   "aliases": [
+    "computer networks",
+    "networking",
+    "computer networking",
+    "tcp/ip"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "networking": "list"
+   }
+  },
+  {
+   "id": "dbms",
+   "display": "DBMS",
+   "aliases": [
+    "dbms",
+    "database management systems",
+    "database management system"
+   ],
+   "category": "concept",
+   "maps_to": "sql",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "multithreading",
+   "display": "Multithreading",
+   "aliases": [
+    "multithreading",
+    "multi-threading",
+    "concurrency"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "agile",
+   "display": "Agile",
+   "aliases": [
+    "agile",
+    "agile methodology",
+    "agile methodologies",
+    "agile development"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null,
+   "context": {
+    "agile": "case"
+   }
+  },
+  {
+   "id": "scrum",
+   "display": "Scrum",
+   "aliases": [
+    "scrum"
+   ],
+   "category": "concept",
+   "maps_to": "agile",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "kanban",
+   "display": "Kanban",
+   "aliases": [
+    "kanban"
+   ],
+   "category": "concept",
+   "maps_to": "agile",
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "sdlc",
+   "display": "SDLC",
+   "aliases": [
+    "sdlc",
+    "software development life cycle"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "tdd",
+   "display": "TDD",
+   "aliases": [
+    "tdd",
+    "test driven development",
+    "test-driven development"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "bdd",
+   "display": "BDD",
+   "aliases": [
+    "bdd",
+    "behavior driven development",
+    "behaviour driven development"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "unit_testing",
+   "display": "Unit Testing",
+   "aliases": [
+    "unit testing",
+    "unit tests"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "integration_testing",
+   "display": "Integration Testing",
+   "aliases": [
+    "integration testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "automation_testing",
+   "display": "Automation Testing",
+   "aliases": [
+    "automation testing",
+    "test automation",
+    "automated testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "manual_testing",
+   "display": "Manual Testing",
+   "aliases": [
+    "manual testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "api_testing",
+   "display": "API Testing",
+   "aliases": [
+    "api testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "performance_testing",
+   "display": "Performance Testing",
+   "aliases": [
+    "performance testing",
+    "load testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "software_testing",
+   "display": "Software Testing",
+   "aliases": [
+    "software testing",
+    "qa testing",
+    "quality assurance"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "regression_testing",
+   "display": "Regression Testing",
+   "aliases": [
+    "regression testing"
+   ],
+   "category": "concept",
+   "maps_to": "software_testing",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "penetration_testing",
+   "display": "Penetration Testing",
+   "aliases": [
+    "penetration testing",
+    "pentesting",
+    "vapt",
+    "pen testing"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [
+    "computer_networks",
+    "linux"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "cybersecurity",
+   "display": "Cybersecurity",
+   "aliases": [
+    "cybersecurity",
+    "cyber security",
+    "information security",
+    "infosec"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [
+    "computer_networks"
+   ],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "network_security",
+   "display": "Network Security",
+   "aliases": [
+    "network security"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "owasp",
+   "display": "OWASP",
+   "aliases": [
+    "owasp"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "cryptography",
+   "display": "Cryptography",
+   "aliases": [
+    "cryptography"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "oauth",
+   "display": "OAuth",
+   "aliases": [
+    "oauth",
+    "oauth2",
+    "oauth 2.0"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "jwt",
+   "display": "JWT",
+   "aliases": [
+    "jwt",
+    "json web tokens",
+    "json web token"
+   ],
+   "category": "concept",
+   "maps_to": "cybersecurity",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "responsive_design",
+   "display": "Responsive Design",
+   "aliases": [
+    "responsive design",
+    "responsive web design"
+   ],
+   "category": "concept",
+   "maps_to": "css",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "ui_ux_design",
+   "display": "UI/UX Design",
+   "aliases": [
+    "ui/ux design",
+    "ui design",
+    "ux design",
+    "ui/ux",
+    "user experience design",
+    "user interface design"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "web_development",
+   "display": "Web Development",
+   "aliases": [
+    "web development",
+    "web dev"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "frontend_development",
+   "display": "Frontend Development",
+   "aliases": [
+    "frontend development",
+    "front-end development",
+    "frontend",
+    "front end"
+   ],
+   "category": "concept",
+   "maps_to": "web_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "frontend": "list",
+    "front end": "list"
+   }
+  },
+  {
+   "id": "backend_development",
+   "display": "Backend Development",
+   "aliases": [
+    "backend development",
+    "back-end development",
+    "backend",
+    "back end"
+   ],
+   "category": "concept",
+   "maps_to": "web_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null,
+   "context": {
+    "backend": "list",
+    "back end": "list"
+   }
+  },
+  {
+   "id": "full_stack_development",
+   "display": "Full Stack Development",
+   "aliases": [
+    "full stack development",
+    "full-stack development",
+    "full stack",
+    "fullstack"
+   ],
+   "category": "concept",
+   "maps_to": "web_development",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "mobile_development",
+   "display": "Mobile Development",
+   "aliases": [
+    "mobile development",
+    "mobile app development"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "api_development",
+   "display": "API Development",
+   "aliases": [
+    "api development",
+    "api design"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "event_driven_architecture",
+   "display": "Event-Driven Architecture",
+   "aliases": [
+    "event-driven architecture",
+    "event driven architecture"
+   ],
+   "category": "concept",
+   "maps_to": "system_design",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "blockchain",
+   "display": "Blockchain",
+   "aliases": [
+    "blockchain"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "web3",
+   "display": "Web3",
+   "aliases": [
+    "web3"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "iot",
+   "display": "IoT",
+   "aliases": [
+    "iot",
+    "internet of things"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "embedded_systems",
+   "display": "Embedded Systems",
+   "aliases": [
+    "embedded systems"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 3,
+   "esco_uri": null
+  },
+  {
+   "id": "seo",
+   "display": "SEO",
+   "aliases": [
+    "seo",
+    "search engine optimization",
+    "search engine optimisation"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "version_control",
+   "display": "Version Control",
+   "aliases": [
+    "version control",
+    "version control systems",
+    "vcs"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "linear_algebra",
+   "display": "Linear Algebra",
+   "aliases": [
+    "linear algebra"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "probability",
+   "display": "Probability",
+   "aliases": [
+    "probability"
+   ],
+   "category": "concept",
+   "maps_to": "statistics",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "json",
+   "display": "JSON",
+   "aliases": [
+    "json"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "xml",
+   "display": "XML",
+   "aliases": [
+    "xml"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "yaml",
+   "display": "YAML",
+   "aliases": [
+    "yaml"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "regex",
+   "display": "Regex",
+   "aliases": [
+    "regex",
+    "regular expressions"
+   ],
+   "category": "concept",
+   "maps_to": null,
+   "prerequisites": [],
+   "difficulty_tier": 1,
+   "esco_uri": null
+  },
+  {
+   "id": "caching",
+   "display": "Caching",
+   "aliases": [
+    "caching"
+   ],
+   "category": "concept",
+   "maps_to": "system_design",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  },
+  {
+   "id": "scalability",
+   "display": "Scalability",
+   "aliases": [
+    "scalability"
+   ],
+   "category": "concept",
+   "maps_to": "system_design",
+   "prerequisites": [],
+   "difficulty_tier": 2,
+   "esco_uri": null
+  }
+ ]
+}
