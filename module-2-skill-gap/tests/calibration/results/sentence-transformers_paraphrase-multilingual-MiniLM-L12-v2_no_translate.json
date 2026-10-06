@@ -1,25 +1,56 @@
 {
- "model": "all-MiniLM-L6-v2",
+ "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
  "export_version": "2.0.0+2.1.0",
+ "tuned": {
+  "thresholds": {
+   "tech": [
+    0.65,
+    0.55
+   ],
+   "tool": [
+    0.65,
+    0.55
+   ],
+   "market_skill": [
+    0.65,
+    0.55
+   ],
+   "task": [
+    0.6,
+    0.5
+   ],
+   "dwa": [
+    0.6,
+    0.5
+   ]
+  },
+  "type_share": {
+   "task": 0.3,
+   "dwa": 0.1,
+   "market_skill": 0.4,
+   "tech": 0.1,
+   "tool": 0.1
+  },
+  "preset": "market_heavy",
+  "tuning_objective": [
+   15,
+   15,
+   0.144,
+   0.37
+  ]
+ },
  "four_way": {
   "a_tuning": {
-   "top1": 14,
+   "top1": 15,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.3392,
+   "mean_margin": 0.3178,
    "worst": {
-    "profile": "tuning/29-1051.00_pharmacist",
-    "margin": -0.0225,
-    "runner_up": "29-2052.00"
+    "profile": "tuning/29-1141.00_staff_nurse",
+    "margin": 0.1438,
+    "runner_up": "31-9092.00"
    },
-   "misses": {
-    "tuning/29-1051.00_pharmacist": {
-     "rank": 2,
-     "own": 0.615,
-     "runner_up": "29-2052.00",
-     "margin": -0.022
-    }
-   },
+   "misses": {},
    "ranks": {
     "tuning/13-2011.00_chartered_accountant": 1,
     "tuning/13-2072.00_loan_officer": 1,
@@ -28,7 +59,7 @@
     "tuning/17-2141.00_mechanical_engineer": 1,
     "tuning/25-2031.00_school_teacher": 1,
     "tuning/27-1024.00_graphic_designer": 1,
-    "tuning/29-1051.00_pharmacist": 2,
+    "tuning/29-1051.00_pharmacist": 1,
     "tuning/29-1141.00_staff_nurse": 1,
     "tuning/31-9092.00_medical_assistant": 1,
     "tuning/35-1011.00_head_chef": 1,
@@ -41,42 +72,42 @@
     "tuning/partial_47-2111.00_iti_apprentice": 1
    },
    "margins": {
-    "tuning/13-2011.00_chartered_accountant": 0.4214,
-    "tuning/13-2072.00_loan_officer": 0.252,
-    "tuning/15-2051.00_data_scientist": 0.4791,
-    "tuning/17-2051.00_civil_site_engineer": 0.457,
-    "tuning/17-2141.00_mechanical_engineer": 0.291,
-    "tuning/25-2031.00_school_teacher": 0.3968,
-    "tuning/27-1024.00_graphic_designer": 0.4969,
-    "tuning/29-1051.00_pharmacist": -0.0225,
-    "tuning/29-1141.00_staff_nurse": 0.2223,
-    "tuning/31-9092.00_medical_assistant": 0.252,
-    "tuning/35-1011.00_head_chef": 0.5496,
-    "tuning/41-4012.00_sales_rep": 0.2393,
-    "tuning/43-4051.00_customer_care": 0.3809,
-    "tuning/47-2111.00_electrician": 0.3815,
-    "tuning/53-3032.00_truck_driver": 0.2898,
-    "tuning/partial_13-2011.00_accountant_no_gst": -0.0186,
-    "tuning/partial_29-1141.00_fresher_nurse": 0.0813,
-    "tuning/partial_47-2111.00_iti_apprentice": 0.0933
+    "tuning/13-2011.00_chartered_accountant": 0.3965,
+    "tuning/13-2072.00_loan_officer": 0.2953,
+    "tuning/15-2051.00_data_scientist": 0.2205,
+    "tuning/17-2051.00_civil_site_engineer": 0.3737,
+    "tuning/17-2141.00_mechanical_engineer": 0.1756,
+    "tuning/25-2031.00_school_teacher": 0.4925,
+    "tuning/27-1024.00_graphic_designer": 0.4428,
+    "tuning/29-1051.00_pharmacist": 0.1663,
+    "tuning/29-1141.00_staff_nurse": 0.1438,
+    "tuning/31-9092.00_medical_assistant": 0.2861,
+    "tuning/35-1011.00_head_chef": 0.5383,
+    "tuning/41-4012.00_sales_rep": 0.212,
+    "tuning/43-4051.00_customer_care": 0.2521,
+    "tuning/47-2111.00_electrician": 0.3921,
+    "tuning/53-3032.00_truck_driver": 0.3799,
+    "tuning/partial_13-2011.00_accountant_no_gst": -0.0483,
+    "tuning/partial_29-1141.00_fresher_nurse": 0.0817,
+    "tuning/partial_47-2111.00_iti_apprentice": 0.1014
    }
   },
   "b_heldout": {
    "top1": 14,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1403,
+   "mean_margin": 0.1296,
    "worst": {
-    "profile": "heldout/25-2031.00_teacher_oneliner",
-    "margin": -0.0441,
-    "runner_up": "29-1123.00"
+    "profile": "heldout/41-4012.00_regional_sales_manager",
+    "margin": -0.1335,
+    "runner_up": "41-2031.00"
    },
    "misses": {
-    "heldout/25-2031.00_teacher_oneliner": {
-     "rank": 3,
-     "own": 0.174,
-     "runner_up": "29-1123.00",
-     "margin": -0.044
+    "heldout/41-4012.00_regional_sales_manager": {
+     "rank": 2,
+     "own": 0.177,
+     "runner_up": "41-2031.00",
+     "margin": -0.134
     }
    },
    "ranks": {
@@ -85,46 +116,59 @@
     "heldout/15-2051.00_head_of_analytics": 1,
     "heldout/17-2051.00_civil_hinglish": 1,
     "heldout/17-2141.00_mechanical_fresher": 1,
-    "heldout/25-2031.00_teacher_oneliner": 3,
+    "heldout/25-2031.00_teacher_oneliner": 1,
     "heldout/27-1024.00_dtp_to_designer": 1,
     "heldout/29-1051.00_pharmacist_hinglish": 1,
     "heldout/29-1141.00_nursing_superintendent_senior": 1,
     "heldout/31-9092.00_clinic_assistant_fresher": 1,
     "heldout/35-1011.00_home_baker_to_chef": 1,
-    "heldout/41-4012.00_regional_sales_manager": 1,
+    "heldout/41-4012.00_regional_sales_manager": 2,
     "heldout/43-4051.00_support_bullets_only": 1,
     "heldout/47-2111.00_electrician_oneliner": 1,
     "heldout/53-3032.00_driver_hinglish": 1
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.1335,
-    "heldout/13-2072.00_loan_officer_career_changer": 0.2263,
-    "heldout/15-2051.00_head_of_analytics": 0.1952,
-    "heldout/17-2051.00_civil_hinglish": 0.0015,
-    "heldout/17-2141.00_mechanical_fresher": 0.0977,
-    "heldout/25-2031.00_teacher_oneliner": -0.0441,
-    "heldout/27-1024.00_dtp_to_designer": 0.2043,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.0121,
-    "heldout/29-1141.00_nursing_superintendent_senior": 0.155,
-    "heldout/31-9092.00_clinic_assistant_fresher": 0.1113,
-    "heldout/35-1011.00_home_baker_to_chef": 0.44,
-    "heldout/41-4012.00_regional_sales_manager": 0.0844,
-    "heldout/43-4051.00_support_bullets_only": 0.1268,
-    "heldout/47-2111.00_electrician_oneliner": 0.1447,
-    "heldout/53-3032.00_driver_hinglish": 0.216
+    "heldout/13-2011.00_accountant_hinglish": 0.1424,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2237,
+    "heldout/15-2051.00_head_of_analytics": 0.1882,
+    "heldout/17-2051.00_civil_hinglish": 0.1003,
+    "heldout/17-2141.00_mechanical_fresher": 0.0367,
+    "heldout/25-2031.00_teacher_oneliner": 0.0871,
+    "heldout/27-1024.00_dtp_to_designer": 0.2989,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.0388,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.2414,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.0752,
+    "heldout/35-1011.00_home_baker_to_chef": 0.4256,
+    "heldout/41-4012.00_regional_sales_manager": -0.1335,
+    "heldout/43-4051.00_support_bullets_only": 0.0389,
+    "heldout/47-2111.00_electrician_oneliner": 0.1721,
+    "heldout/53-3032.00_driver_hinglish": 0.0082
    }
   },
   "c_new_occupations": {
-   "top1": 10,
+   "top1": 8,
    "top3": 10,
    "n": 10,
-   "mean_margin": 0.2283,
+   "mean_margin": 0.2123,
    "worst": {
     "profile": "new/43-3071.00_bank_cashier",
-    "margin": 0.0376,
+    "margin": -0.073,
     "runner_up": "13-2072.00"
    },
-   "misses": {},
+   "misses": {
+    "new/41-2031.00_showroom_sales": {
+     "rank": 2,
+     "own": 0.203,
+     "runner_up": "41-4012.00",
+     "margin": -0.03
+    },
+    "new/43-3071.00_bank_cashier": {
+     "rank": 2,
+     "own": 0.416,
+     "runner_up": "13-2072.00",
+     "margin": -0.073
+    }
+   },
    "ranks": {
     "new/13-1071.00_hr_executive": 1,
     "new/15-1253.00_qa_tester": 1,
@@ -132,40 +176,46 @@
     "new/29-1123.00_physiotherapist": 1,
     "new/29-1292.00_dental_hygienist": 1,
     "new/29-2052.00_pharmacy_assistant": 1,
-    "new/41-2031.00_showroom_sales": 1,
-    "new/43-3071.00_bank_cashier": 1,
+    "new/41-2031.00_showroom_sales": 2,
+    "new/43-3071.00_bank_cashier": 2,
     "new/43-4081.00_front_office": 1,
     "new/47-2152.00_plumber_hinglish": 1
    },
    "margins": {
-    "new/13-1071.00_hr_executive": 0.058,
-    "new/15-1253.00_qa_tester": 0.3426,
-    "new/23-1011.00_advocate": 0.2336,
-    "new/29-1123.00_physiotherapist": 0.1186,
-    "new/29-1292.00_dental_hygienist": 0.4852,
-    "new/29-2052.00_pharmacy_assistant": 0.1954,
-    "new/41-2031.00_showroom_sales": 0.043,
-    "new/43-3071.00_bank_cashier": 0.0376,
-    "new/43-4081.00_front_office": 0.4456,
-    "new/47-2152.00_plumber_hinglish": 0.3239
+    "new/13-1071.00_hr_executive": 0.0852,
+    "new/15-1253.00_qa_tester": 0.4086,
+    "new/23-1011.00_advocate": 0.3312,
+    "new/29-1123.00_physiotherapist": 0.2447,
+    "new/29-1292.00_dental_hygienist": 0.5131,
+    "new/29-2052.00_pharmacy_assistant": 0.1609,
+    "new/41-2031.00_showroom_sales": -0.03,
+    "new/43-3071.00_bank_cashier": -0.073,
+    "new/43-4081.00_front_office": 0.229,
+    "new/47-2152.00_plumber_hinglish": 0.2532
    }
   },
   "d_heldout_no_curated": {
-   "top1": 14,
+   "top1": 13,
    "top3": 14,
    "n": 15,
-   "mean_margin": 0.125,
+   "mean_margin": 0.1047,
    "worst": {
-    "profile": "heldout/25-2031.00_teacher_oneliner",
-    "margin": -0.1066,
-    "runner_up": "29-1123.00"
+    "profile": "heldout/43-4051.00_support_bullets_only",
+    "margin": -0.0779,
+    "runner_up": "23-1011.00"
    },
    "misses": {
-    "heldout/25-2031.00_teacher_oneliner": {
-     "rank": 4,
-     "own": 0.112,
-     "runner_up": "29-1123.00",
-     "margin": -0.107
+    "heldout/41-4012.00_regional_sales_manager": {
+     "rank": 2,
+     "own": 0.249,
+     "runner_up": "41-2031.00",
+     "margin": -0.062
+    },
+    "heldout/43-4051.00_support_bullets_only": {
+     "rank": 6,
+     "own": 0.091,
+     "runner_up": "23-1011.00",
+     "margin": -0.078
     }
    },
    "ranks": {
@@ -174,57 +224,51 @@
     "heldout/15-2051.00_head_of_analytics": 1,
     "heldout/17-2051.00_civil_hinglish": 1,
     "heldout/17-2141.00_mechanical_fresher": 1,
-    "heldout/25-2031.00_teacher_oneliner": 4,
+    "heldout/25-2031.00_teacher_oneliner": 1,
     "heldout/27-1024.00_dtp_to_designer": 1,
     "heldout/29-1051.00_pharmacist_hinglish": 1,
     "heldout/29-1141.00_nursing_superintendent_senior": 1,
     "heldout/31-9092.00_clinic_assistant_fresher": 1,
     "heldout/35-1011.00_home_baker_to_chef": 1,
-    "heldout/41-4012.00_regional_sales_manager": 1,
-    "heldout/43-4051.00_support_bullets_only": 1,
+    "heldout/41-4012.00_regional_sales_manager": 2,
+    "heldout/43-4051.00_support_bullets_only": 6,
     "heldout/47-2111.00_electrician_oneliner": 1,
     "heldout/53-3032.00_driver_hinglish": 1
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.0996,
-    "heldout/13-2072.00_loan_officer_career_changer": 0.2536,
-    "heldout/15-2051.00_head_of_analytics": 0.1973,
-    "heldout/17-2051.00_civil_hinglish": 0.0034,
-    "heldout/17-2141.00_mechanical_fresher": 0.1024,
-    "heldout/25-2031.00_teacher_oneliner": -0.1066,
-    "heldout/27-1024.00_dtp_to_designer": 0.0991,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.0242,
-    "heldout/29-1141.00_nursing_superintendent_senior": 0.0662,
-    "heldout/31-9092.00_clinic_assistant_fresher": 0.0964,
-    "heldout/35-1011.00_home_baker_to_chef": 0.4836,
-    "heldout/41-4012.00_regional_sales_manager": 0.0982,
-    "heldout/43-4051.00_support_bullets_only": 0.0714,
-    "heldout/47-2111.00_electrician_oneliner": 0.0971,
-    "heldout/53-3032.00_driver_hinglish": 0.2886
+    "heldout/13-2011.00_accountant_hinglish": 0.107,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2515,
+    "heldout/15-2051.00_head_of_analytics": 0.1989,
+    "heldout/17-2051.00_civil_hinglish": 0.1538,
+    "heldout/17-2141.00_mechanical_fresher": 0.0349,
+    "heldout/25-2031.00_teacher_oneliner": 0.0441,
+    "heldout/27-1024.00_dtp_to_designer": 0.165,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.0387,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.1087,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.0906,
+    "heldout/35-1011.00_home_baker_to_chef": 0.4114,
+    "heldout/41-4012.00_regional_sales_manager": -0.0618,
+    "heldout/43-4051.00_support_bullets_only": -0.0779,
+    "heldout/47-2111.00_electrician_oneliner": 0.0847,
+    "heldout/53-3032.00_driver_hinglish": 0.021
    }
   },
   "e_heldout2": {
-   "top1": 13,
+   "top1": 14,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1627,
+   "mean_margin": 0.14,
    "worst": {
     "profile": "heldout2/29-1051.00_pharmacist_third_person",
-    "margin": -0.1054,
+    "margin": -0.1137,
     "runner_up": "29-2052.00"
    },
    "misses": {
     "heldout2/29-1051.00_pharmacist_third_person": {
      "rank": 2,
-     "own": 0.291,
+     "own": 0.305,
      "runner_up": "29-2052.00",
-     "margin": -0.105
-    },
-    "heldout2/29-1141.00_nurse_career_break": {
-     "rank": 2,
-     "own": 0.152,
-     "runner_up": "31-9092.00",
-     "margin": -0.036
+     "margin": -0.114
     }
    },
    "ranks": {
@@ -236,7 +280,7 @@
     "heldout2/25-2031.00_tgt_kvs_government": 1,
     "heldout2/27-1024.00_freelance_designer_gig": 1,
     "heldout2/29-1051.00_pharmacist_third_person": 2,
-    "heldout2/29-1141.00_nurse_career_break": 2,
+    "heldout2/29-1141.00_nurse_career_break": 1,
     "heldout2/31-9092.00_medical_assistant_interview": 1,
     "heldout2/35-1011.00_executive_chef_linkedin": 1,
     "heldout2/41-4012.00_lubricants_two_liner": 1,
@@ -245,39 +289,46 @@
     "heldout2/53-3032.00_trucker_qa": 1
    },
    "margins": {
-    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2868,
-    "heldout2/13-2072.00_gold_loan_whatsapp": 0.1902,
-    "heldout2/15-2051.00_data_science_fresher": 0.1163,
-    "heldout2/17-2051.00_structural_engineer_third_person": 0.054,
-    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.1882,
-    "heldout2/25-2031.00_tgt_kvs_government": 0.4008,
-    "heldout2/27-1024.00_freelance_designer_gig": 0.1565,
-    "heldout2/29-1051.00_pharmacist_third_person": -0.1054,
-    "heldout2/29-1141.00_nurse_career_break": -0.0356,
-    "heldout2/31-9092.00_medical_assistant_interview": 0.2631,
-    "heldout2/35-1011.00_executive_chef_linkedin": 0.416,
-    "heldout2/41-4012.00_lubricants_two_liner": 0.1217,
-    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.0661,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.3151,
-    "heldout2/53-3032.00_trucker_qa": 0.0074
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2444,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.155,
+    "heldout2/15-2051.00_data_science_fresher": 0.0418,
+    "heldout2/17-2051.00_structural_engineer_third_person": 0.082,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.0469,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.2843,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.3099,
+    "heldout2/29-1051.00_pharmacist_third_person": -0.1137,
+    "heldout2/29-1141.00_nurse_career_break": 0.09,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.2569,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.2911,
+    "heldout2/41-4012.00_lubricants_two_liner": 0.0174,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1259,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.2256,
+    "heldout2/53-3032.00_trucker_qa": 0.0424
    }
   },
   "f_heldout2_extra_occupations": {
-   "top1": 10,
+   "top1": 9,
    "top3": 10,
    "n": 10,
-   "mean_margin": 0.1836,
+   "mean_margin": 0.1711,
    "worst": {
-    "profile": "heldout2/41-2031.00_retail_qa",
-    "margin": 0.036,
-    "runner_up": "41-4012.00"
+    "profile": "heldout2/29-1123.00_physio_whatsapp",
+    "margin": -0.0278,
+    "runner_up": "29-1141.00"
    },
-   "misses": {},
+   "misses": {
+    "heldout2/29-1123.00_physio_whatsapp": {
+     "rank": 2,
+     "own": 0.161,
+     "runner_up": "29-1141.00",
+     "margin": -0.028
+    }
+   },
    "ranks": {
     "heldout2/13-1071.00_hr_psu_government": 1,
     "heldout2/15-1253.00_qa_two_liner": 1,
     "heldout2/23-1011.00_corporate_lawyer_linkedin": 1,
-    "heldout2/29-1123.00_physio_whatsapp": 1,
+    "heldout2/29-1123.00_physio_whatsapp": 2,
     "heldout2/29-1292.00_hygienist_career_break": 1,
     "heldout2/29-2052.00_pharmacy_tech_keyvalue": 1,
     "heldout2/41-2031.00_retail_qa": 1,
@@ -286,40 +337,40 @@
     "heldout2/47-2152.00_plumber_interview": 1
    },
    "margins": {
-    "heldout2/13-1071.00_hr_psu_government": 0.0365,
-    "heldout2/15-1253.00_qa_two_liner": 0.3231,
-    "heldout2/23-1011.00_corporate_lawyer_linkedin": 0.0513,
-    "heldout2/29-1123.00_physio_whatsapp": 0.0533,
-    "heldout2/29-1292.00_hygienist_career_break": 0.3333,
-    "heldout2/29-2052.00_pharmacy_tech_keyvalue": 0.0837,
-    "heldout2/41-2031.00_retail_qa": 0.036,
-    "heldout2/43-3071.00_teller_cover_letter": 0.2635,
-    "heldout2/43-4081.00_reception_third_person": 0.3886,
-    "heldout2/47-2152.00_plumber_interview": 0.2665
+    "heldout2/13-1071.00_hr_psu_government": 0.0256,
+    "heldout2/15-1253.00_qa_two_liner": 0.3763,
+    "heldout2/23-1011.00_corporate_lawyer_linkedin": 0.0746,
+    "heldout2/29-1123.00_physio_whatsapp": -0.0278,
+    "heldout2/29-1292.00_hygienist_career_break": 0.3308,
+    "heldout2/29-2052.00_pharmacy_tech_keyvalue": 0.0767,
+    "heldout2/41-2031.00_retail_qa": 0.1121,
+    "heldout2/43-3071.00_teller_cover_letter": 0.2774,
+    "heldout2/43-4081.00_reception_third_person": 0.2678,
+    "heldout2/47-2152.00_plumber_interview": 0.1972
    }
   },
   "g_heldout2_no_curated": {
    "top1": 13,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1574,
+   "mean_margin": 0.1235,
    "worst": {
     "profile": "heldout2/29-1051.00_pharmacist_third_person",
-    "margin": -0.0962,
+    "margin": -0.1014,
     "runner_up": "29-2052.00"
    },
    "misses": {
     "heldout2/29-1051.00_pharmacist_third_person": {
      "rank": 2,
-     "own": 0.3,
+     "own": 0.317,
      "runner_up": "29-2052.00",
-     "margin": -0.096
+     "margin": -0.101
     },
-    "heldout2/29-1141.00_nurse_career_break": {
+    "heldout2/41-4012.00_lubricants_two_liner": {
      "rank": 2,
-     "own": 0.173,
-     "runner_up": "31-9092.00",
-     "margin": -0.031
+     "own": 0.123,
+     "runner_up": "13-2072.00",
+     "margin": -0.016
     }
    },
    "ranks": {
@@ -331,48 +382,48 @@
     "heldout2/25-2031.00_tgt_kvs_government": 1,
     "heldout2/27-1024.00_freelance_designer_gig": 1,
     "heldout2/29-1051.00_pharmacist_third_person": 2,
-    "heldout2/29-1141.00_nurse_career_break": 2,
+    "heldout2/29-1141.00_nurse_career_break": 1,
     "heldout2/31-9092.00_medical_assistant_interview": 1,
     "heldout2/35-1011.00_executive_chef_linkedin": 1,
-    "heldout2/41-4012.00_lubricants_two_liner": 1,
+    "heldout2/41-4012.00_lubricants_two_liner": 2,
     "heldout2/43-4051.00_bank_callcentre_cover_letter": 1,
     "heldout2/47-2111.00_industrial_electrician_hindi": 1,
     "heldout2/53-3032.00_trucker_qa": 1
    },
    "margins": {
-    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2289,
-    "heldout2/13-2072.00_gold_loan_whatsapp": 0.2313,
-    "heldout2/15-2051.00_data_science_fresher": 0.1144,
-    "heldout2/17-2051.00_structural_engineer_third_person": 0.0542,
-    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.1946,
-    "heldout2/25-2031.00_tgt_kvs_government": 0.4355,
-    "heldout2/27-1024.00_freelance_designer_gig": 0.1088,
-    "heldout2/29-1051.00_pharmacist_third_person": -0.0962,
-    "heldout2/29-1141.00_nurse_career_break": -0.0308,
-    "heldout2/31-9092.00_medical_assistant_interview": 0.2028,
-    "heldout2/35-1011.00_executive_chef_linkedin": 0.3812,
-    "heldout2/41-4012.00_lubricants_two_liner": 0.1095,
-    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1463,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.243,
-    "heldout2/53-3032.00_trucker_qa": 0.0381
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2001,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.1886,
+    "heldout2/15-2051.00_data_science_fresher": 0.0494,
+    "heldout2/17-2051.00_structural_engineer_third_person": 0.0662,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.0388,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.3211,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.1995,
+    "heldout2/29-1051.00_pharmacist_third_person": -0.1014,
+    "heldout2/29-1141.00_nurse_career_break": 0.013,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.2372,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.2949,
+    "heldout2/41-4012.00_lubricants_two_liner": -0.0162,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.0983,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1531,
+    "heldout2/53-3032.00_trucker_qa": 0.1097
    }
   },
   "h_hinglish": {
    "top1": 4,
    "top3": 5,
    "n": 5,
-   "mean_margin": 0.142,
+   "mean_margin": 0.063,
    "worst": {
     "profile": "hinglish/47-2111.00_electrician_devanagari",
-    "margin": -0.2381,
+    "margin": -0.031,
     "runner_up": "47-2152.00"
    },
    "misses": {
     "hinglish/47-2111.00_electrician_devanagari": {
      "rank": 2,
-     "own": 0.23,
+     "own": 0.089,
      "runner_up": "47-2152.00",
-     "margin": -0.238
+     "margin": -0.031
     }
    },
    "ranks": {
@@ -383,22 +434,22 @@
     "hinglish/53-3032.00_driver_devanagari": 1
    },
    "margins": {
-    "hinglish/29-1141.00_nurse_hinglish": 0.0409,
-    "hinglish/35-1011.00_chef_hinglish": 0.3897,
-    "hinglish/43-3071.00_teller_hinglish": 0.2166,
-    "hinglish/47-2111.00_electrician_devanagari": -0.2381,
-    "hinglish/53-3032.00_driver_devanagari": 0.3009
+    "hinglish/29-1141.00_nurse_hinglish": 0.1105,
+    "hinglish/35-1011.00_chef_hinglish": 0.1106,
+    "hinglish/43-3071.00_teller_hinglish": 0.105,
+    "hinglish/47-2111.00_electrician_devanagari": -0.031,
+    "hinglish/53-3032.00_driver_devanagari": 0.0197
    }
   },
   "b_heldout_vs_export15": {
    "top1": 15,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1734,
+   "mean_margin": 0.1658,
    "worst": {
-    "profile": "heldout/17-2051.00_civil_hinglish",
-    "margin": 0.0015,
-    "runner_up": "27-1024.00"
+    "profile": "heldout/53-3032.00_driver_hinglish",
+    "margin": 0.0082,
+    "runner_up": "15-2051.00"
    },
    "misses": {},
    "ranks": {
@@ -419,41 +470,34 @@
     "heldout/53-3032.00_driver_hinglish": 1
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.1479,
-    "heldout/13-2072.00_loan_officer_career_changer": 0.2263,
-    "heldout/15-2051.00_head_of_analytics": 0.1952,
-    "heldout/17-2051.00_civil_hinglish": 0.0015,
-    "heldout/17-2141.00_mechanical_fresher": 0.0977,
-    "heldout/25-2031.00_teacher_oneliner": 0.0756,
-    "heldout/27-1024.00_dtp_to_designer": 0.2466,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.1455,
-    "heldout/29-1141.00_nursing_superintendent_senior": 0.155,
-    "heldout/31-9092.00_clinic_assistant_fresher": 0.1113,
-    "heldout/35-1011.00_home_baker_to_chef": 0.4604,
-    "heldout/41-4012.00_regional_sales_manager": 0.1968,
-    "heldout/43-4051.00_support_bullets_only": 0.1268,
-    "heldout/47-2111.00_electrician_oneliner": 0.172,
-    "heldout/53-3032.00_driver_hinglish": 0.2422
+    "heldout/13-2011.00_accountant_hinglish": 0.1424,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2237,
+    "heldout/15-2051.00_head_of_analytics": 0.1882,
+    "heldout/17-2051.00_civil_hinglish": 0.1003,
+    "heldout/17-2141.00_mechanical_fresher": 0.0549,
+    "heldout/25-2031.00_teacher_oneliner": 0.2028,
+    "heldout/27-1024.00_dtp_to_designer": 0.2993,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.1114,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.2414,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.0752,
+    "heldout/35-1011.00_home_baker_to_chef": 0.4272,
+    "heldout/41-4012.00_regional_sales_manager": 0.0392,
+    "heldout/43-4051.00_support_bullets_only": 0.1422,
+    "heldout/47-2111.00_electrician_oneliner": 0.2311,
+    "heldout/53-3032.00_driver_hinglish": 0.0082
    }
   },
   "e_heldout2_vs_export15": {
-   "top1": 14,
+   "top1": 15,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.2,
+   "mean_margin": 0.1912,
    "worst": {
-    "profile": "heldout2/29-1141.00_nurse_career_break",
-    "margin": -0.0356,
-    "runner_up": "31-9092.00"
+    "profile": "heldout2/41-4012.00_lubricants_two_liner",
+    "margin": 0.0174,
+    "runner_up": "13-2072.00"
    },
-   "misses": {
-    "heldout2/29-1141.00_nurse_career_break": {
-     "rank": 2,
-     "own": 0.152,
-     "runner_up": "31-9092.00",
-     "margin": -0.036
-    }
-   },
+   "misses": {},
    "ranks": {
     "heldout2/13-2011.00_internal_auditor_linkedin": 1,
     "heldout2/13-2072.00_gold_loan_whatsapp": 1,
@@ -463,7 +507,7 @@
     "heldout2/25-2031.00_tgt_kvs_government": 1,
     "heldout2/27-1024.00_freelance_designer_gig": 1,
     "heldout2/29-1051.00_pharmacist_third_person": 1,
-    "heldout2/29-1141.00_nurse_career_break": 2,
+    "heldout2/29-1141.00_nurse_career_break": 1,
     "heldout2/31-9092.00_medical_assistant_interview": 1,
     "heldout2/35-1011.00_executive_chef_linkedin": 1,
     "heldout2/41-4012.00_lubricants_two_liner": 1,
@@ -472,21 +516,21 @@
     "heldout2/53-3032.00_trucker_qa": 1
    },
    "margins": {
-    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2868,
-    "heldout2/13-2072.00_gold_loan_whatsapp": 0.1902,
-    "heldout2/15-2051.00_data_science_fresher": 0.1731,
-    "heldout2/17-2051.00_structural_engineer_third_person": 0.054,
-    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.1882,
-    "heldout2/25-2031.00_tgt_kvs_government": 0.4623,
-    "heldout2/27-1024.00_freelance_designer_gig": 0.2921,
-    "heldout2/29-1051.00_pharmacist_third_person": 0.0217,
-    "heldout2/29-1141.00_nurse_career_break": -0.0356,
-    "heldout2/31-9092.00_medical_assistant_interview": 0.2631,
-    "heldout2/35-1011.00_executive_chef_linkedin": 0.416,
-    "heldout2/41-4012.00_lubricants_two_liner": 0.1217,
-    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.0948,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.3151,
-    "heldout2/53-3032.00_trucker_qa": 0.1564
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.2552,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.155,
+    "heldout2/15-2051.00_data_science_fresher": 0.2082,
+    "heldout2/17-2051.00_structural_engineer_third_person": 0.1575,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.0469,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.4028,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.319,
+    "heldout2/29-1051.00_pharmacist_third_person": 0.0415,
+    "heldout2/29-1141.00_nurse_career_break": 0.09,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.2569,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.3148,
+    "heldout2/41-4012.00_lubricants_two_liner": 0.0174,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1259,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.2256,
+    "heldout2/53-3032.00_trucker_qa": 0.2513
    }
   },
   "gate": {
@@ -497,388 +541,35 @@
  },
  "distributions": {
   "market_skill": {
-   "true_median": 0.687,
-   "false_median": 0.305,
-   "true_p90": 1.0,
-   "false_p90": 0.441
+   "true_median": 0.774,
+   "false_median": 0.394,
+   "true_p90": 0.996,
+   "false_p90": 0.561
   },
   "tech": {
-   "true_median": 0.347,
-   "false_median": 0.251,
-   "true_p90": 0.551,
-   "false_p90": 0.365
+   "true_median": 0.397,
+   "false_median": 0.315,
+   "true_p90": 0.591,
+   "false_p90": 0.441
   },
   "tool": {
-   "true_median": 0.343,
-   "false_median": 0.196,
-   "true_p90": 0.52,
-   "false_p90": 0.309
+   "true_median": 0.427,
+   "false_median": 0.288,
+   "true_p90": 0.621,
+   "false_p90": 0.414
   },
   "task": {
-   "true_median": 0.536,
-   "false_median": 0.307,
-   "true_p90": 0.671,
-   "false_p90": 0.452
+   "true_median": 0.598,
+   "false_median": 0.383,
+   "true_p90": 0.726,
+   "false_p90": 0.534
   },
   "dwa": {
-   "true_median": 0.484,
-   "false_median": 0.307,
-   "true_p90": 0.634,
-   "false_p90": 0.457
+   "true_median": 0.541,
+   "false_median": 0.381,
+   "true_p90": 0.692,
+   "false_p90": 0.539
   }
- },
- "verdict_calibration": {
-  "threshold": 0.3254,
-  "median_full_tuning": 0.6,
-  "tuning": {
-   "positives": 15,
-   "negatives": 14,
-   "full_min": 0.3257,
-   "negative_max": 0.325,
-   "full_below_threshold": [],
-   "negatives_above_threshold": [],
-   "accuracy": 1.0
-  },
-  "validation": {
-   "positives": 15,
-   "negatives": 9,
-   "full_min": 0.1461,
-   "negative_max": 0.1917,
-   "full_below_threshold": [
-    "heldout2/13-2072.00_gold_loan_whatsapp",
-    "heldout2/15-2051.00_data_science_fresher",
-    "heldout2/17-2051.00_structural_engineer_third_person",
-    "heldout2/17-2141.00_hvac_engineer_keyvalue",
-    "heldout2/27-1024.00_freelance_designer_gig",
-    "heldout2/29-1051.00_pharmacist_third_person",
-    "heldout2/29-1141.00_nurse_career_break",
-    "heldout2/41-4012.00_lubricants_two_liner",
-    "heldout2/43-4051.00_bank_callcentre_cover_letter",
-    "heldout2/53-3032.00_trucker_qa"
-   ],
-   "negatives_above_threshold": [],
-   "accuracy": 0.583
-  },
-  "rows": [
-   {
-    "profile": "tuning/13-2011.00_chartered_accountant",
-    "kind": "full",
-    "soc": "13-2011.00",
-    "score": 0.6938
-   },
-   {
-    "profile": "tuning/13-2072.00_loan_officer",
-    "kind": "full",
-    "soc": "13-2072.00",
-    "score": 0.6076
-   },
-   {
-    "profile": "tuning/15-2051.00_data_scientist",
-    "kind": "full",
-    "soc": "15-2051.00",
-    "score": 0.6234
-   },
-   {
-    "profile": "tuning/17-2051.00_civil_site_engineer",
-    "kind": "full",
-    "soc": "17-2051.00",
-    "score": 0.5977
-   },
-   {
-    "profile": "tuning/17-2141.00_mechanical_engineer",
-    "kind": "full",
-    "soc": "17-2141.00",
-    "score": 0.4919
-   },
-   {
-    "profile": "tuning/25-2031.00_school_teacher",
-    "kind": "full",
-    "soc": "25-2031.00",
-    "score": 0.6386
-   },
-   {
-    "profile": "tuning/27-1024.00_graphic_designer",
-    "kind": "full",
-    "soc": "27-1024.00",
-    "score": 0.5804
-   },
-   {
-    "profile": "tuning/29-1051.00_pharmacist",
-    "kind": "full",
-    "soc": "29-1051.00",
-    "score": 0.6008
-   },
-   {
-    "profile": "tuning/29-1141.00_staff_nurse",
-    "kind": "full",
-    "soc": "29-1141.00",
-    "score": 0.6509
-   },
-   {
-    "profile": "tuning/31-9092.00_medical_assistant",
-    "kind": "full",
-    "soc": "31-9092.00",
-    "score": 0.6409
-   },
-   {
-    "profile": "tuning/35-1011.00_head_chef",
-    "kind": "full",
-    "soc": "35-1011.00",
-    "score": 0.6562
-   },
-   {
-    "profile": "tuning/41-4012.00_sales_rep",
-    "kind": "full",
-    "soc": "41-4012.00",
-    "score": 0.5642
-   },
-   {
-    "profile": "tuning/43-4051.00_customer_care",
-    "kind": "full",
-    "soc": "43-4051.00",
-    "score": 0.5139
-   },
-   {
-    "profile": "tuning/47-2111.00_electrician",
-    "kind": "full",
-    "soc": "47-2111.00",
-    "score": 0.496
-   },
-   {
-    "profile": "tuning/53-3032.00_truck_driver",
-    "kind": "full",
-    "soc": "53-3032.00",
-    "score": 0.3257
-   },
-   {
-    "profile": "tuning/partial_13-2011.00_accountant_no_gst",
-    "kind": "partial",
-    "soc": "13-2011.00",
-    "score": 0.1995
-   },
-   {
-    "profile": "tuning/partial_29-1141.00_fresher_nurse",
-    "kind": "partial",
-    "soc": "29-1141.00",
-    "score": 0.3158
-   },
-   {
-    "profile": "tuning/partial_47-2111.00_iti_apprentice",
-    "kind": "partial",
-    "soc": "47-2111.00",
-    "score": 0.325
-   },
-   {
-    "profile": "verdict_tuning/partial_13-2072.00_loan_trainee",
-    "kind": "partial",
-    "soc": "13-2072.00",
-    "score": 0.2482
-   },
-   {
-    "profile": "verdict_tuning/partial_17-2051.00_civil_diploma_fresher",
-    "kind": "partial",
-    "soc": "17-2051.00",
-    "score": 0.1384
-   },
-   {
-    "profile": "verdict_tuning/partial_25-2031.00_bed_student_teacher",
-    "kind": "partial",
-    "soc": "25-2031.00",
-    "score": 0.127
-   },
-   {
-    "profile": "verdict_tuning/partial_27-1024.00_design_student",
-    "kind": "partial",
-    "soc": "27-1024.00",
-    "score": 0.17
-   },
-   {
-    "profile": "verdict_tuning/partial_29-1051.00_bpharm_intern",
-    "kind": "partial",
-    "soc": "29-1051.00",
-    "score": 0.2061
-   },
-   {
-    "profile": "verdict_tuning/partial_35-1011.00_commis_helper",
-    "kind": "partial",
-    "soc": "35-1011.00",
-    "score": 0.1369
-   },
-   {
-    "profile": "verdict_tuning/partial_41-4012.00_sales_trainee",
-    "kind": "partial",
-    "soc": "41-4012.00",
-    "score": 0.0994
-   },
-   {
-    "profile": "verdict_tuning/partial_43-4051.00_fresher_bpo",
-    "kind": "partial",
-    "soc": "43-4051.00",
-    "score": 0.0378
-   },
-   {
-    "profile": "verdict_tuning/wrong_15-2051.00_chef_to_data_scientist",
-    "kind": "wrong",
-    "soc": "15-2051.00",
-    "score": 0.0
-   },
-   {
-    "profile": "verdict_tuning/wrong_29-1141.00_designer_to_nurse",
-    "kind": "wrong",
-    "soc": "29-1141.00",
-    "score": 0.0569
-   },
-   {
-    "profile": "verdict_tuning/wrong_47-2111.00_accountant_to_electrician",
-    "kind": "wrong",
-    "soc": "47-2111.00",
-    "score": 0.0
-   },
-   {
-    "profile": "heldout2/13-2011.00_internal_auditor_linkedin",
-    "kind": "full",
-    "soc": "13-2011.00",
-    "score": 0.3665
-   },
-   {
-    "profile": "heldout2/13-2072.00_gold_loan_whatsapp",
-    "kind": "full",
-    "soc": "13-2072.00",
-    "score": 0.3036
-   },
-   {
-    "profile": "heldout2/15-2051.00_data_science_fresher",
-    "kind": "full",
-    "soc": "15-2051.00",
-    "score": 0.2045
-   },
-   {
-    "profile": "heldout2/17-2051.00_structural_engineer_third_person",
-    "kind": "full",
-    "soc": "17-2051.00",
-    "score": 0.1724
-   },
-   {
-    "profile": "heldout2/17-2141.00_hvac_engineer_keyvalue",
-    "kind": "full",
-    "soc": "17-2141.00",
-    "score": 0.3027
-   },
-   {
-    "profile": "heldout2/25-2031.00_tgt_kvs_government",
-    "kind": "full",
-    "soc": "25-2031.00",
-    "score": 0.4863
-   },
-   {
-    "profile": "heldout2/27-1024.00_freelance_designer_gig",
-    "kind": "full",
-    "soc": "27-1024.00",
-    "score": 0.3246
-   },
-   {
-    "profile": "heldout2/29-1051.00_pharmacist_third_person",
-    "kind": "full",
-    "soc": "29-1051.00",
-    "score": 0.2784
-   },
-   {
-    "profile": "heldout2/29-1141.00_nurse_career_break",
-    "kind": "full",
-    "soc": "29-1141.00",
-    "score": 0.1461
-   },
-   {
-    "profile": "heldout2/31-9092.00_medical_assistant_interview",
-    "kind": "full",
-    "soc": "31-9092.00",
-    "score": 0.4772
-   },
-   {
-    "profile": "heldout2/35-1011.00_executive_chef_linkedin",
-    "kind": "full",
-    "soc": "35-1011.00",
-    "score": 0.4733
-   },
-   {
-    "profile": "heldout2/41-4012.00_lubricants_two_liner",
-    "kind": "full",
-    "soc": "41-4012.00",
-    "score": 0.1742
-   },
-   {
-    "profile": "heldout2/43-4051.00_bank_callcentre_cover_letter",
-    "kind": "full",
-    "soc": "43-4051.00",
-    "score": 0.1617
-   },
-   {
-    "profile": "heldout2/47-2111.00_industrial_electrician_hindi",
-    "kind": "full",
-    "soc": "47-2111.00",
-    "score": 0.3993
-   },
-   {
-    "profile": "heldout2/53-3032.00_trucker_qa",
-    "kind": "full",
-    "soc": "53-3032.00",
-    "score": 0.2006
-   },
-   {
-    "profile": "verdict_validation/partial_13-2011.00_bookkeeping_student",
-    "kind": "partial",
-    "soc": "13-2011.00",
-    "score": 0.05
-   },
-   {
-    "profile": "verdict_validation/partial_15-2051.00_data_entry_learner",
-    "kind": "partial",
-    "soc": "15-2051.00",
-    "score": 0.0911
-   },
-   {
-    "profile": "verdict_validation/partial_17-2141.00_mech_diploma_fresher",
-    "kind": "partial",
-    "soc": "17-2141.00",
-    "score": 0.0872
-   },
-   {
-    "profile": "verdict_validation/partial_29-1123.00_bpt_intern",
-    "kind": "partial",
-    "soc": "29-1123.00",
-    "score": 0.091
-   },
-   {
-    "profile": "verdict_validation/partial_31-9092.00_clinic_receptionist",
-    "kind": "partial",
-    "soc": "31-9092.00",
-    "score": 0.0634
-   },
-   {
-    "profile": "verdict_validation/partial_53-3032.00_lmv_driver",
-    "kind": "partial",
-    "soc": "53-3032.00",
-    "score": 0.1707
-   },
-   {
-    "profile": "verdict_validation/wrong_13-2011.00_driver_to_accountant",
-    "kind": "wrong",
-    "soc": "13-2011.00",
-    "score": 0.0125
-   },
-   {
-    "profile": "verdict_validation/wrong_17-2051.00_teacher_to_civil",
-    "kind": "wrong",
-    "soc": "17-2051.00",
-    "score": 0.0213
-   },
-   {
-    "profile": "verdict_validation/wrong_35-1011.00_tester_to_chef",
-    "kind": "wrong",
-    "soc": "35-1011.00",
-    "score": 0.1917
-   }
-  ]
  },
  "filters": {
   "29-1141.00": {
@@ -922,19 +613,15 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Apache Spark",
      "Google Docs",
      "Microsoft Excel",
-     "Microsoft Project",
      "Microsoft Word",
-     "Electronic infusion pump",
      "Glucometer (blood glucose monitor)",
-     "Pulse oximeter",
-     "Vascular Doppler ultrasound probe",
-     "FaceTime",
-     "FileMaker Pro",
+     "Nebulizer compressor",
+     "Tourniquet",
+     "Data entry software",
      "Google Drive",
-     "IBM Notes",
+     "Per-Se Technologies ORSOS One-Call",
      "YouTube"
     ],
     "curated": [
@@ -1010,14 +697,13 @@
     "off_domain": [
      "Microsoft Excel",
      "Microsoft Word",
-     "Automated tablet blister packaging machine",
      "Electronic precision analytical balance",
      "Laminar air flow clean bench",
      "Mortar and pestle (glass and porcelain)",
      "Ointment slab and flexible stainless steel spatula",
-     "Label-making software",
      "Multitask software",
-     "RxKinetics UD Labels for Windows"
+     "RxKinetics UD Labels for Windows",
+     "Web browser software"
     ],
     "curated": [
      "Autoclave steam sterilizer",
@@ -1075,15 +761,15 @@
    },
    "down_weighted": {
     "off_domain": [
+     "Microsoft Access",
      "Microsoft Excel",
      "Microsoft PowerPoint",
      "Microsoft SharePoint",
      "Microsoft Word",
-     "Autoclave tabletop sterilizer",
-     "Blood glucose test meter",
      "Laboratory centrifuge",
-     "Bookkeeping software",
-     "Microsoft SharePoint Server",
+     "Billing software",
+     "Data entry software",
+     "Microsoft Exchange",
      "Web browser software"
     ],
     "curated": [
@@ -1158,51 +844,51 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Adobe Acrobat",
-     "Epic Systems",
      "Google Docs",
-     "IBM SPSS Statistics",
+     "Google Sheets",
      "MEDITECH software",
+     "Microsoft Access",
+     "Microsoft Excel",
      "Microsoft PowerPoint",
-     "Microsoft Project",
      "Microsoft SQL Server",
      "Microsoft Visual Basic",
      "Microsoft Visual Basic for Applications VBA",
      "Microsoft Word",
+     "Oracle Database",
+     "R",
      "SAS",
      "Structured query language SQL",
      "Swift",
      "Teradata Database",
+     "UNIX",
      "Yardi software",
      "Barcode / QR code document scanner",
-     "Cross-cut secure document shredder",
+     "Digital signature capture pad",
      "Dual-monitor ergonomic workstation",
      "Encrypted portable external SSD storage drive",
      "Hardware security key / token (YubiKey)",
-     "High-speed sheet-fed document scanner",
-     "ADP Super Report Writer",
      "Apache Solr",
-     "Arbutus Analyzer",
      "Best Software CPAPayroll",
+     "CPSI EHR System",
      "Corel WordPerfect Office Suite",
+     "Data entry software",
      "Data extraction software",
      "Database software",
-     "Eko",
      "FileMaker Pro",
      "Google Slides",
-     "Human resource management software HRMS",
+     "Healthcare common procedure coding system HCPCS",
      "LexisNexis",
+     "Lumigent Entegra",
      "Medical condition coding software",
      "Medical procedure coding software",
      "Microsoft OneNote",
-     "Microsoft Publisher",
      "Paisley Cardmap",
-     "Sage CPADocument Manager",
-     "Sage HandiSoft HandiLedger",
+     "Paisley Focus Control Assurance",
+     "Paisley RiskNavigator",
+     "SAP Crystal Reports",
      "TechSmith Camtasia",
-     "WizSoft WizRule",
-     "WizSoft WizWhy",
-     "Yardi Systems Yardi Enterprise"
+     "TrendTracker Compliance Solution",
+     "Tumbleweed SecureTransport"
     ],
     "curated": [
      "Accounting",
@@ -1280,19 +966,24 @@
    "down_weighted": {
     "off_domain": [
      "Microsoft Access",
+     "Microsoft Excel",
      "Microsoft PowerPoint",
      "Microsoft Word",
      "Zoom",
+     "Digital signature pad",
      "High-speed duplex document scanner",
      "Multi-screen display terminal",
      "VoIP telephony communication console",
+     "CGI-AMS BureauLink Enterprise",
      "EDExpress",
      "ELM Resources ELM",
      "EMT Applications CounselorMax",
+     "Equifax Application Engine",
      "FileMaker Pro",
      "LexisNexis",
      "Microsoft Internet Explorer",
      "Student information systems SIS software",
+     "Sungard Higher Education PowerFAIDS",
      "Web browser software"
     ],
     "curated": [
@@ -1357,25 +1048,12 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Microsoft Excel",
-     "Microsoft Office software",
-     "Microsoft PowerPoint",
-     "Microsoft SharePoint",
-     "Microsoft Word",
-     "Digital document camera / visualizer",
      "Digital graphing calculator",
      "Digital sound amplification and lapel microphone",
-     "Interactive whiteboard / smart board",
      "Laboratory Bunsen burner and safety equipment",
-     "Science laboratory compound light microscope",
      "Wireless presentation remote / clicker",
-     "Desmos",
-     "Email software",
-     "Flipgrid",
-     "Geogebra",
      "Google Drive",
-     "Screencastify",
-     "Web browser software"
+     "Screencastify"
     ],
     "curated": [
      "Classroom Management",
@@ -1440,44 +1118,79 @@
    },
    "down_weighted": {
     "off_domain": [
+     "Adobe Acrobat",
+     "Adobe Creative Cloud software",
      "Adobe Illustrator",
+     "Adobe InDesign",
+     "Adobe Photoshop",
+     "Apple macOS",
      "Autodesk AutoCAD",
      "Cisco Webex",
+     "ESRI ArcGIS software",
+     "Eclipse IDE",
+     "Epic Systems",
+     "Extensible markup language XML",
+     "Facebook",
+     "Google Docs",
+     "Hypertext markup language HTML",
+     "Intuit QuickBooks",
+     "Microsoft Access",
+     "Microsoft Excel",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft SharePoint",
+     "Microsoft Visual Basic",
+     "Microsoft Windows",
+     "Microsoft Word",
      "Mozilla Firefox",
-     "Oracle Primavera Enterprise Project Portfolio Management",
+     "Oracle Database",
      "Slack",
+     "UNIX",
      "Yardi software",
      "Zoom",
      "Handheld wireless barcode scanner",
      "Laser distance meter for field measurement",
+     "Mobile point-of-sale (mPOS) card reader terminal",
      "Wireless presentation pointer",
      "3M Post-it App",
+     "Adobe Dreamweaver",
      "Airtable",
+     "Apache Groovy",
+     "Blackboard software",
      "Blink",
      "Citrix cloud computing software",
+     "Computerized call calendars",
      "Computerized time management systems",
+     "Data entry software",
+     "Database software",
      "Dropbox",
      "Eko",
      "Evernote",
      "FaceTime",
      "FileMaker Pro",
      "Google Drive",
-     "Google Meet",
      "GroupMe",
+     "Handheld computer device software",
      "Healthcare common procedure coding system HCPCS",
+     "IBM Power Systems software",
+     "LexisNexis",
+     "LinkedIn",
      "LogMeIn GoToMeeting",
      "LogMeIn GoToWebinar",
      "MASterMind",
      "McAfee",
      "Medical condition coding software",
+     "Microsoft Exchange",
      "Microsoft Internet Explorer",
      "Microsoft OneNote",
      "Mozilla Thunderbird",
      "NortonLifeLock cybersecurity software",
+     "Oracle WebLogic Server",
      "Screencastify",
      "SeaMonkey",
      "Skype",
      "SmugMug Flickr",
+     "Social media sites",
      "Virtual private networking VPN software",
      "Voice over internet protocol VoIP system software",
      "YouTube"
@@ -1554,23 +1267,21 @@
    "down_weighted": {
     "off_domain": [
      "Adobe Creative Cloud software",
-     "Adobe Illustrator",
      "Adobe Photoshop",
      "Facebook",
-     "Yardi software",
+     "Zoom",
+     "Dual-display ergonomic desktop computer system",
      "Ergonomic wrist-rest mechanical keyboard",
      "Handheld barcode scanner",
-     "Noise-canceling binaural USB telephony headset",
-     "Airtable",
+     "Citrix cloud computing software",
+     "FaceTime",
      "Google Drive",
      "Google Sites",
      "LexisNexis",
-     "LogMeIn GoToMeeting",
-     "Medical condition coding software",
+     "LinkedIn",
      "Microsoft Internet Explorer",
-     "Nearpod",
+     "NortonLifeLock cybersecurity software",
      "Open Text Fax Server, RightFax Edition",
-     "Padlet",
      "Virtual private networking VPN software",
      "YouTube"
     ],
@@ -1629,42 +1340,19 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Chef",
      "Microsoft Access",
      "Microsoft Excel",
-     "Microsoft Office software",
-     "Microsoft Outlook",
      "Microsoft PowerPoint",
      "Microsoft SQL Server",
      "Microsoft SharePoint",
-     "Microsoft Visual Basic for Applications VBA",
      "Microsoft Word",
-     "Puppet",
-     "Shell script",
-     "Teradata Database",
-     "Trimble SketchUp Pro",
      "Dial indicator gauge",
-     "Digital storage oscilloscope",
      "Infrared thermal imaging camera",
-     "Optical tachometer / stroboscope",
-     "Ultrasonic thickness gauge",
+     "Strain gauge data acquisition system",
      "Blink",
-     "Blue Ridge Numerics CFDesign",
      "Cost estimating software",
-     "MAYA Nastran",
      "Microsoft Dynamics",
-     "Microsoft Exchange",
-     "Oracle JD Edwards EnterpriseOne",
-     "Perforce Helix software",
-     "ReliaSoft Alta 6 Pro",
-     "ReliaSoft BlockSim",
-     "ReliaSoft Weibull++ 6",
-     "Sigmetrix CETOL 6 Sigma",
-     "SmugMug Flickr",
-     "Statistical energy analysis SEA software",
-     "Statistical software",
-     "Supervisory control and data acquisition SCADA software",
-     "Video analysis software"
+     "Sigmetrix CETOL 6 Sigma"
     ],
     "curated": [
      "Coordinate measuring machine (CMM)",
@@ -1725,35 +1413,14 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Adobe Acrobat",
      "Apache Subversion SVN",
      "Microsoft Access",
      "Microsoft Excel",
-     "Microsoft Office software",
-     "Microsoft Outlook",
      "Microsoft PowerPoint",
      "Microsoft Word",
-     "Shell script",
-     "Trimble SketchUp Pro",
      "GPS RTK geodetic receiver",
-     "Inclinometer casing probe",
      "Laser distance meter",
-     "Nuclear density gauge (soil compaction)",
-     "Theodolite optical transit",
-     "Water quality sampling kit",
-     "Corel WordPerfect Office Suite",
-     "Dassault Systemes Abaqus",
-     "Formula translation/translator FORTRAN",
-     "HEC-1",
-     "HEC-HMS",
-     "MAYA Nastran",
-     "Microsoft Dynamics",
-     "Microsoft Exchange",
-     "Microsoft Internet Explorer",
-     "Oracle JD Edwards EnterpriseOne",
-     "SmugMug Flickr",
-     "Supervisory control and data acquisition SCADA software",
-     "Trimble Geomatics Office"
+     "Water quality sampling kit"
     ],
     "curated": [
      "AutoCAD Drafting",
@@ -1806,23 +1473,14 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Adobe Acrobat",
      "Microsoft Excel",
      "Microsoft Office software",
+     "Microsoft Outlook",
      "Microsoft Windows",
-     "SAP software",
-     "Clamp-on ammeter / clamp meter",
-     "Pipe and conduit threader",
-     "Thermal imaging infrared camera",
      "Database software",
-     "Elite Software Inpoint",
-     "Elite Software Outpoint",
-     "Elite Software VDROP",
      "Insight Direct ServiceCEO",
      "Resolve Systems Service Management",
-     "Shafer Service Systems",
-     "SmartDraw",
-     "Turtle Creek Software Goldenseal"
+     "Shafer Service Systems"
     ],
     "curated": [
      "Circuit Troubleshooting",
@@ -1878,20 +1536,15 @@
      "Microsoft Outlook",
      "Microsoft PowerPoint",
      "Microsoft Word",
-     "Chinois conical fine mesh strainer",
-     "Commercial vacuum packaging machine",
-     "Salamander broiler",
+     "Diamond whetstone and honing steel",
      "ADP eTIME",
      "CostGuard",
      "Delphi Technology",
      "EGS CALCMENU",
      "Email software",
-     "Enggist & Grandjean EGS F&B Control",
-     "GNOME Gnutrition",
      "GroupMe",
      "ReServe Interactive",
-     "Sage MAS 90 ERP",
-     "SoftCafe MenuPro"
+     "Sage MAS 90 ERP"
     ],
     "curated": [
      "Culinary Operations",
@@ -1946,15 +1599,17 @@
    "down_weighted": {
     "off_domain": [
      "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft Outlook",
      "Microsoft Windows",
-     "Citizen band (CB) two-way radio transceiver",
-     "Digital tire pressure gauge",
+     "Microsoft Word",
+     "SAP software",
      "Gladhand air hose lockout safety device",
-     "Eko",
+     "3M Post-it App",
+     "ADP ezLaborManager",
      "Evernote",
      "Omnitracs Performance Monitoring",
-     "YouTube",
-     "ddlsoftware.com drivers daily log program DDL"
+     "YouTube"
     ],
     "curated": [
      "Fleet & Highway Safety",
@@ -2025,32 +1680,21 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Adobe Acrobat",
      "Apple macOS",
      "Extensible markup language XML",
      "Google Docs",
+     "Hypertext markup language HTML",
      "Microsoft Access",
      "Microsoft Excel",
-     "Microsoft Outlook",
      "Microsoft Windows",
      "Microsoft Word",
      "Structured query language SQL",
-     "Digital single-lens reflex (DSLR) camera kit",
-     "Pantone color matching swatch formula guide",
-     "Precision aluminum straightedge ruler and light box",
-     "Rotary paper trimmer and precision heavy-duty cutting mat",
-     "Corel WordPerfect Office Suite",
-     "Dynamic hypertext markup language DHTML",
      "Extensible hypertext markup language XHTML",
      "FileMaker Pro",
      "Google Chrome",
      "Google Drive",
-     "IBM Notes",
      "Oracle Eloqua",
-     "Oracle JavaServer Pages JSP",
-     "PDF readers",
-     "Verilog",
-     "Web browser software"
+     "Oracle JavaServer Pages JSP"
     ],
     "curated": [
      "Adobe Illustrator",
@@ -2126,11 +1770,6 @@
     ]
    },
    "down_weighted": {
-    "off_domain": [
-     "Dual Ultra-HD 4K monitors",
-     "External high-speed NVMe RAID storage array",
-     "Hardware security authentication key (FIDO2 / YubiKey)"
-    ],
     "curated": [
      "Dual Ultra-HD 4K monitors",
      "External high-speed NVMe RAID storage array",
@@ -2196,9 +1835,7 @@
    "down_weighted": {
     "off_domain": [
      "Microsoft Excel",
-     "Microsoft Word",
-     "Biometrics video game software",
-     "Cedaron Dexter Evaluation & Impairment Rating"
+     "Microsoft Word"
     ]
    }
   },
@@ -2268,20 +1905,13 @@
    "down_weighted": {
     "off_domain": [
      "Intuit QuickBooks",
+     "Microsoft Active Server Pages ASP",
      "Microsoft Excel",
      "Microsoft Office software",
-     "Bookkeeping software",
      "Database software",
-     "Elite Software FIRE",
-     "Elite Software HSYM",
      "Email software",
-     "Heat loss calculation software",
      "Insight Direct ServiceCEO",
-     "Klear Estimator",
-     "KRS Enterprises Service First!",
      "PricePoint",
-     "Quicken",
-     "Quote Software QuoteExpress",
      "Wintac Pro"
     ]
    }
@@ -2629,7 +2259,6 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Adobe Creative Cloud software",
      "Adobe Illustrator",
      "Adobe InDesign",
      "Adobe Photoshop",
@@ -2637,53 +2266,33 @@
      "Cisco Webex",
      "Extensible markup language XML",
      "Facebook",
-     "Google Analytics",
-     "Google Docs",
      "Hypertext markup language HTML",
-     "Microsoft Access",
-     "Microsoft SQL Server",
+     "Microsoft Excel",
+     "Microsoft Visual Basic",
      "Microsoft Visual Basic for Applications VBA",
      "Microsoft Word",
      "Oracle Database",
-     "Teradata Database",
+     "Slack",
      "Zoom",
      "Adobe Dreamweaver",
-     "Airtable",
      "Apple Final Cut Pro",
+     "Blackboard software",
+     "Data entry software",
      "Database software",
-     "Drupal",
-     "Evernote",
      "FaceTime",
-     "FileMaker Pro",
-     "Google",
      "Google Drive",
-     "Google Meet",
-     "Google Slides",
      "IBM Domino",
-     "IBM InfoSphere DataStage",
      "LexisNexis",
+     "LinkedIn",
      "Loom",
      "Microsoft Internet Explorer",
-     "Microsoft Publisher",
      "Online databases",
-     "Oracle Solaris",
-     "Oracle WebLogic Server",
-     "Perforce Helix software",
+     "SAP Crystal Reports",
      "Skype",
-     "SmugMug Flickr",
      "Social media sites",
-     "StataCorp Stata",
-     "Web browser software",
      "YouTube",
-     "Case",
-     "Code Review",
-     "data cleansing",
-     "Data modeling",
-     "data visualization",
-     "Javascript",
-     "NoSQL",
-     "PLSQL",
-     "Power BI"
+     "Computer vision",
+     "Translation"
     ]
    }
   },
@@ -2955,40 +2564,42 @@
      "Microsoft PowerPoint",
      "Microsoft Project",
      "Microsoft Word",
+     "SAP software",
+     "Abacus Data Systems AbacusLaw",
      "ADERANT Expert Matter Center",
      "Advanced Technologies Class Act",
+     "AdvantageLaw WinVantage",
      "Bridgeway eCounsel",
      "Canyon Solutions Jcats",
-     "Catalyst Repository Systems CatalystCR",
      "Catalyst Repository Systems CatalystDR",
      "Catalyst Repository Systems CatalystXE",
      "Chesapeake Interlink Needles",
+     "Client Profiles Case Management",
      "Compugov DocketView",
+     "CompuLaw Vision",
      "Convex FactLogic",
-     "Corel WordPerfect Office Suite",
      "Corporate Focus Solium Shareworks",
-     "Corporatek EnAct Platinum",
      "Creative Data Solutions DuProcess",
-     "Crocodile Consulting Traffic Control",
      "Customer Expressions i-Sight",
+     "CyberDyne Industries CaseWizard",
      "DATAssimilate Systems DATAssimilator",
      "De Novo Systems De Novo CaseMgr",
      "Diarymaster",
-     "Direct Hit Systems THREADS",
      "eLawSoftware",
      "Equative TimeLedger",
      "HiPerSoft Practice Information Powertool",
-     "IDEA TrialPro",
-     "Iron Mountain Accutrac records management software",
      "LexisNexis",
+     "LexisNexis CaseMap",
      "LexisNexis Lexis Front Office",
      "LexisNexis Shepard's Citations Service",
      "LogMeIn GoToMeeting",
+     "LT Online Corporation LAWTRAC",
      "Lucid IQ CMP",
      "MicroFocus GroupWise",
      "Microsoft Dynamics",
-     "Microsoft Publisher",
-     "Practice Technology Prevail",
+     "Microsoft SharePoint Server",
+     "OpenText eDOCS DM",
+     "PerfectLaw All-in-One Suite",
      "ProCAT Denoto",
      "Saga Practice Manager",
      "Sage Timeslips",
@@ -2996,10 +2607,12 @@
      "Solution Specialties TRACKER",
      "Synergy International Systems Synergy CaseTrack",
      "Tabs3 PracticeMaster",
+     "TopDogLegal",
      "Upside Software UpsideContract",
      "Web browser software",
      "WebEx WebOffice",
      "Woll2Woll InfoPower Studio",
+     "Wolters Kluwer Loislaw",
      "WorthMORE Software CaseWORTH"
     ]
    }
@@ -3065,8 +2678,7 @@
      "Microsoft Edge",
      "Microsoft Excel",
      "Microsoft Word",
-     "Mozilla Firefox",
-     "Label-making software"
+     "Mozilla Firefox"
     ]
    }
   },
@@ -3198,20 +2810,37 @@
    "down_weighted": {
     "off_domain": [
      "Adobe Acrobat",
+     "Adobe Creative Cloud software",
      "Adobe Illustrator",
+     "Adobe InDesign",
+     "Adobe Photoshop",
+     "Apple macOS",
      "Apple Safari",
      "Autodesk AutoCAD",
+     "Eclipse IDE",
+     "Facebook",
      "Google Docs",
+     "Intuit QuickBooks",
+     "Microsoft Access",
      "Microsoft Edge",
+     "Microsoft Excel",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft SharePoint",
+     "Microsoft Windows",
      "Microsoft Word",
      "Mozilla Firefox",
      "Blink",
+     "Data entry software",
+     "Database software",
      "FileMaker Pro",
      "Google Drive",
-     "Google Meet",
      "GroupMe",
+     "Handheld computer device software",
      "IBM Notes",
+     "LinkedIn",
      "SmugMug Flickr",
+     "Social media sites",
      "YouTube"
     ]
    }
@@ -4369,10 +3998,7 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Trimble SketchUp Pro",
-     "Dynamic hypertext markup language DHTML",
-     "SmugMug Flickr",
-     "XML Path Language XPATH"
+     "Selenium"
     ]
    }
   },
@@ -4432,9 +4058,7 @@
    },
    "down_weighted": {
     "off_domain": [
-     "Facebook",
-     "Yardi software",
-     "Blink"
+     "Facebook"
     ]
    }
   },
@@ -4492,7 +4116,8 @@
    "down_weighted": {
     "off_domain": [
      "Microsoft Excel",
-     "Microsoft Word"
+     "Microsoft Word",
+     "Web browser software"
     ]
    }
   }
@@ -4504,16 +4129,16 @@
     "provenance": "onet",
     "requirement": "Record patients' medical information and vital signs.",
     "status": "met",
-    "similarity": 0.5502,
+    "similarity": 0.6695,
     "reason": "semantic",
-    "evidence": "chart vitals"
+    "evidence": "Admitted patients, took history and assessed their condition on arrival."
    },
    {
     "type": "task",
     "provenance": "onet",
     "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
     "status": "met",
-    "similarity": 0.7379,
+    "similarity": 0.8327,
     "reason": "semantic",
     "evidence": "medication administration"
    },
@@ -4522,7 +4147,7 @@
     "provenance": "onet",
     "requirement": "Maintain accurate, detailed reports and records.",
     "status": "missing",
-    "similarity": 0.3831,
+    "similarity": 0.3957,
     "reason": "none",
     "evidence": "clinical documentation"
    },
@@ -4531,25 +4156,25 @@
     "provenance": "onet",
     "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
     "status": "met",
-    "similarity": 0.6395,
+    "similarity": 0.6663,
     "reason": "semantic",
-    "evidence": "Admitted patients, took history and assessed their condition on arrival."
+    "evidence": "Patient assessment"
    },
    {
     "type": "task",
     "provenance": "onet",
     "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilit",
-    "status": "partial",
-    "similarity": 0.4945,
-    "reason": "semantic",
-    "evidence": "Counsel families on discharge, wound care at home and medication schedules."
+    "status": "missing",
+    "similarity": 0.4962,
+    "reason": "none",
+    "evidence": "Admitted patients"
    },
    {
     "type": "task",
     "provenance": "onet",
     "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluat",
     "status": "met",
-    "similarity": 0.6363,
+    "similarity": 0.6459,
     "reason": "semantic",
     "evidence": "Patient assessment"
    },
@@ -4558,16 +4183,16 @@
     "provenance": "onet",
     "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular",
     "status": "partial",
-    "similarity": 0.4871,
+    "similarity": 0.5049,
     "reason": "semantic",
-    "evidence": "B.Sc Nursing, Government College of Nursing, Thiruvananthapuram, 2019"
+    "evidence": "B.Sc Nursing"
    },
    {
     "type": "task",
     "provenance": "onet",
     "requirement": "Monitor all aspects of patient care, including diet and physical activity.",
     "status": "met",
-    "similarity": 0.617,
+    "similarity": 0.677,
     "reason": "semantic",
     "evidence": "Patient assessment"
    },
@@ -4576,25 +4201,34 @@
     "provenance": "onet",
     "requirement": "Perform administrative or managerial functions, such as taking responsibility for a unit's",
     "status": "missing",
-    "similarity": 0.4156,
+    "similarity": 0.3325,
     "reason": "none",
-    "evidence": "medication administration"
+    "evidence": "member of the hand hygiene audit team"
    },
    {
     "type": "task",
     "provenance": "onet",
     "requirement": "Order, interpret, and evaluate diagnostic tests to identify and assess patient's condition",
     "status": "met",
-    "similarity": 0.7211,
+    "similarity": 0.752,
     "reason": "semantic",
     "evidence": "Patient assessment"
    },
    {
     "type": "tech",
     "provenance": "onet",
+    "requirement": "Apache Spark",
+    "status": "missing",
+    "similarity": 0.1648,
+    "reason": "none",
+    "evidence": "intake-output"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
     "requirement": "Epic Systems",
     "status": "missing",
-    "similarity": 0.4217,
+    "similarity": 0.4239,
     "reason": "none",
     "evidence": "clinical documentation"
    },
@@ -4603,7 +4237,7 @@
     "provenance": "onet",
     "requirement": "Henry Schein Dentrix",
     "status": "missing",
-    "similarity": 0.4125,
+    "similarity": 0.531,
     "reason": "none",
     "evidence": "clinical documentation"
    },
@@ -4612,7 +4246,7 @@
     "provenance": "onet",
     "requirement": "Kronos Workforce Timekeeper",
     "status": "missing",
-    "similarity": 0.2884,
+    "similarity": 0.4428,
     "reason": "none",
     "evidence": "GCS every hour"
    },
@@ -4620,64 +4254,55 @@
     "type": "tech",
     "provenance": "onet",
     "requirement": "MEDITECH software",
-    "status": "missing",
-    "similarity": 0.4969,
-    "reason": "none",
-    "evidence": "medication administration"
+    "status": "partial",
+    "similarity": 0.62,
+    "reason": "semantic",
+    "evidence": "clinical documentation"
    },
    {
     "type": "tech",
     "provenance": "onet",
     "requirement": "Microsoft Access",
     "status": "missing",
-    "similarity": 0.1538,
+    "similarity": 0.2151,
     "reason": "none",
-    "evidence": "collected blood samples"
+    "evidence": "intake-output"
    },
    {
     "type": "tech",
     "provenance": "onet",
     "requirement": "Microsoft Office software",
     "status": "missing",
-    "similarity": 0.262,
+    "similarity": 0.2844,
     "reason": "none",
-    "evidence": "medication administration"
+    "evidence": "Government College of Nursing"
    },
    {
     "type": "tech",
     "provenance": "onet",
     "requirement": "Microsoft Outlook",
     "status": "missing",
-    "similarity": 0.2178,
+    "similarity": 0.3229,
     "reason": "none",
-    "evidence": "medication administration"
+    "evidence": "update them at every handover"
    },
    {
     "type": "tech",
     "provenance": "onet",
     "requirement": "Microsoft PowerPoint",
     "status": "missing",
-    "similarity": 0.199,
+    "similarity": 0.2168,
     "reason": "none",
     "evidence": "clinical documentation"
    },
    {
     "type": "tech",
     "provenance": "onet",
-    "requirement": "Microsoft SharePoint",
+    "requirement": "Microsoft Project",
     "status": "missing",
-    "similarity": 0.3512,
+    "similarity": 0.2921,
     "reason": "none",
-    "evidence": "clinical documentation"
-   },
-   {
-    "type": "tech",
-    "provenance": "onet",
-    "requirement": "Microsoft Windows",
-    "status": "missing",
-    "similarity": 0.2398,
-    "reason": "none",
-    "evidence": "medication administration"
+    "evidence": "Follow hospital infection control protocol"
    }
   ],
   "work_activities": [
@@ -4686,7 +4311,7 @@
     "status": "evidenced",
     "via": [
      "Administer non-intravenous medications.",
-     "Treat acute illnesses, infections, or injuries."
+     "Assist healthcare practitioners during examinations or treatments."
     ]
    },
    {
@@ -4808,9 +4433,9 @@
    {
     "type": "skill",
     "name": "Service Orientation",
-    "inferred": false,
-    "support": "",
-    "kind": null
+    "inferred": true,
+    "support": "Assist healthcare practitioners during examinations or treatments.",
+    "kind": "dwa"
    }
   ],
   "fit_indicators": [

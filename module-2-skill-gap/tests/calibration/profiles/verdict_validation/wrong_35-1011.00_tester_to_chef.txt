@@ -1,0 +1,2 @@
+Software tester, 4 years. Selenium automation in Java, API testing in Postman, bugs in Jira, regression
+before each release. Interested in becoming a chef.

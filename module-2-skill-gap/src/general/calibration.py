@@ -16,14 +16,15 @@ from pathlib import Path
 
 import numpy as np
 
-from src.general import matcher
+from src.general import matcher, scoring
 from src.general.embeddings import Encoder, cosine
-from src.general.evidence import EvidenceUnit, from_text
+from src.general.evidence import EvidenceUnit, Translator, from_text, role_history
 from src.general.m1_client import EXTRA_FIXTURE_PATH, FIXTURE_PATH, FixtureM1Client
 from src.general.requirements import SCORED_TYPES, FilterReport, RequirementItem
+from src.general.translate import FixtureTranslator
 
 PROFILES_DIR = Path(__file__).resolve().parents[2] / "tests" / "calibration" / "profiles"
-SETS = ("tuning", "heldout", "new", "heldout2")
+SETS = ("tuning", "heldout", "new", "heldout2", "hinglish", "verdict_tuning", "verdict_validation")
 PARTIAL_PREFIX = "partial_"
 TYPES = list(SCORED_TYPES)
 
@@ -33,8 +34,10 @@ class Profile:
     name: str
     soc: str              # the occupation this profile was written for
     set: str
-    partial: bool
+    partial: bool                     # partial_* and wrong_* profiles: not counted in top-1/top-3
     units: list[EvidenceUnit]
+    history: list[tuple[str, float | None]] = field(default_factory=list)
+    kind: str = "full"                # full | partial | wrong (wrong_<target soc>: someone from another field)
 
 
 @dataclass
@@ -44,7 +47,8 @@ class Occupation:
     items: list[RequirementItem]       # core items (scored)
     all_items: list[RequirementItem]   # every layer (for inference)
     report: FilterReport
-    vectors: np.ndarray                # of items
+    vectors: np.ndarray                # expanded rows of items (matcher.expand)
+    starts: np.ndarray
 
 
 @dataclass
@@ -58,15 +62,23 @@ class Pair:
     best: np.ndarray
     alias: np.ndarray
     best_unit: list[int | None] = field(default_factory=list)
+    implied: float = 0.0              # role-history credit for this occupation's tasks/DWAs without evidence
 
 
-def load_profiles(directory: Path = PROFILES_DIR, sets: tuple[str, ...] = SETS) -> list[Profile]:
+WRONG_PREFIX = "wrong_"
+
+
+def load_profiles(directory: Path = PROFILES_DIR, sets: tuple[str, ...] = SETS,
+                  translator: Translator | None = None) -> list[Profile]:
+    """<soc>_<name>.txt (full), partial_<soc>_<name>.txt, wrong_<target soc>_<name>.txt."""
     out = []
     for s in sets:
         for f in sorted((directory / s).glob("*.txt")):
-            partial = f.name.startswith(PARTIAL_PREFIX)
-            soc = f.name.removeprefix(PARTIAL_PREFIX).split("_", 1)[0]
-            out.append(Profile(f"{s}/{f.stem}", soc, s, partial, from_text(f.read_text(encoding="utf-8"))))
+            kind = "partial" if f.name.startswith(PARTIAL_PREFIX) else "wrong" if f.name.startswith(WRONG_PREFIX) else "full"
+            soc = f.name.removeprefix(PARTIAL_PREFIX).removeprefix(WRONG_PREFIX).split("_", 1)[0]
+            text = f.read_text(encoding="utf-8")
+            out.append(Profile(f"{s}/{f.stem}", soc, s, kind != "full", from_text(text, translator=translator),
+                               role_history(text), kind))
     return out
 
 
@@ -76,20 +88,26 @@ def load_occupations(client: FixtureM1Client, encoder: Encoder) -> list[Occupati
     out = []
     for soc, occ in client.occupations.items():
         d = prepare_occupation(soc, occ, client.requirements(soc), encoder, client.version_of(soc))
-        out.append(Occupation(soc, d.title, d.core, d.items, d.report, d.vectors))
+        out.append(Occupation(soc, d.title, d.core, d.items, d.report, d.vectors, d.starts))
     return out
 
 
-def pair(profile: Profile, occ: Occupation, unit_vectors: np.ndarray) -> Pair:
-    sims = cosine(occ.vectors, unit_vectors)
-    by_skill = {sid for u in profile.units for sid in u.skill_ids}
+def pair(profile: Profile, occ: Occupation, unit_vectors: np.ndarray, implied: float = 0.0) -> Pair:
+    """Same matching as the engine: max over a requirement's clauses, title lines never matched."""
+    matchable = np.array([u.matchable for u in profile.units], dtype=bool)
+    by_skill = {sid for u in profile.units if u.matchable for sid in u.skill_ids}
     alias = np.array([i.item_type in matcher.ALIAS_TYPES and (matcher.requirement_skill_id(i.name) in by_skill)
                       for i in occ.items], dtype=bool)
-    best = sims.max(axis=1) if sims.shape[1] else np.zeros(len(occ.items))
+    if len(occ.items) and matchable.any():
+        sims = np.where(matchable[None, :], cosine(occ.vectors, unit_vectors), -1.0)
+        best, unit = matcher.best_rows(sims, occ.starts)
+        best = np.maximum(best, 0.0)
+    else:
+        best, unit = np.zeros(len(occ.items)), np.zeros(len(occ.items), dtype=int)
     return Pair(np.array([TYPES.index(i.item_type) for i in occ.items], dtype=int),
                 np.array([i.weight for i in occ.items]), np.array([i.base_weight for i in occ.items]),
                 np.array([i.provenance == "curated" for i in occ.items], dtype=bool), best, alias,
-                [int(x) for x in sims.argmax(axis=1)] if sims.shape[1] else [None] * len(occ.items))
+                [int(x) for x in unit], implied)
 
 
 def pair_coverage(p: Pair, thresholds: dict[str, tuple[float, float]], type_share: dict[str, float],
@@ -100,6 +118,9 @@ def pair_coverage(p: Pair, thresholds: dict[str, tuple[float, float]], type_shar
     met = np.array([thresholds[t][0] for t in TYPES])[idx]
     partial = np.array([thresholds[t][1] for t in TYPES])[idx]
     credit = np.where(p.alias[keep] | (p.best[keep] >= met), 1.0, np.where(p.best[keep] >= partial, 0.5, 0.0))
+    if p.implied:
+        implied_types = np.isin(idx, [TYPES.index(t) for t in scoring.IMPLIED_TYPES])
+        credit = np.where((credit == 0) & implied_types, p.implied, credit)
     num = np.bincount(idx, weights=w * credit, minlength=len(TYPES))
     den = np.bincount(idx, weights=w, minlength=len(TYPES))
     bas = np.bincount(idx, weights=base, minlength=len(TYPES))
@@ -110,6 +131,11 @@ def pair_coverage(p: Pair, thresholds: dict[str, tuple[float, float]], type_shar
     if share.sum() <= 0:
         return 0.0
     return float((share / share.sum() * np.divide(num, den, out=np.zeros_like(num), where=den > 0)).sum())
+
+
+def is_full(name: str) -> bool:
+    """A full profile (not partial_* or wrong_*), counted in top-1 / top-3 and margins."""
+    return PARTIAL_PREFIX not in name and WRONG_PREFIX not in name
 
 
 @dataclass
@@ -125,7 +151,7 @@ class Result:
     runner_up: dict[str, str]   # profile -> best other occupation
 
     def _full(self) -> dict[str, float]:
-        return {n: m for n, m in self.margins.items() if PARTIAL_PREFIX not in n}
+        return {n: m for n, m in self.margins.items() if is_full(n)}
 
     @property
     def mean_margin(self) -> float:
@@ -161,17 +187,35 @@ def evaluate(profiles: list[Profile], occupations: list[Occupation], pairs: dict
     return Result(socs, [p.name for p in profiles], matrix, top1, top3, n, margins, ranks, runner_up)
 
 
-def build(encoder: Encoder | None = None, client: FixtureM1Client | None = None, sets: tuple[str, ...] = SETS):
-    """Everything evaluate() needs: profiles, occupations (export + extra fixtures) and the precomputed pairs."""
+def implied_by_soc(profile: Profile, client) -> dict[str, float]:
+    """Role history as the engine applies it: each past title resolved through module 1's search (fixture here);
+    a title at ROLE_MIN_CONFIDENCE implies its occupation's tasks/DWAs at scoring.implied_credit(years)."""
+    years: dict[str, list[float | None]] = {}
+    for title, y in profile.history:
+        res = client.search(title, 1)
+        if res.matches and res.matches[0].confidence >= scoring.ROLE_MIN_CONFIDENCE:
+            years.setdefault(res.matches[0].soc_code, []).append(y)
+    out = {}
+    for soc, ys in years.items():
+        known = [y for y in ys if y is not None]
+        out[soc] = scoring.implied_credit(sum(known) if known else None)
+    return out
+
+
+def build(encoder: Encoder | None = None, client: FixtureM1Client | None = None, sets: tuple[str, ...] = SETS,
+          translator: Translator | None = None):
+    """Everything evaluate() needs: profiles, occupations (export + extra fixtures) and the precomputed pairs.
+    Non-English sentences use the committed translations (FixtureTranslator) unless a translator is given."""
     encoder = encoder or Encoder()
     client = client or FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH)
-    profiles = load_profiles(sets=sets)
+    profiles = load_profiles(sets=sets, translator=translator or FixtureTranslator())
     occupations = load_occupations(client, encoder)
     pairs = {}
     for p in profiles:
         uv = encoder.encode([u.text for u in p.units])
+        implied = implied_by_soc(p, client)
         for o in occupations:
-            pairs[(p.name, o.soc)] = pair(p, o, uv)
+            pairs[(p.name, o.soc)] = pair(p, o, uv, implied.get(o.soc, 0.0))
     return profiles, occupations, pairs
 
 

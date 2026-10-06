@@ -65,11 +65,15 @@ def tune(profiles, occupations, pairs, shift: float = 0.0):
     return best
 
 
+def own_soc(name: str) -> str:
+    return name.split("/")[1].removeprefix(cal.PARTIAL_PREFIX).removeprefix(cal.WRONG_PREFIX).split("_")[0]
+
+
 def summary(r: cal.Result) -> dict:
     name, worst = r.worst
-    misses = {n: {"rank": r.ranks[n], "own": round(float(r.matrix[r.names.index(n)][r.socs.index(n.split("/")[1].removeprefix(cal.PARTIAL_PREFIX).split("_")[0])]), 3),
+    misses = {n: {"rank": r.ranks[n], "own": round(float(r.matrix[r.names.index(n)][r.socs.index(own_soc(n))]), 3),
                   "runner_up": r.runner_up[n], "margin": round(r.margins[n], 3)}
-              for n in r.names if r.ranks[n] > 1 and cal.PARTIAL_PREFIX not in n}
+              for n in r.names if r.ranks[n] > 1 and cal.is_full(n)}
     return {"top1": r.top1, "top3": r.top3, "n": r.n, "mean_margin": round(r.mean_margin, 4),
             "worst": {"profile": name, "margin": round(worst, 4), "runner_up": r.runner_up[name]},
             "misses": misses, "ranks": r.ranks, "margins": {k: round(v, 4) for k, v in r.margins.items()}}
@@ -86,6 +90,7 @@ def four_way(profiles, occupations, pairs, thresholds, share) -> dict:
             ("e_heldout2", ("heldout2",), False, None, EXPORT_SOCS, None),
             ("f_heldout2_extra_occupations", ("heldout2",), False, None, None, EXPORT_SOCS),
             ("g_heldout2_no_curated", ("heldout2",), True, None, EXPORT_SOCS, None),
+            ("h_hinglish", ("hinglish",), False, None, None, None),
             ("b_heldout_vs_export15", ("heldout",), False, EXPORT_SOCS, None, None),
             ("e_heldout2_vs_export15", ("heldout2",), False, EXPORT_SOCS, EXPORT_SOCS, None))
     for label, sets, drop, socs, only, exclude in rows:
@@ -145,30 +150,58 @@ def nurse_sample(profiles, occupations, encoder, thresholds) -> dict:
         "fit_indicators": [f.name for f in gen.fit_indicators]}
 
 
-def verdict_calibration(client, encoder) -> dict:
-    """A2 match scores of the tuning profiles on their own occupation (full vs partial) and on their best other
-    occupation; the good-fit threshold is the midpoint between the highest partial and the lowest full score."""
-    from pathlib import Path as _P
-
+def target_scores(engine, files: list) -> list[dict]:
+    """A2 match score of each profile on its target occupation (own SOC; for wrong_*, the role applied for)."""
     from src.general.schemas import GapAnalysisV2Request
-    from src.general.service import GeneralEngine
-    engine = GeneralEngine(client=client, encoder=encoder)
+
     rows = []
-    for f in sorted((cal.PROFILES_DIR / "tuning").glob("*.txt")):
-        partial = f.name.startswith(cal.PARTIAL_PREFIX)
-        soc = f.name.removeprefix(cal.PARTIAL_PREFIX).split("_", 1)[0]
-        units, years, _ = engine.evidence(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8")))
-        uv = encoder.encode([u.text for u in units])
-        scores = {s: engine._score(engine.occupation(s), units, uv, years)[0] for s in client.occupations}
-        other = max((s for s in scores if s != soc), key=scores.get)
-        rows.append({"profile": _P(f).stem, "partial": partial, "own": round(scores[soc], 4),
-                     "best_other": round(scores[other], 4), "best_other_soc": other, "years": years})
-    full = [r["own"] for r in rows if not r["partial"]]
-    part = [r["own"] for r in rows if r["partial"]]
-    threshold = round((max(part) + min(full)) / 2, 2) if part and full else None
-    return {"rows": rows, "full_min": min(full), "partial_max": max(part), "threshold": threshold,
-            "separable": max(part) < min(full),
-            "wrong_occupation_above_threshold": sum(r["best_other"] >= (threshold or 1) for r in rows if not r["partial"])}
+    for f in files:
+        kind = "partial" if f.name.startswith(cal.PARTIAL_PREFIX) else "wrong" if f.name.startswith(cal.WRONG_PREFIX) else "full"
+        soc = f.name.removeprefix(cal.PARTIAL_PREFIX).removeprefix(cal.WRONG_PREFIX).split("_", 1)[0]
+        ev = engine.evidence(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8")))
+        uv = engine.encoder.encode([u.text for u in ev.units])
+        score = engine._score(engine.occupation(soc), ev.units, uv, ev.years, engine.roles(ev.history))[0]
+        rows.append({"profile": f"{f.parent.name}/{f.stem}", "kind": kind, "soc": soc, "score": round(score, 4)})
+    return rows
+
+
+def best_threshold(pos: list[float], neg: list[float]) -> float:
+    """The cut with the best balanced accuracy; among ties, the middle of the widest gap."""
+    cuts = sorted(set(pos + neg))
+    candidates = [(a + b) / 2 for a, b in zip(cuts, cuts[1:])] or [cuts[0]]
+
+    def quality(t):
+        acc = (sum(p >= t for p in pos) / len(pos) + sum(n < t for n in neg) / len(neg)) / 2
+        gap = min([abs(x - t) for x in pos + neg])
+        return acc, gap
+    return round(max(candidates, key=quality), 4)
+
+
+def verdict_calibration(client, encoder, translator) -> dict:
+    """Good-fit threshold from the tuning profiles (full vs partial and wrong-role, on their target), checked on the
+    validation profiles (held-out-2 full vs verdict_validation). FIT_MEDIAN_FULL = median full tuning score."""
+    from src.general.service import GeneralEngine
+    engine = GeneralEngine(client=client, encoder=encoder, translator=translator)
+    tuning = target_scores(engine, sorted((cal.PROFILES_DIR / "tuning").glob("*.txt"))
+                           + sorted((cal.PROFILES_DIR / "verdict_tuning").glob("*.txt")))
+    export = {soc for soc, v in client.versions.items() if v.startswith("2.1")}
+    validation = target_scores(engine, [f for f in sorted((cal.PROFILES_DIR / "heldout2").glob("*.txt"))
+                                        if f.name.split("_")[0] in export]
+                               + sorted((cal.PROFILES_DIR / "verdict_validation").glob("*.txt")))
+    pos = [r["score"] for r in tuning if r["kind"] == "full"]
+    neg = [r["score"] for r in tuning if r["kind"] != "full"]
+    t = best_threshold(pos, neg)
+
+    def check(rows):
+        p = [r for r in rows if r["kind"] == "full"]
+        n = [r for r in rows if r["kind"] != "full"]
+        return {"positives": len(p), "negatives": len(n), "full_min": min(r["score"] for r in p),
+                "negative_max": max(r["score"] for r in n),
+                "full_below_threshold": [r["profile"] for r in p if r["score"] < t],
+                "negatives_above_threshold": [r["profile"] for r in n if r["score"] >= t],
+                "accuracy": round((sum(r["score"] >= t for r in p) + sum(r["score"] < t for r in n)) / len(rows), 3)}
+    return {"threshold": t, "median_full_tuning": round(statistics.median(pos), 2),
+            "tuning": check(tuning), "validation": check(validation), "rows": tuning + validation}
 
 
 def main() -> None:
@@ -176,6 +209,7 @@ def main() -> None:
     ap.add_argument("--model", default=None, help="sentence-transformers model (default: EMBEDDING_MODEL or MiniLM)")
     ap.add_argument("--tune", action="store_true", help="search thresholds and type shares on the tuning set")
     ap.add_argument("--verdict", action="store_true", help="calibrate the good-fit threshold (A2 scores)")
+    ap.add_argument("--no-translate", action="store_true", help="match non-English sentences as written")
     ap.add_argument("--grid-shift", type=float, default=0.0, help="add to every threshold in the search grid")
     ap.add_argument("--filters", default="13-2011.00,47-2111.00,17-2051.00", help="SOCs to print filter reports for")
     args = ap.parse_args()
@@ -183,7 +217,8 @@ def main() -> None:
     encoder = Encoder(args.model or model_name())
     client = cal.FixtureM1Client(cal.FIXTURE_PATH, cal.EXTRA_FIXTURE_PATH)
     EXPORT_SOCS.update(soc for soc, v in client.versions.items() if v.startswith("2.1"))
-    profiles, occupations, pairs = cal.build(encoder, client)
+    translator = (lambda texts: [None] * len(texts)) if args.no_translate else cal.FixtureTranslator()
+    profiles, occupations, pairs = cal.build(encoder, client, translator=translator)
     titles = {o.soc: o.title for o in occupations}
     out: dict = {"model": encoder.name, "export_version": client.version()}
     thresholds, share = matcher.THRESHOLDS, matcher.TYPE_SHARE
@@ -206,11 +241,13 @@ def main() -> None:
         print(f"  {t:14} {d}")
 
     if args.verdict:
-        vc = verdict_calibration(client, encoder)
+        vc = verdict_calibration(client, encoder, translator)
         out["verdict_calibration"] = vc
-        print(f"\n== verdict: full own-occupation min {vc['full_min']}, partial max {vc['partial_max']}, "
-              f"threshold {vc['threshold']} (separable: {vc['separable']}); "
-              f"{vc['wrong_occupation_above_threshold']}/15 full profiles also clear it on another occupation")
+        print(f"\n== verdict threshold {vc['threshold']} (tuning), median full tuning score {vc['median_full_tuning']}")
+        for label in ("tuning", "validation"):
+            c = vc[label]
+            print(f"  {label:10} accuracy {c['accuracy']}  full min {c['full_min']}  negative max {c['negative_max']}  "
+                  f"full below: {c['full_below_threshold']}  negatives above: {c['negatives_above_threshold']}")
     out["filters"] = {o.soc: o.report.model_dump() for o in occupations}
     for o in occupations:
         if o.soc in args.filters.split(","):
@@ -231,7 +268,8 @@ def main() -> None:
     print("  fit indicators:", sample["fit_indicators"])
 
     RESULTS.mkdir(parents=True, exist_ok=True)
-    path = RESULTS / f"{encoder.name.replace('/', '_')}{'_shift' + str(args.grid_shift) if args.grid_shift else ''}.json"
+    suffix = ("_shift" + str(args.grid_shift) if args.grid_shift else "") + ("_no_translate" if args.no_translate else "")
+    path = RESULTS / f"{encoder.name.replace('/', '_')}{suffix}.json"
     path.write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"\nwrote {path}")
 

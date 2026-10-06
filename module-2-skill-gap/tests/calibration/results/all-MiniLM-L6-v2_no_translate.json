@@ -62,10 +62,10 @@
    }
   },
   "b_heldout": {
-   "top1": 14,
+   "top1": 12,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1403,
+   "mean_margin": 0.1263,
    "worst": {
     "profile": "heldout/25-2031.00_teacher_oneliner",
     "margin": -0.0441,
@@ -77,6 +77,18 @@
      "own": 0.174,
      "runner_up": "29-1123.00",
      "margin": -0.044
+    },
+    "heldout/29-1051.00_pharmacist_hinglish": {
+     "rank": 2,
+     "own": 0.154,
+     "runner_up": "29-2052.00",
+     "margin": -0.021
+    },
+    "heldout/53-3032.00_driver_hinglish": {
+     "rank": 2,
+     "own": 0.003,
+     "runner_up": "13-1071.00",
+     "margin": -0.003
     }
    },
    "ranks": {
@@ -87,38 +99,38 @@
     "heldout/17-2141.00_mechanical_fresher": 1,
     "heldout/25-2031.00_teacher_oneliner": 3,
     "heldout/27-1024.00_dtp_to_designer": 1,
-    "heldout/29-1051.00_pharmacist_hinglish": 1,
+    "heldout/29-1051.00_pharmacist_hinglish": 2,
     "heldout/29-1141.00_nursing_superintendent_senior": 1,
     "heldout/31-9092.00_clinic_assistant_fresher": 1,
     "heldout/35-1011.00_home_baker_to_chef": 1,
     "heldout/41-4012.00_regional_sales_manager": 1,
     "heldout/43-4051.00_support_bullets_only": 1,
     "heldout/47-2111.00_electrician_oneliner": 1,
-    "heldout/53-3032.00_driver_hinglish": 1
+    "heldout/53-3032.00_driver_hinglish": 2
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.1335,
+    "heldout/13-2011.00_accountant_hinglish": 0.1028,
     "heldout/13-2072.00_loan_officer_career_changer": 0.2263,
     "heldout/15-2051.00_head_of_analytics": 0.1952,
-    "heldout/17-2051.00_civil_hinglish": 0.0015,
+    "heldout/17-2051.00_civil_hinglish": 0.0733,
     "heldout/17-2141.00_mechanical_fresher": 0.0977,
     "heldout/25-2031.00_teacher_oneliner": -0.0441,
     "heldout/27-1024.00_dtp_to_designer": 0.2043,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.0121,
+    "heldout/29-1051.00_pharmacist_hinglish": -0.021,
     "heldout/29-1141.00_nursing_superintendent_senior": 0.155,
     "heldout/31-9092.00_clinic_assistant_fresher": 0.1113,
     "heldout/35-1011.00_home_baker_to_chef": 0.44,
     "heldout/41-4012.00_regional_sales_manager": 0.0844,
     "heldout/43-4051.00_support_bullets_only": 0.1268,
     "heldout/47-2111.00_electrician_oneliner": 0.1447,
-    "heldout/53-3032.00_driver_hinglish": 0.216
+    "heldout/53-3032.00_driver_hinglish": -0.0027
    }
   },
   "c_new_occupations": {
    "top1": 10,
    "top3": 10,
    "n": 10,
-   "mean_margin": 0.2283,
+   "mean_margin": 0.2249,
    "worst": {
     "profile": "new/43-3071.00_bank_cashier",
     "margin": 0.0376,
@@ -147,14 +159,14 @@
     "new/41-2031.00_showroom_sales": 0.043,
     "new/43-3071.00_bank_cashier": 0.0376,
     "new/43-4081.00_front_office": 0.4456,
-    "new/47-2152.00_plumber_hinglish": 0.3239
+    "new/47-2152.00_plumber_hinglish": 0.289
    }
   },
   "d_heldout_no_curated": {
-   "top1": 14,
+   "top1": 12,
    "top3": 14,
    "n": 15,
-   "mean_margin": 0.125,
+   "mean_margin": 0.1105,
    "worst": {
     "profile": "heldout/25-2031.00_teacher_oneliner",
     "margin": -0.1066,
@@ -166,6 +178,18 @@
      "own": 0.112,
      "runner_up": "29-1123.00",
      "margin": -0.107
+    },
+    "heldout/29-1051.00_pharmacist_hinglish": {
+     "rank": 2,
+     "own": 0.154,
+     "runner_up": "29-2052.00",
+     "margin": -0.021
+    },
+    "heldout/53-3032.00_driver_hinglish": {
+     "rank": 2,
+     "own": 0.004,
+     "runner_up": "13-1071.00",
+     "margin": -0.002
     }
    },
    "ranks": {
@@ -176,38 +200,38 @@
     "heldout/17-2141.00_mechanical_fresher": 1,
     "heldout/25-2031.00_teacher_oneliner": 4,
     "heldout/27-1024.00_dtp_to_designer": 1,
-    "heldout/29-1051.00_pharmacist_hinglish": 1,
+    "heldout/29-1051.00_pharmacist_hinglish": 2,
     "heldout/29-1141.00_nursing_superintendent_senior": 1,
     "heldout/31-9092.00_clinic_assistant_fresher": 1,
     "heldout/35-1011.00_home_baker_to_chef": 1,
     "heldout/41-4012.00_regional_sales_manager": 1,
     "heldout/43-4051.00_support_bullets_only": 1,
     "heldout/47-2111.00_electrician_oneliner": 1,
-    "heldout/53-3032.00_driver_hinglish": 1
+    "heldout/53-3032.00_driver_hinglish": 2
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.0996,
+    "heldout/13-2011.00_accountant_hinglish": 0.0957,
     "heldout/13-2072.00_loan_officer_career_changer": 0.2536,
     "heldout/15-2051.00_head_of_analytics": 0.1973,
-    "heldout/17-2051.00_civil_hinglish": 0.0034,
+    "heldout/17-2051.00_civil_hinglish": 0.126,
     "heldout/17-2141.00_mechanical_fresher": 0.1024,
     "heldout/25-2031.00_teacher_oneliner": -0.1066,
     "heldout/27-1024.00_dtp_to_designer": 0.0991,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.0242,
+    "heldout/29-1051.00_pharmacist_hinglish": -0.021,
     "heldout/29-1141.00_nursing_superintendent_senior": 0.0662,
     "heldout/31-9092.00_clinic_assistant_fresher": 0.0964,
     "heldout/35-1011.00_home_baker_to_chef": 0.4836,
     "heldout/41-4012.00_regional_sales_manager": 0.0982,
     "heldout/43-4051.00_support_bullets_only": 0.0714,
     "heldout/47-2111.00_electrician_oneliner": 0.0971,
-    "heldout/53-3032.00_driver_hinglish": 0.2886
+    "heldout/53-3032.00_driver_hinglish": -0.0017
    }
   },
   "e_heldout2": {
    "top1": 13,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1627,
+   "mean_margin": 0.1493,
    "worst": {
     "profile": "heldout2/29-1051.00_pharmacist_third_person",
     "margin": -0.1054,
@@ -258,7 +282,7 @@
     "heldout2/35-1011.00_executive_chef_linkedin": 0.416,
     "heldout2/41-4012.00_lubricants_two_liner": 0.1217,
     "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.0661,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.3151,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1132,
     "heldout2/53-3032.00_trucker_qa": 0.0074
    }
   },
@@ -302,7 +326,7 @@
    "top1": 13,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1574,
+   "mean_margin": 0.1437,
    "worst": {
     "profile": "heldout2/29-1051.00_pharmacist_third_person",
     "margin": -0.0962,
@@ -353,52 +377,64 @@
     "heldout2/35-1011.00_executive_chef_linkedin": 0.3812,
     "heldout2/41-4012.00_lubricants_two_liner": 0.1095,
     "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1463,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.243,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.0364,
     "heldout2/53-3032.00_trucker_qa": 0.0381
    }
   },
   "h_hinglish": {
-   "top1": 4,
-   "top3": 5,
+   "top1": 2,
+   "top3": 3,
    "n": 5,
-   "mean_margin": 0.142,
+   "mean_margin": 0.014,
    "worst": {
-    "profile": "hinglish/47-2111.00_electrician_devanagari",
-    "margin": -0.2381,
-    "runner_up": "47-2152.00"
+    "profile": "hinglish/35-1011.00_chef_hinglish",
+    "margin": -0.0034,
+    "runner_up": "17-2051.00"
    },
    "misses": {
-    "hinglish/47-2111.00_electrician_devanagari": {
+    "hinglish/35-1011.00_chef_hinglish": {
      "rank": 2,
-     "own": 0.23,
-     "runner_up": "47-2152.00",
-     "margin": -0.238
+     "own": 0.011,
+     "runner_up": "17-2051.00",
+     "margin": -0.003
+    },
+    "hinglish/47-2111.00_electrician_devanagari": {
+     "rank": 11,
+     "own": 0.0,
+     "runner_up": "29-1141.00",
+     "margin": 0.0
+    },
+    "hinglish/53-3032.00_driver_devanagari": {
+     "rank": 13,
+     "own": 0.0,
+     "runner_up": "29-1141.00",
+     "margin": 0.0
     }
    },
    "ranks": {
     "hinglish/29-1141.00_nurse_hinglish": 1,
-    "hinglish/35-1011.00_chef_hinglish": 1,
+    "hinglish/35-1011.00_chef_hinglish": 2,
     "hinglish/43-3071.00_teller_hinglish": 1,
-    "hinglish/47-2111.00_electrician_devanagari": 2,
-    "hinglish/53-3032.00_driver_devanagari": 1
+    "hinglish/47-2111.00_electrician_devanagari": 11,
+    "hinglish/53-3032.00_driver_devanagari": 13
    },
    "margins": {
-    "hinglish/29-1141.00_nurse_hinglish": 0.0409,
-    "hinglish/35-1011.00_chef_hinglish": 0.3897,
-    "hinglish/43-3071.00_teller_hinglish": 0.2166,
-    "hinglish/47-2111.00_electrician_devanagari": -0.2381,
-    "hinglish/53-3032.00_driver_devanagari": 0.3009
+    "hinglish/29-1141.00_nurse_hinglish": 0.0364,
+    "hinglish/35-1011.00_chef_hinglish": -0.0034,
+    "hinglish/43-3071.00_teller_hinglish": 0.037,
+    "hinglish/47-2111.00_electrician_devanagari": 0.0,
+    "hinglish/53-3032.00_driver_devanagari": 0.0
    }
   },
   "b_heldout_vs_export15": {
    "top1": 15,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.1734,
+   "mean_margin": 0.1576,
    "worst": {
-    "profile": "heldout/17-2051.00_civil_hinglish",
-    "margin": 0.0015,
-    "runner_up": "27-1024.00"
+    "profile": "heldout/53-3032.00_driver_hinglish",
+    "margin": 0.0028,
+    "runner_up": "29-1141.00"
    },
    "misses": {},
    "ranks": {
@@ -419,28 +455,28 @@
     "heldout/53-3032.00_driver_hinglish": 1
    },
    "margins": {
-    "heldout/13-2011.00_accountant_hinglish": 0.1479,
+    "heldout/13-2011.00_accountant_hinglish": 0.1028,
     "heldout/13-2072.00_loan_officer_career_changer": 0.2263,
     "heldout/15-2051.00_head_of_analytics": 0.1952,
-    "heldout/17-2051.00_civil_hinglish": 0.0015,
+    "heldout/17-2051.00_civil_hinglish": 0.0733,
     "heldout/17-2141.00_mechanical_fresher": 0.0977,
     "heldout/25-2031.00_teacher_oneliner": 0.0756,
     "heldout/27-1024.00_dtp_to_designer": 0.2466,
-    "heldout/29-1051.00_pharmacist_hinglish": 0.1455,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.1213,
     "heldout/29-1141.00_nursing_superintendent_senior": 0.155,
     "heldout/31-9092.00_clinic_assistant_fresher": 0.1113,
     "heldout/35-1011.00_home_baker_to_chef": 0.4604,
     "heldout/41-4012.00_regional_sales_manager": 0.1968,
     "heldout/43-4051.00_support_bullets_only": 0.1268,
     "heldout/47-2111.00_electrician_oneliner": 0.172,
-    "heldout/53-3032.00_driver_hinglish": 0.2422
+    "heldout/53-3032.00_driver_hinglish": 0.0028
    }
   },
   "e_heldout2_vs_export15": {
    "top1": 14,
    "top3": 15,
    "n": 15,
-   "mean_margin": 0.2,
+   "mean_margin": 0.1865,
    "worst": {
     "profile": "heldout2/29-1141.00_nurse_career_break",
     "margin": -0.0356,
@@ -485,7 +521,7 @@
     "heldout2/35-1011.00_executive_chef_linkedin": 0.416,
     "heldout2/41-4012.00_lubricants_two_liner": 0.1217,
     "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.0948,
-    "heldout2/47-2111.00_industrial_electrician_hindi": 0.3151,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1132,
     "heldout2/53-3032.00_trucker_qa": 0.1564
    }
   },
@@ -526,359 +562,6 @@
    "true_p90": 0.634,
    "false_p90": 0.457
   }
- },
- "verdict_calibration": {
-  "threshold": 0.3254,
-  "median_full_tuning": 0.6,
-  "tuning": {
-   "positives": 15,
-   "negatives": 14,
-   "full_min": 0.3257,
-   "negative_max": 0.325,
-   "full_below_threshold": [],
-   "negatives_above_threshold": [],
-   "accuracy": 1.0
-  },
-  "validation": {
-   "positives": 15,
-   "negatives": 9,
-   "full_min": 0.1461,
-   "negative_max": 0.1917,
-   "full_below_threshold": [
-    "heldout2/13-2072.00_gold_loan_whatsapp",
-    "heldout2/15-2051.00_data_science_fresher",
-    "heldout2/17-2051.00_structural_engineer_third_person",
-    "heldout2/17-2141.00_hvac_engineer_keyvalue",
-    "heldout2/27-1024.00_freelance_designer_gig",
-    "heldout2/29-1051.00_pharmacist_third_person",
-    "heldout2/29-1141.00_nurse_career_break",
-    "heldout2/41-4012.00_lubricants_two_liner",
-    "heldout2/43-4051.00_bank_callcentre_cover_letter",
-    "heldout2/53-3032.00_trucker_qa"
-   ],
-   "negatives_above_threshold": [],
-   "accuracy": 0.583
-  },
-  "rows": [
-   {
-    "profile": "tuning/13-2011.00_chartered_accountant",
-    "kind": "full",
-    "soc": "13-2011.00",
-    "score": 0.6938
-   },
-   {
-    "profile": "tuning/13-2072.00_loan_officer",
-    "kind": "full",
-    "soc": "13-2072.00",
-    "score": 0.6076
-   },
-   {
-    "profile": "tuning/15-2051.00_data_scientist",
-    "kind": "full",
-    "soc": "15-2051.00",
-    "score": 0.6234
-   },
-   {
-    "profile": "tuning/17-2051.00_civil_site_engineer",
-    "kind": "full",
-    "soc": "17-2051.00",
-    "score": 0.5977
-   },
-   {
-    "profile": "tuning/17-2141.00_mechanical_engineer",
-    "kind": "full",
-    "soc": "17-2141.00",
-    "score": 0.4919
-   },
-   {
-    "profile": "tuning/25-2031.00_school_teacher",
-    "kind": "full",
-    "soc": "25-2031.00",
-    "score": 0.6386
-   },
-   {
-    "profile": "tuning/27-1024.00_graphic_designer",
-    "kind": "full",
-    "soc": "27-1024.00",
-    "score": 0.5804
-   },
-   {
-    "profile": "tuning/29-1051.00_pharmacist",
-    "kind": "full",
-    "soc": "29-1051.00",
-    "score": 0.6008
-   },
-   {
-    "profile": "tuning/29-1141.00_staff_nurse",
-    "kind": "full",
-    "soc": "29-1141.00",
-    "score": 0.6509
-   },
-   {
-    "profile": "tuning/31-9092.00_medical_assistant",
-    "kind": "full",
-    "soc": "31-9092.00",
-    "score": 0.6409
-   },
-   {
-    "profile": "tuning/35-1011.00_head_chef",
-    "kind": "full",
-    "soc": "35-1011.00",
-    "score": 0.6562
-   },
-   {
-    "profile": "tuning/41-4012.00_sales_rep",
-    "kind": "full",
-    "soc": "41-4012.00",
-    "score": 0.5642
-   },
-   {
-    "profile": "tuning/43-4051.00_customer_care",
-    "kind": "full",
-    "soc": "43-4051.00",
-    "score": 0.5139
-   },
-   {
-    "profile": "tuning/47-2111.00_electrician",
-    "kind": "full",
-    "soc": "47-2111.00",
-    "score": 0.496
-   },
-   {
-    "profile": "tuning/53-3032.00_truck_driver",
-    "kind": "full",
-    "soc": "53-3032.00",
-    "score": 0.3257
-   },
-   {
-    "profile": "tuning/partial_13-2011.00_accountant_no_gst",
-    "kind": "partial",
-    "soc": "13-2011.00",
-    "score": 0.1995
-   },
-   {
-    "profile": "tuning/partial_29-1141.00_fresher_nurse",
-    "kind": "partial",
-    "soc": "29-1141.00",
-    "score": 0.3158
-   },
-   {
-    "profile": "tuning/partial_47-2111.00_iti_apprentice",
-    "kind": "partial",
-    "soc": "47-2111.00",
-    "score": 0.325
-   },
-   {
-    "profile": "verdict_tuning/partial_13-2072.00_loan_trainee",
-    "kind": "partial",
-    "soc": "13-2072.00",
-    "score": 0.2482
-   },
-   {
-    "profile": "verdict_tuning/partial_17-2051.00_civil_diploma_fresher",
-    "kind": "partial",
-    "soc": "17-2051.00",
-    "score": 0.1384
-   },
-   {
-    "profile": "verdict_tuning/partial_25-2031.00_bed_student_teacher",
-    "kind": "partial",
-    "soc": "25-2031.00",
-    "score": 0.127
-   },
-   {
-    "profile": "verdict_tuning/partial_27-1024.00_design_student",
-    "kind": "partial",
-    "soc": "27-1024.00",
-    "score": 0.17
-   },
-   {
-    "profile": "verdict_tuning/partial_29-1051.00_bpharm_intern",
-    "kind": "partial",
-    "soc": "29-1051.00",
-    "score": 0.2061
-   },
-   {
-    "profile": "verdict_tuning/partial_35-1011.00_commis_helper",
-    "kind": "partial",
-    "soc": "35-1011.00",
-    "score": 0.1369
-   },
-   {
-    "profile": "verdict_tuning/partial_41-4012.00_sales_trainee",
-    "kind": "partial",
-    "soc": "41-4012.00",
-    "score": 0.0994
-   },
-   {
-    "profile": "verdict_tuning/partial_43-4051.00_fresher_bpo",
-    "kind": "partial",
-    "soc": "43-4051.00",
-    "score": 0.0378
-   },
-   {
-    "profile": "verdict_tuning/wrong_15-2051.00_chef_to_data_scientist",
-    "kind": "wrong",
-    "soc": "15-2051.00",
-    "score": 0.0
-   },
-   {
-    "profile": "verdict_tuning/wrong_29-1141.00_designer_to_nurse",
-    "kind": "wrong",
-    "soc": "29-1141.00",
-    "score": 0.0569
-   },
-   {
-    "profile": "verdict_tuning/wrong_47-2111.00_accountant_to_electrician",
-    "kind": "wrong",
-    "soc": "47-2111.00",
-    "score": 0.0
-   },
-   {
-    "profile": "heldout2/13-2011.00_internal_auditor_linkedin",
-    "kind": "full",
-    "soc": "13-2011.00",
-    "score": 0.3665
-   },
-   {
-    "profile": "heldout2/13-2072.00_gold_loan_whatsapp",
-    "kind": "full",
-    "soc": "13-2072.00",
-    "score": 0.3036
-   },
-   {
-    "profile": "heldout2/15-2051.00_data_science_fresher",
-    "kind": "full",
-    "soc": "15-2051.00",
-    "score": 0.2045
-   },
-   {
-    "profile": "heldout2/17-2051.00_structural_engineer_third_person",
-    "kind": "full",
-    "soc": "17-2051.00",
-    "score": 0.1724
-   },
-   {
-    "profile": "heldout2/17-2141.00_hvac_engineer_keyvalue",
-    "kind": "full",
-    "soc": "17-2141.00",
-    "score": 0.3027
-   },
-   {
-    "profile": "heldout2/25-2031.00_tgt_kvs_government",
-    "kind": "full",
-    "soc": "25-2031.00",
-    "score": 0.4863
-   },
-   {
-    "profile": "heldout2/27-1024.00_freelance_designer_gig",
-    "kind": "full",
-    "soc": "27-1024.00",
-    "score": 0.3246
-   },
-   {
-    "profile": "heldout2/29-1051.00_pharmacist_third_person",
-    "kind": "full",
-    "soc": "29-1051.00",
-    "score": 0.2784
-   },
-   {
-    "profile": "heldout2/29-1141.00_nurse_career_break",
-    "kind": "full",
-    "soc": "29-1141.00",
-    "score": 0.1461
-   },
-   {
-    "profile": "heldout2/31-9092.00_medical_assistant_interview",
-    "kind": "full",
-    "soc": "31-9092.00",
-    "score": 0.4772
-   },
-   {
-    "profile": "heldout2/35-1011.00_executive_chef_linkedin",
-    "kind": "full",
-    "soc": "35-1011.00",
-    "score": 0.4733
-   },
-   {
-    "profile": "heldout2/41-4012.00_lubricants_two_liner",
-    "kind": "full",
-    "soc": "41-4012.00",
-    "score": 0.1742
-   },
-   {
-    "profile": "heldout2/43-4051.00_bank_callcentre_cover_letter",
-    "kind": "full",
-    "soc": "43-4051.00",
-    "score": 0.1617
-   },
-   {
-    "profile": "heldout2/47-2111.00_industrial_electrician_hindi",
-    "kind": "full",
-    "soc": "47-2111.00",
-    "score": 0.3993
-   },
-   {
-    "profile": "heldout2/53-3032.00_trucker_qa",
-    "kind": "full",
-    "soc": "53-3032.00",
-    "score": 0.2006
-   },
-   {
-    "profile": "verdict_validation/partial_13-2011.00_bookkeeping_student",
-    "kind": "partial",
-    "soc": "13-2011.00",
-    "score": 0.05
-   },
-   {
-    "profile": "verdict_validation/partial_15-2051.00_data_entry_learner",
-    "kind": "partial",
-    "soc": "15-2051.00",
-    "score": 0.0911
-   },
-   {
-    "profile": "verdict_validation/partial_17-2141.00_mech_diploma_fresher",
-    "kind": "partial",
-    "soc": "17-2141.00",
-    "score": 0.0872
-   },
-   {
-    "profile": "verdict_validation/partial_29-1123.00_bpt_intern",
-    "kind": "partial",
-    "soc": "29-1123.00",
-    "score": 0.091
-   },
-   {
-    "profile": "verdict_validation/partial_31-9092.00_clinic_receptionist",
-    "kind": "partial",
-    "soc": "31-9092.00",
-    "score": 0.0634
-   },
-   {
-    "profile": "verdict_validation/partial_53-3032.00_lmv_driver",
-    "kind": "partial",
-    "soc": "53-3032.00",
-    "score": 0.1707
-   },
-   {
-    "profile": "verdict_validation/wrong_13-2011.00_driver_to_accountant",
-    "kind": "wrong",
-    "soc": "13-2011.00",
-    "score": 0.0125
-   },
-   {
-    "profile": "verdict_validation/wrong_17-2051.00_teacher_to_civil",
-    "kind": "wrong",
-    "soc": "17-2051.00",
-    "score": 0.0213
-   },
-   {
-    "profile": "verdict_validation/wrong_35-1011.00_tester_to_chef",
-    "kind": "wrong",
-    "soc": "35-1011.00",
-    "score": 0.1917
-   }
-  ]
  },
  "filters": {
   "29-1141.00": {
