@@ -40,6 +40,7 @@ STRENGTHS_TOP = 10
 GAPS_TOP = 15
 SEARCH_K = 5
 ROLE_TITLES_MAX = 6            # past titles resolved per request
+ROLE_DISPLAY_MIN_CONFIDENCE = 0.9   # a past title that doesn't apply to the target is shown only above this
 # Module 1 /related tiers close enough for a past title to imply the target's tasks (fixture stand-ins excluded).
 ROLE_RELATED_TIERS = {"Primary-Short", "Primary-Long"}
 JOB_TEXT_BLEND = 0.6           # match_text: weight of the job's own text vs the occupation's core requirements
@@ -361,7 +362,8 @@ class GeneralEngine:
                                      for i, r in occ.not_applicable],
             role_history=[RoleHistoryItem(title=r.title, years=r.years, soc_code=r.soc,
                                           occupation_title=r.occupation_title, confidence=r.confidence,
-                                          applies_to_target=r in self.roles_for(occ, roles)) for r in roles],
+                                          applies_to_target=r in self.roles_for(occ, roles)) for r in roles
+                          if r in self.roles_for(occ, roles) or r.confidence >= ROLE_DISPLAY_MIN_CONFIDENCE],
             qualifications=[u.original_text or u.text for u in units if u.education],
             draws_on=[DrawsOnItem(name=d.item.name, item_type=d.item.item_type, importance=d.item.importance,
                                   inferred=d.inferred, support=d.support) for d in generic.draws_on],
