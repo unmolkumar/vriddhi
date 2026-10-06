@@ -838,21 +838,37 @@ class CareerDatabase:
 
             # Indian Experience Benchmarks
             cursor.execute("""
-                SELECT typical_min, typical_max, p25_min, median_min, sample_size, years_covered
+                SELECT typical_min, typical_max, p25_min, median_min, sample_size, years_covered, fallback_to_job_zone
                 FROM occupation_experience_india
                 WHERE soc_code = ?
             """, (clean_soc,))
             exp_row = cursor.fetchone()
             if exp_row:
-                profile["indian_experience"] = dict(exp_row)
-                profile["indian_experience"]["fallback_to_job_zone"] = False
+                exp_dict = dict(exp_row)
+                is_fallback = bool(exp_dict.get("fallback_to_job_zone", 0))
+                exp_dict["fallback_to_job_zone"] = is_fallback
+                if is_fallback:
+                    exp_dict["job_zone_guidance"] = profile["job_zone"]["experience_text"] if profile.get("job_zone") else "General experience"
+                profile["indian_experience"] = exp_dict
             else:
+                jz_num = profile["job_zone"]["job_zone"] if profile.get("job_zone") else 3
+                jz_ranges = {
+                    1: (0.0, 1.0, 0.0, 0.5),
+                    2: (1.0, 2.5, 0.5, 1.5),
+                    3: (2.0, 4.5, 1.5, 3.0),
+                    4: (3.0, 7.0, 2.5, 4.5),
+                    5: (5.0, 10.0, 4.0, 6.5)
+                }
+                t_min, t_max, p25, med = jz_ranges.get(jz_num, (1.0, 4.0, 1.0, 2.0))
                 profile["indian_experience"] = {
-                    "typical_min": 1.0,
-                    "typical_max": 4.0,
+                    "typical_min": t_min,
+                    "typical_max": t_max,
+                    "p25_min": p25,
+                    "median_min": med,
                     "sample_size": 0,
+                    "years_covered": None,
                     "fallback_to_job_zone": True,
-                    "job_zone_guidance": profile["job_zone"]["experience_text"] if profile["job_zone"] else "General experience"
+                    "job_zone_guidance": profile["job_zone"]["experience_text"] if profile.get("job_zone") else "General experience"
                 }
 
             # Salary Percentiles (India)

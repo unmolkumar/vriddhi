@@ -1,7 +1,7 @@
 {
   "metadata": {
     "version": "2.2.0",
-    "generated_at": "2026-10-06T13:39:13.349663+00:00",
+    "generated_at": "2026-10-06T16:32:08.793793+00:00",
     "description": "Static export of unified requirements (v_occupation_requirements) for 15 cross-industry test occupations v2.2.0 (with Official O*NET Tools, Top-50 Market Skills with posting_count, normalized names, and neutral curated weights).",
     "target_occupations_count": 15
   },

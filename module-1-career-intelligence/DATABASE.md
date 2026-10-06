@@ -47,7 +47,7 @@ This document details:
 | **`v_skill_demand_clean`** | View | **Clean** | `skill_demand` minus noise terms, joined to `skill_context_soc_map` for pristine SOC-level skill intelligence. |
 | **`skill_demand_by_soc`** | Table | **1,691** | Cleaned empirical skill demand (posting_count >= 3, capped top 50 per SOC, normalized names) + curated domain competencies. |
 | **`education_level_map_india`** | Table | **12** | Crosswalk mapping O\*NET education categories to Indian qualifications (10th, 12th, ITI/Diploma, Bachelor's, CA/MBBS, Master's, PhD). |
-| **`occupation_experience_india`** | Table | **385** | Empirical Indian min/max experience distributions with sample sizes ($n$) for 2023+ postings. |
+| **`occupation_experience_india`** | Table | **1,016** | Empirical Indian min/max experience distributions (2023+ postings where $n \ge 30$, with automatic Job Zone fallback when $n < 30$). |
 | **`occupation_salary_india`** | Table | **1,317** | Unflagged 2023+ Indian salary percentiles (p25 / p50 / p75) sliced by canonical city, experience bucket, and onsite/remote work mode. |
 | **`v_occupation_requirements`** | View | **260,226** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, official tools, tech, and market skills per SOC for M2 & M3. |
 | **`job_postings_india`** | Table | **72,691** | Real Indian postings (Naukri, PromptCloud) with titles, companies, cities, INR salaries, and experience bands (UNTOUCHED). |
@@ -490,7 +490,7 @@ All new endpoints are strictly additive under `/api/v1/occupations`:
     "skill_demand_by_soc": 1691,
     "v_occupation_requirements": 260226
   },
-  "export_hash": "02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13"
+  "export_hash": "d2bc9d7044eec03361fdcf63a0beec04c68303c0bb2c44dddd2365d427da9ad2"
 }
 ```
 
@@ -499,7 +499,7 @@ All new endpoints are strictly additive under `/api/v1/occupations`:
 ## 9. Test Occupations & Static Mock Export (v2.2.0)
 
 A static mock export covering **15 representative occupations across 8 diverse industries** is provided at:
-`data/m1_occupation_requirements_export.json` (hash: `02b93f2ab57d315d...`)
+`data/m1_occupation_requirements_export.json` (hash: `d2bc9d7044eec033...`)
 
 | Industry Domain | Occupation | SOC Code | Total Reqs | Skills | Knowledge | Abilities | DWAs | Tools | Tech | Market Skills |
 |---|---|---|---|---|---|---|---|---|---|---|

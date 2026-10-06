@@ -21,7 +21,7 @@ Module 1 has been transformed from supporting ~7 tech roles into a **universal c
   - `salary_benchmarks`: **43,374** (unchanged)
   - `skill_demand`: **371,141** (unchanged)
 - **Backward Compatibility**: Existing endpoints (`/career/analyze`, `/rank`, `/search_by_domain`, `/compare`) continue to return identical schemas and pass all regression tests.
-- **Test Integrity**: All 18 legacy tests + 34 generalisation acceptance tests pass (52/52 green). All 165 Module 3 tests pass (163 passed, 2 skipped live API).
+- **Test Integrity**: All 18 legacy tests + 36 generalisation acceptance tests pass (54/54 green). All 165 Module 3 tests pass (163 passed, 2 skipped live API).
 
 ---
 
@@ -118,7 +118,7 @@ To solve the issue where Module 1 on-site salaries ran 16–37% above JSearch / 
   - `monthly_suspected`: 80 full-time annual salaries reported $< 1.2$ LPA flagged.
   - `outlier`: 24 extreme outliers ($> 3 \times \text{IQR}$, max ₹5.4 Cr) flagged.
 - **`occupation_salary_india`** (1,317 slices): Computed **exclusively from unflagged 2023+ records**, sliced by `city_canonical × experience_bucket × work_mode ('onsite' | 'remote')` with sample size counts ($n$).
-- **`occupation_experience_india`** (385 benchmarks): Verified experience ranges (min, max, p25, median) from 2023+ postings with fallback to `onet_job_zones`.
+- **`occupation_experience_india`** (1,016 benchmarks): Verified experience ranges (min, max, p25, median) covering all occupations using 2023+ postings (where $n \ge 30$) with automated fallback to `onet_job_zones` (where $n < 30$), including `sample_size`, `years_covered`, and `fallback_to_job_zone`.
 - **`education_level_map_india`** (12 crosswalk tiers): Maps O\*NET categories to Indian qualifications (10th, 12th, ITI/Diploma, Bachelor's, Professional CA/CS/MBBS, Master's, PhD).
 
 ---
@@ -231,7 +231,7 @@ Exposes database build metadata and schema verification info directly from `db_m
 ## 5. 15 Test Occupations & Static Mock Fixture (v2.2.0)
 
 The static mock fixture file is generated and saved in the repository:
-[`data/m1_occupation_requirements_export.json`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/m1_occupation_requirements_export.json) (hash: `02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13`)
+[`data/m1_occupation_requirements_export.json`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/m1_occupation_requirements_export.json) (hash: `d2bc9d7044eec03361fdcf63a0beec04c68303c0bb2c44dddd2365d427da9ad2`)
 
 Covering the **15 cross-industry test occupations**:
 
@@ -272,8 +272,8 @@ Covering the **15 cross-industry test occupations**:
 
 ## 7. Verification & Test Suite Summary
 
-- **Module 1**: **52 / 52 tests passed (100% green)** in 20.88s.
-- **Module 3**: **163 passed, 2 skipped (165 total tests, 100% green)** in 3.43s.
+- **Module 1**: **54 / 54 tests passed (100% green)** in 22.72s.
+- **Module 3**: **163 passed, 2 skipped (165 total tests, 100% green)** in 3.60s.
 - **Documentation Updated**:
   - [`DATABASE.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/DATABASE.md)
   - [`WORKING.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/WORKING.md)
@@ -314,4 +314,15 @@ Covering the **15 cross-industry test occupations**:
 | **1. DWA ETL Loader Duplication Bug** | `onet_dwa` had accumulated 192,696 rows (and earlier up to 264,957 = ~11 copies) because every run appended DWAs instead of replacing them. | **Fixed**: Updated `03_additive_generalisation_load.py` to enforce strict clear-and-reload (`DELETE FROM onet_dwa`) and in-memory deduplication `list(dict.fromkeys(rows))` before insert. Implemented `DELETE FROM` across all additive tables to guarantee 100% idempotent ETL. `onet_dwa` now has exactly **24,087** rows. |
 | **2. Invariant Verification Test** | Add test that `COUNT(*) = COUNT(DISTINCT soc, task, dwa)`. | **Added**: Implemented `test_onet_dwa_idempotent_deduplication` in `tests/test_generalisation_v2.py`. Verifies `total_dwa == 24087` and `total_dwa == distinct_dwa`. All 52 tests pass in M1; all 165 tests pass in M3. |
 | **3. Export SHA-256 Alignment** | Export fixture rebuilt and synchronized with `db_meta`. | **Fixed**: Re-exported `data/m1_occupation_requirements_export.json`. Hash synchronized in `db_meta` to `02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13`. |
+
+---
+
+## 11. Review Feedback (Follow-Up / Round 4) Resolution Matrix
+
+| Review Item | Feedback (Round 4) | Resolution in Updated v2.2.0 |
+|---|---|---|
+| **1. `onet_related_occupations.relatedness_tier` was NULL** | All 18,460 rows had NULL `relatedness_tier` because loader had `parse_int` on string column. | **Fixed**: Corrected parsing in `03_additive_generalisation_load.py`. All 18,460 rows are now populated with `Primary-Short` (4,615), `Primary-Long` (4,615), and `Supplemental` (9,230). 0 NULLs remaining. Verified via test. |
+| **2. Registered Nurses experience distorted by 2015–16 postings** | RN had $n=3$ from 2015–2016 (1.3–3.3 yrs), violating 2023+ spec and making experienced nurses look over-qualified. | **Fixed**: Strictly enforced `listed_year >= 2023` across all experience aggregations, completely discarding stale 2015–2017 rows. Applied automatic Job Zone fallback for all roles with $n < 30$. RN (Job Zone 4) now provides `typical_min: 3.0, typical_max: 7.0` with `sample_size: 0, years_covered: null, fallback_to_job_zone: true, job_zone_guidance: "..."`. Experienced nurses with 4–7 years fit naturally. Populated across all 1,016 occupations. |
+| **3. Include `sample_size` + `years_covered` in `/profile`** | Needed transparency on sample size and years in API response. | **Fixed**: Both fields are now guaranteed in `profile["indian_experience"]` across all occupations, alongside `fallback_to_job_zone`. |
+| **4. `onet_dwa` row count documentation** | Docs previously cited 264,957 during duplication audit. | **Synchronized**: All documentation files (`DATABASE.md`, `HANDOVER.md`, `WORKING.md`, `SOURCES.md`) and tests confirm exact count is **24,087** (`COUNT(*) = COUNT(DISTINCT soc, task, dwa)`). |
 
