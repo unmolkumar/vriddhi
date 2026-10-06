@@ -221,6 +221,7 @@ def test_related_occupations_endpoint(client):
     assert len(related) > 0
     assert all("related_soc_code" in r for r in related)
     assert all("related_title" in r for r in related)
+    assert any("job_zone" in r and r["job_zone"] is not None for r in related)
 
 
 # 8. City Aliases Normalization
@@ -268,7 +269,7 @@ def test_static_export_file_validity():
         export_data = json.load(f)
 
     assert "metadata" in export_data
-    assert export_data["metadata"]["version"] in ["2.0.0", "2.1.0"]
+    assert export_data["metadata"]["version"] == "2.2.0"
     assert "occupations" in export_data
     assert len(export_data["occupations"]) == 15
 
@@ -279,3 +280,101 @@ def test_static_export_file_validity():
         assert len(occ_entry["requirements"]) == occ_entry["total_requirements"]
         assert occ_entry["requirements_breakdown"]["dwa"] > 0
         assert occ_entry["requirements_breakdown"]["tools"] > 0
+
+
+# 11. Acceptance v2.2: Build Metadata Endpoint (GET /api/v1/meta)
+def test_build_metadata_endpoint(client):
+    res = client.get("/api/v1/meta")
+    assert res.status_code == 200
+    meta = res.json()
+    assert meta["schema_version"] == "2.2.0"
+    assert "built_at" in meta
+    assert meta["export_hash"] is not None
+    assert len(meta["export_hash"]) == 64
+    assert "table_counts" in meta
+    counts = meta["table_counts"]
+    assert counts["onet_tools"] > 40000
+    assert counts["occupations"] == 1016
+    assert counts["skill_demand_by_soc"] > 1500
+
+
+# 12. Acceptance v2.2: O*NET Tools Provenance & Full Coverage
+def test_onet_tools_official_provenance():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    # Total rows in onet_tools must be from official O*NET Tools Used (>40,000 rows across ~1000 occupations)
+    c.execute("SELECT COUNT(*), COUNT(DISTINCT soc_code) FROM onet_tools")
+    total_tools, occ_count = c.fetchone()
+    assert total_tools >= 40000
+    assert occ_count >= 800
+
+    # In the unified view, all tools must have source='onet'
+    c.execute("SELECT COUNT(*) FROM v_occupation_requirements WHERE item_type = 'tool' AND source != 'onet'")
+    assert c.fetchone()[0] == 0
+
+    # Ensure hand-written mock tuples are NOT present in onet_tools
+    c.execute("""
+        SELECT COUNT(*) FROM onet_tools 
+        WHERE LOWER(example) LIKE '%dual ultra-hd 4k monitors%'
+           OR LOWER(example) LIKE '%10-key heavy-duty financial printing calculator%'
+    """)
+    assert c.fetchone()[0] == 0
+
+    conn.close()
+
+
+# 13. Acceptance v2.2: Indian Market Skills Restored with posting_count >= 3
+def test_indian_market_skills_ds_and_counts(client):
+    res = client.get("/api/v1/occupations/15-2051.00/requirements")
+    assert res.status_code == 200
+    reqs = res.json()
+
+    market_skills = [
+        r for r in reqs 
+        if r["source"] == "india_postings" and r["item_type"] == "market_skill"
+    ]
+    # Data Scientists must have top tech skills restored (cap 50)
+    assert len(market_skills) >= 40
+
+    skill_names = {r["item_name"] for r in market_skills}
+    for expected_skill in ["Machine Learning", "Python", "SQL", "TensorFlow", "Deep Learning", "PyTorch", "AWS"]:
+        assert expected_skill in skill_names
+
+    # Check posting_count and soc_posting_total fields exist and posting_count >= 3
+    for s in market_skills:
+        assert s["posting_count"] is not None
+        assert s["posting_count"] >= 3
+        assert s["soc_posting_total"] is not None
+        assert s["soc_posting_total"] > 1000
+
+    # Verify curated rows have neutral importance (0.50) and empirical top skills outrank them
+    curated_skills = [r for r in reqs if r["source"] == "curated"]
+    for c in curated_skills:
+        assert c["importance_norm"] == 0.50
+
+    top_empirical = market_skills[0]
+    assert top_empirical["importance_norm"] > 0.50
+
+
+# 14. Acceptance v2.2: India Relevance Flags on US-Specific Tasks/DWAs
+def test_india_relevance_flags_on_requirements(client):
+    res = client.get("/api/v1/occupations/29-1141.00/requirements")
+    assert res.status_code == 200
+    reqs = res.json()
+
+    # All items must have india_relevant flag
+    for r in reqs:
+        assert "india_relevant" in r
+        assert r["india_relevant"] in [0, 1]
+
+    # Prescribe / recommend drugs for Registered Nurses must be flagged india_relevant = 0 with reason
+    irrelevant = [
+        r for r in reqs 
+        if r["india_relevant"] == 0
+    ]
+    assert len(irrelevant) > 0
+    for irr in irrelevant:
+        assert irr["india_irrelevant_reason"] is not None
+        assert "Indian" in irr["india_irrelevant_reason"] or "regulations" in irr["india_irrelevant_reason"]
+

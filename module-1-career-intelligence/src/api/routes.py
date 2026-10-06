@@ -177,3 +177,20 @@ async def get_related_occupations(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Related occupations retrieval failed: {str(e)}")
 
+
+meta_router = APIRouter(prefix="/api/v1", tags=["Metadata"])
+
+
+@meta_router.get("/meta")
+async def get_meta(
+    service: CareerIntelligenceService = Depends(get_service)
+) -> Dict[str, Any]:
+    """
+    Retrieve database build metadata, schema version, export hash, and table counts.
+    Allows Module 2 and Module 3 to verify database build compatibility and invalidate caches.
+    """
+    meta = service.get_db_meta()
+    if not meta:
+        raise HTTPException(status_code=404, detail="Database metadata not found.")
+    return meta
+

@@ -38,9 +38,9 @@ def run_export():
 
     export_data = {
         "metadata": {
-            "version": "2.1.0",
+            "version": "2.2.0",
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "description": "Static export of unified requirements (v_occupation_requirements) for 15 cross-industry test occupations v2.1.0 (with DWAs, Tools, deduplicated Tech, cleaned Market Skills, and curated provenance).",
+            "description": "Static export of unified requirements (v_occupation_requirements) for 15 cross-industry test occupations v2.2.0 (with Official O*NET Tools, Top-50 Market Skills with posting_count, normalized names, and neutral curated weights).",
             "target_occupations_count": len(TEST_SOCS)
         },
         "occupations": {}
@@ -61,7 +61,9 @@ def run_export():
         c.execute("""
             SELECT soc_code, item_type, item_id, item_name, item_description,
                    importance_norm, level_norm, hot_technology, in_demand,
-                   india_demand_share, source, reliable
+                   india_demand_share, source, reliable,
+                   posting_count, soc_posting_total,
+                   india_relevant, india_irrelevant_reason
             FROM v_occupation_requirements
             WHERE soc_code = ?
             ORDER BY CASE WHEN importance_norm IS NOT NULL THEN importance_norm ELSE 0 END DESC
@@ -99,7 +101,7 @@ def run_export():
     with open(OUTPUT_PATH, "rb") as f:
         f_hash = hashlib.sha256(f.read()).hexdigest()
 
-    c.execute("UPDATE db_meta SET export_hash = ? WHERE schema_version = '2.1.0'", (f_hash,))
+    c.execute("UPDATE db_meta SET export_hash = ? WHERE schema_version = '2.2.0'", (f_hash,))
     conn.commit()
 
     print(f"Export successfully written to {OUTPUT_PATH} (hash: {f_hash[:16]}...)")

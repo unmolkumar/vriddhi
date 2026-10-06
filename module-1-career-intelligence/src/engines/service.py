@@ -236,3 +236,7 @@ class CareerIntelligenceService:
         """Retrieve related occupations for career transition recommendations."""
         return self.db.get_related_occupations(soc_code, limit=limit)
 
+    def get_db_meta(self) -> Optional[Dict[str, Any]]:
+        """Retrieve database metadata and build info."""
+        return self.db.get_db_meta()
+
