@@ -92,11 +92,11 @@ Response fields:
 | `match_score` | 0–1. `blend × job_text_score + (1 − blend) × occupation_score`; `blend` is 0.6 with a `soc_code`, else 1.0 |
 | `job_text_score` | Weighted coverage of the job's own clauses by the user's evidence |
 | `occupation_score` | The user's v2 match score for `soc_code` (null without it) |
-| `met[]`, `missing[]` | Top 15 each: `requirement`, `status`, `similarity`, `credit`, `provenance` (`job_text` for the listing's clauses; `onet` / `india_postings` / `curated` for the occupation's), `evidence` (`text`, `evidence_type` work/project/mentioned/self, `span`) |
+| `met[]`, `missing[]` | Top 15 each: `requirement`, `status`, `similarity`, `credit`, `reason` (`alias` / `semantic` / `implied_by_role` / `none`), `provenance` (`job_text` for the listing's clauses; `onet` / `india_postings` / `curated` for the occupation's), `evidence` (`text`, `evidence_type` work/project/mentioned/self, `span`, and `translated` + `original_text` when a Hinglish or Hindi sentence was rewritten in English) |
 | `job_requirements` | How many clauses were taken from the job text |
 | `m1_version`, `warnings` | Module 1 data version; notes such as unknown experience |
 
-Scores are comparable across jobs for the same user, so you can rank listings by `match_score` and show `missing[]` as the reasons. For the full picture of a role (verdict, alternatives, roadmap), call `POST /api/v2/skills/gap_analysis` once with the role or SOC. Contract: [`src/models/schema_m2_v2.json`](src/models/schema_m2_v2.json); formulas: WORKING.md §12.
+Job-title lines in the user's evidence count as role history: with a `soc_code`, a past title in that occupation gives its tasks an implied partial credit (`reason: "implied_by_role"`, never `met`). Requirements outside the scope of practice in India (e.g. nurses prescribing) are left out. Scores are comparable across jobs for the same user, so you can rank listings by `match_score` and show `missing[]` as the reasons. For the full picture of a role (verdict, alternatives, roadmap), call `POST /api/v2/skills/gap_analysis` once with the role or SOC. Contract: [`src/models/schema_m2_v2.json`](src/models/schema_m2_v2.json); formulas: WORKING.md §12.
 
 ## Errors
 

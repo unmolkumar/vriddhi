@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–12) adds 119 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–13) adds 142 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -564,11 +564,11 @@ match_score        = skill_score × experience_factor
 
 | Label | When |
 |---|---|
-| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD = 0.29` |
+| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD` (0.29 in A2; **0.3254 since A3**, §13.4) |
 | `over_qualified` | ≥ threshold, years > band.high + `OVERQUALIFIED_EXTRA_YEARS = 3`, and a related occupation with a higher job zone also scores ≥ threshold. That occupation is returned as `suggested_role` |
 | `good_fit` | otherwise |
 
-**Calibration** (`python scripts/calibrate.py --verdict`, tuning set, A2 scores on each profile's own occupation):
+**A2 calibration** (superseded by §13.4; `python scripts/calibrate.py --verdict`, tuning set, A2 scores on each profile's own occupation):
 - The 15 full profiles score 0.295–0.656; the 3 partial profiles (fresher nurse, accountant without GST/Tally, ITI apprentice) score 0.176–0.288.
 - The threshold is the midpoint, 0.29. It separates the two groups, but the gap is thin (0.007): the truck driver's free-text profile sits at 0.295.
 - The verdict judges fit *for the chosen target*, not whether it's the right occupation. 5 of 15 full profiles also clear 0.29 on some other occupation (e.g. the pharmacist on Pharmacy Technicians, 0.60).
@@ -582,7 +582,7 @@ match_score        = skill_score × experience_factor
 
 ### 12.4 Roadmap
 
-Missing and partial core items, heaviest first, up to `ROADMAP_MAX_ITEMS = 10`. Each item has:
+Missing and partial core items, heaviest first, up to `ROADMAP_MAX_ITEMS` (10 in A2; 8 since A3, with the rest in `later` and role-implied items last, §13.1). Each item has:
 - **Order:** a taxonomy prerequisite of a heavier item moves ahead of it.
 - **Prerequisites:** tech, tool or market items that resolve to v1 taxonomy ids list that skill's prerequisites the evidence doesn't already show (Apache Spark → Python, SQL).
 - **Practice ideas:** the `PRACTICE_IDEAS = 2` nearest *other* unmet O*NET tasks or DWAs of the same occupation, at cosine ≥ `PRACTICE_MIN_SIM = 0.35`. For example, "Maintain accurate, detailed reports and records" → "Maintain medical facility records", "Maintain inventory of medical supplies or equipment".
@@ -618,11 +618,11 @@ Occupations are prepared once per process: filtered, weighted and encoded, with 
 
 Measured on CPU with MiniLM, fixture client, `hours_per_week` set, through the HTTP test client:
 - **Warm:** 0.24 s for the nurse profile vs "staff nurse" and 0.15 s for the electrician (median of 5). The direct engine call was 0.3–0.6 s, including related occupations.
-- **Cold:** about 20 s on first use; most of it is preparing and encoding the target and its related occupations.
+- **Cold:** about 20 s on first use. A3 measured this more precisely: most of it is loading the model, once per process (§13.6).
 
 `test_latency.py` checks warm < 2 s.
 
-### 12.7 Known limits
+### 12.7 Known limits (A2; see §13.8 for what A3 fixed)
 
 - **Hinglish / Indian-language text:** MiniLM is English-only; see §11.3.
 - **Job-title lines are evidence too.** "Staff Nurse" meets "Direct or supervise less-skilled nursing personnel" at 0.66. A title says what someone was called, not what they did.
@@ -630,3 +630,154 @@ Measured on CPU with MiniLM, fixture client, `hours_per_week` set, through the H
 - **Long, generic O*NET tasks can miss clear evidence** ("Assemble, install, test, or maintain electrical wiring…" for the ITI electrician).
 - **The verdict threshold** rests on 3 partial profiles and a 0.007 gap (§12.2).
 - **The fixture client stands in for module 1's search and related lists:** documented Indian aliases plus title tokens, and related = same SOC major group. Live module 1 uses its alias table, 62k alternate titles and O*NET related occupations.
+
+---
+
+## 13. General engine (v2) — A3: hardening and readiness
+
+A3 changes how evidence and requirements are read, then re-tunes on the tuning set only and freezes. Where it changes a value in §11–12, this section wins.
+
+### 13.1 What changed
+
+1. **Requirement-side clauses** (`requirements.requirement_clauses`). Long task and DWA sentences are also matched as clauses, and a requirement's similarity is the **max over the full sentence and its clauses**; the response shows the full sentence.
+   - The clauses are the sentence without its example tail (", using …", ", such as …", ", including …", "; …").
+   - A leading verb list is expanded, each verb with the first object ("Assemble, install, test, or maintain electrical or electronic wiring, …" → "install electrical wiring", "maintain electrical wiring", …).
+   - Two "and" halves of 3+ words each also become clauses.
+   - Up to `MAX_REQUIREMENT_CLAUSES = 8`. Clause vectors are encoded with the occupation and cached.
+2. **Job-title lines are role history, not evidence** (`evidence.role_history`).
+   - Experience lines with a date range, and short header lines (≤ 6 words) of a sectioned resume, become `role_title` units that are never matched.
+   - Each title (cut at "|", "," or "(") is resolved through module 1's search. At confidence ≥ `ROLE_MIN_CONFIDENCE = 0.7`, the title counts for that occupation and for related ones in `ROLE_RELATED_TIERS` (O*NET Primary-Short / Primary-Long; the fixture's stand-in tier never counts).
+   - For that occupation, tasks and DWAs without real evidence become `partial` with `reason: "implied_by_role"` and credit `min(0.4, 0.08 × years)` (0.1 when years are unknown). That is always below `PARTIAL_CREDIT`, never `met`.
+   - The evidence text reads like "11 years as Maintenance Electrician".
+   - Real evidence always wins. Implied items are listed after real gaps in the roadmap.
+3. **Not applicable in India** (`data/general/india_not_applicable.json`). Seven tasks and DWAs that are outside the scope of practice in India:
+   - Registered Nurses prescribing: task 1859 and DWAs 4.A.4.c.3.f.3 and .f.4;
+   - Pharmacists prescribing: DWAs .f.3 and .f.1;
+   - Medical Assistants authorising refills: task 2031 and DWA .f.2.
+
+   They are excluded from scoring and listed in `not_applicable_in_india` with the reason, never as gaps or roadmap items. The list is kept to clear legal cases; module 1 should eventually send an `india_relevant` flag.
+4. **Non-English evidence.**
+   - **Language check:** `english_share` is the share of words that are neither Devanagari nor in a list of frequent romanised-Hindi words (`ROMAN_HINDI_MARKERS`, which leaves out English look-alikes such as *main*, *to*, *do*). A sentence below `ENGLISH_MIN_SHARE = 0.75` counts as non-English. On all 93 calibration profiles it flags 52 of 66 Hinglish/Hindi sentences and 0 English ones; the 14 it misses are English-heavy ("B.Sc Nursing, Delhi Nursing Council registered").
+   - **Translation:** non-English sentences are rewritten in English by Groq (`GROQ_MODEL`) in one batch per request, cached by text hash. The unit keeps `original_text` and the original span and is marked `translated`.
+   - **Fail-safe:** without a key, on a timeout or with a bad answer, the sentence is matched as written and a warning is added.
+   - **Offline:** calibration and tests use committed rewrites (`tests/calibration/translations.json`, 54 sentences, refreshed with `scripts/refresh_translations.py`).
+5. **`fit_percent` and `fit_label`.** `match_score` stays raw, and `fit_percent` maps it piecewise-linearly:
+   - 0 → 0, `GOOD_FIT_THRESHOLD` → 50, `FIT_MEDIAN_FULL = 0.60` (the median full-profile own-occupation score on the tuning set) → 80;
+   - the same slope continues above, capped at 100.
+
+   Labels: ≥ 80 "Strong fit", ≥ 50 "Good fit", ≥ 25 "Developing", else "Early stage".
+6. **Roadmap focus.** The main roadmap is the `ROADMAP_MAX_ITEMS = 8` heaviest gaps, with role-implied items after real ones; the rest are in `roadmap.later`. Totals cover the main roadmap only.
+7. **Cold start.**
+   - `scripts/prewarm_embeddings.py <SOC …> | --all-fixture` prepares occupations and their related ones into the disk cache.
+   - `M2_PREWARM_SOCS="29-1141.00,47-2111.00"` does the same in a background thread at startup.
+8. **Fixture search.** Token-match confidence averages the share of the query matched and the share of the title matched, so "Maintenance Electrician" → Electricians (0.75). Live module 1 uses its 62k alternate titles.
+
+### 13.2 Final frozen constants (tuned on the tuning set only)
+
+| Core type | met | partial | TYPE_SHARE |
+|---|---|---|---|
+| tech, tool, market_skill | 0.60 | 0.50 | 0.10, 0.10, 0.40 |
+| task, dwa | 0.55 | 0.45 | 0.30, 0.10 |
+
+`MIN_ITEMS_FOR_FULL_SHARE = 5`, `CURATED_WEIGHT = 0.5`, `GOOD_FIT_THRESHOLD = 0.3254`, `FIT_MEDIAN_FULL = 0.60`.
+
+### 13.3 Final calibration (25 occupations unless noted)
+
+| Set | MiniLM + translation (**shipped**) | MiniLM, no translation | multilingual MiniLM-L12, own tuning, no translation |
+|---|---|---|---|
+| tuning | 14/15, +0.339 | 14/15, +0.339 | 15/15, +0.318 |
+| held-out (A1b) | **14/15**, +0.140 | 12/15, +0.126 | 14/15, +0.130 |
+| A1b extra occupations | **10/10**, +0.228 | 10/10, +0.225 | 8/10, +0.212 |
+| held-out, curated rows removed | 14/15, +0.125 | 12/15, +0.111 | 13/15, +0.105 |
+| held-out-2, export occupations | 13/15, +0.163 | 13/15, +0.149 | 14/15, +0.140 |
+| held-out-2, extra occupations | **10/10**, +0.184 | 10/10, +0.184 | 9/10, +0.171 |
+| held-out-2, curated rows removed | 13/15, +0.157 | 13/15, +0.144 | 13/15, +0.123 |
+| **Hinglish / Hindi (new, 5)** | **4/5, +0.142** | 2/5, +0.014 | 4/5, +0.063 |
+| held-out, 15 export occupations | 15/15, +0.173 | 15/15, +0.158 | 15/15, +0.166 |
+| held-out-2, 15 export occupations | 14/15, +0.200 | 14/15, +0.186 | 15/15, +0.191 |
+| **held-out top-1, all sets** | **51/55** | 47/55 | 49/55 |
+
+Top-3 is 14–15/15, 10/10 and 5/5 throughout for the shipped setting.
+
+**Choice: MiniLM with translation.**
+- It is best on held-out top-1 (51 of 55) and on mean margins.
+- English matching is unchanged.
+- The model is a third of the size.
+
+The multilingual model gains one held-out-2 profile but loses two extra occupations, and its Hinglish margin is less than half. MiniLM without translation drops the Hindi and Hinglish profiles: Hinglish 2/5, and two A1b Hinglish profiles miss (the truck driver and the pharmacist).
+
+**Remaining misses:**
+- **Adjacent occupations:**
+  - pharmacist → Pharmacy Technicians (tuning, and held-out-2 third person);
+  - a nurse after a career break → Medical Assistants.
+- **The teacher one-liner** → Physical Therapists, rank 3 (0.17).
+- **The Devanagari electrician** → Plumbers: the rewrite says "lay pipes and pull wires", and pipes pull towards plumbing.
+
+The A2 gate still passes (13/15, 10/10).
+
+### 13.4 Verdict separation
+
+The threshold is tuned on the tuning profiles only:
+- **Tuning set:** 15 full profiles, against 3 + 8 partial and 3 wrong-role profiles (someone from another field applying to the target).
+- **Validation set:** the 15 held-out-2 full profiles, against 6 partial and 3 wrong-role profiles.
+
+| | Full profiles (min) | Partial / wrong (max) | Accuracy at 0.3254 |
+|---|---|---|---|
+| tuning (29) | 0.326 | 0.325 | 1.00 |
+| **validation (24)** | 0.146 | 0.192 | **0.58** |
+
+**The tuned threshold does not transfer.** No full profile in validation scores above a negative one by a wide margin, and 10 of the 15 held-out-2 full profiles fall below 0.3254 (WhatsApp, two-liner, Q&A, third-person, key-value styles). Every partial and wrong-role validation profile is correctly below it.
+- **Cause:** the score measures how much of the occupation the evidence *shows*, so short descriptions score low whatever the person's real level. The tuning profiles are long and resume-shaped.
+- **Not fixed by tuning on validation.** Options for the next round:
+  - a separate `insufficient_evidence` verdict when there are few matchable units or little evidenced weight;
+  - a tuning set with mixed styles;
+  - a threshold per evidence-volume band.
+- **Until then:** `under_skilled` on a short description means "not shown", and `fit_label` is the better user-facing signal.
+
+### 13.5 Examples, before and after A3
+
+| Profile vs role | A2 (score → fit %) | A3 (score → fit %, label, verdict) |
+|---|---|---|
+| tuning staff nurse vs "staff nurse" | 0.575 → 77 | 0.651 → **86**, Strong fit, good_fit |
+| tuning ITI electrician vs "electrician" | 0.362 → 54 | 0.496 → **69**, Good fit, good_fit |
+
+A2 scores are mapped with the A3 `fit_percent` for comparison.
+
+**Electrician:**
+- "Assemble, install, test, or maintain electrical or electronic wiring…" was missing in A2 and is now **met** (0.65, via the clause "install electrical wiring" against the skills item "House wiring"). The work bullets "Lay conduits and pull wires…" and "Install and connect DBs, MCBs…" reach 0.53 on their own, which is partial; MiniLM doesn't read DB/MCB as wiring.
+- "Repair or replace wiring…" is met at 0.81 by the clause "repair faults in wiring".
+- Role history: "Maintenance Electrician" (9 years), "Apprentice Electrician" (2 years) and the header "Electrician" give the blueprint, ladder and tool tasks an implied 0.4.
+
+**Nurse:**
+- The title line "Staff Nurse" no longer meets the supervision task (now partial, from the B.Sc Nursing line).
+- Prescribing (1 task, 2 DWAs) is listed as not applicable in India.
+- "Maintain accurate, detailed reports and records" becomes partial from 7.5 years of role history.
+
+### 13.6 Latency (CPU, MiniLM, nurse vs "staff nurse", fixture client)
+
+| Start | Model load | First request | Warm (median of 5) |
+|---|---|---|---|
+| empty embedding cache | 12.9 s | 1.25 s | 0.19 s |
+| disk cache, no prewarm | 16.5 s | 0.33 s | 0.19 s |
+| after `prewarm(["29-1141.00"])` | 11.5 s | 0.32 s | 0.19 s |
+
+Most of the earlier "~20 s cold" was loading the model (once per process). With `M2_PREWARM_SOCS`, both the model load and the occupation preparation happen at startup, so the first user request takes about 0.3 s.
+
+### 13.7 Readiness checklist (context/AGENTS.md §18) for the v2 engine
+
+| # | Gate criterion | Status | Evidence |
+|---|---|---|---|
+| 1 | Self-contained execution | ✅ | Same FastAPI service on port 8002 (`uvicorn src.api.main:app --port 8002`). Module 1 is reached only over REST (`M1_BASE_URL`). Offline fixtures cover all tests; `scripts/prewarm_embeddings.py --all-fixture` runs without module 1 |
+| 2 | Contract compliance | ✅ | Pydantic request/response models in `src/general/schemas.py`, exported to `src/models/schema_m2_v2.json` with a drift test (`test_v2_schema_export_is_current`). v2 accepts v1's `UserProfile`. Errors use INTEGRATION.md's `{"error": {"code", "message"}}` |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/` → **426 passed, 1 skipped** (the live Groq test without a key). The v1 suite is unchanged at 284 + 1 skipped; 142 tests cover the general engine, including held-out floors and the A2 gate |
+| 4 | Error handling | ✅ | Module 1 down → 503 `M1_UNAVAILABLE` for v2 while v1 keeps working (tested). Unknown role → 404 `ROLE_NOT_RESOLVED`; unknown SOC → 404 `OCCUPATION_NOT_FOUND`; bad module 1 response → 502. Invalid input → 422; v1's file errors on `/v2/analyze_resume`. Groq missing or failing → original text plus a warning. Related occupations module 1 can't return are skipped |
+| 5 | Zero cross-module imports | ✅ | `src/general` imports only `src.*` (module 2) and third-party packages. Module 1 data comes over REST or from fixture files; `career_intel.db` is never opened |
+| 6 | Documentation | ✅ | README (v2 quick start, env vars, payload examples), this file §11–13 (design, formulas, worked example, calibration, limits), HANDOFF_TO_M3 (`/api/v2/skills/match_text` contract and example) |
+| 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap`, one change per commit |
+
+### 13.8 Known limits after A3
+
+- **Verdict on short descriptions** (§13.4).
+- **Roadmap ordering.** The main roadmap is ordered by weight, as specified, so heavy O*NET software (Epic, Outlook, Word) can fill it for a nurse or an electrician. Ranking by expected score gain (each item's share of its type × its missing credit) would favour tasks; worth deciding before the UI uses it.
+- **Education lines are still evidence** (e.g. "B.Sc Nursing…" as partial evidence of supervision).
+- **Not yet validated on live module 1 data.** `/related` (alternatives, over-qualified, related roles in role history) still uses the fixture stand-in, and the 10 extra occupations are module 1 v2.0 data.
