@@ -21,7 +21,10 @@ log = logging.getLogger(__name__)
 
 MODULE_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = MODULE_ROOT / "data" / "cache" / "m1"
-FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_occupation_requirements_export.json"
+FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_occupation_requirements_export.json"          # v2.1, 15 SOCs
+EXTRA_FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_heldout_occupations.json"   # 10 SOCs from a live module 1
+META_VERSION_FIELDS = ("schema_version", "version")
+META_BUILD_FIELDS = ("export_hash", "built_at")
 DEFAULT_BASE_URL = "http://localhost:8001"
 TIMEOUT_S = 10.0
 LOW_CONFIDENCE = 0.85          # top match below this: ask "Did you mean ...?"
@@ -94,13 +97,29 @@ class M1Client:
             raise M1Error("bad_response", f"module 1 sent non-JSON on {path}", r.status_code) from e
 
     def version(self) -> str:
-        """Module 1's version. Its responses carry no db_meta yet, so this is the API version from /openapi.json."""
+        """Cache key for module 1's data: GET /api/v1/meta (schema version + export hash or build time) when module 1
+        has it, else the API version from /openapi.json, else 'unknown' (nothing cached)."""
         if self._version is None:
-            try:
-                self._version = str(self._get("/openapi.json").get("info", {}).get("version") or "unknown")
-            except M1Error:
-                self._version = "unknown"
+            self._version = self._meta_version() or self._openapi_version() or "unknown"
         return self._version
+
+    def _meta_version(self) -> str | None:
+        try:
+            meta = self._get("/api/v1/meta")
+        except M1Error:
+            return None                  # not there yet (module 1 v2.1) or unreachable
+        if not isinstance(meta, dict):
+            return None
+        meta = meta.get("db_meta", meta)
+        version = next((str(meta[f]) for f in META_VERSION_FIELDS if meta.get(f)), None)
+        build = next((str(meta[f]) for f in META_BUILD_FIELDS if meta.get(f)), None)
+        return f"{version}+{build[:16]}" if version and build else version
+
+    def _openapi_version(self) -> str | None:
+        try:
+            return str(self._get("/openapi.json").get("info", {}).get("version") or "") or None
+        except M1Error:
+            return None
 
     def _cached(self, kind: str, soc: str, path: str, **params):
         version = self.version()
@@ -130,15 +149,24 @@ class M1Client:
 
 
 class FixtureM1Client:
-    """Same interface, backed by module 1's export (tests and calibration; no network)."""
+    """Same interface, backed by module 1 export files (tests and calibration; no network). Several files merge;
+    each occupation keeps its file's metadata version (version_of)."""
 
-    def __init__(self, path: Path = FIXTURE_PATH):
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
-        self._meta = data.get("metadata", {})
-        self.occupations: dict[str, dict] = data["occupations"]
+    def __init__(self, *paths: Path):
+        self.occupations: dict[str, dict] = {}
+        self.versions: dict[str, str] = {}
+        for path in paths or (FIXTURE_PATH,):
+            data = json.loads(Path(path).read_text(encoding="utf-8"))
+            version = str(data.get("metadata", {}).get("version", "unknown"))
+            for soc, occ in data["occupations"].items():
+                self.occupations[soc] = occ
+                self.versions[soc] = version
 
     def version(self) -> str:
-        return str(self._meta.get("version", "unknown"))
+        return "+".join(sorted(set(self.versions.values()))) or "unknown"
+
+    def version_of(self, soc: str) -> str:
+        return self.versions.get(soc, "unknown")
 
     def _occupation(self, soc: str) -> dict:
         if soc not in self.occupations:
