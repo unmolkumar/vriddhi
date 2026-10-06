@@ -3,7 +3,9 @@
   "version": "2.0.0",
   "generated_at": "2026-10-06T10:39:09.952325+00:00",
   "description": "Module 1 REST responses (/occupations/{soc}/profile and /requirements) for 10 occupations outside the 15-occupation export, for held-out calibration. Fetched from a local module 1 (v2.1 code, database built 2026-10-06 06:25, db_meta schema 2.0.0).",
-  "target_occupations_count": 10
+  "target_occupations_count": 10,
+  "data_version": "2.0.0",
+  "data_label": "module 1 database v2.0 (before v2.1): no DWA, tool or curated rows, v2.0 market-skill noise. Refetch with scripts/refetch_extra_occupations.py when a v2.1+ database is available."
  },
  "occupations": {
   "29-1123.00": {

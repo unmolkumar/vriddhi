@@ -38,6 +38,7 @@ SHARE_PRESETS = {   # absolute, so the search doesn't drift with whatever matche
     "tech_light": {"task": 0.40, "dwa": 0.20, "market_skill": 0.30, "tech": 0.05, "tool": 0.05},
 }
 EXPORT_SOCS: set[str] = set()
+GATE_HELDOUT2_TOP1, GATE_EXTRA_TOP1 = 12, 7     # A2 goes ahead only above these (of 15 and 10)
 
 
 def thresholds_for(name_met: float, sent_met: float, gap: float) -> dict[str, tuple[float, float]]:
@@ -75,15 +76,23 @@ def summary(r: cal.Result) -> dict:
 
 
 def four_way(profiles, occupations, pairs, thresholds, share) -> dict:
-    """(a)-(d) on all 25 occupations, plus the held-out set against the 15 export occupations only (like for like:
-    the 10 extra occupations come from a v2.0 database without DWA, tool or curated rows)."""
+    """Each profile set on all 25 occupations, plus held-out sets against the 15 export occupations only (like for
+    like: the 10 extra occupations come from a v2.0 database without DWA, tool or curated rows)."""
     out = {}
-    for label, sets, drop, socs in (("a_tuning", ("tuning",), False, None), ("b_heldout", ("heldout",), False, None),
-                                    ("c_new_occupations", ("new",), False, None),
-                                    ("d_heldout_no_curated", ("heldout",), True, None),
-                                    ("b_heldout_vs_export15", ("heldout",), False, EXPORT_SOCS)):
-        ps, os_ = cal.subset(profiles, occupations, sets=sets, socs=socs)
+    rows = (("a_tuning", ("tuning",), False, None, None, None),
+            ("b_heldout", ("heldout",), False, None, None, None),
+            ("c_new_occupations", ("new",), False, None, None, None),
+            ("d_heldout_no_curated", ("heldout",), True, None, None, None),
+            ("e_heldout2", ("heldout2",), False, None, EXPORT_SOCS, None),
+            ("f_heldout2_extra_occupations", ("heldout2",), False, None, None, EXPORT_SOCS),
+            ("g_heldout2_no_curated", ("heldout2",), True, None, EXPORT_SOCS, None),
+            ("b_heldout_vs_export15", ("heldout",), False, EXPORT_SOCS, None, None),
+            ("e_heldout2_vs_export15", ("heldout2",), False, EXPORT_SOCS, EXPORT_SOCS, None))
+    for label, sets, drop, socs, only, exclude in rows:
+        ps, os_ = cal.subset(profiles, occupations, sets=sets, socs=socs, profile_socs=only, exclude_profile_socs=exclude)
         out[label] = summary(cal.evaluate(ps, os_, pairs, thresholds, share, drop_curated=drop))
+    gate = out["e_heldout2"]["top1"] >= GATE_HELDOUT2_TOP1 and out["f_heldout2_extra_occupations"]["top1"] >= GATE_EXTRA_TOP1
+    out["gate"] = {"passed": gate, "heldout2_top1_floor": GATE_HELDOUT2_TOP1, "extra_top1_floor": GATE_EXTRA_TOP1}
     return out
 
 
@@ -91,6 +100,10 @@ def print_four_way(fw: dict, titles: dict[str, str]) -> None:
     print(f"\n== 25-occupation matrix ({len(titles)} occupations)")
     print(f"  {'set':24} {'top-1':>7} {'top-3':>7} {'mean margin':>12} {'worst margin':>13}  worst profile -> runner-up")
     for label, s in fw.items():
+        if label == "gate":
+            print(f"  GATE: {'passed' if s['passed'] else 'FAILED'} (held-out-2 top-1 >= {s['heldout2_top1_floor']}/15, "
+                  f"extra occupations top-1 >= {s['extra_top1_floor']}/10)")
+            continue
         w = s["worst"]
         print(f"  {label:24} {s['top1']:>3}/{s['n']:<3} {s['top3']:>3}/{s['n']:<3} {s['mean_margin']:>+12.3f} "
               f"{w['margin']:>+13.3f}  {w['profile']} -> {titles[w['runner_up']][:30]}")
