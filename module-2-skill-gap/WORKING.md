@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11) adds 48 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11) adds 72 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -332,9 +332,9 @@ Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analys
 
 ---
 
-## 11. General engine (v2) — A1
+## 11. General engine (v2) — A1 and A1b
 
-**Status:** A1 only (requirements, evidence, matching, calibration). There is no public endpoint yet; scoring, verdicts, roadmaps and `/api/v2/*` are A2. Everything in §1–10 (v1, `/api/v1/*`, the 483-skill taxonomy, the gap analyzer) is unchanged; the new code lives in `src/general/` and nothing in v1 imports it.
+**Status:** A1 (requirements, evidence, matching, calibration) plus A1b (provenance, core-only scoring, inferred generic layers, held-out calibration). There is no public endpoint yet; scoring, verdicts, roadmaps and `/api/v2/*` are A2. Everything in §1–10 (v1, `/api/v1/*`, the 483-skill taxonomy, the gap analyzer) is unchanged; the new code lives in `src/general/` and nothing in v1 imports it.
 
 ### 11.1 Design
 
@@ -344,164 +344,173 @@ module 1 (REST)                      resume / free text / typed skills / v1 prof
   /occupations/{soc}/requirements              ▼
           │                            evidence.py: EvidenceUnit(text, evidence_type, section, span, skill_ids)
           ▼                                    │
-  requirements.py: filter + weight             │
-  RequirementItem(layer, weight, flags)        │
+  requirements.py: filter, weight,             │
+  provenance → RequirementItem                 │
           │                                    │
-          └──────────► matcher.py ◄────────────┘
-                 1. alias: same taxonomy skill  → met
-                 2. semantic: MiniLM cosine     → met / partial / missing (per item type)
-                 → RequirementMatch(status, similarity, reason, best evidence + span)
+          ├── core (market_skill, tech, tool, task, dwa) ──► matcher.py ◄──┘
+          │        1. alias: same taxonomy skill → met
+          │        2. semantic: MiniLM cosine → met / partial / missing
+          │                         │
+          └── knowledge, skill, work_activity, ability ──► inference.py (from the core matches)
 ```
 
 - **`m1_client.py`.** Calls module 1's four occupation endpoints over REST (`M1_BASE_URL`, default `http://localhost:8001`, 10 s timeout). Failures become `M1Error(code)`: `unreachable`, `timeout`, `not_found` or `bad_response`.
-  - Requirements, profiles and related lists are cached on disk under `data/cache/m1/<version>/`. Module 1 responses carry no `db_meta` yet, so the version is the API version from `/openapi.json`. If the version is unknown, nothing is cached.
-  - Search returns a `Resolution` with `low_confidence` (top match below `LOW_CONFIDENCE = 0.85`, or two different occupation families within `AMBIGUOUS_GAP = 0.05`) and `did_you_mean`.
-  - `FixtureM1Client` has the same interface over `tests/mocks/m1_occupation_requirements_export.json` (module 1 v2.0.0, 15 occupations).
-- **`requirements.py`.** Turns module 1 rows into `RequirementItem(soc, item_type, item_id, name, description, importance, level, source, reliable, layer, weight, flags)`.
-  - **Layers:** core (`market_skill`, `tech`, `tool`, `knowledge`, `task`, `dwa`), transferable (`skill`, `work_activity`), fit_indicator (`ability`: never something to learn).
-  - **Weight:** `importance_norm × LAYER_WEIGHT[layer] × reliability`, with `LAYER_WEIGHT` = core 1.0, transferable 0.5, fit_indicator 0.
-  - **Required level:** `level_norm`, or `DEFAULT_LEVEL[type]` when it is null (0.6 for tasks and DWAs, 0.5 otherwise).
-  - **Embedded text:** `"{name}: {description}"`, or just the name when the description repeats it or is module 1's generic "Extracted from Indian job postings".
+  - **Cache.** Requirements, profiles and related lists are cached on disk under `data/cache/m1/<version>/`. The version comes from `GET /api/v1/meta` (schema version + export hash or build time) when module 1 has that endpoint (feature-detected; not in v2.1). Otherwise it's the API version from `/openapi.json`. If neither is available, nothing is cached.
+  - **Search.** Returns a `Resolution` with `low_confidence` (top match below `LOW_CONFIDENCE = 0.85`, or two different occupation families within `AMBIGUOUS_GAP = 0.05`) and `did_you_mean`. Live example: "physical therapist" ties Physical Therapists, Aides and Assistants at 0.88, so it gets flagged.
+  - **Fixtures.** `FixtureM1Client(*paths)` merges export files, and each occupation keeps its file's `version` (used in the embedding cache key):
+    - `tests/mocks/m1_occupation_requirements_export.json`: module 1 v2.1.0, 15 occupations.
+    - `tests/mocks/m1_heldout_occupations.json`: 10 more occupations, fetched from a local module 1.
+    - `…_v2.0.json`: kept for a filter regression test.
+- **`requirements.py`.** Turns module 1 rows into `RequirementItem(soc, item_type, item_id, name, description, importance, level, source, provenance, reliable, layer, weight, reliability, flags)`.
+  - **Layers:**
+    - **core** (`market_skill`, `tech`, `tool`, `task`, `dwa`): matched and scored.
+    - **transferable** (`knowledge`, `skill`, `work_activity`): inferred and reported, never scored or listed as gaps.
+    - **fit_indicator** (`ability`): reported only.
+  - **Weight:** `importance_norm × LAYER_WEIGHT[layer] × reliability`. Reliability multiplies together `CURATED_WEIGHT` and `OFF_DOMAIN_FACTOR`, when they apply.
+  - **Required level:** `level_norm`, or `DEFAULT_LEVEL[type]` when it is null.
+  - **Embedded text:** `"{name}: {description}"`, or the name alone when the description repeats it or is generic ("Extracted from Indian job postings", "Curated domain competency").
 - **`evidence.py`.** Splits resume or free text into units, using v1's `section_segmenter`.
-  - Experience bullets become `work`, project bullets `project`, and everything else (summary, skills items, education) `mentioned`. Typed skills become `self`.
-  - Bullets are split into sentences, and skills sections into items (a "Software:" style label is stripped). Contact lines are dropped.
-  - Each unit keeps its character `span` in the source text and the taxonomy ids v1's dictionary finds in it.
-  - `from_resume` (v1 parser) and `from_profile` (a v1 `UserProfile`) are also supported.
-- **`embeddings.py`.** `all-MiniLM-L6-v2` by default (`EMBEDDING_MODEL` to change), CPU only, normalised vectors.
-  - Requirement vectors are cached as float16 `.npy` under `data/cache/embeddings/<model>/<soc>-<hash of the item texts>.npy` (gitignored), so an edited requirement list is re-encoded.
-- **`matcher.py`.** Each requirement is matched in two steps:
-  1. **Alias.** A tech, tool or market_skill requirement that the v1 taxonomy resolves to the same skill as a unit is `met`, with `reason: "alias"` ("Advanced Excel" meets "Microsoft Excel").
+  - Experience bullets become `work`, project bullets `project`, and everything else `mentioned`. Typed skills become `self`.
+  - Bullets are split into sentences, and skills sections into items. Contact lines are dropped.
+  - Each unit keeps its character `span` and the taxonomy ids v1's dictionary finds in it.
+- **`embeddings.py`.** `all-MiniLM-L6-v2` by default (`EMBEDDING_MODEL` to change), CPU only. Vectors are cached as float16 `.npy` per model, key (module 1 version + SOC) and text hash, under the gitignored `data/cache/embeddings/`.
+- **`matcher.py`.** Matches core items only:
+  1. **Alias.** A tech, tool or market_skill requirement that the v1 taxonomy resolves to the same skill as a unit is `met`, with `reason: "alias"`.
   2. **Semantic.** Otherwise, the best cosine over all units is compared with that type's `(met, partial)` thresholds.
 
-  Every match returns its status, similarity, reason, and the deciding unit's text, type, section and span. `coverage()` is a **provisional** 0–1 score for calibration only. Within each item type, it is the weight-averaged credit (met 1, partial 0.5). The types are then combined by `TYPE_SHARE`, so an occupation with 474 tech rows isn't scored on tech alone. A2 replaces this score.
+  Every match carries its `provenance`, status, similarity, reason and the deciding unit (text, type, section, span). `coverage()` is a **provisional** 0–1 score for calibration only:
+  - Within each core type, it is the weight-averaged credit (met 1, partial 0.5).
+  - Types are combined by `TYPE_SHARE × the type's mean reliability`, so a market-skill list made only of curated rows counts half.
 
-### 11.2 Filters (module 1 v2.0 data issues)
+  A2 replaces this score.
+- **`inference.py`.** Handles the generic O*NET layers, which don't separate occupations (§11.3):
+  - **work_activity (GWA):** `evidenced` when any of its DWAs is met. The ids nest: a DWA or IWA id starts with its GWA's element id (`4.A.2.a.4.I01.D03` and module 1's `4.A.4.a.5.c.3` both sit under GWA `4.A.4.a.5`). The status is `not_evidenced` when its DWAs exist but none is met, and `no_dwa_data` when module 1 sent none.
+  - **knowledge, skill:** the top `DRAWS_ON_TOP` (5 each) by importance are reported as "what this role draws on". One is marked `inferred` when a met task or DWA reaches `SUPPORT_SIM = 0.45`, or an education line reaches `EDUCATION_SUPPORT_SIM = 0.35`. These are never gaps.
 
-Each filter is a named constant. A drop is recorded in the per-occupation `FilterReport` (reason → names, and logged); a down-weight is recorded in the item's `flags`. Every filter is a no-op on clean data (test `test_clean_data_passes_through_untouched`).
+    Measured on the tuning profiles:
+    - nurse: Medicine and Dentistry 0.54;
+    - electrician: Troubleshooting 0.58 and Installation 0.77;
+    - accountant: Economics and Accounting 0.66.
+
+    Generic skills (Active Listening, Critical Thinking) stay at 0.23–0.29, so they are not inferred.
+  - **ability:** the top `FIT_TOP` (6) are fit indicators.
+
+### 11.2 Provenance and filters
+
+**Provenance (module 1 v2.1).**
+- **Hand-written rows:**
+  - 47 of the export's 64 market skills are `source='curated'`, all at a fixed importance of 0.80.
+  - The 156 `tool` rows are hand-written in module 1's ETL but labelled `source='onet'`. They have `tool_*` ids and exist only for the 15 export occupations.
+- **Handling until module 1 replaces them with real data:**
+  - Both kinds get `provenance="curated"` and weight × `CURATED_WEIGHT = 0.5`, with flag `"curated"`.
+  - Their share is never shown as market data (`india_demand_share` is forced to `null`).
+  - Every requirement and every match carries `provenance`: `onet`, `india_postings` or `curated`.
+- **Not tool rows:** `tech_*` ids are real O*NET Technology Skills, so they are not treated as curated.
+
+**Filters.** Each is a named constant. A drop is recorded in the per-occupation `FilterReport` (reason → names, and logged); a down-weight is recorded in the item's `flags`. Every filter is a no-op on clean data (`test_clean_data_passes_through_untouched`).
 
 | Filter | Constant(s) | Applies to | Effect |
 |---|---|---|---|
-| duplicate | normalised (type, name) | all | drop; keep the higher-importance copy. Module 1 v2.0 exports **every tech row twice** (e.g. 237 of 474 for Accountants) |
+| duplicate | normalised (type, name) | all | drop, keeping the higher-importance copy (module 1 v2.0 exported every tech row twice; v2.1 has none) |
 | unreliable | `reliable = 0` | all | drop |
-| low support | `MARKET_MIN_SHARE = 0.02`, `MARKET_MIN_POSTINGS = 3` (when a `posting_count` is sent) | market_skill | drop |
-| noise | `INDUSTRY_LABELS` (+ "IT Software - …" pattern), `INDIAN_PLACES`, `SENIORITY_WORDS`, `GENERIC_TITLES`, `BENEFITS`, `GENERIC_TERMS`, the occupation's own title and aliases; case-insensitive | market_skill | drop, with the list as the reason |
-| cap | `MARKET_CAP = 50` by share | market_skill | drop the tail |
-| off-domain | `OFF_DOMAIN_SIM = 0.18`, `OFF_DOMAIN_FACTOR = 0.3` | tech, tool | weight × 0.3, flag `off_domain(sim)`; never deleted |
+| low support | `MARKET_MIN_SHARE = 0.005` safety net; **`posting_count ≥ MARKET_MIN_POSTINGS = 3` whenever module 1 sends `posting_count`** (feature-detected per row) | posting-derived market_skill | drop. Module 1 v2.1 already filters at ≥ 3 postings and share ≥ 0.02, so this only catches single-posting noise |
+| noise | `INDUSTRY_LABELS` (+ "IT Software - …"), `INDIAN_PLACES`, `SENIORITY_WORDS`, `GENERIC_TITLES`, `BENEFITS`, `GENERIC_TERMS`, the occupation's own title; case-insensitive | market_skill | drop |
+| cap | `MARKET_CAP = 50` by share | posting-derived market_skill (curated never) | drop the tail |
+| off-domain | `OFF_DOMAIN_SIM = 0.18` against the title + module 1's domain labels, `OFF_DOMAIN_FACTOR = 0.3` | tech, tool, and posting-derived market skills with share < `MARKET_OFF_DOMAIN_MAX_SHARE = 0.05` (curated and high-share exempt) | weight × 0.3, flag `off_domain(sim)` |
+| curated | `CURATED_WEIGHT = 0.5` | `source='curated'`, `tool_*` | weight × 0.5, flag `curated` |
 
-**Off-domain, measured.** The brief suggested comparing tech with the occupation's description and tasks. On the fixture, that let Epic Systems through for Accountants (0.34) and Apache Spark for Registered Nurses (0.28), while flagging Excel for Accountants. Comparing with the **title and module 1's domain labels** (major group, career cluster, Indian industry; `domain_texts()`) separates them cleanly:
+**Why off-domain uses the domain labels** (measured in A1): comparing with the description and tasks let Epic Systems through for Accountants (0.34) and Apache Spark for Registered Nurses (0.28). With the title and domain labels, those score 0.12 and 0.11, while Epic for Nurses (0.42) and QuickBooks for Accountants (0.44) stay. General office software also falls below 0.18 for non-office occupations; that's acceptable, because it says nothing about the occupation.
 
-| Tech | Occupation | Description + tasks | Title + domain labels |
-|---|---|---|---|
-| Apache Spark | Registered Nurses | 0.28 | 0.11 (off) |
-| Epic Systems | Registered Nurses | 0.35 | 0.42 |
-| Epic Systems | Accountants | 0.34 | 0.12 (off) |
-| Intuit QuickBooks | Accountants | 0.63 | 0.44 |
-| Apache Subversion | Civil Engineers | 0.15 | 0.01 (off) |
-| Bentley MicroStation | Civil Engineers | 0.52 | 0.42 |
+**Per occupation, v2.1 export** (rows → kept; dropped; down-weighted):
+- **Accountants:** 472 → 435. Dropped 37 unreliable. Down-weighted 45 off-domain (Epic, MEDITECH, SPSS, Word, …) and 16 curated (8 market skills, 8 tools).
+- **Electricians:** 251 → 241. Dropped 10 unreliable. Down-weighted 17 off-domain and 22 curated.
+- **Civil Engineers:** 289 → 265. Dropped 24 unreliable. Down-weighted 29 off-domain and 17 curated. The 5 posting-derived market skills (Construction, Project management, AutoCAD, …) are kept at full weight.
+- **Graphic Designers:** module 1's "IT Software - Other" and "IT Software - eCommerce" (share 0.5) are still dropped as industry labels.
 
-General office software (Word, Outlook) also falls below 0.18 for non-office occupations and is down-weighted. That's acceptable, because it says nothing about the occupation.
-
-**Per-occupation result:**
-
-| Occupation | Rows | Kept | Dropped | Down-weighted |
-|---|---|---|---|---|
-| Registered Nurses | 280 | 220 | duplicate 43, unreliable 16, industry label 1 (Medical) | off-domain 10 |
-| Accountants and Auditors | 674 | 399 | duplicate 237, unreliable 37, industry label 1 (Hotels) | off-domain 39 (Epic, MEDITECH, SPSS, Word, …) |
-| Customer Service Reps | 417 | 256 | duplicate 112, unreliable 37, low support 11, industry label 1 (ITES) | off-domain 17 |
-| Mechanical Engineers | 418 | 266 | duplicate 92, low support 38, unreliable 21, industry label 1 (IT Hardware) | off-domain 31 |
-| Civil Engineers | 388 | 236 | duplicate 73, low support 55 (incl. Ahmedabad, BE, Basic, C++), unreliable 24 | off-domain 23 (SVN, Office, …) |
-| Electricians | 247 | 206 | duplicate 30, unreliable 10, industry label 1 (IT Hardware) | off-domain 14 |
-| Data Scientists | 1,603 | 234 | low support 1,245, duplicate 87, unreliable 37 | — |
-
-The full report for all 15 occupations is in `tests/calibration/results/all-MiniLM-L6-v2.json`.
-
-**Still noisy after the filters:**
-- Customer Service keeps HTML and Javascript (share 0.034, about 2 postings).
-- Graphic Designers keep "Design" (0.68, effectively the industry label).
-- Data Scientists keep only 7 market skills (ML, PYTHON, SQL, TensorFlow, …). Module 1 sends no posting counts, so the 0.02 share floor drops PyTorch (0.014) and NLP along with the noise. A `posting_count` field would let `MARKET_MIN_POSTINGS` keep them.
+**The 10 extra occupations** (v2.0 database, see §11.3): Software QA keeps 30 of 699 market skills (667 single-posting rows dropped, 10 capped); HR Specialists keeps 50 of 151.
 
 ### 11.3 Calibration
 
-`python scripts/calibrate.py [--tune] [--model …] [--grid-shift …]` scores every profile in `tests/calibration/profiles/` against every fixture occupation.
-- **Profiles:** 15, one per occupation, plus 3 partial ones (a GNM fresher nurse, an accounts assistant without GST or Tally, and an ITI apprentice). They are written in Indian context and paraphrased, not copied from O*NET. Two (customer care, truck driver) are free text rather than resume-shaped.
-- **Report:** top-1 and top-3 accuracy, the margin (own occupation minus the best other), per-type similarity of true vs false matches, filter reports, and the nurse sample.
-- **`--tune`:** a grid search over three threshold groups (name-like, task-like, generic), the partial gap, and five type-share presets. It maximises (top-1, top-3, worst margin, mean margin).
+**Profile sets** (`tests/calibration/profiles/`). All are Indian context and none copies O*NET sentences:
 
-**Results (15 full profiles):**
-
-| Setting | Top-1 | Top-3 | Mean margin | Worst margin |
-|---|---|---|---|---|
-| MiniLM, initial hand-set constants | 15/15 | 15/15 | +0.211 | +0.026 (Mechanical vs Graphic Designers) |
-| **MiniLM, tuned (shipped)** | **15/15** | **15/15** | **+0.283** | **+0.103** (Staff nurse vs Medical Assistants) |
-| bge-small-en-v1.5, MiniLM's thresholds | 11/15 | 15/15 | +0.016 | −0.016 |
-| bge-small-en-v1.5, its own tuning (grid +0.15) | 15/15 | 15/15 | +0.241 | +0.061 |
-
-MiniLM stays the default: it has a better worst margin and is smaller, and v1 already uses it. bge-small works on a compressed cosine scale (almost everything falls between 0.55 and 0.80), so it needs its own thresholds.
-
-**Partial profiles** still rank their own occupation first, with lower coverage than the full profile:
-
-| Partial profile | Own coverage | Full profile's coverage |
-|---|---|---|
-| Fresher nurse | 0.26 | 0.41 |
-| Accounts assistant without GST/Tally | 0.22 | 0.57 |
-| ITI apprentice | 0.33 | 0.39 |
-
-**Shipped constants (`matcher.py`):**
-
-| Item types | met | partial | TYPE_SHARE |
+| Set | Profiles | Style | Used for |
 |---|---|---|---|
-| tech, tool | 0.65 | 0.52 | 0.05 each |
-| market_skill | 0.65 | 0.52 | 0.30 |
-| task, dwa | 0.55 | 0.42 | 0.30, 0.10 |
-| knowledge | 0.50 | 0.37 | 0.10 |
-| skill, work_activity | 0.50 | 0.37 | 0.04 each |
-| ability | 0.50 | 0.37 | 0 (fit indicator) |
+| `tuning/` | 15 + 3 partial | mostly resume-shaped (2 free text) | tuning only |
+| `heldout/` | 15, one per export occupation | senior nursing superintendent, Hinglish pharmacist / accountant / civil engineer / truck driver, fresher clinic assistant and mechanical engineer, career changers (insurance → loans, HR → chef, DTP → designer), one-liners (teacher, electrician), bullet-only support agent, head of analytics | never tuned on |
+| `new/` | 10, for occupations outside the export | Physical Therapists, Plumbers, HR Specialists, Tellers, Lawyers, Pharmacy Technicians, Retail Salespersons, Software QA, Hotel Desk Clerks, Dental Hygienists | never tuned on |
 
-**Best-evidence similarity, own occupation vs others (MiniLM, median):**
+The 10 extra occupations were resolved through module 1's `/occupations/search` and fetched from `/profile` and `/requirements` on a local module 1 (v2.1 code). The local database predates v2.1 (`db_meta` 2.0.0), so these 10 have **no DWA, no tool and no curated rows, and v2.0's noisier market skills**. They show how the engine does on real O*NET data alone.
 
-| Item type | Own occupation | Others |
+**Procedure:**
+1. `python scripts/calibrate.py --tune` searches the thresholds (name-like, task-like), the partial gap and five type-share presets on the **tuning profiles against the 15 export occupations only**.
+2. The result is frozen in `matcher.py`.
+3. `python scripts/calibrate.py` reports the held-out sets with those constants on the 25-occupation matrix.
+
+The held-out results were not used to change any constant.
+
+**Frozen constants:**
+
+| Core type | met | partial | TYPE_SHARE |
+|---|---|---|---|
+| tech, tool | 0.55 | 0.45 | 0.10 each |
+| market_skill | 0.55 | 0.45 | 0.40 |
+| task | 0.55 | 0.45 | 0.30 |
+| dwa | 0.55 | 0.45 | 0.10 |
+
+**Results (MiniLM, frozen constants):**
+
+| Set | Occupations | Top-1 | Top-3 | Mean margin | Worst margin |
+|---|---|---|---|---|---|
+| tuning, as tuned | 15 export | 15/15 | 15/15 | +0.335 | +0.144 (staff nurse) |
+| (a) tuning | 25 | 14/15 | 15/15 | +0.265 | −0.040 (pharmacist → Pharmacy Technicians) |
+| (b) held-out | 25 | 13/15 | 14/15 | +0.111 | −0.244 (fresher clinic assistant → Physical Therapists) |
+| (c) 10 new occupations | 25 | 8/10 | 10/10 | +0.130 | −0.129 (advocate → Retail Salespersons) |
+| (d) held-out, curated rows removed | 25 | 13/15 | 14/15 | +0.098 | −0.213 (same) |
+| held-out, like for like | 15 export | 14/15 | 14/15 | +0.146 | 0.000 (teacher one-liner) |
+
+**Reading the results:**
+- **The tuning-set numbers overstate accuracy.** Held-out top-1 drops from 15/15 to 13–14/15, and the mean margin halves (+0.335 → +0.146 like for like).
+- **Curated rows don't carry the result:** removing them, (d), keeps top-1 at 13/15 and lowers the mean margin by only 0.013.
+- **The 10 new occupations reach 8/10 top-1 and 10/10 top-3 on O*NET data alone.**
+
+**Failures and causes:**
+
+1. **Teacher one-liner, coverage 0.00 (rank 6–7).** The whole profile is one comma-separated sentence, so it becomes a single evidence unit that matches nothing above 0.45. *Fix (A2):* split long comma lists in free text into clauses.
+2. **Fresher clinic assistant → Physical Therapists (0.63 vs own 0.39), and advocate → Retail Salespersons (0.28 vs 0.15).** The extra occupations from the v2.0 database often have exactly one market skill, sometimes noise ("Teaching" for Physical Therapists and Tellers, "Strategy" for Retail). With `TYPE_SHARE["market_skill"] = 0.40`, one hit on that item supplies 40% of the score, and one miss costs 40%. Lawyers' tasks match the advocate well (0.68, 0.66, 0.65), but Lawyers score 0.15 because their single market skill misses. *Fixes:*
+   - scale a type's share by its item count (e.g. full share from 5 items);
+   - refetch the extra occupations from a v2.1 database (cleaned market skills, DWAs);
+   - re-tune both on the tuning set only.
+3. **Pharmacist → Pharmacy Technicians (−0.04)** and **showroom salesperson → Sales Representatives (−0.04).** These are adjacent occupations. The comparison is also uneven: Pharmacists have DWAs and curated tools, Pharmacy Technicians have neither. A2's verdict should present close runners-up as alternatives, not errors.
+
+**Best-evidence similarity, own vs other occupations** (tuning set, median):
+
+| Type | Own | Other |
 |---|---|---|
-| market_skill | 0.65 | 0.26 |
-| task | 0.50 | 0.27 |
+| market_skill | 0.65 | 0.27 |
+| task | 0.50 | 0.28 |
+| dwa | 0.46 | 0.28 |
 | tech | 0.34 | 0.24 |
-| knowledge | 0.21 | 0.20 |
-| skill | 0.25 | 0.25 |
-| work_activity | 0.25 | 0.25 |
-| ability | 0.16 | 0.16 |
+| tool | 0.29 | 0.16 |
 
-Tasks and market skills carry the signal. The generic O*NET layers (skills, work activities, abilities, and mostly knowledge) are the **same 35/41/52/33 items for every occupation**, and resume text doesn't separate them semantically. A2 should infer them from the matched tasks and work history, not from text similarity. Tech names rarely appear in Indian resumes in O*NET's wording (1.7% met for the right occupation), so tech relies on the alias layer.
+In A1 the generic layers were 0.25 vs 0.25 (skill, work_activity), 0.21 vs 0.20 (knowledge) and 0.16 vs 0.16 (ability), which is why they are now inferred instead of matched.
 
-**Overfitting caveat:** the thresholds and shares were tuned on the same 15 profiles they are tested on. The calibration tests (`tests/calibration/test_calibration.py`) require top-1 ≥ 13/15 and top-3 = 15/15, plus sanity checks:
-- the nurse profile scores Registered Nurses at least 0.10 above Electricians;
-- the accountant profile ranks Accountants in the top 2;
-- the data scientist profile ranks Data Scientists first;
-- each partial profile scores below its full profile.
+**Nurse sample** (tuning staff nurse vs Registered Nurses):
+- **Core:** "Administer medications…" met (0.65), "Monitor, record, and report symptoms…" met (0.64), "Record patients' medical information and vital signs" partial (0.53); Epic (0.42) missing, MEDITECH partial (0.50).
+- **Work activities:** Assisting and Caring for Others, Documenting/Recording Information, Communicating with Supervisors… and Making Decisions… are evidenced through met DWAs; Getting Information is not evidenced; the rest have no DWA data.
+- **Draws on:** Medicine and Dentistry is inferred (from a met DWA). Psychology, Customer and Personal Service, English Language, Administrative and the top 5 skills are listed but not inferred.
+- **Fit indicators:** Deductive Reasoning, Problem Sensitivity, Inductive Reasoning, Oral Comprehension, Oral Expression, Written Comprehension.
 
-They need held-out profiles before the numbers are trusted beyond this set.
-
-**Sample, staff nurse vs Registered Nurses** (core requirements, heaviest first):
-- Met:
-  - "Administer medications…" ← "medication administration" (0.65)
-  - "Monitor, record, and report symptoms…" ← "Admitted patients, took history and assessed their condition" (0.64)
-  - "Consult and coordinate with healthcare team members…" ← "Prepare nursing care plans with the intensivist…" (0.56)
-  - "Direct or coordinate infection control programs…" ← "infection control" (0.71)
-- Partial:
-  - "Record patients' medical information and vital signs" (0.53)
-  - "Provide health care, first aid, immunizations…" (0.49)
-- Missing:
-  - "Maintain accurate, detailed reports and records" (0.38, against "clinical documentation")
-  - "Prescribe or recommend drugs…" (0.40)
-  - Knowledge "Psychology"
-  - All tech (Epic 0.42, MEDITECH 0.50): the profile names only "hospital EMR"
+The bge-small comparison from A1 (MiniLM kept as default) was not re-run for the core-only score.
 
 ### 11.4 Tests
 
 | File | Tests | Covers |
 |---|---|---|
-| `test_general_m1_client.py` | 8 | cache per module 1 version (and none when unknown), timeout/unreachable/404/500 as `M1Error`, search confidence, low confidence and ties, fixture twin |
-| `test_general_requirements.py` | 26 | layers, weights, default levels, dwa/tool, embedding text, duplicate, unreliable, support floor and posting count, each noise list, market cap, off-domain down-weight, domain texts, clean data untouched, the Accountants fixture report |
-| `test_general_evidence.py` | 4 | sections → work/project/mentioned, spans, sentence and skills-item splitting, contact lines dropped, free text, typed skills, v1 profile |
-| `test_general_matcher.py` | 5 | alias before semantics, best evidence and span, per-type thresholds, no evidence, provisional coverage |
-| `calibration/test_calibration.py` | 5 | top-1 ≥ 13/15 and top-3, nurse vs Electricians margin, Accountants top-2, Data Scientists top-1, partial < full (MiniLM; skipped if it can't load) |
+| `test_general_m1_client.py` | 10 | cache per module 1 version (none when unknown), `/api/v1/meta` preferred and OpenAPI fallback, timeout/unreachable/404/500 as `M1Error`, search confidence, low confidence and ties, fixture files merging with their versions |
+| `test_general_requirements.py` | 34 | layers and scored types, weights, default levels, embedding text, provenance (curated source, `tool_*`, `tech_*`), curated weight and no share, duplicate, unreliable, safety-net floor and `posting_count` switch, noise lists, cap (curated exempt), off-domain for tech and low-share posting skills (curated and high-share exempt), domain texts, clean data untouched, v2.1 Accountants, v2.0 regression |
+| `test_general_evidence.py` | 4 | sections → work/project/mentioned, spans, sentence and skills-item splitting, contact lines, free text, typed skills, v1 profile |
+| `test_general_matcher.py` | 7 | core types only with provenance, alias before semantics, best evidence and span, per-type thresholds, no evidence, coverage with reliability-scaled shares |
+| `test_general_inference.py` | 7 | GWA from DWA/IWA ids, evidenced / not evidenced / no DWA data, draws-on inferred from a met DWA and never a gap, fit indicators |
+| `calibration/test_calibration.py` | 10 | tuning set (top-1 ≥ 13/15, top-3 15/15, nurse vs Electricians, Accountants top-2, Data Scientists top-1, partial < full); held-out floors one profile below the observed results for (b), (c), (d) and like-for-like; curated rows change top-1 by at most one (MiniLM; skipped if it can't load) |
 
-The v1 suite is untouched: **284 passed + 1 skipped (live Groq without a key) = 285**. With the general engine, the total is **332 passed, 1 skipped**.
+The v1 suite is untouched: **284 passed + 1 skipped (live Groq without a key) = 285**. With the general engine, the total is **356 passed, 1 skipped**.

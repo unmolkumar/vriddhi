@@ -6,7 +6,7 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
-> **v2 in progress:** a general career engine for any occupation (module 1 v2.0 requirements, not just tech roles) is being built in `src/general/`. Phase A1 (requirements, evidence, semantic matching, calibration) is in; it has no public endpoint yet. Everything below (v1, `/api/v1/*`) is unchanged. Design and calibration results: [WORKING.md §11](WORKING.md#11-general-engine-v2--a1).
+> **v2 in progress:** a general career engine for any occupation (module 1 v2.0 requirements, not just tech roles) is being built in `src/general/`. Phases A1 and A1b (requirements with provenance, evidence, semantic matching of core requirements, inferred generic layers, held-out calibration) are in; there is no public endpoint yet. Everything below (v1, `/api/v1/*`) is unchanged. Design and calibration results: [WORKING.md §11](WORKING.md#11-general-engine-v2--a1-and-a1b).
 
 ## Install
 
@@ -31,8 +31,8 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 333 tests (285 v1 + 48 general engine); the live Groq test is skipped without a key
-python module-2-skill-gap/scripts/calibrate.py --tune   # general engine: 15 profiles x 15 occupations, thresholds
+pytest module-2-skill-gap/tests/ -v      # 357 tests (285 v1 + 72 general engine); the live Groq test is skipped without a key
+python module-2-skill-gap/scripts/calibrate.py          # general engine: tuning / held-out / new-occupation report
 ```
 
 General engine settings (optional, root `.env`): `M1_BASE_URL` (default `http://localhost:8001`), `EMBEDDING_MODEL` (default `all-MiniLM-L6-v2`).
