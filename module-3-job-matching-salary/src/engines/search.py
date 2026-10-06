@@ -10,10 +10,10 @@ from src.engines.job_fetcher import fetch_jobs
 from src.engines.job_store import JobStore, role_key
 from src.engines.locations import normalise_city
 from src.engines.m2_client import M2Unavailable, resolve_typed_skills
-from src.engines.market_profile import build_profile, concrete_children, infer_skills, is_broad
+from src.engines.market_profile import build_profile, category_flags, concrete_children, infer_skills, is_broad
 from src.engines.matching import TITLE_EXPERIENCE, candidate_cities, classify, match_job, skills_confidence
 from src.engines.ranking import rank_components, rank_score, sort_key
-from src.engines.salary import candidate_value, estimate_market, negotiate
+from src.engines.salary import candidate_value, estimate_market, m1_salary, negotiate
 from src.models.schemas import (
     MANUAL_SKILL_LEVEL, CandidateProfile, CandidateSkill, ExperienceBand, Job, JobResult, JobSearchRequest,
     JobSearchResponse, SalaryRange, SkillUnlock, slug,
@@ -38,6 +38,17 @@ class SearchContext:
 
     def __init__(self, response: JobSearchResponse, jobs: dict[str, Job], matches: dict[str, float]):
         self.response, self.jobs, self.matches = response, jobs, matches
+
+
+def age_hours(fetched_at: datetime, now: datetime) -> float:
+    return round(max(0.0, (now - fetched_at).total_seconds() / 3600), 1)
+
+
+def age_text(hours: float | None) -> str | None:
+    """'fetched 10 h ago' ('fetched 25 min ago' under an hour)."""
+    if hours is None:
+        return None
+    return f"fetched {round(hours * 60)} min ago" if hours < 1 else f"fetched {round(hours, 1):g} h ago"
 
 
 def _primary_location(req: JobSearchRequest) -> str | None:
@@ -103,10 +114,11 @@ def _unlock_skills(req: JobSearchRequest, candidate: CandidateProfile, jobs: lis
     if req.gap_analysis:
         wanted += list(req.gap_analysis.critical_missing) + [slug(s) for s in req.gap_analysis.learning_priorities]
     wanted += [p.skill for p in profile.top_skills]
-    out = []
+    out, flags = [], category_flags(jobs)
     for skill in dict.fromkeys(wanted):
-        options = [c for c in concrete_children(skill, jobs, profile) if c not in have] if is_broad(skill) else [skill]
-        pick = next((o for o in options if o and o not in have and o not in out and not is_broad(o)), None)
+        broad = is_broad(skill, flags)
+        options = [c for c in concrete_children(skill, jobs, profile) if c not in have] if broad else [skill]
+        pick = next((o for o in options if o and o not in have and o not in out and not is_broad(o, flags)), None)
         if pick:
             out.append(pick)
         if len(out) == UNLOCK_SKILLS:
@@ -142,8 +154,11 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         histogram_fn = lambda: adzuna.histogram(req.target_role, fetched.cities[0], client=client)  # noqa: E731
     js_salary = _jsearch_salary(req, fetched.cities[0] if fetched.cities else city, candidate.experience_years,
                                 store, client, now, warnings)
+    m1 = (m1_salary(req.market_salary_percentiles, candidate.experience_years, city,
+                    remote_only=set(req.work_mode) == {"remote"})
+          if req.market_salary_percentiles else None)
     market = estimate_market(jobs, histogram_fn=histogram_fn, baseline=req.market_baseline,
-                             percentiles=req.market_salary_percentiles, jsearch_estimate=js_salary)
+                             percentiles=m1, jsearch_estimate=js_salary)
     if market.estimated_median is None:
         warnings.append("No salary estimate: not enough posted salaries, percentiles, estimates or histogram data.")
 
@@ -171,7 +186,8 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         job_results.append(JobResult(
             job_id=job.job_id, title=job.title, company=job.company, location=job.location, work_mode=job.work_mode,
             employment_type=job.employment_type, posted_at=job.posted_at, source=job.source, publisher=job.publisher,
-            source_url=job.source_url, stale=job.stale,
+            source_url=job.source_url, stale=job.stale, fetched_at=job.last_observed_at,
+            age_hours=age_hours(job.last_observed_at, now),
             salary=SalaryRange(min=job.salary_min, max=job.salary_max, is_predicted=job.salary_is_predicted),
             match_score=round(m.overall * 100), classification=classify(m.overall), match=m.breakdown,
             matched_skills=m.matched, missing_skills=m.missing, inferred_skills=job.inferred_skills,
@@ -181,11 +197,10 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
         ))
 
     # Position the candidate within the band the salary data describes, so experience isn't counted twice:
-    # percentiles carry their own band, and a JSearch estimate is already for one experience bucket.
+    # module 1's percentiles describe one experience tier, and a JSearch estimate one experience bucket.
     band = _role_band(req)
-    if req.market_salary_percentiles and req.market_salary_percentiles.experience_band and \
-            market.sources_used == ["module_1_percentiles"]:
-        band = req.market_salary_percentiles.experience_band
+    if "module_1_percentiles" in market.sources_used and m1 and m1.band:
+        band = m1.band
     elif market.sources_used == ["jsearch_salary_estimate"] and js_salary and js_salary.get("bucket") in jsearch.BUCKET_BANDS:
         lo, hi = jsearch.BUCKET_BANDS[js_salary["bucket"]]
         band = ExperienceBand(min=lo, max=hi)
@@ -218,10 +233,12 @@ def run_search(req: JobSearchRequest, *, store: JobStore | None = None, client: 
                      f"job{'s' if len(moved) != 1 else ''}{where} to a Good or Strong match.")))
     unlocks.sort(key=lambda u: -u.jobs_unlocked)
 
+    oldest = min((j.last_observed_at for j in jobs), default=None)
+    age = age_hours(oldest, now) if oldest else None
     response = JobSearchResponse(
         target_role=req.target_role, location=city, cities=fetched.cities, total_found=len(jobs),
         total_available=fetched.total_available, jobs=job_results[:req.limit], role_market_profile=profile,
         market_salary=market, candidate_value=value, negotiation=negotiation, skill_unlocks=unlocks,
         provider_trace=fetched.attempts, sources=fetched.sources, stale=fetched.stale,
-        warnings=list(dict.fromkeys(warnings)))
+        fetched_at=oldest, age_hours=age, data_age=age_text(age), warnings=list(dict.fromkeys(warnings)))
     return SearchContext(response, {j.job_id: j for j in jobs}, matches)

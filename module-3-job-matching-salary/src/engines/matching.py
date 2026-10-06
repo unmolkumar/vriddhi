@@ -96,7 +96,7 @@ def skill_component(job: Job, candidate: CandidateProfile) -> tuple[float, list[
     total = credit = 0.0
     matched, missing = [], []
     for s in job.skills:
-        weight = (INFERRED_SKILL_WEIGHT if s in job.inferred_skills else 1.0) * (BROAD_SKILL_WEIGHT if is_broad(s) else 1.0)
+        weight = (INFERRED_SKILL_WEIGHT if s in job.inferred_skills else 1.0) * (BROAD_SKILL_WEIGHT if is_broad(s, job.skill_is_category) else 1.0)
         c = direct.get(s) or via_parent.get(s) or 0.0
         parent = job.skill_parents.get(s)
         if not c and parent and parent in direct:
@@ -105,7 +105,7 @@ def skill_component(job: Job, candidate: CandidateProfile) -> tuple[float, list[
         credit += weight * c
         (matched if c > 0 else missing).append(s)
     # Concrete skills first (the job's own before inferred); broad categories (ai, data_science) always last.
-    missing.sort(key=lambda s: (is_broad(s), s in job.inferred_skills))
+    missing.sort(key=lambda s: (is_broad(s, job.skill_is_category), s in job.inferred_skills))
     inferred_fraction = len([s for s in job.skills if s in job.inferred_skills]) / len(job.skills)
     # A job whose skills are mostly inferred can't outrank comparable jobs with real skills.
     return credit / total * (1 - INFERRED_PENALTY * inferred_fraction), matched, missing, "skills"

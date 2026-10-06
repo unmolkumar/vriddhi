@@ -38,10 +38,49 @@ python scripts/prewarm.py                     # fill it; --with-jsearch-salary c
 
 Start module 2 (port 8002) as well, so job descriptions get skill ids.
 
+`prewarm.py` always fills Adzuna for all 7 roles × 5 cities. `--roles "A,B"` / `--cities "X,Y"` limit the JSearch calls to those pairs. It prints the most JSearch calls it can make before fetching, and refuses a plan above 20 without `--yes`.
+
+## Demo-day runbook
+
+Commands are PowerShell, from `module-3-job-matching-salary/` with the venv active. JSearch's free plan is 200 calls a month; this plan uses about 41.
+
+**Two nights before:** cache JSearch's salary estimates for every role × city (kept 7 days).
+```powershell
+python scripts/prewarm.py --with-jsearch-salary --dry-run    # JSearch: at most 35 call(s) ... (0 search + 35 salary ...)
+python scripts/prewarm.py --with-jsearch-salary --yes        # 35 JSearch calls, once; Adzuna for all 7x5 as well
+```
+
+**Night before:** start module 2, then refresh Adzuna for all 7 × 5 and fetch JSearch full descriptions for the demo pairs only. `--force` is needed because the run two nights before already cached these queries.
+```powershell
+cd ..\module-2-skill-gap; Start-Process python -ArgumentList "-m","uvicorn","src.api.main:app","--port","8002"; cd ..\module-3-job-matching-salary
+python scripts/prewarm.py --roles "Data Scientist,Data Analyst,Backend Developer" --cities "Bengaluru,Pune" --with-jsearch --dry-run
+#   JSearch: at most 6 call(s) of the 200/month quota (6 search + 0 salary, over 6 role x city pair(s)).
+python scripts/prewarm.py --roles "Data Scientist,Data Analyst,Backend Developer" --cities "Bengaluru,Pune" --with-jsearch --force
+```
+
+**Morning of:** keep the night's jobs fresh through the demo, start both services and check them.
+```powershell
+$env:LIVE_CACHE_TTL_HOURS = "36"          # set in this window before starting module 3 (or put it in .env)
+uvicorn src.api.main:app --port 8003      # in another window: module 2 on 8002 as above
+Invoke-RestMethod http://127.0.0.1:8002/api/v1/health                 # module 2: status ok
+Invoke-RestMethod http://127.0.0.1:8003/api/v1/health                 # module 3: status ok, providers adzuna/jsearch true, cache jobs > 0, salary_estimates >= 35
+$r = Invoke-RestMethod http://127.0.0.1:8003/api/v1/jobs/search -Method Post -ContentType application/json `
+     -Body '{"target_role":"Data Scientist","location":"Bengaluru","skills":["python","sql","machine learning"],"experience_years":4}'
+$r.stale; $r.data_age; $r.sources; $r.market_salary.display    # False, "fetched 9 h ago", adzuna (+ jsearch), a range
+$r.market_salary.source_check    # module 1 vs JSearch: both numbers, the gap, and which one is primary
+```
+`stale` must be `False`, and `data_age` should match last night's run. If `stale` is `True`, Adzuna couldn't be reached: check the network, then re-run the night-before command.
+
+**If the Wi-Fi dies:**
+- Pre-warmed role × city pairs searched within `LIVE_CACHE_TTL_HOURS` are served from the cache, so nothing changes (`stale: false`). Salary ranges come from the cached JSearch estimates.
+- Older pairs come back from the last snapshot. The response shows `"stale": true` and `"sources": ["snapshot"]`. Each job carries `stale: true` and `age_hours`. `provider_trace` shows `adzuna: error` and `snapshot: used, "14.2 h old"`. `warnings` says *"Live providers unavailable for Bengaluru; showing jobs last fetched 14.2 hours ago."*
+- A pair that was never fetched returns no jobs, with the warning *"No live or cached jobs available for …"*. Stick to the pre-warmed pairs.
+- What to say: "We're offline, so these are real listings from last night's fetch, labelled with their age. Live, the same call goes to Adzuna and JSearch; the snapshot exists so the product degrades instead of breaking."
+
 ## Test
 
 ```bash
-pytest module-3-job-matching-salary/tests/ -v      # 138 tests; the two live provider tests skip without keys
+pytest module-3-job-matching-salary/tests/ -v      # 165 tests; the two live provider tests skip without keys
 ```
 
 ## Endpoints
@@ -74,7 +113,7 @@ With module 2's profile instead of `skills`, pass `"profile": <module 2 UserProf
 |---|---|---|
 | `gap_analysis` | module 2 | drives which skills the unlocks look at |
 | `typical_experience` `{min, max}` | module 1 | experience band for jobs that don't state one |
-| `market_salary_percentiles` `{p25, p50, p75, sample_size, experience_band}` | module 1 | primary salary source after posted salaries |
+| `market_salary_percentiles` | module 1 `POST /api/v1/career/analyze`, passed as-is | salary source after posted salaries: the candidate's on-site experience tier (× city ratio when that city has ≥ 50 points), or `remote_inr_lpa` when `work_mode` is `["remote"]`. Checked against JSearch; if they differ by more than 25%, the larger India sample wins (`PREFER_LARGER_INDIA_SAMPLE`) |
 | `market_baseline` | module 1 `regional_breakdown.india` | last salary fallback |
 | `jsearch_salary: true` | — | fetch JSearch's salary estimate if not cached (spends JSearch quota; cached 7 days) |
 | `jsearch_enrichment: true` | — | also query JSearch for full job descriptions (spends JSearch quota) |

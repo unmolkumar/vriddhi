@@ -85,12 +85,14 @@ M2_VOCAB = {
     "generative ai": ("generative_ai", "Generative AI", "ai"), " ai ": ("ai", "Artificial Intelligence", None),
     "data science": ("data_science", "Data Science", "machine_learning"),
 }
+M2_CATEGORIES = {"ai", "generative_ai", "data_science", "cloud"}   # module 2's is_category ids among the above
 
 
 def m2_extract_handler(request: httpx.Request) -> httpx.Response:
     """Stand-in for module 2's /skills/extract: keyword hits with id, display, maps_to and matches."""
     text = f" {json.loads(request.content)['text'].lower()} "
-    skills = [{"id": i, "display": d, "maps_to": p, "in_taxonomy": True, "source": "dictionary", "matches": [k.strip()]}
+    skills = [{"id": i, "display": d, "maps_to": p, "in_taxonomy": True, "is_category": i in M2_CATEGORIES,
+               "source": "dictionary", "matches": [k.strip()]}
               for k, (i, d, p) in M2_VOCAB.items() if k in text]
     return httpx.Response(200, json={"skills": skills, "warnings": []})
 

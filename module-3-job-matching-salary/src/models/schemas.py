@@ -57,6 +57,8 @@ class Job(BaseModel):
         "description; 'unavailable' = module 2 unreachable"))
     skill_parents: dict[str, str] = Field(default_factory=dict, description="Coarser id per skill, from module 2 (postgresql -> sql)")
     skill_display: dict[str, str] = Field(default_factory=dict, description="Display name per skill id, from module 2 (pytorch -> PyTorch)")
+    skill_is_category: dict[str, bool] = Field(
+        default_factory=dict, description="Module 2's is_category per skill id; empty when module 2 didn't send it")
     skills_inferred: bool = Field(default=False, description="Some skills were filled from the role market profile")
     inferred_skills: list[str] = Field(default_factory=list, description="Which skills were inferred (also listed in skills)")
     salary_min: int | None = Field(default=None, description="INR per year")
@@ -150,20 +152,48 @@ class ExperienceBand(BaseModel):
         return self
 
 
-class MarketPercentiles(BaseModel):
-    """Optional: module 1's salary percentiles for the role (INR per year), e.g. from its INR salary points."""
+class PercentileBand(BaseModel):
+    """One of module 1's salary percentile bands, in INR lakh per annum (LPA)."""
     model_config = ConfigDict(extra="ignore")
-    p25: int = Field(gt=0)
-    p50: int = Field(gt=0)
-    p75: int = Field(gt=0)
+    p25: float = Field(gt=0)
+    p50: float = Field(gt=0)
+    p75: float = Field(gt=0)
     sample_size: int = Field(ge=0)
-    experience_band: ExperienceBand | None = Field(default=None, description="The band these percentiles describe")
 
     @model_validator(mode="after")
-    def _ordered(self) -> "MarketPercentiles":
+    def _ordered(self) -> "PercentileBand":
         if not self.p25 <= self.p50 <= self.p75:
             raise ValueError("percentiles must satisfy p25 <= p50 <= p75")
         return self
+
+
+class MarketPercentiles(BaseModel):
+    """Module 1's market_salary_percentiles object, as POST /api/v1/career/analyze returns it (values in LPA).
+    overall_usd is accepted and ignored. Older module 1 sends no remote_inr_lpa (remote mixed into overall)."""
+    model_config = ConfigDict(extra="ignore")
+    overall_inr_lpa: PercentileBand | None = Field(default=None, description="On-site and hybrid (all roles in older module 1)")
+    remote_inr_lpa: PercentileBand | None = Field(
+        default=None, description="Pure remote roles; used only when the request accepts remote work only")
+    by_experience_inr_lpa: dict[str, PercentileBand] = Field(
+        default_factory=dict, description="'entry' (<3 years), 'mid' (3-5), 'senior' (>5)")
+    by_city_inr_lpa: dict[str, PercentileBand] = Field(
+        default_factory=dict, description="'Bengaluru', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi NCR'")
+
+
+class SourceCheck(BaseModel):
+    """Module 1's percentiles against JSearch's estimate, when both were available (INR per year)."""
+    module_1_p25: int
+    module_1_median: int
+    module_1_p75: int
+    module_1_sample_size: int
+    jsearch_min: int
+    jsearch_median: int
+    jsearch_max: int
+    jsearch_sample_size: int
+    gap_pct: float = Field(description="(JSearch - module 1) / module 1 x 100")
+    agree: bool = Field(description="Within SALARY_SOURCE_TOLERANCE")
+    primary: Literal["module_1", "jsearch"] = Field(description="The source the estimate uses")
+    rule: str = Field(description="'module_1_agrees' or 'PREFER_LARGER_INDIA_SAMPLE'")
 
 
 class MatchWeights(BaseModel):
@@ -270,6 +300,8 @@ class JobResult(BaseModel):
     publisher: str | None
     source_url: str | None
     stale: bool
+    fetched_at: datetime = Field(description="When this listing was fetched from its provider")
+    age_hours: float = Field(description="Hours since fetched_at")
     salary: SalaryRange
     match_score: int = Field(ge=0, le=100, description="Overall match, percent")
     classification: Classification
@@ -310,6 +342,10 @@ class SalaryEstimate(BaseModel):
     sample_size: int
     sources_used: list[str]
     excluded: dict[str, int] = Field(default_factory=dict, description="Salaries left out and why")
+    method: Literal["experience_bucket", "experience_x_city_ratio", "overall", "remote"] | None = Field(
+        default=None, description="How module 1's percentiles were applied, when they were used")
+    source_check: SourceCheck | None = Field(
+        default=None, description="Module 1 vs JSearch medians, when both were available")
     display: str | None = Field(default=None, description="e.g. 'Estimated market range: 12-18 LPA'")
     note: str
 
@@ -362,6 +398,9 @@ class JobSearchResponse(BaseModel):
     provider_trace: list[ProviderAttempt]
     sources: list[str]
     stale: bool
+    fetched_at: datetime | None = Field(description="When the oldest returned listing was fetched")
+    age_hours: float | None = Field(description="Hours since fetched_at")
+    data_age: str | None = Field(description="e.g. 'fetched 10 h ago'")
     warnings: list[str]
 
 
