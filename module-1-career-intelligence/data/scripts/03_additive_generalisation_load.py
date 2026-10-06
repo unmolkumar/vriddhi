@@ -1558,7 +1558,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
             MIN(source) AS source,
             MAX(reliable) AS reliable,
             MAX(posting_count) AS posting_count,
-            MAX(soc_posting_total) AS soc_posting_total
+            MAX(soc_posting_total) AS soc_posting_total,
+            MIN(india_relevant) AS india_relevant,
+            MAX(india_irrelevant_reason) AS india_irrelevant_reason
         FROM (
             -- 1. O*NET Skills
             SELECT 
@@ -1575,7 +1577,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 CASE WHEN s.recommend_suppress = 'Y' OR s.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_skills s
             LEFT JOIN onet_content_model cm ON s.element_id = cm.element_id
 
@@ -1596,7 +1600,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 CASE WHEN k.recommend_suppress = 'Y' OR k.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_knowledge k
             LEFT JOIN onet_content_model cm ON k.element_id = cm.element_id
 
@@ -1617,7 +1623,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 CASE WHEN a.recommend_suppress = 'Y' OR a.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_abilities a
             LEFT JOIN onet_content_model cm ON a.element_id = cm.element_id
 
@@ -1638,7 +1646,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 1 AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_work_activities w
             LEFT JOIN onet_content_model cm ON w.element_id = cm.element_id
 
@@ -1659,7 +1669,17 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 1 AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                CASE 
+                    WHEN tr.soc_code IN ('29-1141.00', '31-9092.00') AND (LOWER(tr.task_description) LIKE '%prescribe%' OR LOWER(tr.task_description) LIKE '%recommend drug%') THEN 0
+                    WHEN LOWER(tr.task_description) LIKE '%401(k)%' OR LOWER(tr.task_description) LIKE '%irs form%' THEN 0
+                    ELSE 1 
+                END AS india_relevant,
+                CASE 
+                    WHEN tr.soc_code IN ('29-1141.00', '31-9092.00') AND (LOWER(tr.task_description) LIKE '%prescribe%' OR LOWER(tr.task_description) LIKE '%recommend drug%') THEN 'Prescription of scheduled medications is legally reserved for registered medical practitioners (MBBS/MD) under Indian medical regulations'
+                    WHEN LOWER(tr.task_description) LIKE '%401(k)%' OR LOWER(tr.task_description) LIKE '%irs form%' THEN 'US-specific regulatory or tax compliance requirement'
+                    ELSE NULL 
+                END AS india_irrelevant_reason
             FROM onet_task_ratings tr
 
             UNION ALL
@@ -1679,7 +1699,15 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 1 AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                CASE 
+                    WHEN d.soc_code IN ('29-1141.00', '31-9092.00') AND (LOWER(d.dwa_title) LIKE '%prescribe%' OR LOWER(d.dwa_title) LIKE '%recommend drug%') THEN 0
+                    ELSE 1 
+                END AS india_relevant,
+                CASE 
+                    WHEN d.soc_code IN ('29-1141.00', '31-9092.00') AND (LOWER(d.dwa_title) LIKE '%prescribe%' OR LOWER(d.dwa_title) LIKE '%recommend drug%') THEN 'Prescription of scheduled medications is legally reserved for registered medical practitioners (MBBS/MD) under Indian medical regulations'
+                    ELSE NULL 
+                END AS india_irrelevant_reason
             FROM onet_dwa d
 
             UNION ALL
@@ -1699,7 +1727,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 1 AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_tech_skills ts
 
             UNION ALL
@@ -1719,7 +1749,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 'onet' AS source,
                 1 AS reliable,
                 0 AS posting_count,
-                NULL AS soc_posting_total
+                NULL AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM onet_tools t
 
             UNION ALL
@@ -1742,7 +1774,9 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
                 ds.source AS source,
                 1 AS reliable,
                 ds.posting_count AS posting_count,
-                ds.soc_posting_total AS soc_posting_total
+                ds.soc_posting_total AS soc_posting_total,
+                1 AS india_relevant,
+                NULL AS india_irrelevant_reason
             FROM skill_demand_by_soc ds
             WHERE ds.region IN ('india', 'curated')
         )

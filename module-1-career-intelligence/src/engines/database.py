@@ -753,7 +753,8 @@ class CareerDatabase:
                 SELECT soc_code, item_type, item_id, item_name, item_description,
                        importance_norm, level_norm, hot_technology, in_demand,
                        india_demand_share, source, reliable,
-                       posting_count, soc_posting_total
+                       posting_count, soc_posting_total,
+                       india_relevant, india_irrelevant_reason
                 FROM v_occupation_requirements
                 WHERE soc_code = ?
             """
@@ -887,9 +888,11 @@ class CareerDatabase:
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT r.soc_code, r.related_soc_code, r.related_title, r.relatedness_tier, r.index_val,
-                       d.major_group_title, d.career_cluster
+                       d.major_group_title, d.career_cluster,
+                       jz.job_zone
                 FROM onet_related_occupations r
                 LEFT JOIN occupation_domains d ON r.related_soc_code = d.soc_code
+                LEFT JOIN onet_job_zones jz ON r.related_soc_code = jz.soc_code
                 WHERE r.soc_code = ?
                 ORDER BY r.relatedness_tier ASC, r.index_val ASC
                 LIMIT ?

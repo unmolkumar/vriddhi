@@ -62,7 +62,8 @@ def run_export():
             SELECT soc_code, item_type, item_id, item_name, item_description,
                    importance_norm, level_norm, hot_technology, in_demand,
                    india_demand_share, source, reliable,
-                   posting_count, soc_posting_total
+                   posting_count, soc_posting_total,
+                   india_relevant, india_irrelevant_reason
             FROM v_occupation_requirements
             WHERE soc_code = ?
             ORDER BY CASE WHEN importance_norm IS NOT NULL THEN importance_norm ELSE 0 END DESC

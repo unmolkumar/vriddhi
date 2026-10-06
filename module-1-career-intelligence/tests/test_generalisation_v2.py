@@ -221,6 +221,7 @@ def test_related_occupations_endpoint(client):
     assert len(related) > 0
     assert all("related_soc_code" in r for r in related)
     assert all("related_title" in r for r in related)
+    assert any("job_zone" in r and r["job_zone"] is not None for r in related)
 
 
 # 8. City Aliases Normalization
@@ -354,4 +355,26 @@ def test_indian_market_skills_ds_and_counts(client):
 
     top_empirical = market_skills[0]
     assert top_empirical["importance_norm"] > 0.50
+
+
+# 14. Acceptance v2.2: India Relevance Flags on US-Specific Tasks/DWAs
+def test_india_relevance_flags_on_requirements(client):
+    res = client.get("/api/v1/occupations/29-1141.00/requirements")
+    assert res.status_code == 200
+    reqs = res.json()
+
+    # All items must have india_relevant flag
+    for r in reqs:
+        assert "india_relevant" in r
+        assert r["india_relevant"] in [0, 1]
+
+    # Prescribe / recommend drugs for Registered Nurses must be flagged india_relevant = 0 with reason
+    irrelevant = [
+        r for r in reqs 
+        if r["india_relevant"] == 0
+    ]
+    assert len(irrelevant) > 0
+    for irr in irrelevant:
+        assert irr["india_irrelevant_reason"] is not None
+        assert "Indian" in irr["india_irrelevant_reason"] or "regulations" in irr["india_irrelevant_reason"]
 

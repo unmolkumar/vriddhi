@@ -393,7 +393,7 @@ Module 1 v2.1 expands Vriddhi beyond technology into a **universal career intell
 
 ### 8.1. Unified Requirements Contract: `v_occupation_requirements`
 
-This view provides **216,212 deduplicated requirement rows** across all 1,016 O\*NET occupations:
+This view provides **260,173 deduplicated requirement rows** across all 1,016 O\*NET occupations:
 
 ```sql
 SELECT 
@@ -402,26 +402,27 @@ SELECT
     item_id,            -- Unique identifier (O*NET element ID, DWA ID, task ID, tech_<slug>, tool_<slug>, or normalized skill)
     item_name,          -- Plain-English name (e.g. 'Reading Comprehension', 'Medicine and Dentistry', 'Multimeter', 'Tally ERP')
     item_description,   -- Detailed narrative statement ready for embedding
-    importance_norm,    -- Normalized importance [0.0, 1.0]
+    importance_norm,    -- Normalized importance [0.0, 1.0] (neutral 0.50 for curated fallback)
     level_norm,         -- Normalized proficiency level [0.0, 1.0] (NULL if not applicable)
     hot_technology,     -- 1 or 0
     in_demand,          -- 1 or 0
     india_demand_share, -- Share of Indian postings requiring this skill [0.0, 1.0] (NULL for curated domain skills)
-    source,             -- 'onet' | 'india_postings' | 'global_postings' | 'curated'
-    reliable            -- 1 (high reliability, non-suppressed) or 0
+    source,             -- 'onet' | 'india_postings' | 'curated'
+    reliable,           -- 1 (high reliability, non-suppressed) or 0
+    posting_count,      -- Empirical number of job postings citing skill (0 for onet/curated)
+    soc_posting_total,  -- Total job postings mapped to this SOC (NULL for onet/curated)
+    india_relevant,     -- 1 (relevant to Indian practice) or 0 (US-specific regulatory/legal task)
+    india_irrelevant_reason -- Plain-English rationale when india_relevant = 0 (e.g. prescription laws)
 FROM v_occupation_requirements;
 ```
 
-#### v2.1 Refinements & Quality Assurances:
-1. **DWAs and Tools Fully Populated**: Every occupation includes Detailed Work Activities (`onet_dwa`) and specialized physical equipment tools (`onet_tools`). Clinical and trade occupations have extensive tooling (e.g., Electricians: 18 tools including conduit benders, multimeters; Nurses: 18 tools including infusion pumps, vital signs monitors; Chefs: 18 tools).
-2. **Deduplicated Tech Tools with Unique Slugs**: Tech items no longer carry ambiguous content model IDs (like `2.E.6.m`) or duplicate rows across commodities. Unique item IDs are prefixed (`tech_<slug>`, `tool_<slug>`).
-3. **Cleaned Market Skills & Noise Elimination**: Empirical posting skills filter out all 45 PromptCloud industry categories, Indian cities/states, EEO terms, employee benefits, seniority prefixes, and self-referential occupation titles. Requires minimum support ($\ge 3$ postings, share $\ge 0.02$, capped at top 50 per SOC).
-4. **Curated Domain Competencies Provenance**: Core vocational skills (e.g., *Tally ERP, GST Filing* for Accountants; *Electrical Wiring, ITI Standards* for Electricians) are explicitly labeled with `source = 'curated'`, `region = 'curated'`, `mentions = 0`, and `india_demand_share = NULL`.
-5. **Note on Unzoned Occupations in `onet_job_zones`**: 93 out of 1,016 occupations do not possess an assigned Job Zone in O\*NET 31.0. These are exclusively residual/catch-all occupations ending in `.99` (e.g., `11-9199.00 Managers, All Other`, `15-1299.00 Computer Occupations, All Other`, `17-2199.00 Engineers, All Other`) and military codes. O\*NET does not assign uniform job zones to residual categories due to the heterogeneity of roles grouped under "All Other".
-6. **DB Build Metadata & Integrity Verification (`db_meta`)**:
-   - `schema_version`: `'2.1.0'`
-   - `export_hash`: `'070ce4a909e8b1dbdb1efb8008331bd86db3fe0bfb965e4a7cf8e0cd828e2538'` (SHA-256 of `data/m1_occupation_requirements_export.json`)
-   - `table_counts`: Stored as JSON directly in `db_meta` for downstream M2/M3 assertions.
+#### v2.2 Refinements & Quality Assurances:
+1. **Official O\*NET Tools Across All Occupations**: Ingested all 43,372 official O\*NET Tools Used records with commodity codes and titles into `onet_tools` (`source='onet'`). Zero hand-written tuples remain. Roll-up inheritance provides tools for parent specializations.
+2. **Restored Top-50 Empirical Market Skills**: Replaced share floor with `posting_count >= 3`, capped at top 50 per SOC. Data Scientists have 50 top market skills restored (Machine Learning, Python, SQL, TensorFlow, Deep Learning, PyTorch, AWS, etc.). Names normalized with display overrides.
+3. **Neutral Curated Weights**: Curated competencies set to `importance_norm = 0.50`, ensuring real market demand signals naturally outrank curated items.
+4. **India Relevance Flags (`india_relevant`)**: US-specific tasks/DWAs (such as nurse prescription of scheduled drugs or 401(k) / IRS tax filings) are flagged with `india_relevant = 0` and include legal/regulatory explanation in `india_irrelevant_reason`.
+5. **DB Build Metadata (`GET /api/v1/meta`)**: Live endpoint exposing `schema_version` (`'2.2.0'`), `built_at`, `export_hash` (`'3726e36d951c38f5...'`), and `table_counts`.
+6. **Related Occupations With Job Zones**: `GET /api/v1/occupations/{soc}/related` directly exposes `job_zone` (1–5) alongside `relatedness_tier`.
 
 ### 8.2. Additive REST API Endpoints
 
