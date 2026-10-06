@@ -5,7 +5,9 @@ Two layers per requirement:
      skill as an evidence unit is met, reason 'alias';
   2. semantic: cosine of '{name}: {description}' against every unit; the best unit decides, with per-item-type
      thresholds (task sentences and tool names score on different scales).
-coverage() is a provisional weighted score for calibration only; A2 replaces it with the real scoring.
+Only core requirements (SCORED_TYPES: market_skill, tech, tool, task, dwa) are matched and scored; the generic
+O*NET layers are inferred in inference.py. coverage() is a provisional weighted score for calibration only; A2
+replaces it with the real scoring.
 """
 from __future__ import annotations
 
@@ -13,31 +15,31 @@ from functools import lru_cache
 from typing import Literal, NamedTuple
 
 import numpy as np
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.engines.skill_extractor import extract_skills, resolve_skill
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import EvidenceUnit
-from src.general.requirements import RequirementItem
+from src.general.requirements import SCORED_TYPES, Provenance, RequirementItem
 
 Status = Literal["met", "partial", "missing"]
 
-# (met, partial) cosine per item type, MiniLM; calibrated on tests/calibration (WORKING.md, General engine A1).
+# (met, partial) cosine per core item type, MiniLM; tuned on tests/calibration/profiles/tuning only, then frozen
+# (WORKING.md section 11.3).
 THRESHOLDS: dict[str, tuple[float, float]] = {
-    "tech": (0.65, 0.52), "tool": (0.65, 0.52), "market_skill": (0.65, 0.52),
-    "task": (0.55, 0.42), "dwa": (0.55, 0.42),
-    "knowledge": (0.50, 0.37), "skill": (0.50, 0.37), "work_activity": (0.50, 0.37), "ability": (0.50, 0.37),
+    "tech": (0.55, 0.45), "tool": (0.55, 0.45), "market_skill": (0.55, 0.45),
+    "task": (0.55, 0.45), "dwa": (0.55, 0.45),
 }
 ALIAS_TYPES = ("tech", "tool", "market_skill")
 CREDIT = {"met": 1.0, "partial": 0.5, "missing": 0.0}
-# Provisional coverage: share of each item type in the score (renormalised over the types present). Within a
-# type, items are weighted by RequirementItem.weight, so LAYER_WEIGHT only matters across layers via these shares.
-TYPE_SHARE = {"task": 0.30, "dwa": 0.10, "market_skill": 0.30, "tech": 0.05, "tool": 0.05,
-              "knowledge": 0.10, "skill": 0.04, "work_activity": 0.04, "ability": 0.0}
+# Provisional coverage: share of each core item type in the score. A type's share is scaled by its items' mean
+# reliability (curated and off-domain factors), then renormalised over the types present.
+TYPE_SHARE = {"task": 0.30, "dwa": 0.10, "market_skill": 0.40, "tech": 0.10, "tool": 0.10}
 
 
 class RequirementMatch(BaseModel):
     item: RequirementItem
+    provenance: Provenance = Field(description="onet | india_postings | curated (same as item.provenance)")
     status: Status
     similarity: float
     reason: Literal["alias", "semantic", "none"]
@@ -91,7 +93,7 @@ def score(items: list[RequirementItem], units: list[EvidenceUnit], encoder: Enco
 
 
 def status_of(item_type: str, sim: float, thresholds: dict[str, tuple[float, float]] = THRESHOLDS) -> Status:
-    met, partial = thresholds.get(item_type, THRESHOLDS["skill"])
+    met, partial = thresholds.get(item_type, THRESHOLDS["task"])
     return "met" if sim >= met else "partial" if sim >= partial else "missing"
 
 
@@ -106,7 +108,7 @@ def classify(items: list[RequirementItem], units: list[EvidenceUnit], scored: li
             reason = "semantic" if status != "missing" else "none"
             u, sim = (units[s.unit] if s.unit is not None else None), s.similarity
         out.append(RequirementMatch(
-            item=item, status=status, similarity=round(sim, 4), reason=reason,
+            item=item, provenance=item.provenance, status=status, similarity=round(sim, 4), reason=reason,
             evidence_text=u.text if u else None, evidence_type=u.evidence_type if u else None,
             evidence_section=u.section if u else None, evidence_span=u.span if u else None))
     return out
@@ -115,20 +117,27 @@ def classify(items: list[RequirementItem], units: list[EvidenceUnit], scored: li
 def match(items: list[RequirementItem], units: list[EvidenceUnit], encoder: Encoder, *,
           cache_key: str | None = None, thresholds: dict[str, tuple[float, float]] = THRESHOLDS
           ) -> list[RequirementMatch]:
-    """Status, similarity, reason and best evidence for every requirement."""
-    return classify(items, units, score(items, units, encoder, cache_key=cache_key), thresholds)
+    """Status, similarity, reason and best evidence for every core requirement (other layers are skipped)."""
+    core = [i for i in items if i.item_type in SCORED_TYPES]
+    return classify(core, units, score(core, units, encoder, cache_key=cache_key), thresholds)
 
 
 def coverage(matches: list[RequirementMatch], type_share: dict[str, float] = TYPE_SHARE) -> float:
-    """Provisional 0-1 score: per item type, the weight-averaged credit (met 1, partial 0.5); then the types
-    combined by TYPE_SHARE, so a SOC with 474 tech rows isn't scored on tech alone."""
-    per_type: dict[str, list[float]] = {}
+    """Provisional 0-1 score over core types: per type, the weight-averaged credit (met 1, partial 0.5); the
+    types combined by TYPE_SHARE x the type's mean reliability, so a SOC with 237 tech rows isn't scored on tech
+    alone, and a type made only of curated rows counts half."""
+    num: dict[str, float] = {}
+    den: dict[str, float] = {}
+    base: dict[str, float] = {}
     for m in matches:
-        t = per_type.setdefault(m.item.item_type, [0.0, 0.0])
-        t[0] += m.item.weight * CREDIT[m.status]
-        t[1] += m.item.weight
-    shares = {t: type_share.get(t, 0.0) for t, (_, w) in per_type.items() if w > 0}
+        t = m.item.item_type
+        if t not in type_share:
+            continue
+        num[t] = num.get(t, 0.0) + m.item.weight * CREDIT[m.status]
+        den[t] = den.get(t, 0.0) + m.item.weight
+        base[t] = base.get(t, 0.0) + m.item.base_weight
+    shares = {t: type_share[t] * den[t] / base[t] for t in den if den[t] > 0 and base[t] > 0}
     total = sum(shares.values())
     if total <= 0:
         return 0.0
-    return sum(shares[t] / total * per_type[t][0] / per_type[t][1] for t in shares)
+    return sum(shares[t] / total * num[t] / den[t] for t in shares)
