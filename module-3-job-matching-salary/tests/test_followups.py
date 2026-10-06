@@ -10,7 +10,7 @@ from src.engines import m2_client
 from src.engines.market_profile import is_broad
 from src.engines.matching import BROAD_SKILL_WEIGHT, skill_component
 from src.engines.salary import (
-    MIN_CITY_SAMPLES, SALARY_SOURCE_TOLERANCE, estimate_market, experience_tier, m1_salary,
+    MIN_CITY_SAMPLES, PREFER_LARGER_INDIA_SAMPLE, SALARY_SOURCE_TOLERANCE, estimate_market, experience_tier, m1_salary,
 )
 from src.models.schemas import CandidateProfile, CandidateSkill, MarketPercentiles
 
@@ -111,17 +111,28 @@ def test_agreeing_sources_keep_module_1_primary():
     est = estimate_market([], percentiles=m1_salary(DS, 4, "Bengaluru"), jsearch_estimate=JS)   # 20 vs 22.1: -9.5%
     assert est.sources_used == ["module_1_percentiles"] and est.source_check.agree
     assert est.source_check.gap_pct == -9.5 and est.estimated_median == 2_210_000 and est.confidence == 0.66
+    assert (est.source_check.primary, est.source_check.rule) == ("module_1", "module_1_agrees")
     assert "JSearch's estimate agrees" in est.note
 
 
-def test_disagreeing_sources_are_both_reported_with_lower_confidence():
-    far = {**JS, "median": 12 * L}                                              # 12 vs 22.1: -45.7%
+def test_disagreeing_sources_prefer_the_larger_india_sample():
+    far = {**JS, "min": 8 * L, "median": 12 * L, "max": 17 * L}                   # 12 vs 22.1: -45.7%
     assert abs(12 - 22.1) / 22.1 > SALARY_SOURCE_TOLERANCE
     est = estimate_market([], percentiles=m1_salary(DS, 4, "Bengaluru"), jsearch_estimate=far)
-    assert est.sources_used == ["module_1_percentiles", "jsearch_salary_estimate"]
-    assert not est.source_check.agree and est.source_check.gap_pct == -45.7
-    assert (est.estimated_min, est.estimated_median, est.estimated_max) == (12 * L, 1_710_000, 30 * L)
-    assert est.confidence == 0.51 and "differs by 45.7%" in est.note
+    # JSearch has 900 salaries, module 1's mid tier 188: JSearch is primary, its own range, not a stretched one
+    assert est.sources_used == ["jsearch_salary_estimate"] and est.method is None
+    assert (est.estimated_min, est.estimated_median, est.estimated_max) == (8 * L, 12 * L, 17 * L)
+    assert est.confidence == 0.5                                                 # HIGH 0.6 - DISAGREE_PENALTY
+    c = est.source_check
+    assert (c.primary, c.rule, c.agree, c.gap_pct) == ("jsearch", PREFER_LARGER_INDIA_SAMPLE, False, -45.7)
+    assert (c.module_1_p25, c.module_1_median, c.module_1_p75, c.module_1_sample_size) == (15 * L, 2_210_000, 30 * L, 188)
+    assert "differs by 45.7%" in est.note
+
+    small = {**far, "sample_size": 100}                                          # now module 1's 188 is larger
+    est = estimate_market([], percentiles=m1_salary(DS, 4, "Bengaluru"), jsearch_estimate=small)
+    assert est.sources_used == ["module_1_percentiles"] and est.source_check.primary == "module_1"
+    assert (est.estimated_min, est.estimated_max) == (15 * L, 30 * L) and est.confidence == 0.56   # 0.66 - 0.1
+    assert est.source_check.jsearch_median == 12 * L and est.source_check.jsearch_sample_size == 100
 
 
 def test_search_accepts_module_1_object_and_reports_method(wired):
