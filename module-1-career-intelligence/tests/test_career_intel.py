@@ -306,5 +306,12 @@ def test_integration_contract_compliance_m1_to_m2(service):
     assert "overall_inr_lpa" in sal_pct
     assert sal_pct["overall_inr_lpa"]["p25"] <= sal_pct["overall_inr_lpa"]["p50"] <= sal_pct["overall_inr_lpa"]["p75"]
     assert sal_pct["overall_inr_lpa"]["sample_size"] > 0
+    if sal_pct.get("remote_inr_lpa"):
+        assert sal_pct["remote_inr_lpa"]["p25"] <= sal_pct["remote_inr_lpa"]["p50"] <= sal_pct["remote_inr_lpa"]["p75"]
+        assert sal_pct["remote_inr_lpa"]["sample_size"] > 0
+    if "mid" in sal_pct.get("by_experience_inr_lpa", {}):
+        mid = sal_pct["by_experience_inr_lpa"]["mid"]
+        assert mid["p25"] <= mid["p50"] <= mid["p75"]
+
 
 

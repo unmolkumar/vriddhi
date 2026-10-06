@@ -3,7 +3,7 @@
 **Branch:** `feat/module-2-skill-gap` · **Owner:** Chaitanya Sharma · **API port:** 8002
 **Question answered:** *"Where is this person now, how well do they match the target role, and what should they learn next?"*
 
-Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 278 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
+Status: complete and integration-ready per context/AGENTS.md §15/§18: self-contained, contract models + JSON Schema, structured errors, 285 passing tests, no cross-module imports. See §10 for the readiness checklist. Backend only: the UI is built separately on top of this API.
 
 ---
 
@@ -86,6 +86,7 @@ The format is detected from the bytes; the filename only breaks ties. Every erro
 - `prerequisites`: 139 skills; acyclic.
 - `difficulty_tier`: 1 foundational tool/syntax · 2 working skill · 3 deep specialisation.
 - `context`: rules for ambiguous aliases.
+- `is_category`: true for 16 field-level ids that other skills map into and that aren't learned as one skill: `ai`, `generative_ai`, `data_science`, `data_engineering`, `big_data`, `backend`, `frontend_development`, `full_stack_development`, `web_development`, `mobile_development`, `api_development`, `devops`, `automation`, `cloud`, `software_testing`, `cybersecurity`. Learnable areas with children (`machine_learning`, `etl`, `ci_cd`, `statistics`) stay concrete. Exposed on `/skills/extract`, profile skills and the gap matrix.
 - `non_skill_ids` (top level): ids module 1 can emit that aren't learnable skills. Today only `data`, a broad posting tag. Gap analysis skips them with a warning instead of scoring or recommending them; a request with only such ids returns 422.
 - Product variants are aliases of their base skill (Tableau Desktop/Server/Public/Prep → Tableau, Power BI Desktop/Service → Power BI, MS Excel → Excel, Google Colab → Jupyter, Docker Desktop → Docker, MySQL Workbench → MySQL, SSMS → SQL Server). AWS EC2, S3 and Lambda are their own skills with `maps_to` aws → cloud.
 - `esco_uri`: `null`. This is an **ESCO-aligned taxonomy, mapping in progress**, not ESCO.
@@ -218,6 +219,12 @@ The wording follows AGENTS.md §12: every figure is an "estimated" range, and th
 
 ---
 
+### 6.1 Categories (`is_category`)
+A required category (e.g. module 1 asking for `cloud` or `devops`) stays in the gap matrix and is scored like any skill: a concrete child the user has, such as AWS for `cloud`, can match it through `maps_to`. But it is:
+- **never a roadmap milestone**, and never pulled in as a prerequisite (terraform's prerequisite `cloud` isn't scheduled), so it never leads `learning_priorities`;
+- listed after concrete skills in `critical_missing`, and left out of the "yet to learn" and "close X" messages;
+- explained instead: its `category_children` are found by walking `maps_to` downwards, nearest first, then most central (skills with the most skills mapping into them). Unless the requirement is already met, its `advice` reads *"Cloud Computing is a broad field, not a single skill. Concrete skills that build it: AWS, Microsoft Azure, Google Cloud Platform, Cloudflare."* A category the taxonomy has nothing under (`backend`, `data_science`, `automation`) says so, and isn't added to the roadmap. An unbacked claim ("you rate yourself level 5…") still takes priority over the category note.
+
 ## 7. Output variable dictionary
 
 | Field | Type | Meaning |
@@ -231,7 +238,7 @@ The wording follows AGENTS.md §12: every figure is an "estimated" range, and th
 | `importance_source` | `skill_importance` · `m1_weights` · `knowledge_graph` · `rank_decay` | Where the weights came from |
 | `typical_experience` | {min, max} | Role band used for the experience factor and over-qualification |
 | `experience_source` | `request` · `title_heuristic` | Whether the band came from the request or the job title |
-| `gap_matrix[]` | SkillGap | Per required skill: `status`, `reason` (`exact`/`maps_to`/`prerequisite`/`semantic`), `via`, `similarity`, `relation` (adjacent only), `importance`, `priority`, `required_level`, `current_level` (0 unless matched), `related_level` (adjacent only), `gap`, `evidence`, `advice` |
+| `gap_matrix[]` | SkillGap | Per required skill: `is_category` and, for categories, `category_children` (up to 4 concrete skills under it); `status`, `reason` (`exact`/`maps_to`/`prerequisite`/`semantic`), `via`, `similarity`, `relation` (adjacent only), `importance`, `priority`, `required_level`, `current_level` (0 unless matched), `related_level` (adjacent only), `gap`, `evidence`, `advice` |
 | `skills` | buckets | `matched`, `weak`, `adjacent`, `critical_missing`, `above_requirement` (ids) |
 | `strengths` | list[str] | Matched skills meeting the requirement |
 | `learning_priorities` | list[str] | First 5 roadmap skills |
@@ -287,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**278 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -297,6 +304,7 @@ pytest module-2-skill-gap/tests/ -v
 | `test_profile.py` | 12 | evidence tags, levels, OCR parity with the text PDF, manual entry, verification flags, INTEGRATION profile shape, privacy |
 | `test_gap_analyzer.py` | 33 | worked example, module 1 weights, skipped categories, each matching reason (incl. semantic matched/adjacent and the TF-IDF fallback), relation wording, adjacent levels, importance sources, experience source, all verdicts + 1-year control, advice, validation |
 | `test_roadmap.py` | 8 | prerequisites before dependants, pulled-in prerequisites, implied knowledge, hour ranges, adjacent < missing estimate, per-skill and cumulative weeks, whole-taxonomy ordering |
+| `test_category.py` | 7 | the category set, children ordering, the flag on extract / analyze_resume / gap matrix, categories explained but never scheduled (incl. as prerequisites), notes when met vs. weak |
 | `test_api.py` | 28 | health, upload formats, every error status, gap analysis, resume → gap round trip, `/skills/extract` (results, warnings, errors), module 1 weights, schema export, OpenAPI paths |
 | `test_llm_live.py` | 1 | real Groq call, grounded output, cache |
 
@@ -314,7 +322,7 @@ pytest module-2-skill-gap/tests/ -v
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-2-skill-gap && uvicorn src.api.main:app --port 8002`; verified over HTTP (`/api/v1/health` → `status: ok`). No database or other module needed |
 | 2 | Contract compliance | ✅ | `UserProfile` is a superset of INTEGRATION.md's common profile (tested in `test_integration_profile_shape`); input takes module 1's `occupation`, `top_skills`, `knowledge_graph` as plain data; errors use `{"error": {"code", "message"}}`. JSON Schema: `src/models/schema_m2.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **278 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/ -v` → **285 passed, 0 failed, 0 skipped**, with module 1 data from mocks (`tests/mocks/m1_contract.json`). The live Groq test skips cleanly without a key |
 | 4 | Error handling | ✅ | Corrupt, encrypted, oversized, too many pages, empty, wrong type and legacy files → 400/413/415 with codes; invalid JSON → 422 `INVALID_REQUEST`; LLM timeout, rate limit, missing key or unknown model → dictionary fallback; MiniLM unavailable → TF-IDF fallback; unexpected errors → 500 `INTERNAL_ERROR` without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` and `tests/` import only `src.*` and third-party packages; the only module-1 references are comments, test names and a documented replica of its `normalize_skill` |
 | 6 | Documentation | ✅ | `README.md`: install, run, test, example request/response payloads. This file: architecture, formulas, contracts, results. `HANDOFF_TO_M3.md` for module 3 |

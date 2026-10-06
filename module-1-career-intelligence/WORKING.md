@@ -316,11 +316,18 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
   },
   "market_salary_percentiles": {
     "overall_inr_lpa": {
-      "p25": 10.6,
-      "p50": 17.6,
-      "p75": 28.5,
+      "p25": 10.5,
+      "p50": 17.5,
+      "p75": 27.5,
       "currency": "INR LPA",
-      "sample_size": 333
+      "sample_size": 199
+    },
+    "remote_inr_lpa": {
+      "p25": 10.6,
+      "p50": 17.5,
+      "p75": 35.5,
+      "currency": "INR LPA",
+      "sample_size": 89
     },
     "overall_usd": {
       "p25": 57083.0,
@@ -330,12 +337,12 @@ When a user searches for broad interest areas (e.g. *"FinTech"*, *"Artificial In
       "sample_size": 2808
     },
     "by_experience_inr_lpa": {
-      "entry": { "p25": 5.0, "p50": 8.0, "p75": 12.0, "currency": "INR LPA", "sample_size": 37 },
-      "mid": { "p25": 15.0, "p50": 22.1, "p75": 30.0, "currency": "INR LPA", "sample_size": 188 },
-      "senior": { "p25": 22.5, "p50": 36.0, "p75": 55.9, "currency": "INR LPA", "sample_size": 108 }
+      "entry": { "p25": 6.6, "p50": 8.8, "p75": 12.3, "currency": "INR LPA", "sample_size": 69 },
+      "mid": { "p25": 15.0, "p50": 21.1, "p75": 30.0, "currency": "INR LPA", "sample_size": 107 },
+      "senior": { "p25": 21.8, "p50": 32.5, "p75": 58.9, "currency": "INR LPA", "sample_size": 63 }
     },
     "by_city_inr_lpa": {
-      "Bengaluru": { "p25": 12.5, "p50": 15.0, "p75": 22.6, "currency": "INR LPA", "sample_size": 39 },
+      "Bengaluru": { "p25": 12.0, "p50": 15.0, "p75": 22.8, "currency": "INR LPA", "sample_size": 45 },
       "Hyderabad": { "p25": 11.2, "p50": 16.8, "p75": 24.0, "currency": "INR LPA", "sample_size": 28 },
       "Pune": { "p25": 9.5, "p50": 14.5, "p75": 21.0, "currency": "INR LPA", "sample_size": 24 },
       "Mumbai": { "p25": 10.0, "p50": 15.5, "p75": 23.5, "currency": "INR LPA", "sample_size": 19 },
@@ -509,7 +516,7 @@ For external services, TypeScript frontends, or cross-language validation, an ex
   * `result.typical_experience` $\rightarrow$ Empirical experience distribution (`min`, `max` years) to calibrate candidate seniority without heuristics.
   * `result.knowledge_graph` $\rightarrow$ Competency taxonomy graph for skill gap hierarchy and prerequisite planning.
 * **To Module 3 (Job Matching & Salary Intelligence)**:
-  * `result.market_salary_percentiles` $\rightarrow$ Empirical p25, median (p50), and p75 salary distributions across overall, experience tiers (entry, mid, senior), and metros (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR) with sample size counts ($n$). Used directly as `market_salary_percentiles` to evaluate live job offers and eliminate overly wide 5–25 LPA estimates.
+  * `result.market_salary_percentiles` $\rightarrow$ Empirical p25, median (p50), and p75 salary distributions across on-site/hybrid overall, pure remote (`remote_inr_lpa`), experience tiers (entry, mid, senior), and metros (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR) with sample size counts ($n$). Used directly as `market_salary_percentiles` to evaluate live job offers, compare remote vs. on-site packages, and eliminate overly wide 5–25 LPA estimates.
   * `result.regional_breakdown` $\rightarrow$ India (LPA) and Global (USD) aggregate salary baselines and hiring cities to validate live job listings.
   * `result.current_demand_score` $\rightarrow$ Weight multiplier for job opportunity matching.
 
@@ -576,23 +583,21 @@ This technical section details the fine-tuning, cross-module synchronization, an
 * Pushed all updates, refreshed JSON schemas, and target role exports to GitHub `origin/main`.
 
 ### 7.7. Empirical Salary Percentile Distributions (`market_salary_percentiles`)
-* **Problem Identified**: Indian job listings frequently omit salary figures, causing salary estimates in Module 3 to span unhelpfully broad brackets (e.g., 5–25 LPA).
-* **Resolution**: Implemented `get_salary_percentiles()` in `database.py` leveraging the ingested 43k+ normalized salary points and 11.7k+ verified Indian salary postings.
+* **Problem Identified**: Indian job listings frequently omit salary figures, causing salary estimates in Module 3 to span unhelpfully broad brackets (e.g., 5–25 LPA). Furthermore, pooling high-paying US-remote listings into national benchmarks artificially inflated local base numbers and distorted city ratios.
+* **Resolution**: Implemented `get_salary_percentiles()` in `database.py` leveraging the ingested 43k+ normalized salary points and 11.7k+ verified Indian salary postings, strictly decoupling **on-site/hybrid** roles from **pure remote** listings:
 * **Percentile Architecture**:
-  * Emits `overall_inr_lpa` (p25, p50, p75 with sample size $n$).
+  * Emits `overall_inr_lpa` (on-site & hybrid only: p25, p50, p75 with sample size $n$).
+  * Emits `remote_inr_lpa` (pure remote only: p25, p50, p75 with sample size $n$).
   * Emits `overall_usd` (p25, p50, p75 with sample size $n$).
-  * Emits `by_experience_inr_lpa` broken down into `entry` (<3 YoE), `mid` (3–5 YoE), and `senior` (>5 YoE).
+  * Emits `by_experience_inr_lpa` for on-site/hybrid broken down into `entry` (<3 YoE), `mid` (3–5 YoE), and `senior` (>5 YoE).
   * Emits `by_city_inr_lpa` covering India's core tech hubs: `Bengaluru`, `Hyderabad`, `Pune`, `Mumbai`, and `Delhi NCR`.
-* **Empirical Ground Truth**:
-  * **Data Scientist**:
-    * Overall: p25 = 10.6 LPA, p50 = 17.6 LPA, p75 = 28.5 LPA ($n = 333$)
-    * Bengaluru: p25 = 12.5 LPA, p50 = 15.0 LPA, p75 = 22.6 LPA ($n = 39$)
-    * Mid-Level: p25 = 15.0 LPA, p50 = 22.1 LPA, p75 = 30.0 LPA ($n = 188$)
-    * Senior-Level: p25 = 22.5 LPA, p50 = 36.0 LPA, p75 = 55.9 LPA ($n = 108$)
-  * **Data Engineer**:
-    * Overall: p25 = 12.0 LPA, p50 = 17.5 LPA, p75 = 25.0 LPA ($n = 555$)
-    * Bengaluru: p25 = 15.0 LPA, p50 = 20.0 LPA, p75 = 25.5 LPA ($n = 105$)
-    * Mid-Level: p25 = 14.0 LPA, p50 = 18.0 LPA, p75 = 22.5 LPA ($n = 360$)
-* Downstream Module 3 can directly plug this payload into its `market_salary_percentiles` input for precision offer benchmarking and realistic negotiation advice.
+* **Empirical Ground Truth (Data Scientist)**:
+  * *On-Site / Hybrid Overall*: p25 = **10.5 LPA**, p50 = **17.5 LPA**, p75 = **27.5 LPA** ($n = 199$)
+  * *Pure Remote Overall*: p25 = **10.6 LPA**, p50 = **17.5 LPA**, p75 = **35.5 LPA** ($n = 89$)
+  * *Bengaluru*: p25 = **12.0 LPA**, p50 = **15.0 LPA**, p75 = **22.8 LPA** ($n = 45$)
+  * *On-Site Entry*: p25 = **6.6 LPA**, p50 = **8.8 LPA**, p75 = **12.3 LPA** ($n = 69$)
+  * *On-Site Mid-Level*: p25 = **15.0 LPA**, p50 = **21.1 LPA**, p75 = **30.0 LPA** ($n = 107$)
+  * *On-Site Senior*: p25 = **21.8 LPA**, p50 = **32.5 LPA**, p75 = **58.9 LPA** ($n = 63$)
+* Downstream Module 3 can directly plug this payload into its `market_salary_percentiles` input for precision offer benchmarking and realistic negotiation advice without remote compensation skewing city estimates.
 
 

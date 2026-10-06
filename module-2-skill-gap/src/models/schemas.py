@@ -29,6 +29,7 @@ class SkillHit(BaseModel):
     display: str
     category: str | None = None
     in_taxonomy: bool
+    is_category: bool = Field(default=False, description="A broad field (ai, cloud, devops) other skills map into, not one skill")
     source: Literal["dictionary", "llm"]
     matches: list[str] = Field(default_factory=list, description="Surface forms found in the text")
 
@@ -39,6 +40,7 @@ class ExtractedSkill(BaseModel):
     display: str
     category: str | None = None
     in_taxonomy: bool = True
+    is_category: bool = Field(default=False, description="A broad field (ai, cloud, devops), not one skill")
     maps_to: str | None = Field(default=None, description="Coarser taxonomy id, e.g. postgresql -> sql")
     level: int = Field(ge=0, le=5, description="0 not demonstrated … 5 expert; derived from evidence")
     confidence: float = Field(ge=0.0, le=1.0, description="How strongly the evidence supports this skill")
@@ -150,6 +152,9 @@ class SkillGap(BaseModel):
     skill: str = Field(description="Required skill id (taxonomy id when it resolves)")
     display: str
     in_taxonomy: bool
+    is_category: bool = Field(default=False, description="A broad field: shown, never a roadmap milestone")
+    category_children: list[str] = Field(default_factory=list,
+                                         description="For categories: the most relevant concrete skills under it")
     status: MatchStatus
     reason: MatchReason | None = Field(default=None, description="Why it matched / is adjacent; null when missing")
     via: str | None = Field(default=None, description="The user's skill that matched or is adjacent")
@@ -252,6 +257,7 @@ class ExtractedTextSkill(BaseModel):
     category: str | None = None
     maps_to: str | None = Field(default=None, description="Coarser taxonomy id, e.g. postgresql -> sql")
     in_taxonomy: bool
+    is_category: bool = Field(default=False, description="A broad field (ai, cloud, devops), not one skill")
     source: Literal["dictionary", "llm"]
     matches: list[str] = Field(default_factory=list, description="Surface forms found in the text")
 

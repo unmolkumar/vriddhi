@@ -154,6 +154,12 @@
           "title": "In Taxonomy",
           "type": "boolean"
         },
+        "is_category": {
+          "default": false,
+          "description": "A broad field (ai, cloud, devops), not one skill",
+          "title": "Is Category",
+          "type": "boolean"
+        },
         "maps_to": {
           "anyOf": [
             {
@@ -264,6 +270,12 @@
         },
         "in_taxonomy": {
           "title": "In Taxonomy",
+          "type": "boolean"
+        },
+        "is_category": {
+          "default": false,
+          "description": "A broad field (ai, cloud, devops), not one skill",
+          "title": "Is Category",
           "type": "boolean"
         },
         "source": {
@@ -1004,6 +1016,20 @@
         "in_taxonomy": {
           "title": "In Taxonomy",
           "type": "boolean"
+        },
+        "is_category": {
+          "default": false,
+          "description": "A broad field: shown, never a roadmap milestone",
+          "title": "Is Category",
+          "type": "boolean"
+        },
+        "category_children": {
+          "description": "For categories: the most relevant concrete skills under it",
+          "items": {
+            "type": "string"
+          },
+          "title": "Category Children",
+          "type": "array"
         },
         "status": {
           "enum": [

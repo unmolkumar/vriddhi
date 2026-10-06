@@ -10,7 +10,7 @@ Base URL: `http://localhost:8002` (Module 1 is on 8001). Start it with `cd modul
 |---|---|---|
 | A user's profile from a resume | `POST /api/v1/skills/analyze_resume` (multipart `file`, optional `location`) | `{"profile": UserProfile, "gap_analysis": null}` |
 | The gap against a target role | `POST /api/v1/skills/gap_analysis` (`target_role`, `required_skills`, `profile` or `manual_profile`) | `GapAnalysisResult` |
-| Skills in a job description | `POST /api/v1/skills/extract` (`{"text": ..., "use_llm": false}`) | `{"skills": [{id, display, maps_to, in_taxonomy, ...}], "warnings": []}` |
+| Skills in a job description | `POST /api/v1/skills/extract` (`{"text": ..., "use_llm": false}`) | `{"skills": [{id, display, maps_to, in_taxonomy, is_category, ...}], "warnings": []}`; `is_category: true` marks broad fields (ai, cloud, devops) that shouldn't be offered as a skill to learn |
 | A gap against one job listing | `/skills/extract` on the description, then `/skills/gap_analysis` with those ids as `required_skills` (INTEGRATION.md scenario 3) | `GapAnalysisResult` for that job |
 
 Skill ids are the same snake_case ids Module 1 uses (`python`, `machine_learning`, `sql`, `cloud`, …). Variants resolve automatically (`apache_spark`, `Postgres`, `Tableau Desktop`).

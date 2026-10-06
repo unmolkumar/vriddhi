@@ -111,7 +111,20 @@
               "type": "null"
             }
           ],
-          "default": null
+          "default": null,
+          "description": "On-site and hybrid India salary percentiles (excluding pure remote)"
+        },
+        "remote_inr_lpa": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryPercentileBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pure remote India salary percentiles"
         },
         "overall_usd": {
           "anyOf": [
@@ -128,7 +141,7 @@
           "additionalProperties": {
             "$ref": "#/$defs/SalaryPercentileBand"
           },
-          "description": "Percentiles by tier: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)",
+          "description": "Percentiles by tier for on-site/hybrid: 'entry' (0-2y), 'mid' (3-5y), 'senior' (5+y)",
           "title": "By Experience Inr Lpa",
           "type": "object"
         },

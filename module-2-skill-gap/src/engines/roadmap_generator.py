@@ -39,6 +39,8 @@ def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: fl
     known = known_ids(profile)
     items: dict[str, dict] = {}
     for g in gaps:
+        if g.is_category:
+            continue  # a field (ai, cloud) is never a milestone; its concrete skills are named in the gap's advice
         if g.status == "missing":
             kind, reason = "missing", f"Asked for by the role ({g.priority.lower()} priority)."
         elif g.status == "adjacent":
@@ -55,7 +57,7 @@ def build_roadmap(gaps: list[SkillGap], profile: UserProfile, hours_per_week: fl
     while stack:
         sid = stack.pop()
         for pre in by_id.get(sid, {}).get("prerequisites", []):
-            if pre in known:
+            if pre in known or by_id.get(pre, {}).get("is_category"):
                 continue
             if pre not in items:
                 items[pre] = {"kind": "prerequisite", "display": by_id[pre]["display"], "importance": 0.0,

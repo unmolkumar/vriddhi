@@ -169,3 +169,11 @@ Answers the foundational market question:
 Every signal is tagged by region (`india` or `global`), enabling direct comparisons:
 - **Domestic Indian Market**: City-level distribution (Bengaluru, NCR, Hyderabad, Mumbai, Pune, Chennai), INR compensations (LPA), and domestic hiring velocity.
 - **Global / Worldwide Market**: Multi-country distributions, USD compensations, and international skill frequencies.
+
+---
+
+## Detailed Documentation & Integration Guides
+
+- **[DATABASE.md](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/DATABASE.md)**: Full `career_intel.db` database schema, 371k+ skill demand records, O*NET tables, and SQL/Python recipes for Module 2 to replace hardcoded skill gaps with real market evidence.
+- **[WORKING.md](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/WORKING.md)**: Comprehensive technical specification, outcome variable formulas, mathematical models, API schemas, and cross-module contracts.
+- **[data/SOURCES.md](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/SOURCES.md)**: Origin, licensing, and ETL pipeline for all datasets.
