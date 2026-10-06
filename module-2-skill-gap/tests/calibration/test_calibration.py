@@ -12,13 +12,20 @@ from src.general.embeddings import DEFAULT_MODEL, Encoder
 
 RN, ELECTRICIANS, ACCOUNTANTS, DATA_SCIENTISTS = "29-1141.00", "47-2111.00", "13-2011.00", "15-2051.00"
 CLEAR_MARGIN = 0.10
-# set: (top-1 floor, top-3 floor, mean-margin floor); observed 13/15, 14/15, +0.111 | 8/10, 10/10, +0.130 | ...
+# set: (top-1 floor, top-3 floor, mean-margin floor), one profile below the A1c results with the frozen constants:
+# b 12/15 14/15 +0.114 | c 10/10 10/10 +0.195 | d 12/15 14/15 +0.094 | e 13/15 15/15 +0.135 | f 10/10 10/10 +0.173 |
+# g 13/15 15/15 +0.122 | b vs export15 15/15 +0.143 | e vs export15 14/15 15/15 +0.177
 HELDOUT_FLOORS = {
-    "b_heldout": (12, 13, 0.08),
-    "c_new_occupations": (7, 9, 0.10),
-    "d_heldout_no_curated": (12, 13, 0.07),
-    "b_heldout_vs_export15": (13, 13, 0.11),
+    "b_heldout": (11, 13, 0.08),
+    "c_new_occupations": (9, 9, 0.16),
+    "d_heldout_no_curated": (11, 13, 0.06),
+    "e_heldout2": (12, 14, 0.10),
+    "f_heldout2_extra_occupations": (9, 9, 0.14),
+    "g_heldout2_no_curated": (12, 14, 0.09),
+    "b_heldout_vs_export15": (14, 14, 0.11),
+    "e_heldout2_vs_export15": (13, 14, 0.14),
 }
+A2_GATE = {"e_heldout2": 12, "f_heldout2_extra_occupations": 7}
 
 
 @pytest.fixture(scope="module")
@@ -86,13 +93,23 @@ def test_partial_profiles_score_below_the_full_ones(tuning):
 def heldout(built, export_socs):
     profiles, occupations, pairs = built
     out = {}
-    for label, sets, drop, socs in (("b_heldout", ("heldout",), False, None),
-                                    ("c_new_occupations", ("new",), False, None),
-                                    ("d_heldout_no_curated", ("heldout",), True, None),
-                                    ("b_heldout_vs_export15", ("heldout",), False, export_socs)):
-        ps, os_ = cal.subset(profiles, occupations, sets=sets, socs=socs)
+    for label, sets, drop, socs, only, exclude in (
+            ("b_heldout", ("heldout",), False, None, None, None),
+            ("c_new_occupations", ("new",), False, None, None, None),
+            ("d_heldout_no_curated", ("heldout",), True, None, None, None),
+            ("e_heldout2", ("heldout2",), False, None, export_socs, None),
+            ("f_heldout2_extra_occupations", ("heldout2",), False, None, None, export_socs),
+            ("g_heldout2_no_curated", ("heldout2",), True, None, export_socs, None),
+            ("b_heldout_vs_export15", ("heldout",), False, export_socs, None, None),
+            ("e_heldout2_vs_export15", ("heldout2",), False, export_socs, export_socs, None)):
+        ps, os_ = cal.subset(profiles, occupations, sets=sets, socs=socs, profile_socs=only, exclude_profile_socs=exclude)
         out[label] = cal.evaluate(ps, os_, pairs, drop_curated=drop)
     return out
+
+
+def test_a2_gate(heldout):
+    for label, floor in A2_GATE.items():
+        assert heldout[label].top1 >= floor, (label, heldout[label].ranks)
 
 
 @pytest.mark.parametrize("label", list(HELDOUT_FLOORS))
@@ -107,3 +124,4 @@ def test_heldout_floors(heldout, label):
 def test_curated_rows_do_not_carry_the_heldout_result(heldout):
     """Removing every curated row changes top-1 by at most one profile."""
     assert abs(heldout["b_heldout"].top1 - heldout["d_heldout_no_curated"].top1) <= 1
+    assert abs(heldout["e_heldout2"].top1 - heldout["g_heldout2_no_curated"].top1) <= 1

@@ -39,8 +39,18 @@ def test_free_text_without_headings_is_one_section():
     text = "I have worked as a staff nurse for five years. I give IV medicines and chart vitals."
     units = from_text(text)
     assert [u.text for u in units] == ["I have worked as a staff nurse for five years.",
-                                       "I give IV medicines and chart vitals."]
+                                       "I give IV medicines and chart vitals.", "I give IV medicines", "chart vitals"]
     assert {u.section for u in units} == {"free_text"} and units[1].span == (47, 84)
+    assert units[3].span == (71, 83) and units[3].context_span == (47, 84)       # clause keeps the sentence span
+
+
+def test_list_like_one_liner_becomes_clause_units():
+    text = "Science teacher, 12 yrs, CBSE, lab practicals and board exam prep, PTMs."
+    units = from_text(text)
+    parts = [u for u in units if u.context_span]
+    assert [u.text for u in parts] == ["Science teacher", "12 yrs", "CBSE", "lab practicals", "board exam prep", "PTMs"]
+    assert all(text[u.span[0]:u.span[1]] == u.text and u.context_span == (0, len(text)) for u in parts)
+    assert units[0].text == text and units[0].context_span is None              # the sentence itself is kept
 
 
 def test_typed_skills_are_self_reported_with_taxonomy_ids():

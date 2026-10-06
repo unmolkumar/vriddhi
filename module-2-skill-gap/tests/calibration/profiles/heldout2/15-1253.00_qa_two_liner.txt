@@ -1,0 +1,1 @@
+Automation tester, 5 yrs: Selenium + Java + TestNG for web, Appium for mobile, Rest Assured for APIs, CI in Jenkins, bugs in Jira, test planning and regression for an insurance product at TCS Pune.

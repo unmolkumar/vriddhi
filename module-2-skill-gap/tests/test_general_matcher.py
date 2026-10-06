@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 
 from src.general.evidence import EvidenceUnit
-from src.general.matcher import THRESHOLDS, TYPE_SHARE, coverage, match, status_of
+from src.general.matcher import MIN_ITEMS_FOR_FULL_SHARE, THRESHOLDS, TYPE_SHARE, coverage, match, status_of
 from src.general.requirements import CURATED_WEIGHT, SCORED_TYPES, normalise
 
 
@@ -92,11 +92,16 @@ def test_no_evidence_means_everything_missing(encoder):
     assert {m.status for m in match(items, [], encoder)} == {"missing"}
 
 
+def n(items):
+    """Item-count factor of a type's share."""
+    return min(1.0, items / MIN_ITEMS_FOR_FULL_SHARE)
+
+
 def test_coverage_balances_core_types(encoder):
     items, _ = normalise(rows())
     matches = match(items, units(), encoder)
-    # tech: 1 of 1 met; task: weight 0.9 met of 1.6
-    tech, task = TYPE_SHARE["tech"], TYPE_SHARE["task"]
+    # tech: 1 of 1 met (1 item -> 1/5 of its share); task: weight 0.9 met of 1.6 (2 items -> 2/5)
+    tech, task = TYPE_SHARE["tech"] * n(1), TYPE_SHARE["task"] * n(2)
     expected = (tech * 1.0 + task * 0.9 / 1.6) / (tech + task)
     assert coverage(matches) == pytest.approx(expected)
 
@@ -107,6 +112,21 @@ def test_a_type_made_of_curated_rows_counts_at_its_reliability(encoder):
     items, _ = normalise(rows() + curated)
     matches = match(items, units() + [EvidenceUnit(text="Bank reconciliation", evidence_type="work",
                                                    section="experience")], encoder)
-    tech, task, mk = TYPE_SHARE["tech"], TYPE_SHARE["task"], TYPE_SHARE["market_skill"] * CURATED_WEIGHT
+    tech, task = TYPE_SHARE["tech"] * n(1), TYPE_SHARE["task"] * n(2)
+    mk = TYPE_SHARE["market_skill"] * CURATED_WEIGHT * n(1)
     expected = (tech * 1.0 + task * 0.9 / 1.6 + mk * 1.0) / (tech + task + mk)
     assert coverage(matches) == pytest.approx(expected)
+
+
+def test_a_one_item_type_cannot_swing_the_score(encoder):
+    tasks = [{"soc_code": "s", "item_type": "task", "item_name": f"Reconcile ledger number {k}", "importance_norm": 0.8,
+              "reliable": 1} for k in range(5)]
+    one = [{"soc_code": "s", "item_type": "market_skill", "item_name": "Teaching", "source": "india_postings",
+            "india_demand_share": 0.3, "importance_norm": 1.0, "reliable": 1}]
+    items, _ = normalise(tasks + one)
+    work = [EvidenceUnit(text=f"Reconcile ledger number {k}", evidence_type="work", section="experience") for k in range(5)]
+    miss = coverage(match(items, work, encoder))                  # every task met, the one market skill missed
+    hit = coverage(match(items, work + [EvidenceUnit(text="Teaching", evidence_type="work", section="experience")], encoder))
+    task, market = TYPE_SHARE["task"], TYPE_SHARE["market_skill"] * n(1)
+    assert hit == pytest.approx(1.0) and miss == pytest.approx(task / (task + market))
+    assert miss > 0.75          # unscaled, the single item would have cost 0.40 / 0.70 = 57% of the score
