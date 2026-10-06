@@ -1,0 +1,18 @@
+Vivek Sharma
+QA Engineer (Manual + Automation), 4 years
+
+Experience
+QA Engineer | Paytm, Noida | 2022 - Present
+- Write test plans and test cases from user stories for the payments app; run regression before every release.
+- Automate UI tests in Selenium WebDriver with Java and TestNG; API tests in Postman and Rest Assured.
+- Log bugs in Jira with steps to reproduce and retest fixes; take part in sprint planning.
+- Run the automation suite in Jenkins on every build and report failures to developers.
+
+Software Tester | Mindtree | 2020 - 2022
+- Manual functional and regression testing of a retail web app.
+
+Skills
+Selenium, Java, TestNG, Postman, Rest Assured, Jira, SQL, Jenkins, Agile
+
+Education
+B.Tech (IT), 2020

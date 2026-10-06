@@ -1,0 +1,21 @@
+Shalini Gupta
+Head of Data Science & Analytics | 14 years
+
+Summary
+Lead a 25-person data science team at a large private bank; previously built credit risk models at a consulting firm.
+
+Experience
+Head of Data Science | ICICI Bank, Mumbai | 2019 - Present
+- Own the roadmap for credit scoring, fraud detection and customer propensity models.
+- Team builds models in Python and PySpark on a Hadoop/Spark lake; I review model design and validation.
+- Present model results and business impact to the CRO and the board's risk committee.
+- Set up an MLOps practice: model registry, monitoring for drift, quarterly re-validation for the regulator.
+
+Manager, Analytics | EXL Service | 2011 - 2019
+- Logistic regression and gradient boosting scorecards for US card issuers; SAS and SQL.
+
+Skills
+Machine learning, statistics, Python, PySpark, SQL, SAS, model risk management, team leadership
+
+Education
+M.Stat, Indian Statistical Institute
