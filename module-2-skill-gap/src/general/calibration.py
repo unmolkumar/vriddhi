@@ -20,7 +20,7 @@ from src.general import matcher
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import EvidenceUnit, from_text
 from src.general.m1_client import EXTRA_FIXTURE_PATH, FIXTURE_PATH, FixtureM1Client
-from src.general.requirements import SCORED_TYPES, FilterReport, RequirementItem, domain_texts, normalise
+from src.general.requirements import SCORED_TYPES, FilterReport, RequirementItem
 
 PROFILES_DIR = Path(__file__).resolve().parents[2] / "tests" / "calibration" / "profiles"
 SETS = ("tuning", "heldout", "new", "heldout2")
@@ -71,18 +71,12 @@ def load_profiles(directory: Path = PROFILES_DIR, sets: tuple[str, ...] = SETS) 
 
 
 def load_occupations(client: FixtureM1Client, encoder: Encoder) -> list[Occupation]:
+    from src.general.service import prepare_occupation   # the engine's own preparation, so calibration matches it
+
     out = []
     for soc, occ in client.occupations.items():
-        key = f"{client.version_of(soc)}-{soc}"
-        domain = encoder.encode_cached(f"{key}-domain", domain_texts(occ["title"], occ.get("domain"), occ.get("description")))
-
-        def similarity(texts: list[str], domain=domain, key=key) -> list[float]:
-            return cosine(encoder.encode_cached(f"{key}-offdomain", texts), domain).max(axis=1).tolist()
-
-        all_items, report = normalise(client.requirements(soc), title=occ["title"], domain_similarity=similarity)
-        items = [i for i in all_items if i.item_type in SCORED_TYPES]
-        out.append(Occupation(soc, occ["title"], items, all_items, report,
-                              encoder.encode_cached(key, [i.text for i in items])))
+        d = prepare_occupation(soc, occ, client.requirements(soc), encoder, client.version_of(soc))
+        out.append(Occupation(soc, d.title, d.core, d.items, d.report, d.vectors))
     return out
 
 

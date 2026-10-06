@@ -145,10 +145,37 @@ def nurse_sample(profiles, occupations, encoder, thresholds) -> dict:
         "fit_indicators": [f.name for f in gen.fit_indicators]}
 
 
+def verdict_calibration(client, encoder) -> dict:
+    """A2 match scores of the tuning profiles on their own occupation (full vs partial) and on their best other
+    occupation; the good-fit threshold is the midpoint between the highest partial and the lowest full score."""
+    from pathlib import Path as _P
+
+    from src.general.schemas import GapAnalysisV2Request
+    from src.general.service import GeneralEngine
+    engine = GeneralEngine(client=client, encoder=encoder)
+    rows = []
+    for f in sorted((cal.PROFILES_DIR / "tuning").glob("*.txt")):
+        partial = f.name.startswith(cal.PARTIAL_PREFIX)
+        soc = f.name.removeprefix(cal.PARTIAL_PREFIX).split("_", 1)[0]
+        units, years, _ = engine.evidence(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8")))
+        uv = encoder.encode([u.text for u in units])
+        scores = {s: engine._score(engine.occupation(s), units, uv, years)[0] for s in client.occupations}
+        other = max((s for s in scores if s != soc), key=scores.get)
+        rows.append({"profile": _P(f).stem, "partial": partial, "own": round(scores[soc], 4),
+                     "best_other": round(scores[other], 4), "best_other_soc": other, "years": years})
+    full = [r["own"] for r in rows if not r["partial"]]
+    part = [r["own"] for r in rows if r["partial"]]
+    threshold = round((max(part) + min(full)) / 2, 2) if part and full else None
+    return {"rows": rows, "full_min": min(full), "partial_max": max(part), "threshold": threshold,
+            "separable": max(part) < min(full),
+            "wrong_occupation_above_threshold": sum(r["best_other"] >= (threshold or 1) for r in rows if not r["partial"])}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--model", default=None, help="sentence-transformers model (default: EMBEDDING_MODEL or MiniLM)")
     ap.add_argument("--tune", action="store_true", help="search thresholds and type shares on the tuning set")
+    ap.add_argument("--verdict", action="store_true", help="calibrate the good-fit threshold (A2 scores)")
     ap.add_argument("--grid-shift", type=float, default=0.0, help="add to every threshold in the search grid")
     ap.add_argument("--filters", default="13-2011.00,47-2111.00,17-2051.00", help="SOCs to print filter reports for")
     args = ap.parse_args()
@@ -178,6 +205,12 @@ def main() -> None:
     for t, d in dist.items():
         print(f"  {t:14} {d}")
 
+    if args.verdict:
+        vc = verdict_calibration(client, encoder)
+        out["verdict_calibration"] = vc
+        print(f"\n== verdict: full own-occupation min {vc['full_min']}, partial max {vc['partial_max']}, "
+              f"threshold {vc['threshold']} (separable: {vc['separable']}); "
+              f"{vc['wrong_occupation_above_threshold']}/15 full profiles also clear it on another occupation")
     out["filters"] = {o.soc: o.report.model_dump() for o in occupations}
     for o in occupations:
         if o.soc in args.filters.split(","):

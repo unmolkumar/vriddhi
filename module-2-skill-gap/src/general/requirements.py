@@ -29,7 +29,7 @@ DEFAULT_LEVEL = {"market_skill": 0.5, "tech": 0.5, "tool": 0.5, "task": 0.6, "dw
 
 # --- provenance -----------------------------------------------------------------------------------
 # Hand-written rows must not drive results until module 1 replaces them with real data.
-Provenance = Literal["onet", "india_postings", "curated"]
+Provenance = Literal["onet", "india_postings", "curated", "job_text"]   # job_text: /match_text only
 CURATED_WEIGHT = 0.5               # weight factor for curated rows
 CURATED_SOURCES = {"curated"}
 CURATED_TOOL_ID_PREFIX = "tool_"   # v2.1 tool rows are hand-written in module 1's ETL but labelled source='onet'

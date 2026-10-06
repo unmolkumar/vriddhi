@@ -23,6 +23,15 @@ MODULE_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = MODULE_ROOT / "data" / "cache" / "m1"
 FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_occupation_requirements_export.json"          # v2.1, 15 SOCs
 EXTRA_FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_heldout_occupations.json"   # 10 SOCs from a live module 1
+# Module 1's india_title_aliases as documented in its HANDOVER.md, for the fixture's search only.
+FIXTURE_ALIASES = {
+    "staff nurse": "29-1141.00", "nursing officer": "29-1141.00", "sister in charge": "29-1141.00",
+    "icu nurse": "29-1141.00", "ca": "13-2011.00", "chartered accountant": "13-2011.00",
+    "accounts executive": "13-2011.00", "internal auditor": "13-2011.00", "site engineer": "17-2051.00",
+    "civil site supervisor": "17-2051.00", "telecaller": "43-4051.00", "bpo executive": "43-4051.00",
+    "customer care executive": "43-4051.00", "iti electrician": "47-2111.00", "electrical wireman": "47-2111.00",
+    "relationship manager": "41-4012.00", "bde": "41-4012.00", "medical representative (mr)": "41-4012.00",
+}
 META_VERSION_FIELDS = ("schema_version", "version")
 META_BUILD_FIELDS = ("export_hash", "built_at")
 DEFAULT_BASE_URL = "http://localhost:8001"
@@ -174,7 +183,12 @@ class FixtureM1Client:
         return self.occupations[soc]
 
     def search(self, q: str, k: int = DEFAULT_K) -> Resolution:
-        """Token overlap with fixture titles (module 1's real search also uses aliases and alternate titles)."""
+        """Module 1's documented Indian aliases (exact, 1.0), else token overlap with fixture titles. Module 1's real
+        search also uses 62k alternate titles."""
+        alias = FIXTURE_ALIASES.get(q.strip().lower())
+        if alias in self.occupations:
+            return resolution(q, [OccupationMatch(soc_code=alias, title=self.occupations[alias]["title"], confidence=1.0,
+                                                  method="india_alias_exact", matched_term=q.strip().lower())])
         words = set(re.findall(r"[a-z]+", q.lower()))
         matches = []
         for soc, occ in self.occupations.items():
@@ -194,5 +208,8 @@ class FixtureM1Client:
         return {k: occ.get(k) for k in ("soc_code", "title", "description", "domain", "job_zone")}
 
     def related(self, soc: str, limit: int = 20) -> list[dict]:
+        """The export has no related occupations: stand in with fixture occupations of the same SOC major group."""
         self._occupation(soc)
-        return []                       # the export has no related occupations
+        same = [s for s in self.occupations if s != soc and s[:2] == soc[:2]]
+        return [{"soc_code": soc, "related_soc_code": s, "related_title": self.occupations[s]["title"],
+                 "relatedness_tier": "fixture_same_major_group", "index_val": i + 1} for i, s in enumerate(same[:limit])]

@@ -49,6 +49,7 @@ class RequirementMatch(BaseModel):
     evidence_type: str | None = None
     evidence_section: str | None = None
     evidence_span: tuple[int, int] | None = None
+    evidence_context_span: tuple[int, int] | None = None
 
 
 class Scored(NamedTuple):
@@ -68,14 +69,16 @@ def requirement_skill_id(name: str) -> str | None:
 
 
 def score(items: list[RequirementItem], units: list[EvidenceUnit], encoder: Encoder, *,
-          cache_key: str | None = None, req_vectors: np.ndarray | None = None) -> list[Scored]:
+          cache_key: str | None = None, req_vectors: np.ndarray | None = None,
+          unit_vectors: np.ndarray | None = None) -> list[Scored]:
     """Best evidence per requirement (similarity, unit) and the alias unit, before thresholds."""
     if not items:
         return []
     if req_vectors is None:
         texts = [i.text for i in items]
         req_vectors = encoder.encode_cached(cache_key, texts) if cache_key else encoder.encode(texts)
-    unit_vectors = encoder.encode([u.text for u in units])
+    if unit_vectors is None:
+        unit_vectors = encoder.encode([u.text for u in units])
     sims = cosine(req_vectors, unit_vectors)
     by_skill: dict[str, int] = {}
     for idx, u in enumerate(units):
@@ -112,7 +115,8 @@ def classify(items: list[RequirementItem], units: list[EvidenceUnit], scored: li
         out.append(RequirementMatch(
             item=item, provenance=item.provenance, status=status, similarity=round(sim, 4), reason=reason,
             evidence_text=u.text if u else None, evidence_type=u.evidence_type if u else None,
-            evidence_section=u.section if u else None, evidence_span=u.span if u else None))
+            evidence_section=u.section if u else None, evidence_span=u.span if u else None,
+            evidence_context_span=u.context_span if u else None))
     return out
 
 
