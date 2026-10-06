@@ -16,6 +16,44 @@
       "title": "AnalyzeResumeV2Response",
       "type": "object"
     },
+    "AnswerIn": {
+      "properties": {
+        "requirement_id": {
+          "description": "follow_up_questions[].requirement_id",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "answer": {
+          "enum": [
+            "yes",
+            "no",
+            "some"
+          ],
+          "title": "Answer",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: where or how you did it",
+          "title": "Detail"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "answer"
+      ],
+      "title": "AnswerIn",
+      "type": "object"
+    },
     "CloseAlternative": {
       "properties": {
         "soc_code": {
@@ -270,6 +308,31 @@
       "title": "EvidenceRef",
       "type": "object"
     },
+    "EvidenceVolumeOut": {
+      "properties": {
+        "units": {
+          "description": "Substantive evidence sentences or items",
+          "title": "Units",
+          "type": "integer"
+        },
+        "related_share": {
+          "description": "Share of the core requirements with any related evidence",
+          "title": "Related Share",
+          "type": "number"
+        },
+        "short": {
+          "title": "Short",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "units",
+        "related_share",
+        "short"
+      ],
+      "title": "EvidenceVolumeOut",
+      "type": "object"
+    },
     "ExtractedSkill": {
       "description": "A skill in the user's profile, with evidence and an evidence-based level.",
       "properties": {
@@ -400,6 +463,53 @@
       "title": "FitIndicatorItem",
       "type": "object"
     },
+    "FitRange": {
+      "properties": {
+        "low": {
+          "title": "Low",
+          "type": "integer"
+        },
+        "high": {
+          "description": "If the follow-up questions were all answered yes",
+          "title": "High",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "low",
+        "high"
+      ],
+      "title": "FitRange",
+      "type": "object"
+    },
+    "FollowUpQuestionOut": {
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "requirement": {
+          "title": "Requirement",
+          "type": "string"
+        },
+        "item_type": {
+          "title": "Item Type",
+          "type": "string"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "requirement",
+        "item_type",
+        "question"
+      ],
+      "title": "FollowUpQuestionOut",
+      "type": "object"
+    },
     "GapAnalysisV2Request": {
       "properties": {
         "free_text": {
@@ -508,6 +618,15 @@
           "default": null,
           "description": "For roadmap weeks",
           "title": "Hours Per Week"
+        },
+        "answers": {
+          "description": "Answers to follow_up_questions: yes/some become self-reported evidence",
+          "items": {
+            "$ref": "#/$defs/AnswerIn"
+          },
+          "maxItems": 20,
+          "title": "Answers",
+          "type": "array"
         }
       },
       "title": "GapAnalysisV2Request",
@@ -536,8 +655,36 @@
           "title": "Fit Label",
           "type": "string"
         },
+        "fit_provisional": {
+          "default": false,
+          "description": "True with insufficient_evidence: see fit_range",
+          "title": "Fit Provisional",
+          "type": "boolean"
+        },
+        "fit_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FitRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "verdict": {
           "$ref": "#/$defs/Verdict"
+        },
+        "evidence_volume": {
+          "$ref": "#/$defs/EvidenceVolumeOut"
+        },
+        "follow_up_questions": {
+          "description": "With insufficient_evidence: answer them in `answers` to re-score",
+          "items": {
+            "$ref": "#/$defs/FollowUpQuestionOut"
+          },
+          "title": "Follow Up Questions",
+          "type": "array"
         },
         "score_breakdown": {
           "$ref": "#/$defs/ScoreBreakdown"
@@ -573,6 +720,14 @@
             "$ref": "#/$defs/RoleHistoryItem"
           },
           "title": "Role History",
+          "type": "array"
+        },
+        "qualifications": {
+          "description": "Degree/institution lines (not task evidence)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Qualifications",
           "type": "array"
         },
         "draws_on": {
@@ -627,6 +782,7 @@
         "fit_percent",
         "fit_label",
         "verdict",
+        "evidence_volume",
         "score_breakdown",
         "strengths",
         "gaps",
@@ -658,6 +814,14 @@
             "$ref": "#/$defs/LaterItem"
           },
           "title": "Later",
+          "type": "array"
+        },
+        "basics": {
+          "description": "Generic office/productivity software (unless a market skill here)",
+          "items": {
+            "$ref": "#/$defs/LaterItem"
+          },
+          "title": "Basics",
           "type": "array"
         },
         "total_hours": {
@@ -1056,6 +1220,7 @@
             "alias",
             "semantic",
             "implied_by_role",
+            "answered",
             "none"
           ],
           "title": "Reason",
@@ -1596,6 +1761,7 @@
         "label": {
           "enum": [
             "under_skilled",
+            "insufficient_evidence",
             "good_fit",
             "over_qualified"
           ],

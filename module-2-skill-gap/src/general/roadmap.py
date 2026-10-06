@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import math
+import re
 
 import numpy as np
 
@@ -20,6 +21,7 @@ from src.general.scoring import PARTIAL_CREDIT
 from src.models.schemas import HourRange
 
 ROADMAP_MAX_ITEMS = 8            # the rest go to `later`
+ROADMAP_MAX_TECH = 3             # tech/tool items in the main roadmap; more go to `later`
 HOURS_PER_LEVEL = {"task": 60, "dwa": 40, "market_skill": 80, "tech": 50, "tool": 20}   # hours for a full level 0 -> 1
 JOB_ZONE_FACTOR = {1: 0.5, 2: 0.75, 3: 1.0, 4: 1.25, 5: 1.5}
 HOURS_SPREAD = (0.7, 1.3)        # range around the estimate
@@ -107,6 +109,83 @@ def order(gaps: list[RequirementMatch], known: set[str]) -> list[RequirementMatc
                 if id(p) not in placed and sid.get(p.item.item_id) in pre_ids:
                     out.append(p)
                     placed.add(id(p))
+        out.append(m)
+        placed.add(id(m))
+    return out
+
+
+# --- A3b: ranking by expected score gain --------------------------------------------------------------------
+# Generic office/productivity software: a separate `basics` list unless the occupation's market skills name it.
+BASIC_SOFTWARE = re.compile(
+    r"(microsoft (word|excel|outlook|access|powerpoint|office|windows|onenote|teams|exchange|sharepoint)|"
+    r"office suite|google (docs|sheets|drive|slides|workspace)|gmail|adobe acrobat|web browser|email|e-mail|"
+    r"word processing|spreadsheet software|presentation software|operating system|internet browser)", re.IGNORECASE)
+
+
+def expected_gain(matches: list[RequirementMatch], credit) -> dict[str, float]:
+    """item_id -> score the item would add if fully met: the type's effective share (renormalised, as in the score)
+    x the item's share of its type's weight x the credit still missing."""
+    from src.general.matcher import TYPE_SHARE, effective_share
+
+    groups: dict[str, list[RequirementMatch]] = {}
+    for m in matches:
+        if m.item.item_type in TYPE_SHARE:
+            groups.setdefault(m.item.item_type, []).append(m)
+    raw = {t: effective_share(TYPE_SHARE[t], sum(m.item.weight for m in ms), sum(m.item.base_weight for m in ms), len(ms))
+           for t, ms in groups.items()}
+    total = sum(raw.values()) or 1.0
+    out = {}
+    for t, ms in groups.items():
+        w = sum(m.item.weight for m in ms) or 1.0
+        for m in ms:
+            out[m.item.item_id] = raw[t] / total * m.item.weight / w * (1 - credit(m))
+    return out
+
+
+def is_basic_software(m: RequirementMatch, market_skill_ids: set[str], market_names: set[str]) -> bool:
+    if m.item.item_type not in ("tech", "tool") or not BASIC_SOFTWARE.search(m.item.name):
+        return False
+    sid = requirement_skill_id(m.item.name)
+    return not (sid and sid in market_skill_ids) and not any(n in m.item.name.lower() for n in market_names)
+
+
+def plan(gaps: list[RequirementMatch], matches: list[RequirementMatch], credit, known: set[str],
+         market_skills: list[str]) -> tuple[list[RequirementMatch], list[RequirementMatch], list[RequirementMatch]]:
+    """(main, later, basics). Main: by expected gain (role-implied items after real gaps), taxonomy prerequisites
+    first, at most ROADMAP_MAX_ITEMS items and ROADMAP_MAX_TECH tech/tool items. Basic office software goes to
+    basics; everything else to later."""
+    gain = expected_gain(matches, credit)
+    ids = {requirement_skill_id(n) for n in market_skills} - {None}
+    names = {n.lower() for n in market_skills}
+    basics = [m for m in gaps if is_basic_software(m, ids, names)]
+    rest = [m for m in gaps if not is_basic_software(m, ids, names)]
+    ranked = sorted(rest, key=lambda m: (m.reason == "implied_by_role", -gain.get(m.item.item_id, 0.0)))
+    main, later, tech = [], [], 0
+    for m in ranked:
+        is_tech = m.item.item_type in ("tech", "tool")
+        if len(main) < ROADMAP_MAX_ITEMS and not (is_tech and tech >= ROADMAP_MAX_TECH):
+            main.append(m)
+            tech += is_tech
+        else:
+            later.append(m)
+    main = order_keep_rank(main, known)
+    basics.sort(key=lambda m: -gain.get(m.item.item_id, 0.0))
+    return main, later, basics
+
+
+def order_keep_rank(items: list[RequirementMatch], known: set[str]) -> list[RequirementMatch]:
+    """The given order, except a taxonomy prerequisite of a later item moves ahead of it."""
+    sid = {m.item.item_id: requirement_skill_id(m.item.name) for m in items if m.item.item_type in ("tech", "tool", "market_skill")}
+    by_id = taxonomy()["by_id"]
+    out, placed = [], set()
+    for m in items:
+        if id(m) in placed:
+            continue
+        pre = set(by_id.get(sid.get(m.item.item_id) or "", {}).get("prerequisites", [])) - known
+        for p in items:
+            if pre and id(p) not in placed and sid.get(p.item.item_id) in pre:
+                out.append(p)
+                placed.add(id(p))
         out.append(m)
         placed.add(id(m))
     return out

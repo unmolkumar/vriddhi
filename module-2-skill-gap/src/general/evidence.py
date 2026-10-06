@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from src.engines.skill_extractor import extract_skills, resolve_skill
 from src.models.schemas import UserProfile
-from src.parsers.section_segmenter import DATE_RANGE, extract_work_history, segment
+from src.parsers.section_segmenter import _DEGREE, _INSTITUTION, _YEAR, DATE_RANGE, extract_work_history, segment
 
 EvidenceType = Literal["work", "project", "mentioned", "self"]
 SECTION_TYPE: dict[str, EvidenceType] = {"experience": "work", "projects": "project"}   # everything else: mentioned
@@ -56,12 +56,14 @@ class EvidenceUnit(BaseModel):
         default=None, description="For a clause split out of a list-like sentence: the whole sentence's span")
     skill_ids: list[str] = Field(default_factory=list, description="Taxonomy skills the v1 dictionary finds here")
     role_title: bool = Field(default=False, description="A job-title line: role history, never matched as a task")
+    education: bool = Field(default=False, description="A degree/institution line: qualifications and knowledge "
+                                                        "inference only, never task/DWA/tool evidence")
     translated: bool = Field(default=False, description="text is an English rewrite of original_text")
     original_text: str | None = Field(default=None, description="The text as written, when translated")
 
     @property
     def matchable(self) -> bool:
-        return not self.role_title
+        return not self.role_title and not self.education
 
 
 def clauses(sentence: str) -> list[str]:
@@ -106,6 +108,19 @@ def english_share(text: str) -> float:
 
 def is_english(text: str) -> bool:
     return english_share(text) >= ENGLISH_MIN_SHARE
+
+
+EDUCATION_MAX_WORDS = 8          # a short line naming a degree is a qualification, even without a year or institution
+_EDUCATION_LEAD = re.compile(r"^\s*(education|qualifications?|academics?)\s*[:\-]", re.IGNORECASE)
+
+
+def is_education_line(section: str, piece: str) -> bool:
+    """A degree / institution line: the Education section, or a degree name with an institution, a year, or few
+    words ('B.Sc Nursing, Government College of Nursing, 2019', 'Diploma in Hotel Management')."""
+    if section == "education" or _EDUCATION_LEAD.match(piece):
+        return True
+    return bool(_DEGREE.search(piece)) and bool(_INSTITUTION.search(piece) or _YEAR.search(piece)
+                                                 or len(piece.split()) <= EDUCATION_MAX_WORDS)
 
 
 def _is_title_line(section: str, piece: str, multi_section: bool) -> bool:
@@ -162,10 +177,11 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
                                    skill_ids=[h.id for h in extract_skills(part, use_llm=False, skills_context=True)])
                       for part in clauses(eng)]
             continue
+        education = not title and is_education_line(name, piece)
         hits = extract_skills(piece, use_llm=False, skills_context=name == "skills")
         units.append(EvidenceUnit(text=piece, evidence_type=kind, section=name, span=span, role_title=title,
-                                  skill_ids=[] if title else [h.id for h in hits]))
-        if title:
+                                  education=education, skill_ids=[] if title or education else [h.id for h in hits]))
+        if title or education:
             continue
         part_cursor = span[0] if span else 0
         for part in parts:

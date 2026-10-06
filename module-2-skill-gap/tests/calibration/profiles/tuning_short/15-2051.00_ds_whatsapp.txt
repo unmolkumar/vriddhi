@@ -1,0 +1,1 @@
+hey! data scientist at a fintech, 4 yrs. building credit risk & fraud models in python (xgboost, sklearn), sql for features, deploy on aws, dashboards in tableau

@@ -24,7 +24,8 @@ from src.general.requirements import SCORED_TYPES, FilterReport, RequirementItem
 from src.general.translate import FixtureTranslator
 
 PROFILES_DIR = Path(__file__).resolve().parents[2] / "tests" / "calibration" / "profiles"
-SETS = ("tuning", "heldout", "new", "heldout2", "hinglish", "verdict_tuning", "verdict_validation")
+SETS = ("tuning", "heldout", "new", "heldout2", "hinglish", "verdict_tuning", "verdict_validation", "tuning_short",
+        "verdict_validation2")
 PARTIAL_PREFIX = "partial_"
 TYPES = list(SCORED_TYPES)
 

@@ -12,6 +12,7 @@ from src.general.requirements import (
 
 SOC = "13-2011.00"
 V20 = Path(__file__).parent / "mocks" / "m1_occupation_requirements_export_v2.0.json"
+V21 = Path(__file__).parent / "mocks" / "m1_occupation_requirements_export_v2.1.json"
 
 
 def row(item_type, name, **kw):
@@ -50,15 +51,18 @@ def test_embedding_text_skips_empty_or_generic_descriptions():
                                        "Process invoices."]
 
 
-@pytest.mark.parametrize("r, provenance", [
-    (row("task", "Audit books"), "onet"),
-    (market("Tally ERP", 0.15), "india_postings"),
-    (row("market_skill", "GST Filing", source="curated"), "curated"),
-    (row("tool", "Cash counting machine", item_id="tool_cash_counting_machine"), "curated"),   # v2.1: hand-written
-    (row("tool", "Calculator", item_id="43211503"), "onet"),
-    (row("tech", "Microsoft Excel", item_id="tech_microsoft_excel"), "onet")])
-def test_provenance(r, provenance):
-    assert provenance_of(r) == provenance
+@pytest.mark.parametrize("r, version, provenance", [
+    (row("task", "Audit books"), "2.2.0", "onet"),
+    (market("Tally ERP", 0.15), "2.2.0", "india_postings"),
+    (row("market_skill", "GST Filing", source="curated"), "2.2.0", "curated"),
+    (row("tool", "Cash counting machine", item_id="tool_cash_counting_machine"), "2.1.0", "curated"),  # hand-written
+    (row("tool", "Autoclaves", item_id="tool_autoclaves"), "2.2.0", "onet"),          # real O*NET Tools Used from v2.2
+    (row("tool", "Autoclaves", item_id="tool_autoclaves"), "2.2.0+f81d5eb087e03531", "onet"),
+    (row("tool", "Autoclaves", item_id="tool_autoclaves"), None, "onet"),             # unknown version: the latest
+    (row("tool", "Calculator", item_id="43211503"), "2.1.0", "onet"),
+    (row("tech", "Microsoft Excel", item_id="tech_microsoft_excel"), "2.1.0", "onet")])
+def test_provenance(r, version, provenance):
+    assert provenance_of(r, version) == provenance
 
 
 def test_curated_rows_are_down_weighted_flagged_and_never_carry_a_share():
@@ -66,7 +70,7 @@ def test_curated_rows_are_down_weighted_flagged_and_never_carry_a_share():
                                    india_demand_share=0.9),
                                row("tool", "Cash counting machine", item_id="tool_cash_counting_machine",
                                    importance_norm=0.65),
-                               market("Accounting", 0.25, importance_norm=0.5)])
+                               market("Accounting", 0.25, importance_norm=0.5)], m1_version="2.1.0")
     by = {i.name: i for i in items}
     gst, tool, acc = by["GST Filing"], by["Cash counting machine"], by["Accounting"]
     assert gst.provenance == tool.provenance == "curated" and acc.provenance == "india_postings"
@@ -154,10 +158,27 @@ def test_clean_data_passes_through_untouched():
     assert all(i.flags == [] and i.reliability == 1.0 for i in items)
 
 
-def test_v21_export_accountants():
+def test_v22_export_accountants():
+    """Module 1 v2.2: real O*NET tools (tool_* ids are onet now), curated market skills at importance 0.50,
+    posting-derived market skills with posting_count, india_relevant flags."""
     f = FixtureM1Client()
+    assert f.version() == "2.2.0"
+    items, report = normalise(f.requirements(SOC), title=f.occupations[SOC]["title"], m1_version=f.version())
+    tools = [i for i in items if i.item_type == "tool"]
+    assert len(tools) > 10 and all(i.provenance == "onet" and not i.flags for i in tools)
+    curated = [i for i in items if i.provenance == "curated"]
+    assert curated and all(i.item_type == "market_skill" and i.importance == 0.5 for i in curated)
+    rows = FixtureM1Client().requirements("15-2051.00")
+    ds, ds_report = normalise(rows, title="Data Scientists", m1_version="2.2.0")
+    assert all(r.get("posting_count", 0) >= 3 for r in rows if r["source"] == "india_postings")
+    assert "low_support" not in ds_report.dropped                      # module 1 already keeps >= 3 postings
+    assert any(i.name == "Machine Learning" and i.india_demand_share for i in ds)
+
+
+def test_v21_export_accountants():
+    f = FixtureM1Client(V21)
     assert f.version() == "2.1.0"
-    items, report = normalise(f.requirements(SOC), title=f.occupations[SOC]["title"])
+    items, report = normalise(f.requirements(SOC), title=f.occupations[SOC]["title"], m1_version=f.version())
     assert report.rows_in == 472 and "duplicate" not in report.dropped and "industry_label" not in report.dropped
     by_type = {t: [i for i in items if i.item_type == t] for t in ("market_skill", "tool", "dwa")}
     assert len(by_type["dwa"]) == 28 and all(i.provenance == "onet" for i in by_type["dwa"])

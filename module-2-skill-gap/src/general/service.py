@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.general import inference, roadmap, scoring
+from src.general import inference, roadmap, scoring, verdict
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import (
     EvidenceUnit, Translator, from_profile, from_skills, from_text, profile_history, role_history,
@@ -24,8 +24,8 @@ from src.general.requirements import (
     DEFAULT_LEVEL, SCORED_TYPES, FilterReport, RequirementItem, domain_texts, normalise,
 )
 from src.general.schemas import (
-    CloseAlternative, DrawsOnItem, EvidenceRef, FitIndicatorItem, GapAnalysisV2Request, GapAnalysisV2Response,
-    GeneralRoadmap, LaterItem, MatchTextRequest, MatchTextResponse, NotApplicableItem, ProvenanceSummary,
+    CloseAlternative, DrawsOnItem, EvidenceRef, EvidenceVolumeOut, FitIndicatorItem, FitRange, FollowUpQuestionOut,
+    GapAnalysisV2Request, GapAnalysisV2Response, GeneralRoadmap, LaterItem, MatchTextRequest, MatchTextResponse, NotApplicableItem, ProvenanceSummary,
     RequirementResult, RoadmapItem, RoleHistoryItem, RoleOption, RoleResolution, ScoreBreakdown, TypeScore, Verdict,
     WorkActivityItem,
 )
@@ -47,6 +47,7 @@ JOB_MIN_WORDS = 3              # job-text clauses shorter than this aren't requi
 JOB_MAX_REQUIREMENTS = 60
 MATCH_TEXT_TOP = 15
 NOT_APPLICABLE_PATH = Path(__file__).resolve().parents[2] / "data" / "general" / "india_not_applicable.json"
+M1_NA_REASON = "Module 1 marks this as not relevant in India."
 CURATED_NOTE = ("Curated rows are hand-written in module 1 and count at half weight until module 1 replaces them "
                 "with O*NET or posting data.")
 _DEFAULT = object()
@@ -110,8 +111,11 @@ def prepare_occupation(soc: str, profile: dict, rows: list[dict], encoder: Encod
     def similarity(texts: list[str]) -> list[float]:
         return cosine(encoder.encode_cached(f"{key}-offdomain", texts), domain).max(axis=1).tolist()
 
-    items, report = normalise(rows, title=title, domain_similarity=similarity)
-    na = india_not_applicable()
+    items, report = normalise(rows, title=title, domain_similarity=similarity, m1_version=version)
+    # Not applicable in India: module 1's india_relevant = 0 (v2.2+, with its reason), plus the local list.
+    na = dict(india_not_applicable())
+    na.update({(soc, r.get("item_type"), str(r.get("item_id"))): r.get("india_irrelevant_reason") or M1_NA_REASON
+               for r in rows if r.get("india_relevant") in (0, False)})
     not_applicable = [(i, na[(soc, i.item_type, i.item_id)]) for i in items if (soc, i.item_type, i.item_id) in na]
     if not_applicable:
         report.dropped["not_applicable_in_india"] = [i.name for i, _ in not_applicable]
@@ -170,12 +174,14 @@ def result(m: RequirementMatch) -> RequirementResult:
 
 
 class GeneralEngine:
-    def __init__(self, client=None, encoder: Encoder | None = None, translator: Translator | None = _DEFAULT):
+    def __init__(self, client=None, encoder: Encoder | None = None, translator: Translator | None = _DEFAULT,
+                 rephraser=_DEFAULT):
         from src.general.translate import default_translator
 
         self.client = client or M1Client()
         self.encoder = encoder or Encoder()
         self.translator = default_translator() if translator is _DEFAULT else translator
+        self.rephraser = verdict.default_rephraser() if rephraser is _DEFAULT else rephraser
         self._occupations: dict[str, OccupationData] = {}
         self._titles: dict[str, Role | None] = {}
         self._related: dict[str, set[str]] = {}
@@ -233,6 +239,9 @@ class GeneralEngine:
             units += from_text(req.free_text, translator=self.translator, warnings=warnings)
             history += role_history(req.free_text)
         units += from_skills([s for s in req.skills if s.strip()])
+        for a in getattr(req, "answers", []):
+            if a.answer in ("yes", "some") and a.detail and a.detail.strip():
+                units.append(EvidenceUnit(text=a.detail.strip(), evidence_type="self", section="answers"))
         if req.profile:
             units += from_profile(req.profile)
             history += profile_history(req.profile)
@@ -308,25 +317,40 @@ class GeneralEngine:
         roles = self.roles(ev.history)
         unit_vectors = self.encoder.encode([u.text for u in units])
         band = scoring.experience_band(occ.profile)
-        match_score, matches, factor = self._score(occ, units, unit_vectors, years, roles)
+        _, matches, factor = self._score(occ, units, unit_vectors, years, roles)
+        answers = {a.requirement_id: (a.answer, a.detail) for a in req.answers}
+        matches = verdict.apply_answers(matches, answers)
         skill = scoring.skill_score(matches)
+        match_score = skill * factor
+        vol = verdict.volume(units, matches)
 
         alternatives, better_fit = self._alternatives(occ, units, unit_vectors, years, roles, match_score, warnings)
         if resolution.low_confidence:
             alternatives += [CloseAlternative(soc_code=o.soc_code, title=o.title, score=o.confidence, source="search",
                                               message=f"Did you mean {o.title}?") for o in resolution.did_you_mean]
-        label, reason = scoring.verdict(match_score, years, band, better_fit)
+        label, reason = verdict.decide(match_score, vol, years, band, better_fit)
         suggested = RoleOption(soc_code=better_fit[0], title=better_fit[1], confidence=round(better_fit[2], 4)) \
             if label == "over_qualified" and better_fit else None
         percent = scoring.fit_percent(match_score)
+        questions, fit_range = [], None
+        if label == "insufficient_evidence":
+            questions = verdict.follow_up_questions(matches, occ.title, set(answers), self.rephraser)
+            if len(questions) >= verdict.QUESTIONS_MIN:
+                best = verdict.apply_answers(matches, {q.requirement_id: ("yes", None) for q in questions})
+                fit_range = FitRange(low=percent, high=max(percent, scoring.fit_percent(scoring.skill_score(best) * factor)))
+            else:                                   # nothing left to ask about: the evidence is what it is
+                label, reason = scoring.verdict(match_score, years, band, better_fit, verdict.threshold_for(vol))
+                questions = []
 
         met = sorted((m for m in matches if m.status == "met"), key=lambda m: -m.item.weight * scoring.credit(m))
         gaps = sorted((m for m in matches if m.status != "met"), key=lambda m: -m.item.weight)
         generic = inference.infer(occ.items, matches, units, self.encoder)
         return GapAnalysisV2Response(
             resolution=resolution, match_score=round(match_score, 4), fit_percent=percent,
-            fit_label=scoring.fit_label(percent),
+            fit_label=scoring.fit_label(percent), fit_provisional=fit_range is not None, fit_range=fit_range,
             verdict=Verdict(label=label, reason=reason, suggested_role=suggested),
+            evidence_volume=EvidenceVolumeOut(**vol.model_dump()),
+            follow_up_questions=[FollowUpQuestionOut(**q.model_dump()) for q in questions],
             score_breakdown=ScoreBreakdown(
                 skill_score=round(skill, 4), by_type={t: TypeScore(**v) for t, v in scoring.by_type(matches).items()},
                 experience_years=years, experience_band=(band.low, band.high) if band else None,
@@ -338,13 +362,14 @@ class GeneralEngine:
             role_history=[RoleHistoryItem(title=r.title, years=r.years, soc_code=r.soc,
                                           occupation_title=r.occupation_title, confidence=r.confidence,
                                           applies_to_target=r in self.roles_for(occ, roles)) for r in roles],
+            qualifications=[u.original_text or u.text for u in units if u.education],
             draws_on=[DrawsOnItem(name=d.item.name, item_type=d.item.item_type, importance=d.item.importance,
                                   inferred=d.inferred, support=d.support) for d in generic.draws_on],
             work_activities=[WorkActivityItem(name=w.item.name, status=w.status, via=w.via)
                              for w in generic.work_activities],
             fit_indicators=[FitIndicatorItem(**f.model_dump()) for f in generic.fit_indicators],
             close_alternatives=alternatives,
-            roadmap=self._roadmap(occ, gaps, units, req.hours_per_week),
+            roadmap=self._roadmap(occ, gaps, matches, units, req.hours_per_week),
             provenance_summary=self._provenance(occ),
             m1_version=occ.version, warnings=warnings)
 
@@ -373,16 +398,15 @@ class GeneralEngine:
                     better = (soc, other.title, s)
         return sorted(out, key=lambda a: -a.score), better
 
-    def _roadmap(self, occ: OccupationData, gaps: list[RequirementMatch], units: list[EvidenceUnit],
-                 hours_per_week: float | None) -> GeneralRoadmap:
-        """Main roadmap: the ROADMAP_MAX_ITEMS heaviest gaps (role-implied ones after the rest); the remainder goes
-        to `later`. Totals cover the main roadmap only."""
+    def _roadmap(self, occ: OccupationData, gaps: list[RequirementMatch], matches: list[RequirementMatch],
+                 units: list[EvidenceUnit], hours_per_week: float | None) -> GeneralRoadmap:
+        """Main roadmap: gaps ranked by expected score gain (roadmap.plan), at most ROADMAP_MAX_ITEMS with at most
+        ROADMAP_MAX_TECH tech/tool items; generic office software in `basics`; the rest in `later`. Totals cover the
+        main roadmap only."""
         known = roadmap.known_skill_ids({sid for u in units if u.matchable for sid in u.skill_ids})
         ideas = roadmap.practice_ideas(gaps, occ.vec_by_id)
-        real = [m for m in gaps if m.reason != "implied_by_role"]
-        implied = [m for m in gaps if m.reason == "implied_by_role"]
-        ordered = roadmap.order(real, known) + roadmap.order(implied, known)
-        main, rest = ordered[:roadmap.ROADMAP_MAX_ITEMS], ordered[roadmap.ROADMAP_MAX_ITEMS:]
+        market = [i.name for i in occ.core if i.item_type == "market_skill"]
+        main, rest, basics = roadmap.plan(gaps, matches, scoring.credit, known, market)
         items = []
         for step, m in enumerate(main, start=1):
             h = roadmap.hours(m, occ.job_zone)
@@ -393,9 +417,10 @@ class GeneralEngine:
                                      practice_ideas=ideas.get(m.item.item_id, []), hours=h,
                                      weeks=roadmap.weeks(h, hours_per_week)))
         total = HourRange(low=sum(i.hours.low for i in items), high=sum(i.hours.high for i in items))
-        later = [LaterItem(requirement=m.item.name, item_type=m.item.item_type, status=m.status,
-                           weight=round(m.item.weight, 4)) for m in rest]
-        return GeneralRoadmap(items=items, later=later, total_hours=total,
+        def slim(ms):
+            return [LaterItem(requirement=m.item.name, item_type=m.item.item_type, status=m.status,
+                              weight=round(m.item.weight, 4)) for m in ms]
+        return GeneralRoadmap(items=items, later=slim(rest), basics=slim(basics), total_hours=total,
                               total_weeks=roadmap.weeks(total, hours_per_week), hours_per_week=hours_per_week,
                               note=roadmap.ROADMAP_NOTE)
 

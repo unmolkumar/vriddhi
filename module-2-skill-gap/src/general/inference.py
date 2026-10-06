@@ -84,7 +84,7 @@ def draws_on(items: list[RequirementItem], matches: list[RequirementMatch], unit
     if not top:
         return []
     support = [(m.item.text, m.item.item_type) for m in matches if m.status == "met" and m.item.item_type in ("task", "dwa")]
-    support += [(u.text, "education") for u in units if u.section == "education"]
+    support += [(u.text, "education") for u in units if u.education or u.section == "education"]
     vecs = encoder.encode([i.text for i in top])
     sims = cosine(vecs, encoder.encode([s for s, _ in support])) if support else np.zeros((len(top), 0))
     out = []

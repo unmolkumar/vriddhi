@@ -95,9 +95,9 @@ def test_low_confidence_and_ties_ask_did_you_mean():
 
 def test_fixture_client_mirrors_the_interface():
     f = FixtureM1Client()
-    assert f.version() == "2.1.0" and len(f.occupations) == 15
+    assert f.version() == "2.2.0" and len(f.occupations) == 15
     assert f.search("registered nurse").matches[0].soc_code == RN
-    assert len(f.requirements(RN)) == 291 and f.profile(RN)["title"] == "Registered Nurses"
+    assert len(f.requirements(RN)) == 455 and f.profile(RN)["title"] == "Registered Nurses"
     with pytest.raises(M1Error):
         f.requirements("00-0000.00")
 
@@ -105,8 +105,8 @@ def test_fixture_client_mirrors_the_interface():
 def test_fixture_files_merge_and_keep_their_versions():
     f = FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH)
     assert len(f.occupations) == 25
-    assert f.version_of(RN) == "2.1.0" and f.version_of("23-1011.00") == "2.0.0"
-    assert f.version() == "2.0.0+2.1.0"
+    assert f.version_of(RN) == "2.2.0" and f.version_of("23-1011.00") == "2.0.0"
+    assert f.version() == "2.0.0+2.2.0"
 
 
 def test_meta_endpoint_is_preferred_when_module_1_has_it(tmp_path):

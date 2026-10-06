@@ -151,7 +151,9 @@ def nurse_sample(profiles, occupations, encoder, thresholds) -> dict:
 
 
 def target_scores(engine, files: list) -> list[dict]:
-    """A2 match score of each profile on its target occupation (own SOC; for wrong_*, the role applied for)."""
+    """A2 match score and evidence volume of each profile on its target occupation (own SOC; for wrong_*, the
+    role applied for)."""
+    from src.general import verdict as v
     from src.general.schemas import GapAnalysisV2Request
 
     rows = []
@@ -160,48 +162,73 @@ def target_scores(engine, files: list) -> list[dict]:
         soc = f.name.removeprefix(cal.PARTIAL_PREFIX).removeprefix(cal.WRONG_PREFIX).split("_", 1)[0]
         ev = engine.evidence(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8")))
         uv = engine.encoder.encode([u.text for u in ev.units])
-        score = engine._score(engine.occupation(soc), ev.units, uv, ev.years, engine.roles(ev.history))[0]
-        rows.append({"profile": f"{f.parent.name}/{f.stem}", "kind": kind, "soc": soc, "score": round(score, 4)})
+        score, matches, _ = engine._score(engine.occupation(soc), ev.units, uv, ev.years, engine.roles(ev.history))
+        vol = v.volume(ev.units, matches)
+        rows.append({"profile": f"{f.parent.name}/{f.stem}", "kind": kind, "soc": soc, "score": round(score, 4),
+                     "units": vol.units, "related": vol.related_share})
     return rows
 
 
-def best_threshold(pos: list[float], neg: list[float]) -> float:
-    """The cut with the best balanced accuracy; among ties, the middle of the widest gap."""
-    cuts = sorted(set(pos + neg))
-    candidates = [(a + b) / 2 for a, b in zip(cuts, cuts[1:])] or [cuts[0]]
+# Cost of each (profile kind, verdict): a practitioner called under_skilled, or a beginner / someone from another
+# field called a good fit, is the worst; asking follow-up questions instead is cheap.
+VERDICT_COST = {"full": {"good_fit": 0, "insufficient_evidence": 1, "under_skilled": 5},
+                "partial": {"under_skilled": 0, "insufficient_evidence": 1, "good_fit": 4},
+                "wrong": {"under_skilled": 0, "insufficient_evidence": 2, "good_fit": 5}}
 
-    def quality(t):
-        acc = (sum(p >= t for p in pos) / len(pos) + sum(n < t for n in neg) / len(neg)) / 2
-        gap = min([abs(x - t) for x in pos + neg])
-        return acc, gap
-    return round(max(candidates, key=quality), 4)
+
+def verdict_grid():
+    ts = [round(0.15 + 0.01 * i, 2) for i in range(31)]
+    for t in ts:
+        for ts_short in [None] + [x for x in ts if x < t]:
+            for units in range(3, 11):
+                for related in (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4):
+                    yield t, ts_short, units, related
+
+
+def verdict_labels(rows, params):
+    from src.general import verdict as v
+    return [v.label_for(r["score"], r["units"], r["related"], *params) for r in rows]
+
+
+def verdict_cost(rows, params) -> tuple:
+    labels = verdict_labels(rows, params)
+    cost = sum(VERDICT_COST[r["kind"]][lab] for r, lab in zip(rows, labels))
+    margin = min(abs(r["score"] - (params[1] if r["units"] < params[2] and params[1] is not None else params[0]))
+                 for r in rows)
+    return cost, -margin
+
+
+def confusion(rows, params) -> dict:
+    out: dict = {k: {"good_fit": 0, "insufficient_evidence": 0, "under_skilled": 0} for k in VERDICT_COST}
+    for r, lab in zip(rows, verdict_labels(rows, params)):
+        out[r["kind"]][lab] += 1
+    ok = sum(out["full"][x] for x in ("good_fit", "insufficient_evidence")) + out["partial"]["under_skilled"] \
+        + out["partial"]["insufficient_evidence"] + out["wrong"]["under_skilled"]
+    return {"confusion": out, "acceptable": ok, "n": len(rows),
+            "full_called_under_skilled": [r["profile"] for r, lab in zip(rows, verdict_labels(rows, params))
+                                          if r["kind"] == "full" and lab == "under_skilled"],
+            "non_full_called_good_fit": [r["profile"] for r, lab in zip(rows, verdict_labels(rows, params))
+                                         if r["kind"] != "full" and lab == "good_fit"]}
 
 
 def verdict_calibration(client, encoder, translator) -> dict:
-    """Good-fit threshold from the tuning profiles (full vs partial and wrong-role, on their target), checked on the
-    validation profiles (held-out-2 full vs verdict_validation). FIT_MEDIAN_FULL = median full tuning score."""
+    """Verdict thresholds (good-fit, optional short-description good-fit, short-description units, minimum related
+    share) by minimum VERDICT_COST on the tuning profiles (tuning, verdict_tuning, tuning_short); reported on the
+    fresh validation set (verdict_validation2) and the A3 validation (held-out-2 full + verdict_validation)."""
     from src.general.service import GeneralEngine
-    engine = GeneralEngine(client=client, encoder=encoder, translator=translator)
-    tuning = target_scores(engine, sorted((cal.PROFILES_DIR / "tuning").glob("*.txt"))
-                           + sorted((cal.PROFILES_DIR / "verdict_tuning").glob("*.txt")))
-    export = {soc for soc, v in client.versions.items() if v.startswith("2.1")}
-    validation = target_scores(engine, [f for f in sorted((cal.PROFILES_DIR / "heldout2").glob("*.txt"))
-                                        if f.name.split("_")[0] in export]
-                               + sorted((cal.PROFILES_DIR / "verdict_validation").glob("*.txt")))
-    pos = [r["score"] for r in tuning if r["kind"] == "full"]
-    neg = [r["score"] for r in tuning if r["kind"] != "full"]
-    t = best_threshold(pos, neg)
-
-    def check(rows):
-        p = [r for r in rows if r["kind"] == "full"]
-        n = [r for r in rows if r["kind"] != "full"]
-        return {"positives": len(p), "negatives": len(n), "full_min": min(r["score"] for r in p),
-                "negative_max": max(r["score"] for r in n),
-                "full_below_threshold": [r["profile"] for r in p if r["score"] < t],
-                "negatives_above_threshold": [r["profile"] for r in n if r["score"] >= t],
-                "accuracy": round((sum(r["score"] >= t for r in p) + sum(r["score"] < t for r in n)) / len(rows), 3)}
-    return {"threshold": t, "median_full_tuning": round(statistics.median(pos), 2),
-            "tuning": check(tuning), "validation": check(validation), "rows": tuning + validation}
+    engine = GeneralEngine(client=client, encoder=encoder, translator=translator, rephraser=None)
+    files = lambda d: sorted((cal.PROFILES_DIR / d).glob("*.txt"))  # noqa: E731
+    tuning = target_scores(engine, files("tuning") + files("verdict_tuning") + files("tuning_short"))
+    export = set(EXPORT_SOCS)
+    fresh = target_scores(engine, files("verdict_validation2"))
+    a3 = target_scores(engine, [f for f in files("heldout2") if f.name.split("_")[0] in export] + files("verdict_validation"))
+    best = min(verdict_grid(), key=lambda prm: verdict_cost(tuning, prm))
+    full = [r["score"] for r in tuning if r["kind"] == "full"]
+    return {"params": {"good_fit_threshold": best[0], "good_fit_threshold_short": best[1], "short_units": best[2],
+                       "min_related_share": best[3]},
+            "median_full_tuning": round(statistics.median(full), 2), "tuning_cost": verdict_cost(tuning, best)[0],
+            "tuning": confusion(tuning, best), "validation_fresh": confusion(fresh, best),
+            "validation_a3": confusion(a3, best), "rows": tuning + fresh + a3}
 
 
 def main() -> None:
@@ -209,14 +236,16 @@ def main() -> None:
     ap.add_argument("--model", default=None, help="sentence-transformers model (default: EMBEDDING_MODEL or MiniLM)")
     ap.add_argument("--tune", action="store_true", help="search thresholds and type shares on the tuning set")
     ap.add_argument("--verdict", action="store_true", help="calibrate the good-fit threshold (A2 scores)")
+    ap.add_argument("--fixture", default=None, help="module 1 export to use instead of tests/mocks' (e.g. the v2.1 copy)")
     ap.add_argument("--no-translate", action="store_true", help="match non-English sentences as written")
     ap.add_argument("--grid-shift", type=float, default=0.0, help="add to every threshold in the search grid")
     ap.add_argument("--filters", default="13-2011.00,47-2111.00,17-2051.00", help="SOCs to print filter reports for")
     args = ap.parse_args()
 
     encoder = Encoder(args.model or model_name())
-    client = cal.FixtureM1Client(cal.FIXTURE_PATH, cal.EXTRA_FIXTURE_PATH)
-    EXPORT_SOCS.update(soc for soc, v in client.versions.items() if v.startswith("2.1"))
+    fixture = Path(args.fixture) if args.fixture else cal.FIXTURE_PATH
+    client = cal.FixtureM1Client(fixture, cal.EXTRA_FIXTURE_PATH)
+    EXPORT_SOCS.update(cal.FixtureM1Client(fixture).occupations)
     translator = (lambda texts: [None] * len(texts)) if args.no_translate else cal.FixtureTranslator()
     profiles, occupations, pairs = cal.build(encoder, client, translator=translator)
     titles = {o.soc: o.title for o in occupations}
@@ -243,11 +272,12 @@ def main() -> None:
     if args.verdict:
         vc = verdict_calibration(client, encoder, translator)
         out["verdict_calibration"] = vc
-        print(f"\n== verdict threshold {vc['threshold']} (tuning), median full tuning score {vc['median_full_tuning']}")
-        for label in ("tuning", "validation"):
+        print(f"\n== verdict params {vc['params']} (tuning cost {vc['tuning_cost']}), "
+              f"median full tuning score {vc['median_full_tuning']}")
+        for label in ("tuning", "validation_fresh", "validation_a3"):
             c = vc[label]
-            print(f"  {label:10} accuracy {c['accuracy']}  full min {c['full_min']}  negative max {c['negative_max']}  "
-                  f"full below: {c['full_below_threshold']}  negatives above: {c['negatives_above_threshold']}")
+            print(f"  {label:17} acceptable {c['acceptable']}/{c['n']}  {c['confusion']}")
+            print(f"      full -> under_skilled: {c['full_called_under_skilled']}   non-full -> good_fit: {c['non_full_called_good_fit']}")
     out["filters"] = {o.soc: o.report.model_dump() for o in occupations}
     for o in occupations:
         if o.soc in args.filters.split(","):
@@ -268,7 +298,7 @@ def main() -> None:
     print("  fit indicators:", sample["fit_indicators"])
 
     RESULTS.mkdir(parents=True, exist_ok=True)
-    suffix = ("_shift" + str(args.grid_shift) if args.grid_shift else "") + ("_no_translate" if args.no_translate else "")
+    suffix = ("_shift" + str(args.grid_shift) if args.grid_shift else "") + ("_no_translate" if args.no_translate else "")         + (f"_{Path(args.fixture).stem}" if args.fixture else "")
     path = RESULTS / f"{encoder.name.replace('/', '_')}{suffix}.json"
     path.write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"\nwrote {path}")

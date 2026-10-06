@@ -33,6 +33,7 @@ Provenance = Literal["onet", "india_postings", "curated", "job_text"]   # job_te
 CURATED_WEIGHT = 0.5               # weight factor for curated rows
 CURATED_SOURCES = {"curated"}
 CURATED_TOOL_ID_PREFIX = "tool_"   # v2.1 tool rows are hand-written in module 1's ETL but labelled source='onet'
+REAL_TOOLS_FROM = (2, 2)           # ... from module 1 v2.2 they are real O*NET Tools Used
 POSTING_SOURCES = {"india_postings", "global_postings"}
 
 # --- filters --------------------------------------------------------------------------------------
@@ -157,10 +158,27 @@ def requirement_texts(item: "RequirementItem") -> list[str]:
     return [item.text] + (requirement_clauses(item.name) if item.item_type in CLAUSE_TYPES else [])
 
 
-def provenance_of(row: dict) -> Provenance:
-    """onet | india_postings | curated. 'tool_*' ids are hand-written in module 1 v2.1 whatever their source says."""
+def version_tuple(version: str | None) -> tuple[int, ...]:
+    """'2.2.0+f81d5eb0' -> (2, 2, 0); unknown -> () (treated as the latest)."""
+    parts = []
+    for p in str(version or "").split("+")[0].split("."):
+        if not p.isdigit():
+            break
+        parts.append(int(p))
+    return tuple(parts)
+
+
+def hand_written_tools(m1_version: str | None) -> bool:
+    """Module 1 v2.1 wrote its tool rows by hand (ids 'tool_*', labelled onet); from v2.2 they are O*NET Tools Used."""
+    v = version_tuple(m1_version)
+    return bool(v) and v < REAL_TOOLS_FROM
+
+
+def provenance_of(row: dict, m1_version: str | None = None) -> Provenance:
+    """onet | india_postings | curated. Before module 1 v2.2, 'tool_*' ids are hand-written whatever their source
+    says; from v2.2 they are genuine O*NET."""
     source = row.get("source") or "onet"
-    if source in CURATED_SOURCES or (row.get("item_type") == "tool"
+    if source in CURATED_SOURCES or (row.get("item_type") == "tool" and hand_written_tools(m1_version)
                                      and str(row.get("item_id") or "").startswith(CURATED_TOOL_ID_PREFIX)):
         return "curated"
     return "india_postings" if source in POSTING_SOURCES else "onet"
@@ -212,7 +230,7 @@ def _weak_support(row: dict, share: float | None) -> bool:
 
 
 def normalise(rows: list[dict], *, title: str = "", aliases: list[str] | None = None,
-              domain_similarity: Callable[[list[str]], list[float]] | None = None
+              domain_similarity: Callable[[list[str]], list[float]] | None = None, m1_version: str | None = None
               ) -> tuple[list[RequirementItem], FilterReport]:
     """Filter and weight one SOC's requirement rows.
 
@@ -231,7 +249,7 @@ def normalise(rows: list[dict], *, title: str = "", aliases: list[str] | None = 
         if not r.get("reliable", 1):
             report.drop("unreliable", name)
             continue
-        provenance = provenance_of(r)
+        provenance = provenance_of(r, m1_version)
         share = r.get("india_demand_share") if provenance != "curated" else None   # never shown as market data
         if item_type == "market_skill" and provenance == "india_postings" and _weak_support(r, share):
             report.drop("low_support", name)

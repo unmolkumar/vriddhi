@@ -50,7 +50,7 @@ def test_experience_years_parsed_overridden_or_unknown(engine):
 
 def test_gap_analysis_output(engine):
     r = engine.analyze(GapAnalysisV2Request(target_role="staff nurse", free_text=NURSE, hours_per_week=10))
-    assert r.resolution.soc_code == RN and 0 < r.match_score <= 1 and r.m1_version == "2.1.0"
+    assert r.resolution.soc_code == RN and 0 < r.match_score <= 1 and r.m1_version == "2.2.0"
     assert r.score_breakdown.experience_band_source == "job_zone" and r.score_breakdown.experience_years == 6.0
     assert set(r.score_breakdown.by_type) <= {"market_skill", "tech", "tool", "task", "dwa"}
     assert r.strengths and all(s.status == "met" and s.evidence for s in r.strengths)

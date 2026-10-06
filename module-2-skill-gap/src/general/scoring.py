@@ -39,11 +39,11 @@ EXPERIENCE_GAP_YEARS = 3.0       # ... reached this many years below the band's 
 
 # fit_percent: piecewise-linear, GOOD_FIT_THRESHOLD -> 50, FIT_MEDIAN_FULL (median full-profile own-occupation
 # score on the tuning set) -> 80, the same slope above it, capped at 100; 0 -> 0. Constants from tuning only.
-FIT_MEDIAN_FULL = 0.60            # A3 tuning set, frozen thresholds
+FIT_MEDIAN_FULL = 0.42            # A3b tuning sets, module 1 v2.2, frozen thresholds
 FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Early stage"))
 
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
-GOOD_FIT_THRESHOLD = 0.3254      # A3 tuning: full min 0.3257, partial/wrong max 0.3250 (WORKING.md 13.4)
+GOOD_FIT_THRESHOLD = 0.22        # A3b: tuned with verdict.py's thresholds on the tuning sets (WORKING.md 14.1)
 OVERQUALIFIED_EXTRA_YEARS = 3.0  # years above the band's maximum
 
 
@@ -54,8 +54,8 @@ class Band(NamedTuple):
 
 
 def credit(m: RequirementMatch) -> float:
-    if m.reason == "implied_by_role":
-        return m.implied_credit or 0.0
+    if m.implied_credit is not None:          # implied by role history, or a "some" answer
+        return m.implied_credit
     if m.status == "missing":
         return 0.0
     if m.status == "partial":
@@ -125,13 +125,14 @@ def experience_factor(years: float | None, band: Band | None) -> float:
     return 1.0 - (1.0 - EXPERIENCE_MIN_FACTOR) * short
 
 
-def verdict(score: float, years: float | None, band: Band | None, better_fit: tuple[str, str, float] | None
-            ) -> tuple[str, str]:
+def verdict(score: float, years: float | None, band: Band | None, better_fit: tuple[str, str, float] | None,
+            threshold: float | None = None) -> tuple[str, str]:
     """(label, reason). better_fit: (soc, title, score) of a related occupation with a higher job zone where the
-    user also clears GOOD_FIT_THRESHOLD."""
-    if score < GOOD_FIT_THRESHOLD:
+    user also clears GOOD_FIT_THRESHOLD. threshold overrides GOOD_FIT_THRESHOLD (short descriptions)."""
+    threshold = GOOD_FIT_THRESHOLD if threshold is None else threshold
+    if score < threshold:
         return "under_skilled", (f"Your evidence covers {score:.0%} of this role's weighted core requirements, "
-                                 f"below the {GOOD_FIT_THRESHOLD:.0%} needed for a good fit.")
+                                 f"below the {threshold:.0%} needed for a good fit.")
     senior = years is not None and band is not None and years > band.high + OVERQUALIFIED_EXTRA_YEARS
     if senior and better_fit:
         return "over_qualified", (f"You match this role ({score:.0%}) and have {years:g} years against a typical "

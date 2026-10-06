@@ -14,7 +14,7 @@ SOC_PATTERN = r"^\d{2}-\d{4}\.\d{2}$"
 MAX_TEXT_CHARS = 50_000
 Status = Literal["met", "partial", "missing"]
 Provenance = Literal["onet", "india_postings", "curated", "job_text"]
-VerdictLabel = Literal["under_skilled", "good_fit", "over_qualified"]
+VerdictLabel = Literal["under_skilled", "insufficient_evidence", "good_fit", "over_qualified"]
 
 
 class EvidenceSources(BaseModel):
@@ -29,12 +29,20 @@ class EvidenceSources(BaseModel):
         return bool((self.free_text or "").strip() or [s for s in self.skills if s.strip()] or self.profile)
 
 
+class AnswerIn(BaseModel):
+    requirement_id: str = Field(description="follow_up_questions[].requirement_id")
+    answer: Literal["yes", "no", "some"]
+    detail: str | None = Field(default=None, max_length=500, description="Optional: where or how you did it")
+
+
 class GapAnalysisV2Request(EvidenceSources):
     target_role: str | None = Field(default=None, min_length=2, max_length=120,
                                     description="Free-text role, e.g. 'staff nurse'; resolved through module 1")
     soc_code: str | None = Field(default=None, pattern=SOC_PATTERN, description="O*NET-SOC code, e.g. 29-1141.00")
     city: str | None = Field(default=None, max_length=60)
     hours_per_week: float | None = Field(default=None, gt=0, le=80, description="For roadmap weeks")
+    answers: list[AnswerIn] = Field(default_factory=list, max_length=20,
+                                    description="Answers to follow_up_questions: yes/some become self-reported evidence")
 
     @model_validator(mode="after")
     def _check(self) -> "GapAnalysisV2Request":
@@ -80,7 +88,7 @@ class RequirementResult(BaseModel):
     weight: float
     required_level: float
     provenance: Provenance
-    reason: Literal["alias", "semantic", "implied_by_role", "none"]
+    reason: Literal["alias", "semantic", "implied_by_role", "answered", "none"]
     evidence: EvidenceRef | None = None
     advice: str | None = None
     flags: list[str] = Field(default_factory=list)
@@ -149,6 +157,24 @@ class LaterItem(BaseModel):
     weight: float
 
 
+class EvidenceVolumeOut(BaseModel):
+    units: int = Field(description="Substantive evidence sentences or items")
+    related_share: float = Field(description="Share of the core requirements with any related evidence")
+    short: bool
+
+
+class FollowUpQuestionOut(BaseModel):
+    requirement_id: str
+    requirement: str
+    item_type: str
+    question: str
+
+
+class FitRange(BaseModel):
+    low: int
+    high: int = Field(description="If the follow-up questions were all answered yes")
+
+
 class CloseAlternative(BaseModel):
     soc_code: str
     title: str
@@ -174,6 +200,8 @@ class RoadmapItem(BaseModel):
 class GeneralRoadmap(BaseModel):
     items: list[RoadmapItem] = Field(description="Main roadmap, at most ROADMAP_MAX_ITEMS by weight")
     later: list[LaterItem] = Field(default_factory=list, description="The remaining gaps, for after the main roadmap")
+    basics: list[LaterItem] = Field(default_factory=list,
+                                    description="Generic office/productivity software (unless a market skill here)")
     total_hours: HourRange = Field(description="Main roadmap only")
     total_weeks: HourRange | None = None
     hours_per_week: float | None = None
@@ -191,7 +219,12 @@ class GapAnalysisV2Response(BaseModel):
     match_score: float = Field(ge=0, le=1)
     fit_percent: int = Field(ge=0, le=100, description="User-facing: threshold -> 50, typical full profile -> 80")
     fit_label: str = Field(description="Strong fit / Good fit / Developing / Early stage")
+    fit_provisional: bool = Field(default=False, description="True with insufficient_evidence: see fit_range")
+    fit_range: FitRange | None = None
     verdict: Verdict
+    evidence_volume: EvidenceVolumeOut
+    follow_up_questions: list[FollowUpQuestionOut] = Field(
+        default_factory=list, description="With insufficient_evidence: answer them in `answers` to re-score")
     score_breakdown: ScoreBreakdown
     strengths: list[RequirementResult]
     gaps: list[RequirementResult]
@@ -199,6 +232,7 @@ class GapAnalysisV2Response(BaseModel):
     not_applicable_in_india: list[NotApplicableItem] = Field(
         default_factory=list, description="Excluded from scoring: outside the scope of practice in India")
     role_history: list[RoleHistoryItem] = Field(default_factory=list)
+    qualifications: list[str] = Field(default_factory=list, description="Degree/institution lines (not task evidence)")
     draws_on: list[DrawsOnItem]
     work_activities: list[WorkActivityItem]
     fit_indicators: list[FitIndicatorItem]

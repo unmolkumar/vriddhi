@@ -162,7 +162,8 @@ def test_prescribing_is_not_applicable_for_nurses(engine):
     assert ("29-1141.00", "task", "1859") in india_not_applicable()
     r = engine.analyze(GapAnalysisV2Request(soc_code=RN, free_text="Gave IV medicines and charted vital signs."))
     na = {n.requirement: n.reason for n in r.not_applicable_in_india}
-    assert any(k.startswith("Prescribe or recommend drugs") for k in na) and "prescribing authority" in next(iter(na.values()))
+    assert any(k.startswith("Prescribe or recommend drugs") for k in na)
+    assert all("rescri" in reason for reason in na.values())               # module 1's india_relevant reason (v2.2)
     shown = [g.requirement for g in r.gaps] + [i.requirement for i in r.roadmap.items] + [i.requirement for i in r.roadmap.later]
     assert not any(s.startswith("Prescribe") for s in shown)
 

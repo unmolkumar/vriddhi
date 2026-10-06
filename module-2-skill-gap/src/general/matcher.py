@@ -28,14 +28,14 @@ Status = Literal["met", "partial", "missing"]
 # (met, partial) cosine per core item type, MiniLM; tuned on tests/calibration/profiles/tuning only, then frozen
 # (WORKING.md section 11.3).
 THRESHOLDS: dict[str, tuple[float, float]] = {
-    "tech": (0.60, 0.50), "tool": (0.60, 0.50), "market_skill": (0.60, 0.50),
-    "task": (0.55, 0.45), "dwa": (0.55, 0.45),
+    "tech": (0.55, 0.45), "tool": (0.55, 0.45), "market_skill": (0.55, 0.45),
+    "task": (0.60, 0.50), "dwa": (0.60, 0.50),
 }
 ALIAS_TYPES = ("tech", "tool", "market_skill")
 CREDIT = {"met": 1.0, "partial": 0.5, "missing": 0.0}
 # Share of each core item type in the score. A type's share is scaled by its items' mean reliability (curated and
 # off-domain factors) and by min(1, items / MIN_ITEMS_FOR_FULL_SHARE), then renormalised over the types present.
-TYPE_SHARE = {"task": 0.30, "dwa": 0.10, "market_skill": 0.40, "tech": 0.10, "tool": 0.10}
+TYPE_SHARE = {"task": 0.40, "dwa": 0.20, "market_skill": 0.30, "tech": 0.05, "tool": 0.05}   # A3b, module 1 v2.2
 MIN_ITEMS_FOR_FULL_SHARE = 5
 
 
@@ -44,7 +44,7 @@ class RequirementMatch(BaseModel):
     provenance: Provenance = Field(description="onet | india_postings | curated (same as item.provenance)")
     status: Status
     similarity: float
-    reason: Literal["alias", "semantic", "implied_by_role", "none"]
+    reason: Literal["alias", "semantic", "implied_by_role", "answered", "none"]
     implied_credit: float | None = Field(default=None, description="For implied_by_role: credit from role history")
     evidence_text: str | None = None
     evidence_type: str | None = None

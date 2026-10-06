@@ -39,11 +39,11 @@ def test_gap_analysis(client):
                                                           "experience_years": 6, "hours_per_week": 8})
     assert r.status_code == 200
     body = r.json()
-    assert body["resolution"]["soc_code"] == RN and body["verdict"]["label"] in {"under_skilled", "good_fit", "over_qualified"}
+    assert body["resolution"]["soc_code"] == RN and body["verdict"]["label"] in {"under_skilled", "insufficient_evidence", "good_fit", "over_qualified"}
     for key in ("match_score", "score_breakdown", "strengths", "gaps", "draws_on", "fit_indicators",
                 "close_alternatives", "roadmap", "provenance_summary", "m1_version", "warnings"):
         assert key in body
-    assert body["roadmap"]["hours_per_week"] == 8 and body["m1_version"] == "2.1.0"
+    assert body["roadmap"]["hours_per_week"] == 8 and body["m1_version"] == "2.2.0"
 
 
 def test_gap_analysis_with_soc_code_skills_and_v1_profile(client):
