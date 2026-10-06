@@ -44,10 +44,10 @@ class CareerIntelligenceService:
 
         # 1. Fetch O*NET Tasks and evaluate AI exposure
         tasks = self.db.get_tasks_for_soc(soc_code) if soc_code else []
-        ai_metrics = self.ai_engine.analyze_occupation_tasks(tasks)
+        ai_metrics = self.ai_engine.analyze_occupation_tasks(tasks, occupation_title=target_name, domain=domain_name)
 
         # 2. Fetch real posting history across India and Global markets
-        posting_history = self.db.get_posting_history(target_name)
+        posting_history = self.db.get_posting_history(target_name, soc_code=soc_code)
         yearly_breakdown = self.db.get_yearly_breakdown(target_name)
         demand_metrics = self.demand_engine.calculate_demand(posting_history, region=region)
 

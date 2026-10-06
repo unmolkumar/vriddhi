@@ -3,449 +3,236 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vriddhi • Career Intelligence Testbench (Module 1)</title>
+  <title>Vriddhi • Career Intelligence (Module 1)</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <!-- Header -->
+
+  <!-- Top Simple Nav -->
   <header class="app-header">
     <div class="header-container">
       <div class="brand-group">
-        <div class="brand-title">Vriddhi <span class="brand-sub">Career Intelligence</span></div>
-        <span class="badge badge-neutral">Module 1 v2.2.0</span>
+        <span class="brand-logo">Vriddhi</span>
+        <span class="brand-sub">Career Intelligence Engine</span>
       </div>
-      <div class="header-actions">
-        <div class="status-indicator" id="serverStatus">
-          <span class="status-dot"></span> <span id="statusText">Connecting...</span>
-        </div>
+      <div class="status-indicator" id="serverStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">Connecting...</span>
       </div>
     </div>
-    <!-- Tabs Navigation -->
-    <nav class="nav-tabs">
-      <div class="tabs-container">
-        <button class="nav-tab active" data-tab="tab-forecast">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-6 6"/></svg>
-          Career Forecast & Vacancy Trajectory
-        </button>
-        <button class="nav-tab" data-tab="tab-trending">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          Trending Jobs by Interest
-        </button>
-        <button class="nav-tab" data-tab="tab-profile">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          360° Profile & Requirements
-        </button>
-        <button class="nav-tab" data-tab="tab-rank">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Compare & Rank Careers
-        </button>
-      </div>
-    </nav>
   </header>
 
-  <!-- Main Container -->
   <main class="main-container">
-    
+
     <!-- ================================================================= -->
-    <!-- TAB 1: CAREER FORECAST & TRAJECTORY -->
+    <!-- VIEW 1: INTEREST DISCOVERY & 5-YEAR BOOMING JOBS                 -->
     <!-- ================================================================= -->
-    <section id="tab-forecast" class="tab-content active">
-      <!-- Search Bar -->
-      <div class="search-section card">
-        <div class="search-row">
-          <div class="search-input-wrapper">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="forecastSearchInput" class="search-input" placeholder="Search occupation title or Indian alias (e.g., Data Scientist, Staff Nurse, CA, Electrician)..." autocomplete="off">
-            <div id="forecastAutocomplete" class="autocomplete-dropdown hidden"></div>
+    <section id="view-discovery" class="view-section active">
+      
+      <!-- Minimal Hero Section -->
+      <div class="discovery-hero">
+        <h1 class="discovery-title">What is your field of interest?</h1>
+        <p class="discovery-subtitle">Discover careers projected to boom over the next 5 years, evaluate AI transformation risk, or search any role directly.</p>
+
+        <!-- Search Bar with Dual Tabs -->
+        <div class="search-box card">
+          <div class="search-tabs">
+            <button class="search-tab-btn active" id="tabModeInterest">Search by Interest / Domain</button>
+            <button class="search-tab-btn" id="tabModeRole">Search Specific Job Title</button>
           </div>
-          <button id="forecastBtn" class="btn btn-primary">Analyze Forecast</button>
-        </div>
-        <div class="quick-tags">
-          <span class="quick-tags-label">Quick test roles:</span>
-          <button class="tag-pill" data-role="Data Scientist">Data Scientist</button>
-          <button class="tag-pill" data-role="Registered Nurses">Registered Nurses</button>
-          <button class="tag-pill" data-role="Accountants and Auditors">Accountants & Auditors</button>
-          <button class="tag-pill" data-role="Electricians">Electricians</button>
-          <button class="tag-pill" data-role="Mechanical Engineers">Mechanical Engineers</button>
-          <button class="tag-pill" data-role="Customer Service Representatives">Customer Service Reps</button>
+
+          <!-- Mode 1: Domain Interest Search -->
+          <div id="modeInterestWrapper" class="search-input-group">
+            <div class="search-input-wrapper">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="interestInput" class="search-input" placeholder="e.g. Artificial Intelligence, Healthcare, Electrician, Finance, Green Energy, Clerical...">
+            </div>
+            <button id="btnDiscoverBooming" class="btn btn-primary">Find Booming Jobs</button>
+          </div>
+
+          <!-- Mode 2: Direct Role Search -->
+          <div id="modeRoleWrapper" class="search-input-group hidden">
+            <div class="search-input-wrapper">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="roleInput" class="search-input" placeholder="e.g. Data Scientist, Telemarketer, Electrician, Registered Nurse, Data Entry Keyer..." autocomplete="off">
+              <div id="roleAutocomplete" class="autocomplete-dropdown hidden"></div>
+            </div>
+            <button id="btnAnalyzeRole" class="btn btn-primary">Analyze Job</button>
+          </div>
+
+          <!-- Quick Interest Pills -->
+          <div class="quick-pills-row">
+            <span class="pills-label">Popular Interests:</span>
+            <button class="pill-btn" data-interest="Artificial Intelligence">⚡ AI & Machine Learning</button>
+            <button class="pill-btn" data-interest="Healthcare">🩺 Healthcare & Nursing</button>
+            <button class="pill-btn" data-interest="Electrician">⚡ Electrician & Trades</button>
+            <button class="pill-btn" data-interest="Finance">💰 Finance & Accounting</button>
+            <button class="pill-btn" data-interest="Cybersecurity">🛡️ Cybersecurity</button>
+            <button class="pill-btn pill-decline" data-interest="Routine Clerical">📉 Routine / Clerical (Decline Test)</button>
+          </div>
         </div>
       </div>
 
-      <!-- Forecast Results Panel -->
-      <div id="forecastResultPanel" class="hidden">
-        <!-- Hero Header Card -->
-        <div class="card hero-card">
-          <div class="hero-header">
-            <div>
-              <div class="hero-tags">
-                <span id="heroSoc" class="badge badge-neutral">SOC 15-2051.00</span>
-                <span id="heroDomain" class="badge badge-neutral">Information Technology</span>
-              </div>
-              <h1 id="heroTitle" class="hero-title">Data Scientist</h1>
-              <p id="heroDescription" class="hero-desc"></p>
-            </div>
-            <div class="hero-outlook-box">
-              <span class="metric-label">5-Year Projected Outlook</span>
-              <div id="heroOutlook" class="outlook-badge outlook-strong">Strong Growth</div>
-              <span id="heroConfidence" class="sub-text">Confidence: 82%</span>
-            </div>
-          </div>
-
-          <!-- 4 Core Metric Tiles -->
-          <div class="metric-grid">
-            <div class="metric-card">
-              <span class="metric-label">Projected 5-Yr Growth</span>
-              <div class="metric-value-row">
-                <span id="metricGrowth" class="metric-value">85%</span>
-                <span id="metricCagr" class="metric-sub">+18% CAGR</span>
-              </div>
-              <div class="progress-bar-bg"><div id="metricGrowthBar" class="progress-bar-fill" style="width: 85%;"></div></div>
-            </div>
-            <div class="metric-card">
-              <span class="metric-label">Current Market Demand</span>
-              <div class="metric-value-row">
-                <span id="metricDemand" class="metric-value">88%</span>
-                <span id="metricPostings" class="metric-sub">3,200 postings</span>
-              </div>
-              <div class="progress-bar-bg"><div id="metricDemandBar" class="progress-bar-fill" style="width: 88%;"></div></div>
-            </div>
-            <div class="metric-card">
-              <span class="metric-label">AI Exposure & Discretion</span>
-              <div class="metric-value-row">
-                <span id="metricAi" class="metric-value">42%</span>
-                <span id="metricAiType" class="metric-sub">Augmentation</span>
-              </div>
-              <div class="progress-bar-bg"><div id="metricAiBar" class="progress-bar-fill bg-amber" style="width: 42%;"></div></div>
-            </div>
-            <div class="metric-card">
-              <span class="metric-label">Typical Experience (India)</span>
-              <div class="metric-value-row">
-                <span id="metricExp" class="metric-value">3.8 – 7.4 yrs</span>
-                <span id="metricExpStatus" class="metric-sub">2024–2026 data</span>
-              </div>
-              <span id="metricEducation" class="metric-footnote">Primary: Bachelor's Degree</span>
-            </div>
-          </div>
+      <!-- Results Header -->
+      <div class="results-header">
+        <div>
+          <h2 id="resultsDomainTitle" class="section-title">Booming Jobs in Artificial Intelligence</h2>
+          <p id="resultsDomainSub" class="section-subtitle">Ranked by projected 5-year growth trajectory, hiring velocity, and market demand</p>
         </div>
-
-        <!-- Line Chart Card -->
-        <div class="card chart-card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Hiring Demand & Vacancy Index Trajectory</h2>
-              <p class="card-subtitle">Historical baseline (2021–2026) normalized to 100 with 5-year forecast trajectory (2027–2031)</p>
-            </div>
-            <div class="chart-controls">
-              <label class="control-label"><input type="checkbox" id="toggleIndia" checked> India Demand</label>
-              <label class="control-label"><input type="checkbox" id="toggleGlobal" checked> Global Demand</label>
-              <label class="control-label"><input type="checkbox" id="toggleBounds" checked> Confidence Bounds</label>
-            </div>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="trajectoryChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Two Column Deep Dive: Salary & Drivers -->
-        <div class="grid-two-col">
-          <!-- Left: Indian Salary Ground Truth -->
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">Indian Market Salary Percentiles</h2>
-              <div class="filter-controls">
-                <select id="salaryCityFilter" class="select-input">
-                  <option value="All India">All India</option>
-                  <option value="Bengaluru">Bengaluru</option>
-                  <option value="Delhi NCR">Delhi NCR</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Hyderabad">Hyderabad</option>
-                  <option value="Pune">Pune</option>
-                </select>
-              </div>
-            </div>
-            <div class="salary-container">
-              <div class="salary-box">
-                <div class="salary-tier-label">25th Percentile (P25)</div>
-                <div id="salP25" class="salary-number">₹8.5 LPA</div>
-                <div class="salary-note">Entry / baseline threshold</div>
-              </div>
-              <div class="salary-box salary-highlight">
-                <div class="salary-tier-label">Median Market (P50)</div>
-                <div id="salP50" class="salary-number">₹14.0 LPA</div>
-                <div class="salary-note">Typical market salary</div>
-              </div>
-              <div class="salary-box">
-                <div class="salary-tier-label">75th Percentile (P75)</div>
-                <div id="salP75" class="salary-number">₹22.5 LPA</div>
-                <div class="salary-note">Top quartile / senior pay</div>
-              </div>
-            </div>
-            <div class="salary-meta-row">
-              <span id="salSampleSize" class="sub-text">Sample Size: 3,200 postings</span>
-              <span id="salRecency" class="sub-text">2024–2026 unflagged data</span>
-            </div>
-            <!-- City breakdown list -->
-            <div class="city-salary-list" id="citySalaryList"></div>
-          </div>
-
-          <!-- Right: Drivers & AI Task Impact -->
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">Forecast Evidence & AI Transformation</h2>
-            </div>
-            <div class="evidence-section">
-              <h3 class="section-subheading">Key Drivers & Macroeconomic Signals</h3>
-              <ul id="evidenceList" class="clean-bullet-list"></ul>
-            </div>
-            <div class="tasks-section">
-              <h3 class="section-subheading">Sample Task-Level AI Exposure</h3>
-              <div id="taskExposureList" class="task-impact-list"></div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Loading Spinner -->
-      <div id="forecastLoader" class="loader-box hidden">
+      <!-- Booming Jobs Card Grid -->
+      <div id="boomingCardsContainer" class="cards-grid"></div>
+
+      <!-- Loading State -->
+      <div id="discoveryLoader" class="loader-box hidden">
         <div class="spinner"></div>
-        <p>Crunching multi-signal career intelligence & trajectory...</p>
+        <p>Analyzing labour market signals and 5-year trajectories...</p>
       </div>
+
     </section>
 
     <!-- ================================================================= -->
-    <!-- TAB 2: TRENDING JOBS BY INTEREST -->
+    <!-- VIEW 2: DEDICATED JOB DEEP DIVE ANALYSIS WINDOW                   -->
     <!-- ================================================================= -->
-    <section id="tab-trending" class="tab-content">
-      <div class="card">
+    <section id="view-analysis" class="view-section hidden">
+      
+      <!-- Top Action Bar -->
+      <div class="analysis-topbar">
+        <button id="btnBackToDiscovery" class="btn btn-secondary btn-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Booming Jobs
+        </button>
+        <div class="topbar-search">
+          <input type="text" id="analysisQuickSearch" class="quick-search-input" placeholder="Switch to another role..." autocomplete="off">
+          <div id="quickSearchAutocomplete" class="autocomplete-dropdown hidden"></div>
+        </div>
+      </div>
+
+      <!-- Job Hero Card -->
+      <div class="card job-hero-card">
+        <div class="job-hero-header">
+          <div>
+            <div class="tags-row">
+              <span id="detailSoc" class="badge badge-neutral">SOC 15-2051.00</span>
+              <span id="detailDomain" class="badge badge-neutral">Information Technology</span>
+            </div>
+            <h1 id="detailTitle" class="job-hero-title">Data Scientist</h1>
+            <p id="detailDesc" class="job-hero-desc"></p>
+          </div>
+          <div class="outlook-badge-container">
+            <span class="meta-label">5-Year Projected Outlook</span>
+            <div id="detailOutlook" class="outlook-badge outlook-strong">Strong Growth</div>
+            <span id="detailConfidence" class="meta-sub">Confidence: 85%</span>
+          </div>
+        </div>
+
+        <!-- 3 Core High-Signal Metric Cards (Uncluttered) -->
+        <div class="three-metrics-grid">
+          <!-- 1. Growth Outlook -->
+          <div class="stat-card">
+            <span class="stat-label">5-Year Growth Outlook</span>
+            <div class="stat-val-row">
+              <span id="detailGrowthVal" class="stat-val">+83%</span>
+              <span id="detailCagrVal" class="stat-sub">+16% CAGR</span>
+            </div>
+            <div class="stat-progress-bg">
+              <div id="detailProgressBar" class="stat-progress-fill" style="width: 83%;"></div>
+            </div>
+            <span id="detailGrowthNote" class="stat-footnote">Projected forward vacancy expansion</span>
+          </div>
+
+          <!-- 2. AI Exposure & Automation -->
+          <div class="stat-card">
+            <span class="stat-label">AI Exposure & Discretion</span>
+            <div class="stat-val-row">
+              <span id="detailAiVal" class="stat-val">39%</span>
+              <span id="detailAiType" class="stat-sub">AI Augmentation</span>
+            </div>
+            <div class="stat-progress-bg">
+              <div id="detailAiBar" class="stat-progress-fill bg-blue" style="width: 39%;"></div>
+            </div>
+            <span id="detailAiNote" class="stat-footnote">Productivity multiplier with human discretion</span>
+          </div>
+
+          <!-- 3. Indian Market Salary -->
+          <div class="stat-card">
+            <span class="stat-label">Indian Market Salary (Median)</span>
+            <div class="stat-val-row">
+              <span id="detailSalaryVal" class="stat-val">₹14.0 LPA</span>
+              <span id="detailSalaryTier" class="stat-sub">P50 Benchmark</span>
+            </div>
+            <div class="salary-range-text">
+              <span id="detailSalaryRange">P25: ₹8.5 LPA · P75: ₹22.5 LPA</span>
+            </div>
+            <span id="detailExpNote" class="stat-footnote">Typical exp: 3.8 – 7.4 yrs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Line Graph Card -->
+      <div class="card chart-card">
         <div class="card-header">
           <div>
-            <h2 class="card-title">Discover Booming Careers by Interest</h2>
-            <p class="card-subtitle">Search any domain, topic, or field to find jobs projected to boom over the next 1–5 years</p>
+            <h2 class="card-title">Hiring Demand & Vacancy Index Trajectory (2021–2031)</h2>
+            <p class="card-subtitle">Historical baseline normalized to 100 in 2024 with 5-year probabilistic trajectory</p>
+          </div>
+          <div class="chart-toggles">
+            <label class="toggle-label"><input type="checkbox" id="chkIndia" checked> India Demand</label>
+            <label class="toggle-label"><input type="checkbox" id="chkGlobal" checked> Global Demand</label>
+            <label class="toggle-label"><input type="checkbox" id="chkBounds" checked> Confidence Bounds</label>
           </div>
         </div>
-        <div class="search-row">
-          <div class="search-input-wrapper">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="domainSearchInput" class="search-input" placeholder="Enter an interest (e.g. Artificial Intelligence, Healthcare, Electrician, FinTech, Green Energy)...">
-          </div>
-          <button id="domainSearchBtn" class="btn btn-primary">Find Booming Jobs</button>
-        </div>
-        <div class="quick-tags">
-          <span class="quick-tags-label">Popular Domains:</span>
-          <button class="domain-tag-pill" data-domain="Artificial Intelligence">Artificial Intelligence</button>
-          <button class="domain-tag-pill" data-domain="Healthcare">Healthcare & Medicine</button>
-          <button class="domain-tag-pill" data-domain="Finance">Finance & Accounting</button>
-          <button class="domain-tag-pill" data-domain="Electrician">Electrician & Trades</button>
-          <button class="domain-tag-pill" data-domain="Cloud">Cloud & Infrastructure</button>
-          <button class="domain-tag-pill" data-domain="Logistics">Logistics & Supply Chain</button>
-          <button class="domain-tag-pill" data-domain="Design">Creative & UI/UX</button>
+        <div class="chart-wrapper">
+          <canvas id="detailTrajectoryChart"></canvas>
         </div>
       </div>
 
-      <!-- Trending Results Grid -->
-      <div id="domainResultsContainer" class="trending-grid"></div>
-
-      <!-- Trending Loader -->
-      <div id="domainLoader" class="loader-box hidden">
-        <div class="spinner"></div>
-        <p>Searching career pathways & evaluating growth trajectories...</p>
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- TAB 3: 360° PROFILE & REQUIREMENTS -->
-    <!-- ================================================================= -->
-    <section id="tab-profile" class="tab-content">
-      <div class="card">
-        <div class="search-row">
-          <div class="search-input-wrapper">
-            <input type="text" id="profileSearchInput" class="search-input" placeholder="Select occupation for full requirements & tools breakdown (e.g. Registered Nurses, Electricians)...">
-            <div id="profileAutocomplete" class="autocomplete-dropdown hidden"></div>
-          </div>
-          <button id="profileLoadBtn" class="btn btn-primary">Load 360° Requirements</button>
-        </div>
-      </div>
-
-      <div id="profileDetailPanel" class="hidden">
-        <!-- Overview summary banner -->
+      <!-- Clean Two-Column Deep Dive -->
+      <div class="deep-dive-grid">
+        <!-- Left: Skills in Demand & Education -->
         <div class="card">
-          <div class="profile-meta-row">
-            <div>
-              <h2 id="profTitle" class="card-title">Registered Nurses</h2>
-              <p id="profDesc" class="card-subtitle"></p>
-            </div>
-            <div class="prof-chips">
-              <span id="profJobZoneBadge" class="badge badge-primary">Job Zone 4: Considerable</span>
-              <span id="profEduBadge" class="badge badge-neutral">Primary: Bachelor's Degree</span>
-            </div>
-          </div>
+          <h2 class="card-title">Top In-Demand Market Skills</h2>
+          <p class="card-subtitle">Verified across Indian and global job listings</p>
+          <div id="detailSkillsContainer" class="skills-wrap"></div>
 
-          <!-- Education Distribution -->
-          <div class="education-block">
-            <h3 class="section-subheading">Indian Education Distribution</h3>
-            <div id="educationTiers" class="edu-tiers-container"></div>
+          <div class="edu-section">
+            <h3 class="subsection-title">Indian Qualification Benchmark</h3>
+            <div class="edu-benchmark-box">
+              <span id="detailEducationTier" class="edu-tier-name">Bachelor's Degree in Engineering / Technology</span>
+              <span id="detailJobZone" class="badge badge-neutral">Job Zone 4: Considerable Preparation</span>
+            </div>
           </div>
         </div>
 
-        <!-- Requirements Explorer -->
+        <!-- Right: AI Task Transformation & Career Mobility -->
         <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Unified Occupation Requirements (O*NET 31.0 + Indian Demand)</h2>
-              <p class="card-subtitle">Contract consumed by Module 2 (Skill Gap) and Module 3 (Job Matching)</p>
-            </div>
-            <div class="req-search-wrapper">
-              <input type="text" id="reqFilterInput" class="input-filter" placeholder="Filter items by name...">
-            </div>
-          </div>
+          <h2 class="card-title">How AI Transforms Daily Tasks</h2>
+          <p class="card-subtitle">O*NET task decomposition and operational impact</p>
+          <div id="detailTasksContainer" class="tasks-list"></div>
 
-          <!-- Requirement Category Tabs -->
-          <div class="req-tabs-row" id="reqTypeTabs">
-            <button class="filter-tab active" data-type="all">All Items (<span id="countAll">0</span>)</button>
-            <button class="filter-tab" data-type="skill">Skills (<span id="countSkills">0</span>)</button>
-            <button class="filter-tab" data-type="knowledge">Knowledge (<span id="countKnowledge">0</span>)</button>
-            <button class="filter-tab" data-type="ability">Abilities (<span id="countAbilities">0</span>)</button>
-            <button class="filter-tab" data-type="tool">Physical Tools (<span id="countTools">0</span>)</button>
-            <button class="filter-tab" data-type="tech">Software / Tech (<span id="countTech">0</span>)</button>
-            <button class="filter-tab" data-type="dwa">DWAs (<span id="countDwa">0</span>)</button>
-            <button class="filter-tab" data-type="task">Tasks (<span id="countTasks">0</span>)</button>
-            <button class="filter-tab" data-type="market_skill">Market Skills (<span id="countMarket">0</span>)</button>
+          <div class="mobility-section">
+            <h3 class="subsection-title">Lateral Career Pathways</h3>
+            <div id="detailRelatedContainer" class="related-roles-list"></div>
           </div>
-
-          <!-- Requirements Table -->
-          <div class="table-container">
-            <table class="clean-table">
-              <thead>
-                <tr>
-                  <th style="width: 120px;">Category</th>
-                  <th style="width: 250px;">Requirement Name</th>
-                  <th>Description / Work Activity</th>
-                  <th style="width: 120px;">Importance</th>
-                  <th style="width: 120px;">Level</th>
-                  <th style="width: 110px;">Attributes</th>
-                </tr>
-              </thead>
-              <tbody id="requirementsTableBody"></tbody>
-            </table>
-          </div>
-          <div id="noReqsMsg" class="empty-state hidden">No requirements matching this category or filter.</div>
-        </div>
-
-        <!-- Related Occupations Card -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">Lateral Career Mobility & Related Occupations</h2>
-            <p class="card-subtitle">Alternative pathways and transferable career switches</p>
-          </div>
-          <div id="relatedOccupationsGrid" class="related-grid"></div>
         </div>
       </div>
 
-      <div id="profileLoader" class="loader-box hidden">
+      <!-- Analysis Loading State -->
+      <div id="analysisLoader" class="loader-box hidden">
         <div class="spinner"></div>
-        <p>Loading 360° requirements, tools, and education breakdown...</p>
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- TAB 4: COMPARE & RANK CAREERS -->
-    <!-- ================================================================= -->
-    <section id="tab-rank" class="tab-content">
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">Multi-Signal Career Comparison & Ranking Engine</h2>
-            <p class="card-subtitle">Rank candidate occupations against empirical market demand, 5-year growth, and AI resilience</p>
-          </div>
-          <button id="addRankRoleBtn" class="btn btn-secondary">+ Add Role</button>
-        </div>
-
-        <div class="rank-roles-input-area" id="rankRoleTags">
-          <!-- Default pills -->
-          <span class="role-chip" data-role="Data Scientist">Data Scientist <button class="chip-remove">&times;</button></span>
-          <span class="role-chip" data-role="Software Developers">Software Developers <button class="chip-remove">&times;</button></span>
-          <span class="role-chip" data-role="Accountants and Auditors">Accountants and Auditors <button class="chip-remove">&times;</button></span>
-          <span class="role-chip" data-role="Electricians">Electricians <button class="chip-remove">&times;</button></span>
-        </div>
-
-        <div class="sliders-grid">
-          <div class="slider-box">
-            <div class="slider-header">
-              <span>Growth Weight</span>
-              <span id="valWeightGrowth" class="slider-val">30%</span>
-            </div>
-            <input type="range" id="weightGrowth" min="0" max="100" value="30" class="slider">
-          </div>
-          <div class="slider-box">
-            <div class="slider-header">
-              <span>Current Demand Weight</span>
-              <span id="valWeightDemand" class="slider-val">30%</span>
-            </div>
-            <input type="range" id="weightDemand" min="0" max="100" value="30" class="slider">
-          </div>
-          <div class="slider-box">
-            <div class="slider-header">
-              <span>AI Resilience Weight</span>
-              <span id="valWeightAi" class="slider-val">20%</span>
-            </div>
-            <input type="range" id="weightAi" min="0" max="100" value="20" class="slider">
-          </div>
-          <div class="slider-box">
-            <div class="slider-header">
-              <span>Salary Weight</span>
-              <span id="valWeightSalary" class="slider-val">10%</span>
-            </div>
-            <input type="range" id="weightSalary" min="0" max="100" value="10" class="slider">
-          </div>
-          <div class="slider-box">
-            <div class="slider-header">
-              <span>Confidence Weight</span>
-              <span id="valWeightConfidence" class="slider-val">10%</span>
-            </div>
-            <input type="range" id="weightConfidence" min="0" max="100" value="10" class="slider">
-          </div>
-        </div>
-
-        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-          <button id="runRankBtn" class="btn btn-primary">Compute Career Rankings</button>
-        </div>
+        <p>Loading full 360° career analysis and forecast trajectory...</p>
       </div>
 
-      <!-- Ranking Leaderboard Card -->
-      <div id="rankLeaderboardCard" class="card hidden">
-        <h2 class="card-title">Ranking Results</h2>
-        <div class="table-container">
-          <table class="clean-table">
-            <thead>
-              <tr>
-                <th style="width: 70px;">Rank</th>
-                <th>Occupation</th>
-                <th style="width: 140px;">Composite Score</th>
-                <th style="width: 110px;">Demand</th>
-                <th style="width: 110px;">Growth</th>
-                <th style="width: 110px;">AI Exposure</th>
-                <th>Primary Driver</th>
-              </tr>
-            </thead>
-            <tbody id="rankTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="rankLoader" class="loader-box hidden">
-        <div class="spinner"></div>
-        <p>Evaluating candidate careers with multi-signal ranker...</p>
-      </div>
     </section>
 
   </main>
 
   <footer class="app-footer">
     <div class="footer-container">
-      <span>Vriddhi Lab Intelligence System • Module 1 Test UI</span>
-      <span>FastAPI Local Service @ <code>http://localhost:8001</code></span>
+      <span>Vriddhi • Module 1 Career Intelligence Test UI</span>
+      <span>FastAPI Backend @ <code>http://localhost:8001</code></span>
     </div>
   </footer>
 
