@@ -575,3 +575,322 @@ class CareerDatabase:
                 return self.list_occupations(limit=limit)
 
             return results
+
+    def search_occupations_multilingual(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        """
+        Multilingual / Alias-aware semantic title search to resolve free-text titles to SOC codes.
+        Checks:
+        1. Indian colloquial aliases (e.g., 'staff nurse', 'CA', 'site engineer', 'telecaller', 'ITI electrician')
+        2. Exact O*NET official titles
+        3. O*NET alternate titles (62,000+ alternate titles)
+        4. Substring and keyword similarity
+        Returns top-k candidate occupations with confidence scores and resolution method.
+        """
+        if not query or not query.strip():
+            return []
+
+        q_clean = query.strip().lower()
+        candidates: Dict[str, Dict[str, Any]] = {}
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # 1. Indian title aliases exact match
+            cursor.execute("""
+                SELECT a.soc_code, o.title, a.raw_title, a.confidence
+                FROM india_title_aliases a
+                JOIN occupations o ON a.soc_code = o.soc_code
+                WHERE LOWER(a.raw_title) = ?
+            """, (q_clean,))
+            for r in cursor.fetchall():
+                soc = r["soc_code"]
+                candidates[soc] = {
+                    "soc_code": soc,
+                    "title": r["title"],
+                    "confidence": float(r["confidence"]),
+                    "method": "india_alias_exact",
+                    "matched_term": r["raw_title"]
+                }
+
+            # 2. Exact match in occupations.title
+            cursor.execute("""
+                SELECT soc_code, title FROM occupations WHERE LOWER(title) = ?
+            """, (q_clean,))
+            for r in cursor.fetchall():
+                soc = r["soc_code"]
+                if soc not in candidates or candidates[soc]["confidence"] < 1.0:
+                    candidates[soc] = {
+                        "soc_code": soc,
+                        "title": r["title"],
+                        "confidence": 1.0,
+                        "method": "onet_title_exact",
+                        "matched_term": r["title"]
+                    }
+
+            # 3. Exact match in onet_alternate_titles
+            cursor.execute("""
+                SELECT a.soc_code, o.title, a.title as alt_title
+                FROM onet_alternate_titles a
+                JOIN occupations o ON a.soc_code = o.soc_code
+                WHERE LOWER(a.title) = ? OR LOWER(a.short_title) = ?
+                LIMIT ?
+            """, (q_clean, q_clean, top_k))
+            for r in cursor.fetchall():
+                soc = r["soc_code"]
+                if soc not in candidates or candidates[soc]["confidence"] < 0.95:
+                    candidates[soc] = {
+                        "soc_code": soc,
+                        "title": r["title"],
+                        "confidence": 0.95,
+                        "method": "onet_alt_title_exact",
+                        "matched_term": r["alt_title"]
+                    }
+
+            # 4. Partial match in india_title_aliases
+            if len(candidates) < top_k:
+                cursor.execute("""
+                    SELECT a.soc_code, o.title, a.raw_title, a.confidence
+                    FROM india_title_aliases a
+                    JOIN occupations o ON a.soc_code = o.soc_code
+                    WHERE LOWER(a.raw_title) LIKE ?
+                    LIMIT ?
+                """, (f"%{q_clean}%", top_k))
+                for r in cursor.fetchall():
+                    soc = r["soc_code"]
+                    if soc not in candidates:
+                        candidates[soc] = {
+                            "soc_code": soc,
+                            "title": r["title"],
+                            "confidence": round(float(r["confidence"]) * 0.90, 2),
+                            "method": "india_alias_partial",
+                            "matched_term": r["raw_title"]
+                        }
+
+            # 5. Partial match in occupations.title
+            if len(candidates) < top_k:
+                cursor.execute("""
+                    SELECT soc_code, title FROM occupations
+                    WHERE LOWER(title) LIKE ?
+                    ORDER BY LENGTH(title) ASC
+                    LIMIT ?
+                """, (f"%{q_clean}%", top_k))
+                for r in cursor.fetchall():
+                    soc = r["soc_code"]
+                    if soc not in candidates:
+                        candidates[soc] = {
+                            "soc_code": soc,
+                            "title": r["title"],
+                            "confidence": 0.88,
+                            "method": "onet_title_partial",
+                            "matched_term": r["title"]
+                        }
+
+            # 6. Partial match in onet_alternate_titles
+            if len(candidates) < top_k:
+                cursor.execute("""
+                    SELECT a.soc_code, o.title, a.title as alt_title
+                    FROM onet_alternate_titles a
+                    JOIN occupations o ON a.soc_code = o.soc_code
+                    WHERE LOWER(a.title) LIKE ?
+                    ORDER BY LENGTH(a.title) ASC
+                    LIMIT ?
+                """, (f"%{q_clean}%", top_k))
+                for r in cursor.fetchall():
+                    soc = r["soc_code"]
+                    if soc not in candidates:
+                        candidates[soc] = {
+                            "soc_code": soc,
+                            "title": r["title"],
+                            "confidence": 0.82,
+                            "method": "onet_alt_title_partial",
+                            "matched_term": r["alt_title"]
+                        }
+
+            # 7. Tokenized keyword search across occupations if still under top_k
+            if len(candidates) < top_k:
+                tokens = [t for t in re.sub(r'[^a-z0-9\s]', '', q_clean).split() if len(t) > 2]
+                if tokens:
+                    clause = " OR ".join(["LOWER(title) LIKE ?" for _ in tokens])
+                    params = [f"%{t}%" for t in tokens]
+                    cursor.execute(f"""
+                        SELECT soc_code, title FROM occupations
+                        WHERE {clause}
+                        ORDER BY LENGTH(title) ASC
+                        LIMIT ?
+                    """, params + [top_k])
+                    for r in cursor.fetchall():
+                        soc = r["soc_code"]
+                        if soc not in candidates:
+                            candidates[soc] = {
+                                "soc_code": soc,
+                                "title": r["title"],
+                                "confidence": 0.70,
+                                "method": "token_match",
+                                "matched_term": r["title"]
+                            }
+
+        # Sort by confidence descending
+        sorted_results = sorted(candidates.values(), key=lambda x: x["confidence"], reverse=True)
+        return sorted_results[:top_k]
+
+    def get_occupation_requirements(
+        self,
+        soc_code: str,
+        item_type: Optional[str] = None,
+        limit: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve unified requirement items from v_occupation_requirements for an occupation.
+        Supports filtering by item_type ('skill', 'knowledge', 'ability', 'work_activity', 'dwa', 'task', 'tech', 'tool', 'market_skill').
+        """
+        clean_soc = soc_code.strip()
+        if "." not in clean_soc and len(clean_soc) == 7:
+            clean_soc += ".00"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            query = """
+                SELECT soc_code, item_type, item_id, item_name, item_description,
+                       importance_norm, level_norm, hot_technology, in_demand,
+                       india_demand_share, source, reliable
+                FROM v_occupation_requirements
+                WHERE soc_code = ?
+            """
+            params: List[Any] = [clean_soc]
+            if item_type:
+                query += " AND item_type = ?"
+                params.append(item_type)
+            query += " ORDER BY CASE WHEN importance_norm IS NOT NULL THEN importance_norm ELSE 0 END DESC"
+            if limit:
+                query += " LIMIT ?"
+                params.append(limit)
+
+            cursor.execute(query, params)
+            return [dict(r) for r in cursor.fetchall()]
+
+    def get_occupation_profile(self, soc_code: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve comprehensive occupation profile:
+        - Job zone and preparation details
+        - Indian education level mapping and distribution
+        - Indian experience band and sample size
+        - Market salary percentiles (by city x experience x work mode)
+        - Related occupations
+        - Domain and industry classification
+        """
+        clean_soc = soc_code.strip()
+        if "." not in clean_soc and len(clean_soc) == 7:
+            clean_soc += ".00"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # Base occupation and domain
+            cursor.execute("""
+                SELECT o.soc_code, o.title, o.description,
+                       d.soc_major_group, d.major_group_title, d.career_cluster, d.india_industry
+                FROM occupations o
+                LEFT JOIN occupation_domains d ON o.soc_code = d.soc_code
+                WHERE o.soc_code = ?
+            """, (clean_soc,))
+            base_row = cursor.fetchone()
+            if not base_row:
+                return None
+
+            profile = {
+                "soc_code": base_row["soc_code"],
+                "title": base_row["title"],
+                "description": base_row["description"],
+                "domain": {
+                    "soc_major_group": base_row["soc_major_group"],
+                    "major_group_title": base_row["major_group_title"],
+                    "career_cluster": base_row["career_cluster"],
+                    "india_industry": base_row["india_industry"]
+                }
+            }
+
+            # Job Zone
+            cursor.execute("""
+                SELECT job_zone, name, experience_text, education_text, training_text, svp_range
+                FROM onet_job_zones
+                WHERE soc_code = ?
+            """, (clean_soc,))
+            jz_row = cursor.fetchone()
+            profile["job_zone"] = dict(jz_row) if jz_row else None
+
+            # Indian Education Mapping
+            cursor.execute("""
+                SELECT e.category, e.category_description, e.percent,
+                       m.india_education_level, m.hierarchy_level
+                FROM onet_education e
+                LEFT JOIN education_level_map_india m ON e.category = m.onet_category_id
+                WHERE e.soc_code = ? AND (e.scale_id IN ('RL', 'RQ') OR e.element_name = 'Required Level of Education')
+                ORDER BY e.percent DESC
+            """, (clean_soc,))
+            edu_rows = [dict(r) for r in cursor.fetchall()]
+            primary_edu = edu_rows[0]["india_education_level"] if edu_rows else (profile["job_zone"]["education_text"] if profile["job_zone"] else "Bachelor's Degree")
+            profile["indian_education"] = {
+                "primary_qualification": primary_edu,
+                "distribution": edu_rows
+            }
+
+            # Indian Experience Benchmarks
+            cursor.execute("""
+                SELECT typical_min, typical_max, p25_min, median_min, sample_size, years_covered
+                FROM occupation_experience_india
+                WHERE soc_code = ?
+            """, (clean_soc,))
+            exp_row = cursor.fetchone()
+            if exp_row:
+                profile["indian_experience"] = dict(exp_row)
+                profile["indian_experience"]["fallback_to_job_zone"] = False
+            else:
+                profile["indian_experience"] = {
+                    "typical_min": 1.0,
+                    "typical_max": 4.0,
+                    "sample_size": 0,
+                    "fallback_to_job_zone": True,
+                    "job_zone_guidance": profile["job_zone"]["experience_text"] if profile["job_zone"] else "General experience"
+                }
+
+            # Salary Percentiles (India)
+            cursor.execute("""
+                SELECT city_canonical, experience_bucket, work_mode, p25, p50, p75, sample_size, years_covered
+                FROM occupation_salary_india
+                WHERE soc_code = ?
+                ORDER BY sample_size DESC, city_canonical ASC
+            """, (clean_soc,))
+            profile["salary_percentiles_india"] = [dict(r) for r in cursor.fetchall()]
+
+            # Related Occupations
+            cursor.execute("""
+                SELECT related_soc_code, related_title, relatedness_tier, index_val
+                FROM onet_related_occupations
+                WHERE soc_code = ?
+                ORDER BY relatedness_tier ASC, index_val ASC
+                LIMIT 10
+            """, (clean_soc,))
+            profile["related_occupations"] = [dict(r) for r in cursor.fetchall()]
+
+            return profile
+
+    def get_related_occupations(self, soc_code: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """
+        Retrieve related occupations for career transition and career mobility pathways.
+        """
+        clean_soc = soc_code.strip()
+        if "." not in clean_soc and len(clean_soc) == 7:
+            clean_soc += ".00"
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT r.soc_code, r.related_soc_code, r.related_title, r.relatedness_tier, r.index_val,
+                       d.major_group_title, d.career_cluster
+                FROM onet_related_occupations r
+                LEFT JOIN occupation_domains d ON r.related_soc_code = d.soc_code
+                WHERE r.soc_code = ?
+                ORDER BY r.relatedness_tier ASC, r.index_val ASC
+                LIMIT ?
+            """, (clean_soc, limit))
+            return [dict(r) for r in cursor.fetchall()]

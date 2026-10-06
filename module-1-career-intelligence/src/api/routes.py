@@ -95,3 +95,85 @@ async def search_by_domain(
         return service.search_by_domain(request.domain_query, top_k=request.top_k)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Domain search failed: {str(e)}")
+
+
+# Router for Occupations & Cross-Industry Generalisation (v2.0)
+occupations_router = APIRouter(prefix="/api/v1/occupations", tags=["Occupations & Taxonomy"])
+
+
+@occupations_router.get("/search")
+async def search_occupations(
+    q: str,
+    k: int = 5,
+    service: CareerIntelligenceService = Depends(get_service)
+) -> List[Dict[str, Any]]:
+    """
+    Free-text title -> top-k SOC candidates with confidence (alt titles + Indian aliases + embeddings).
+    Example: q="staff nurse" -> 29-1141.00, q="CA" -> 13-2011.00, q="site engineer" -> 17-2051.00
+    """
+    if not q or not q.strip():
+        raise HTTPException(status_code=400, detail="Query parameter 'q' cannot be empty.")
+    try:
+        return service.search_occupations(query=q, top_k=k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Occupation search failed: {str(e)}")
+
+
+@occupations_router.get("/{soc}/requirements")
+async def get_occupation_requirements(
+    soc: str,
+    item_type: Optional[str] = None,
+    limit: Optional[int] = None,
+    service: CareerIntelligenceService = Depends(get_service)
+) -> List[Dict[str, Any]]:
+    """
+    Retrieve unified requirements (v_occupation_requirements) for an occupation.
+    Powers M2 semantic embedding matching and M3 job matching.
+    """
+    if not soc or not soc.strip():
+        raise HTTPException(status_code=400, detail="SOC code cannot be empty.")
+    try:
+        return service.get_occupation_requirements(soc_code=soc, item_type=item_type, limit=limit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Requirements retrieval failed: {str(e)}")
+
+
+@occupations_router.get("/{soc}/profile")
+async def get_occupation_profile(
+    soc: str,
+    service: CareerIntelligenceService = Depends(get_service)
+) -> Dict[str, Any]:
+    """
+    Retrieve comprehensive 360-degree occupation profile:
+    Job zone, Indian education, experience band, salary percentiles (city x experience x work mode),
+    related occupations, and domain.
+    """
+    if not soc or not soc.strip():
+        raise HTTPException(status_code=400, detail="SOC code cannot be empty.")
+    try:
+        profile = service.get_occupation_profile(soc_code=soc)
+        if not profile:
+            raise HTTPException(status_code=404, detail=f"Occupation '{soc}' not found.")
+        return profile
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Profile retrieval failed: {str(e)}")
+
+
+@occupations_router.get("/{soc}/related")
+async def get_related_occupations(
+    soc: str,
+    limit: int = 20,
+    service: CareerIntelligenceService = Depends(get_service)
+) -> List[Dict[str, Any]]:
+    """
+    Retrieve related occupations for career transition and lateral mobility pathways.
+    """
+    if not soc or not soc.strip():
+        raise HTTPException(status_code=400, detail="SOC code cannot be empty.")
+    try:
+        return service.get_related_occupations(soc_code=soc, limit=limit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Related occupations retrieval failed: {str(e)}")
+

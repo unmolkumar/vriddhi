@@ -112,3 +112,32 @@ enabling side-by-side analysis:
 | Occupation Taxonomy | Mapped to O*NET SOC equivalents | O*NET SOC native |
 | Skill Demand | 120,000+ extracted Indian skill mentions | 160,000+ extracted Global skill mentions |
 | Views | `v_india_vs_global` | `v_skill_comparison` |
+
+---
+
+## 6. Generalisation Additions (v2.0, October 2026)
+
+### O*NET 31.0 Full Content Model Ingestion
+The full O*NET 31.0 release was loaded directly from the official U.S. Department of Labor distribution archive (`db_31_0_csv.zip`):
+- `Skills.csv` -> `onet_skills` (31,850 rows, all 35 skills, separate IM and LV)
+- `Knowledge.csv` -> `onet_knowledge` (30,030 rows, all 33 knowledge domains)
+- `Abilities.csv` -> `onet_abilities` (47,320 rows, all 52 abilities)
+- `Work Activities.csv` -> `onet_work_activities` (37,351 rows, 41 GWAs)
+- `Task Ratings.csv` -> `onet_task_ratings` (18,420 rows, IM, RT, and FT frequency)
+- `DWA Reference.csv` + `Tasks to DWAs.csv` -> `onet_dwa` (24,087 rows)
+- `Technology Skills.csv` -> `onet_tech_skills` (31,821 rows)
+- `Tools Used.csv` -> `onet_tools` (95 rows)
+- `Job Zones.csv` + `Job Zone Reference.csv` -> `onet_job_zones` (923 rows)
+- `Education, Training, and Experience.csv` -> `onet_education` (11,495 rows)
+- `Alternate Titles.csv` + `Sample of Reported Titles.csv` -> `onet_alternate_titles` (62,458 rows)
+- `Related Occupations.csv` -> `onet_related_occupations` (18,460 rows)
+- `Content Model Reference.csv` -> `onet_content_model` (268 rows)
+
+### Salary Quality Flagging Methodology (`salary_quality_flags`)
+To ensure high fidelity with real compensation benchmarks (aligning within ~25% of JSearch / Glassdoor):
+1. **Synthetic Data Quarantine**: `kaggle_ai_salary_2025` India entries ($n = 754$, median ~63 LPA) flagged as `synthetic_source` (global-tier AI compensation mislabeled as domestic India).
+2. **Historical Stale Cutoff**: India salary data points prior to 2023 ($n = 4,642$) flagged as `stale_pre_2023`.
+3. **Monthly Reporting Anomaly Detection**: Full-time annual salaries reported below 1.2 LPA ($n = 80$) flagged as `monthly_suspected`.
+4. **Extreme Outliers**: Salaries exceeding $3 \times \text{IQR}$ per role ($n = 24$, max ₹5.4 Cr) flagged as `outlier`.
+5. **Consumption View**: `occupation_salary_india` and Module 1 percentiles query only unflagged 2023+ records.
+

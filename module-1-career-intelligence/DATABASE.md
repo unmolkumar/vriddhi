@@ -21,16 +21,44 @@ This document details:
 
 | Entity / Table Name | Type | Record Count | Description & Primary Use Case |
 |---|---|---|---|
-| **`skill_demand`** | Table | **371,141** | **Empirical skill frequencies** extracted from 187k+ job postings across India (`region = 'india'`) and Global (`region = 'global'`) markets, segmented by `occupation_context` (e.g. `data scientist`, `backend developer`). |
-| **`occupations`** | Table | **1,016** | **Standard O\*NET 31.0 occupations** with SOC codes (e.g. `15-2051.00`), standardized titles, comprehensive descriptions, job zones (1–5), and typical education requirements. |
-| **`occupation_skills`** | Table | **18,200** | **O\*NET foundational competencies** per SOC code with scientific `importance` (score $[1.0, 5.0]$) and `level` (proficiency level $[1.0, 7.0]$). |
-| **`occupation_tech`** | Table | **31,821** | **Software, libraries, and frameworks** mapped to SOC codes, flagged with `hot_technology` ($1$ or $0$) and `in_demand` ($1$ or $0$). |
-| **`occupation_tasks`** | Table | **18,838** | **Granular day-to-day job activities** mapped to SOC codes, with `task_type` (`Core` or `Supplemental`) and `importance`. |
-| **`job_postings_india`** | Table | **72,691** | **Cleaned Indian job postings** (Naukri, etc.) with titles, companies, cities (Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR, Remote), INR salaries, and empirical min/max experience. |
-| **`job_postings_global`** | Table | **115,000** | **Cleaned Global postings** (LinkedIn) with standardized titles, USD salaries, remote ratios, and skill tags. |
-| **`salary_benchmarks`** | Table | **43,374** | **Normalized salary data points** across India and global markets for experience bands and roles. |
-| **`v_skill_comparison`** | View | **13,458** | Comparative view aggregating `total_demand` and `years_active` per skill between India and Global markets. |
-| **`v_india_vs_global`** | View | **8** | High-level macro view contrasting Indian tech adoption vs global baselines. |
+| **`db_meta`** | Table | **1** | Schema version (`2.0.0`), built timestamp, O*NET version (`31.0`). |
+| **`occupations`** | Table | **1,016** | **Standard O\*NET 31.0 occupations** with SOC codes, standardized titles, comprehensive descriptions, job zones, and typical education requirements. |
+| **`occupation_domains`** | Table | **1,016** | SOC 2-digit major groups, broad career clusters, and Indian industry classifications. |
+| **`onet_skills`** | Table | **31,850** | All 35 O\*NET skills with separate `importance` (1–5) and `level` (0–7), normalized $[0, 1]$, and suppression flags. |
+| **`onet_knowledge`** | Table | **30,030** | All 33 O\*NET knowledge domains (e.g. Medicine, Economics & Accounting, Mechanical, Law) with IM and LV scores. |
+| **`onet_abilities`** | Table | **47,320** | All 52 cognitive, physical, and sensory abilities required per occupation. |
+| **`onet_work_activities`** | Table | **37,351** | All 41 generalized work activities (GWA) with importance and level. |
+| **`onet_task_ratings`** | Table | **18,420** | Criticality ratings for tasks: importance (IM), relevance (RT), and frequency (FT). |
+| **`onet_dwa`** | Table | **24,087** | Granular Detailed Work Activities (DWA) and Intermediate Work Activities (IWA) linked to tasks. |
+| **`onet_tech_skills`** | Table | **31,821** | Software tools, commodity codes, commodity titles, and hot/in-demand technology indicators. |
+| **`onet_tools`** | Table | **95** | Equipment and specialized tools used across trades and clinical professions. |
+| **`onet_job_zones`** | Table | **923** | O\*NET Job Zones 1–5 with full experience, education, and vocational training narratives. |
+| **`onet_education`** | Table | **11,495** | Empirical education, training, and experience requirements distribution across 12 credential tiers. |
+| **`onet_alternate_titles`** | Table | **62,458** | Alternate titles and reported job titles for robust NLP and semantic title matching. |
+| **`onet_related_occupations`** | Table | **18,460** | Lateral career mobility pathways and related occupation mappings. |
+| **`onet_content_model`** | Table | **268** | Plain-English definitions and descriptions of every O\*NET skill, knowledge, ability, and activity element (ready to embed). |
+| **`city_aliases`** | Table | **583** | Indian city normalization collapsing colloquial names to canonical metros, tiers (1/2/3), and metro groups (e.g. Delhi NCR). |
+| **`india_title_aliases`** | Table | **64** | Indian colloquial job titles (e.g. *staff nurse*, *CA*, *site engineer*, *telecaller*, *ITI electrician*) mapped to SOC codes. |
+| **`posting_soc_map`** | Table | **41,125** | High-precision mapping from Indian & global job postings to standard SOC codes with confidence scores. |
+| **`salary_soc_map`** | Table | **24,555** | Mapping from salary benchmarks to standard SOC codes. |
+| **`skill_context_soc_map`** | Table | **25,545** | Mapping from raw posting occupation contexts to standard SOC codes. |
+| **`salary_quality_flags`** | Table | **5,500** | Quality flags isolating synthetic data (Kaggle AI India), stale pre-2023 records, monthly pay confusion, and IQR outliers. |
+| **`skill_noise_terms`** | Table | **44** | EEO boilerplate (gender, religion, color...), employee benefits (dental, vision...), and numeric junk fragments. |
+| **`v_skill_demand_clean`** | View | **Clean** | `skill_demand` minus noise terms, joined to `skill_context_soc_map` for pristine SOC-level skill intelligence. |
+| **`skill_demand_by_soc`** | Table | **22,396** | Cleaned empirical skill demand grouped by SOC code and region (`india` vs `global`). |
+| **`education_level_map_india`** | Table | **12** | Crosswalk mapping O\*NET education categories to Indian qualifications (10th, 12th, ITI/Diploma, Bachelor's, CA/MBBS, Master's, PhD). |
+| **`occupation_experience_india`** | Table | **385** | Empirical Indian min/max experience distributions with sample sizes ($n$) for 2023+ postings. |
+| **`occupation_salary_india`** | Table | **1,317** | Unflagged 2023+ Indian salary percentiles (p25 / p50 / p75) sliced by canonical city, experience bucket, and onsite/remote work mode. |
+| **`v_occupation_requirements`** | View | **206,193** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, tech, and market skills per SOC for M2 & M3. |
+| **`job_postings_india`** | Table | **72,691** | Real Indian postings (Naukri, PromptCloud) with titles, companies, cities, INR salaries, and experience bands (UNTOUCHED). |
+| **`job_postings_global`** | Table | **115,000** | Global postings (LinkedIn) with standardized titles and salary signals (UNTOUCHED). |
+| **`salary_benchmarks`** | Table | **43,374** | Raw normalized salary records (UNTOUCHED). |
+| **`skill_demand`** | Table | **371,141** | Raw skill frequency observations across regions (UNTOUCHED). |
+| **`occupation_skills`** | Table | **18,200** | Legacy O\*NET basic skills table (UNTOUCHED). |
+| **`occupation_tech`** | Table | **31,821** | Legacy O\*NET technology table (UNTOUCHED). |
+| **`occupation_tasks`** | Table | **18,838** | Legacy O\*NET tasks table (UNTOUCHED). |
+| **`v_skill_comparison`** | View | **13,458** | Legacy regional skill comparison view (UNTOUCHED). |
+| **`v_india_vs_global`** | View | **8** | Legacy macro comparison view (UNTOUCHED). |
 
 ---
 
@@ -349,8 +377,102 @@ class CareerIntelDBReader:
 
 ---
 
+---
+
 ## 7. Summary for Downstream Integration
 
-- **For Module 2**: Use `skill_demand` for demand-weighted skill gaps, `job_postings_india` for real candidate experience criteria, and `occupation_tech` / `occupation_tasks` for actionable roadmap generation.
-- **For Module 3**: Use `job_postings_india` and `salary_benchmarks` to access granular `market_salary_percentiles` (p25 / p50 / p75 for on-site, remote, and experience tiers).
-- **For Root Integration Orchestrator**: Module 1's REST endpoint `POST /api/v1/career/analyze` provides all of the above dynamically in a single JSON payload conforming to `schema_m1.json`.
+- **For Module 2**: Use `v_occupation_requirements` and `GET /api/v1/occupations/{soc}/requirements` for embedding-based semantic matching across all industries.
+- **For Module 3**: Use `occupation_salary_india`, `occupation_experience_india`, and `GET /api/v1/occupations/{soc}/profile` to access granular, unflagged 2023+ market salary and experience distributions.
+- **For Root Integration Orchestrator**: Legacy endpoints (`/career/analyze`, `/rank`, `/search_by_domain`) remain 100% backward-compatible. New `/api/v1/occupations/*` endpoints empower the general career engine.
+
+---
+
+## 8. Version 2.0: Cross-Industry Generalisation Layer
+
+Module 1 v2.0 expands Vriddhi beyond technology into a **universal career intelligence engine for every occupation across all industries** (Healthcare, Finance, Education, Sales, Trades, Logistics, Hospitality, Creative, and Tech).
+
+### 8.1. Unified Requirements Contract: `v_occupation_requirements`
+
+This view provides 206,193 requirement rows across all 1,016 O\*NET occupations:
+
+```sql
+SELECT 
+    soc_code,
+    item_type,          -- 'skill' | 'knowledge' | 'ability' | 'work_activity' | 'dwa' | 'task' | 'tech' | 'tool' | 'market_skill'
+    item_id,            -- O*NET element ID or DWA ID
+    item_name,          -- Plain-English name (e.g. 'Reading Comprehension', 'Medicine and Dentistry')
+    item_description,   -- Detailed narrative statement ready for embedding
+    importance_norm,    -- Normalized importance [0.0, 1.0]
+    level_norm,         -- Normalized proficiency level [0.0, 1.0] (NULL if not applicable)
+    hot_technology,     -- 1 or 0
+    in_demand,          -- 1 or 0
+    india_demand_share, -- Share of Indian postings requiring this skill [0.0, 1.0]
+    source,             -- 'onet' | 'india_postings' | 'global_postings'
+    reliable            -- 1 (high reliability, non-suppressed) or 0
+FROM v_occupation_requirements;
+```
+
+### 8.2. Additive REST API Endpoints
+
+All new endpoints are strictly additive under `/api/v1/occupations`:
+
+#### 1. Free-Text Multilingual / Alias-Aware Title Search
+`GET /api/v1/occupations/search?q={query}&k={top_k}`
+- **Parameters**: `q` (e.g. `"staff nurse"`, `"CA"`, `"site engineer"`, `"telecaller"`, `"ITI electrician"`), `k` (default 5).
+- **Response**: List of candidate occupations with resolution confidence and match method:
+```json
+[
+  {
+    "soc_code": "29-1141.00",
+    "title": "Registered Nurses",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "staff nurse"
+  }
+]
+```
+
+#### 2. Unified Occupation Requirements
+`GET /api/v1/occupations/{soc}/requirements?item_type={type}&limit={n}`
+- **Path**: `soc` (e.g. `29-1141.00` or `29-1141`).
+- **Response**: List of requirements from `v_occupation_requirements`.
+
+#### 3. 360-Degree Occupation Profile
+`GET /api/v1/occupations/{soc}/profile`
+- **Response**: Comprehensive profile containing:
+  - `domain`: SOC 2-digit major group, career cluster, Indian industry.
+  - `job_zone`: Preparation depth (1–5), experience narrative, education narrative.
+  - `indian_education`: Primary Indian qualification and distribution across 12 credential tiers.
+  - `indian_experience`: Typical min/max years, median, and sample size ($n$) from 2023+ postings.
+  - `salary_percentiles_india`: Unflagged 2023+ salary percentiles (p25 / p50 / p75) by city × experience bucket × work mode.
+  - `related_occupations`: Top related transfer roles.
+
+#### 4. Related Occupations & Career Mobility
+`GET /api/v1/occupations/{soc}/related?limit={n}`
+- **Response**: List of related occupations for career transition recommendations.
+
+---
+
+## 9. Test Occupations & Static Mock Export
+
+A static mock export covering **15 representative occupations across 8 diverse industries** is provided at:
+`data/m1_occupation_requirements_export.json`
+
+| Industry Domain | Occupation | SOC Code | Total Requirements | Skills | Knowledge | Abilities |
+|---|---|---|---|---|---|---|
+| Healthcare | Registered Nurses | `29-1141.00` | 280 | 35 | 33 | 52 |
+| Healthcare | Pharmacists | `29-1051.00` | 225 | 35 | 33 | 52 |
+| Healthcare | Medical Assistants | `31-9092.00` | 246 | 35 | 33 | 52 |
+| Finance | Accountants and Auditors | `13-2011.00` | 674 | 35 | 33 | 52 |
+| Finance | Loan Officers | `13-2072.00` | 355 | 35 | 33 | 52 |
+| Education | Secondary School Teachers | `25-2031.00` | 246 | 35 | 33 | 52 |
+| Sales / Service | Sales Representatives | `41-4012.00` | 463 | 35 | 33 | 52 |
+| Sales / Service | Customer Service Reps | `43-4051.00` | 417 | 35 | 33 | 52 |
+| Engineering | Mechanical Engineers | `17-2141.00` | 418 | 35 | 33 | 52 |
+| Engineering | Civil Engineers | `17-2051.00` | 388 | 35 | 33 | 52 |
+| Trades | Electricians | `47-2111.00` | 247 | 35 | 33 | 52 |
+| Hospitality | Chefs and Head Cooks | `35-1011.00` | 235 | 35 | 33 | 52 |
+| Logistics | Heavy Truck Drivers | `53-3032.00` | 233 | 35 | 33 | 52 |
+| Creative | Graphic Designers | `27-1024.00` | 367 | 35 | 33 | 52 |
+| Tech (regression) | Data Scientists | `15-2051.00` | 1,603 | 35 | 33 | 52 |
+

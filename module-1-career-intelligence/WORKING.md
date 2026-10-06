@@ -600,4 +600,63 @@ This technical section details the fine-tuning, cross-module synchronization, an
   * *On-Site Senior*: p25 = **21.8 LPA**, p50 = **32.5 LPA**, p75 = **58.9 LPA** ($n = 63$)
 * Downstream Module 3 can directly plug this payload into its `market_salary_percentiles` input for precision offer benchmarking and realistic negotiation advice without remote compensation skewing city estimates.
 
+---
+
+## 8. Generalisation Release v2.0: Universal Career Engine (All Industries)
+
+### 8.1. Mission & Context
+Requested by Module 2 & 3 leads (Chaitanya) on 6 Oct 2026. Objective: Transition Vriddhi from ~7 tech roles into a **general career engine for every occupation across all industries** (nurses, accountants, civil engineers, teachers, electricians, sales executives, truck drivers, chefs, graphic designers, etc.) using embedding-based semantic matching.
+
+### 8.2. Ground Rule Compliance (Strictly Additive)
+- **Zero Breaking Changes**: No existing tables or columns dropped or renamed.
+- **Row Counts Intact**: Sanity checks confirm existing tables (`occupations`: 1,016; `job_postings_india`: 72,691; `job_postings_global`: 115,000; `salary_benchmarks`: 43,374; `skill_demand`: 371,141) are 100% unchanged.
+- **Test Suite**: All 18 legacy M1 tests + 30 new generalisation acceptance tests pass (48/48 green).
+
+### 8.3. Additive Ingestion Summary
+1. **O\*NET 31.0 Full Model Ingested**:
+   - `onet_skills`: 31,850 rows (all 35 skills, separated IM and LV, normalized $[0, 1]$, suppression flags).
+   - `onet_knowledge`: 30,030 rows (all 33 domains: Medicine, Economics, Mechanical, Law, etc.).
+   - `onet_abilities`: 47,320 rows (all 52 cognitive, physical, sensory abilities).
+   - `onet_work_activities`: 37,351 rows (41 generalized work activities).
+   - `onet_task_ratings`: 18,420 rows (importance, relevance, frequency).
+   - `onet_dwa`: 24,087 rows (tasks mapped to DWAs and IWAs).
+   - `onet_tech_skills`: 31,821 software items with commodity codes and hot tech flags.
+   - `onet_tools`: 95 clinical and trade tools.
+   - `onet_job_zones`: 923 preparation narrative benchmarks.
+   - `onet_education`: 11,495 educational distribution items across 12 tiers.
+   - `onet_alternate_titles`: 62,458 titles for robust semantic title matching.
+   - `onet_related_occupations`: 18,460 career mobility paths.
+   - `onet_content_model`: 268 plain-English descriptions ready for embedding.
+2. **Taxonomy & Domain Mapping**:
+   - `occupation_domains`: 1,016 rows mapping SOC 2-digit groups, clusters, and Indian industries.
+   - `city_aliases`: 583 rows normalizing Indian cities into canonical names, tiers, and metro groups (e.g., Gurugram -> Delhi NCR).
+   - `india_title_aliases`: 64 colloquial Indian titles (*staff nurse*, *CA*, *site engineer*, *telecaller*, *ITI electrician*, etc.).
+3. **Data Quality & Hygiene**:
+   - `salary_quality_flags`: 5,500 flagged records isolating synthetic Kaggle AI India (~63 LPA median), stale pre-2023 rows, monthly figures misrecorded as annual, and IQR outliers.
+   - `skill_noise_terms`: 44 terms filtering out EEO boilerplate (*gender, religion, color...*), benefits (*dental, vision...*), and numeric salary fragments.
+   - `v_skill_demand_clean` & `skill_demand_by_soc`: 22,396 clean skill demand points grouped by SOC.
+4. **Empirical Benchmarks**:
+   - `occupation_experience_india`: 385 verified experience ranges (2023+ postings).
+   - `occupation_salary_india`: 1,317 unflagged salary slices by city, experience, and onsite/remote.
+   - `education_level_map_india`: 12 qualification crosswalk tiers.
+   - `v_occupation_requirements`: 206,193 requirement rows uniting all skills, knowledge, abilities, tasks, DWAs, tech, and market skills.
+
+### 8.4. Additive Endpoints Implemented
+- `GET /api/v1/occupations/search?q={query}&k={top_k}`: Free-text title -> top-k SOC candidates with confidence and resolution method.
+- `GET /api/v1/occupations/{soc}/requirements`: Returns rows of `v_occupation_requirements` for semantic matching.
+- `GET /api/v1/occupations/{soc}/profile`: Returns 360-degree profile (Job Zone, Indian education distribution, experience band, unflagged salary percentiles, related roles, domain).
+- `GET /api/v1/occupations/{soc}/related`: Returns related mobility occupations.
+
+### 8.5. Test Occupations & Static Mock Fixture
+Generated `data/m1_occupation_requirements_export.json` covering 15 test occupations across 8 diverse industries:
+- Healthcare: Registered Nurses (`29-1141.00`), Pharmacists (`29-1051.00`), Medical Assistants (`31-9092.00`)
+- Finance: Accountants and Auditors (`13-2011.00`), Loan Officers (`13-2072.00`)
+- Education: Secondary School Teachers (`25-2031.00`)
+- Sales / Service: Sales Representatives (`41-4012.00`), Customer Service Representatives (`43-4051.00`)
+- Engineering / Trades: Mechanical Engineers (`17-2141.00`), Civil Engineers (`17-2051.00`), Electricians (`47-2111.00`)
+- Hospitality / Logistics: Chefs (`35-1011.00`), Heavy Truck Drivers (`53-3032.00`)
+- Creative: Graphic Designers (`27-1024.00`)
+- Tech (regression baseline): Data Scientists (`15-2051.00`)
+
+
 

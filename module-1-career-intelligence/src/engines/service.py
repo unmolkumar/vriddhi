@@ -214,3 +214,25 @@ class CareerIntelligenceService:
                 "postings_by_region_and_year": postings_comp,
                 "top_skills_by_region": skills_comp
             }
+
+    def search_occupations(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        """Multilingual/alias-aware free-text title resolution to SOC codes."""
+        return self.db.search_occupations_multilingual(query, top_k=top_k)
+
+    def get_occupation_requirements(
+        self,
+        soc_code: str,
+        item_type: Optional[str] = None,
+        limit: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
+        """Retrieve unified requirements for semantic embedding matching."""
+        return self.db.get_occupation_requirements(soc_code, item_type=item_type, limit=limit)
+
+    def get_occupation_profile(self, soc_code: str) -> Optional[Dict[str, Any]]:
+        """Retrieve 360-degree occupation profile for all industries."""
+        return self.db.get_occupation_profile(soc_code)
+
+    def get_related_occupations(self, soc_code: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """Retrieve related occupations for career transition recommendations."""
+        return self.db.get_related_occupations(soc_code, limit=limit)
+
