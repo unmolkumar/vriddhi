@@ -66,9 +66,10 @@ Invoke-RestMethod http://127.0.0.1:8002/api/v1/health                 # module 2
 Invoke-RestMethod http://127.0.0.1:8003/api/v1/health                 # module 3: status ok, providers adzuna/jsearch true, cache jobs > 0, salary_estimates >= 35
 $r = Invoke-RestMethod http://127.0.0.1:8003/api/v1/jobs/search -Method Post -ContentType application/json `
      -Body '{"target_role":"Data Scientist","location":"Bengaluru","skills":["python","sql","machine learning"],"experience_years":4}'
-$r.stale; $r.sources; $r.market_salary.display    # expect False, adzuna (+ jsearch), and a range
+$r.stale; $r.data_age; $r.sources; $r.market_salary.display    # False, "fetched 9 h ago", adzuna (+ jsearch), a range
+$r.market_salary.source_check    # module 1 vs JSearch: both numbers, the gap, and which one is primary
 ```
-`stale` must be `False`. If it's `True`, Adzuna couldn't be reached: check the network, then re-run the night-before command.
+`stale` must be `False`, and `data_age` should match last night's run. If `stale` is `True`, Adzuna couldn't be reached: check the network, then re-run the night-before command.
 
 **If the Wi-Fi dies:**
 - Pre-warmed role × city pairs searched within `LIVE_CACHE_TTL_HOURS` are served from the cache, so nothing changes (`stale: false`). Salary ranges come from the cached JSearch estimates.
@@ -79,7 +80,7 @@ $r.stale; $r.sources; $r.market_salary.display    # expect False, adzuna (+ jsea
 ## Test
 
 ```bash
-pytest module-3-job-matching-salary/tests/ -v      # 154 tests; the two live provider tests skip without keys
+pytest module-3-job-matching-salary/tests/ -v      # 165 tests; the two live provider tests skip without keys
 ```
 
 ## Endpoints
@@ -112,7 +113,7 @@ With module 2's profile instead of `skills`, pass `"profile": <module 2 UserProf
 |---|---|---|
 | `gap_analysis` | module 2 | drives which skills the unlocks look at |
 | `typical_experience` `{min, max}` | module 1 | experience band for jobs that don't state one |
-| `market_salary_percentiles` | module 1 `POST /api/v1/career/analyze`, passed as-is | primary salary source after posted salaries: the candidate's experience tier (× city ratio when that city has ≥ 50 points), checked against JSearch |
+| `market_salary_percentiles` | module 1 `POST /api/v1/career/analyze`, passed as-is | salary source after posted salaries: the candidate's on-site experience tier (× city ratio when that city has ≥ 50 points), or `remote_inr_lpa` when `work_mode` is `["remote"]`. Checked against JSearch; if they differ by more than 25%, the larger India sample wins (`PREFER_LARGER_INDIA_SAMPLE`) |
 | `market_baseline` | module 1 `regional_breakdown.india` | last salary fallback |
 | `jsearch_salary: true` | — | fetch JSearch's salary estimate if not cached (spends JSearch quota; cached 7 days) |
 | `jsearch_enrichment: true` | — | also query JSearch for full job descriptions (spends JSearch quota) |
