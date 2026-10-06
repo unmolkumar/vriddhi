@@ -518,6 +518,159 @@
    "false_p90": 0.457
   }
  },
+ "verdict_calibration": {
+  "rows": [
+   {
+    "profile": "13-2011.00_chartered_accountant",
+    "partial": false,
+    "own": 0.6558,
+    "best_other": 0.2655,
+    "best_other_soc": "43-3071.00",
+    "years": 7.5
+   },
+   {
+    "profile": "13-2072.00_loan_officer",
+    "partial": false,
+    "own": 0.5334,
+    "best_other": 0.3754,
+    "best_other_soc": "43-4051.00",
+    "years": 9.0
+   },
+   {
+    "profile": "15-2051.00_data_scientist",
+    "partial": false,
+    "own": 0.5404,
+    "best_other": 0.1553,
+    "best_other_soc": "13-1071.00",
+    "years": 8.0
+   },
+   {
+    "profile": "17-2051.00_civil_site_engineer",
+    "partial": false,
+    "own": 0.5052,
+    "best_other": 0.1362,
+    "best_other_soc": "17-2141.00",
+    "years": 10.0
+   },
+   {
+    "profile": "17-2141.00_mechanical_engineer",
+    "partial": false,
+    "own": 0.4336,
+    "best_other": 0.2,
+    "best_other_soc": "17-2051.00",
+    "years": 9.0
+   },
+   {
+    "profile": "25-2031.00_school_teacher",
+    "partial": false,
+    "own": 0.6032,
+    "best_other": 0.2355,
+    "best_other_soc": "29-1123.00",
+    "years": 11.0
+   },
+   {
+    "profile": "27-1024.00_graphic_designer",
+    "partial": false,
+    "own": 0.473,
+    "best_other": 0.0878,
+    "best_other_soc": "41-2031.00",
+    "years": 9.0
+   },
+   {
+    "profile": "29-1051.00_pharmacist",
+    "partial": false,
+    "own": 0.5214,
+    "best_other": 0.5979,
+    "best_other_soc": "29-2052.00",
+    "years": 9.0
+   },
+   {
+    "profile": "29-1141.00_staff_nurse",
+    "partial": false,
+    "own": 0.575,
+    "best_other": 0.393,
+    "best_other_soc": "31-9092.00",
+    "years": 7.5
+   },
+   {
+    "profile": "31-9092.00_medical_assistant",
+    "partial": false,
+    "own": 0.6284,
+    "best_other": 0.3549,
+    "best_other_soc": "29-2052.00",
+    "years": 7.0
+   },
+   {
+    "profile": "35-1011.00_head_chef",
+    "partial": false,
+    "own": 0.5919,
+    "best_other": 0.12,
+    "best_other_soc": "43-4081.00",
+    "years": 12.0
+   },
+   {
+    "profile": "41-4012.00_sales_rep",
+    "partial": false,
+    "own": 0.552,
+    "best_other": 0.3047,
+    "best_other_soc": "41-2031.00",
+    "years": 10.0
+   },
+   {
+    "profile": "43-4051.00_customer_care",
+    "partial": false,
+    "own": 0.5047,
+    "best_other": 0.1532,
+    "best_other_soc": "43-3071.00",
+    "years": null
+   },
+   {
+    "profile": "47-2111.00_electrician",
+    "partial": false,
+    "own": 0.3621,
+    "best_other": 0.0947,
+    "best_other_soc": "47-2152.00",
+    "years": 11.0
+   },
+   {
+    "profile": "53-3032.00_truck_driver",
+    "partial": false,
+    "own": 0.2951,
+    "best_other": 0.0498,
+    "best_other_soc": "47-2111.00",
+    "years": null
+   },
+   {
+    "profile": "partial_13-2011.00_accountant_no_gst",
+    "partial": true,
+    "own": 0.1761,
+    "best_other": 0.2212,
+    "best_other_soc": "43-3071.00",
+    "years": 5.0
+   },
+   {
+    "profile": "partial_29-1141.00_fresher_nurse",
+    "partial": true,
+    "own": 0.2884,
+    "best_other": 0.1911,
+    "best_other_soc": "31-9092.00",
+    "years": null
+   },
+   {
+    "profile": "partial_47-2111.00_iti_apprentice",
+    "partial": true,
+    "own": 0.2882,
+    "best_other": 0.2384,
+    "best_other_soc": "15-1253.00",
+    "years": 3.0
+   }
+  ],
+  "full_min": 0.2951,
+  "partial_max": 0.2884,
+  "threshold": 0.29,
+  "separable": true,
+  "wrong_occupation_above_threshold": 5
+ },
  "filters": {
   "29-1141.00": {
    "soc": "29-1141.00",
