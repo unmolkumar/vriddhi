@@ -3,8 +3,8 @@
 **From:** Anmol (Module 1 Lead)  
 **To:** Chaitanya (Module 2 & Module 3 Lead)  
 **Date:** 6 Oct 2026  
-**Status:** **Delivered, 100% Verified, Committed & Pushed to `main`**  
-**Schema Version:** `2.0.0` (O\*NET 31.0 Deep Integration)  
+**Status:** **Delivered v2.1.0, 100% Verified, Committed & Pushed to `main`**  
+**Schema Version:** `2.1.0` (O\*NET 31.0 + Cleaned Empirical Market Demand + Physical Equipment Tools + Unified Requirements Contract)  
 
 ---
 
@@ -21,7 +21,7 @@ Module 1 has been transformed from supporting ~7 tech roles into a **universal c
   - `salary_benchmarks`: **43,374** (unchanged)
   - `skill_demand`: **371,141** (unchanged)
 - **Backward Compatibility**: Existing endpoints (`/career/analyze`, `/rank`, `/search_by_domain`, `/compare`) continue to return identical schemas and pass all regression tests.
-- **Test Integrity**: All 18 legacy tests + 30 new generalisation acceptance tests pass (48/48 green). All 136 Module 3 tests pass.
+- **Test Integrity**: All 18 legacy tests + 30 generalisation acceptance tests pass (48/48 green). All 165 Module 3 tests pass (163 passed, 2 skipped live API).
 
 ---
 
@@ -222,23 +222,23 @@ The static mock fixture file is generated and saved in the repository:
 
 Covering the **15 cross-industry test occupations**:
 
-| Domain | Occupation Title | SOC Code | Total Reqs | Skills | Knowledge | Abilities | Tasks / Tech / Market |
-|---|---|---|---|---|---|---|---|
-| **Healthcare** | Registered Nurses | `29-1141.00` | **280** | 35 | 33 | 52 | 160 |
-| **Healthcare** | Pharmacists | `29-1051.00` | **225** | 35 | 33 | 52 | 105 |
-| **Healthcare** | Medical Assistants | `31-9092.00` | **246** | 35 | 33 | 52 | 126 |
-| **Finance** | Accountants and Auditors | `13-2011.00` | **674** | 35 | 33 | 52 | 554 |
-| **Finance** | Loan Officers | `13-2072.00` | **355** | 35 | 33 | 52 | 235 |
-| **Education** | Secondary School Teachers | `25-2031.00` | **246** | 35 | 33 | 52 | 126 |
-| **Sales / Service** | Sales Representatives | `41-4012.00` | **463** | 35 | 33 | 52 | 343 |
-| **Sales / Service** | Customer Service Representatives | `43-4051.00` | **417** | 35 | 33 | 52 | 297 |
-| **Engineering** | Mechanical Engineers | `17-2141.00` | **418** | 35 | 33 | 52 | 298 |
-| **Engineering** | Civil Engineers | `17-2051.00` | **388** | 35 | 33 | 52 | 268 |
-| **Trades** | Electricians | `47-2111.00` | **247** | 35 | 33 | 52 | 127 |
-| **Hospitality** | Chefs and Head Cooks | `35-1011.00` | **235** | 35 | 33 | 52 | 115 |
-| **Logistics** | Heavy Truck Drivers | `53-3032.00` | **233** | 35 | 33 | 52 | 113 |
-| **Creative** | Graphic Designers | `27-1024.00` | **367** | 35 | 33 | 52 | 247 |
-| **Tech (regression)** | Data Scientists | `15-2051.00` | **1,603** | 35 | 33 | 52 | 1,483 |
+| Domain | Occupation Title | SOC Code | Total Reqs | Skills | Knowledge | Abilities | DWAs | Tools | Tech | Market Skills |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **Healthcare** | Registered Nurses | `29-1141.00` | **291** | 35 | 33 | 52 | 37 | 18 | 43 | 5 |
+| **Healthcare** | Pharmacists | `29-1051.00` | **242** | 35 | 33 | 52 | 29 | 10 | 21 | 0 |
+| **Healthcare** | Medical Assistants | `31-9092.00` | **249** | 35 | 33 | 52 | 25 | 11 | 32 | 0 |
+| **Finance** | Accountants and Auditors | `13-2011.00` | **472** | 35 | 33 | 52 | 28 | 8 | 237 | 8 |
+| **Finance** | Loan Officers | `13-2072.00` | **297** | 35 | 33 | 52 | 25 | 6 | 88 | 0 |
+| **Education** | Secondary School Teachers | `25-2031.00` | **262** | 35 | 33 | 52 | 33 | 8 | 24 | 4 |
+| **Sales / Service** | Sales Representatives | `41-4012.00` | **353** | 35 | 33 | 52 | 26 | 6 | 138 | 4 |
+| **Sales / Service** | Customer Service Representatives | `43-4051.00` | **310** | 35 | 33 | 52 | 14 | 5 | 112 | 5 |
+| **Engineering** | Mechanical Engineers | `17-2141.00` | **326** | 35 | 33 | 52 | 32 | 11 | 92 | 2 |
+| **Engineering** | Civil Engineers | `17-2051.00` | **289** | 35 | 33 | 52 | 17 | 12 | 73 | 10 |
+| **Trades** | Electricians | `47-2111.00` | **251** | 35 | 33 | 52 | 17 | 18 | 30 | 4 |
+| **Hospitality** | Chefs and Head Cooks | `35-1011.00` | **246** | 35 | 33 | 52 | 18 | 18 | 24 | 4 |
+| **Logistics** | Heavy Truck Drivers | `53-3032.00` | **251** | 35 | 33 | 52 | 28 | 10 | 20 | 3 |
+| **Creative** | Graphic Designers | `27-1024.00` | **292** | 35 | 33 | 52 | 17 | 9 | 79 | 7 |
+| **Tech (regression)** | Data Scientists | `15-2051.00` | **294** | 35 | 33 | 52 | 16 | 6 | 87 | 8 |
 
 ---
 
@@ -247,7 +247,8 @@ Covering the **15 cross-industry test occupations**:
 ### For Module 2 (Semantic Skill Gap & Roadmap)
 1. **Semantic Matching**: Fetch rows from `v_occupation_requirements` (or use `GET /api/v1/occupations/{soc}/requirements`). Embed `item_name + ": " + item_description` using `all-MiniLM-L6-v2` and compute cosine similarity against the user's resume / free text.
 2. **Proficiency Calibration**: Use `level_norm` $[0.0, 1.0]$ as the required target proficiency instead of heuristics.
-3. **Task-Driven Roadmaps**: Use `item_type = 'task'` and `item_type = 'dwa'` (Detailed Work Activities) to generate practical, domain-specific project ideas for vocational and non-tech careers (e.g. *"Inspect electrical wiring for commercial conduits"*, *"Reconcile ledger accounts against tax statements"*).
+3. **Task & DWA Driven Roadmaps**: Use `item_type = 'task'` and `item_type = 'dwa'` (Detailed Work Activities) to generate practical, domain-specific project ideas for vocational and non-tech careers (e.g. *"Inspect electrical wiring for commercial conduits"*, *"Reconcile ledger accounts against tax statements"*).
+4. **Physical Tools**: Use `item_type = 'tool'` to evaluate trade equipment familiarity (multimeters, wire strippers, infusion pumps, chef knives).
 
 ### For Module 3 (Job Matching & Realistic Salary Calibration)
 1. **Title Matching**: Call `GET /api/v1/occupations/search?q={title}` to map user titles or scraped job titles to canonical SOC codes.
@@ -258,11 +259,22 @@ Covering the **15 cross-industry test occupations**:
 
 ## 7. Verification & Test Suite Summary
 
-- **Module 1**: **48 / 48 tests passed (100% green)** in 15.29s.
-- **Module 3**: **136 / 136 tests passed (100% green)** in 3.02s.
+- **Module 1**: **48 / 48 tests passed (100% green)** in 18.52s.
+- **Module 3**: **163 passed, 2 skipped (165 total tests, 100% green)** in 3.43s.
 - **Documentation Updated**:
   - [`DATABASE.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/DATABASE.md)
   - [`WORKING.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/WORKING.md)
   - [`SOURCES.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/SOURCES.md)
 
-All changes are committed and pushed to `main` (`git push origin main`). You can immediately begin integrating against the database and mock export.
+---
+
+## 8. Review Feedback (v2.1) Resolution Matrix
+
+| Review Item | Issue Raised | Resolution in v2.1 |
+|---|---|---|
+| **0. DB Delivery** | Local DB missing v2 tables | Full v2.1.0 database built with verified hash and table counts in `db_meta`. |
+| **1. DWAs & Tools** | 0 DWAs, 0 tools in export; 95 tools total | All 15 occupations have DWAs (14 to 37 per SOC). Added comprehensive physical equipment seed (`onet_tools` 250 rows). Trades & clinical roles now have $\ge 10$ tools each (Electricians: 18, Nurses: 18, Chefs: 18, Civil Engineers: 12, Pharmacists: 10). |
+| **2. Clean Market Skills** | PromptCloud industry noise (*Hotels, IT Hardware, ITES*); long-tail noise | Excluded all 45 PromptCloud industries, Indian cities/states, benefits, seniority words, and occupation titles. Added min support ($\ge 3$ postings, share $\ge 0.02$). Capped at top 50 per SOC. Hand-curated skills labeled `source='curated'`, `mentions=0`, `india_demand_share=NULL`. Accountants top skills are *Accounting, Tally, Taxation, GST*; zero EEO junk. |
+| **3. Tech Deduplication & Item IDs** | Duplicates (e.g. Apache Spark) & content model ID `2.E.6.m` | `GROUP BY soc_code, item_type, item_name` eliminates duplicates. Unique slugified IDs (`tech_<slug>`, `tool_<slug>`) assigned to every tool/tech item. |
+| **4. Title -> SOC Mapping** | Flat 0.85 confidence on prefix matches; cross-domain leaks (e.g. C++/Fortran on Civil Eng) | Dynamic confidence based on token overlap / Jaccard similarity and length ratio ($0.50$ to $0.90$). Cross-domain guards prevent software titles from mapping to Civil Engineer (17-2051.00). Precision verified on 100 sample postings (50 IT, 50 non-IT). |
+| **5. Unzoned Roles & DB Meta** | 93 occupations without Job Zones; missing hash in `db_meta` | Documented in `DATABASE.md`: all 93 unzoned roles are standard O\*NET residual/catch-all occupations (`.99 Managers, All Other`, `Engineers, All Other`) and military roles. Added `export_hash` and `table_counts` JSON directly to `db_meta`. |
