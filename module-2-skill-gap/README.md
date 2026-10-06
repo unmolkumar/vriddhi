@@ -6,6 +6,8 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
+> **v2 in progress:** a general career engine for any occupation (module 1 v2.0 requirements, not just tech roles) is being built in `src/general/`. Phase A1 (requirements, evidence, semantic matching, calibration) is in; it has no public endpoint yet. Everything below (v1, `/api/v1/*`) is unchanged. Design and calibration results: [WORKING.md §11](WORKING.md#11-general-engine-v2--a1).
+
 ## Install
 
 Python 3.11. From the repo root:
@@ -29,8 +31,11 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 285 tests; the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 333 tests (285 v1 + 48 general engine); the live Groq test is skipped without a key
+python module-2-skill-gap/scripts/calibrate.py --tune   # general engine: 15 profiles x 15 occupations, thresholds
 ```
+
+General engine settings (optional, root `.env`): `M1_BASE_URL` (default `http://localhost:8001`), `EMBEDDING_MODEL` (default `all-MiniLM-L6-v2`).
 
 ## Endpoints
 
@@ -140,12 +145,14 @@ A full response for Module 1's Data Scientists target (from `/analyze_resume` pr
 ```text
 module-2-skill-gap/
 ├── data/taxonomy/skills.json      483 skills: ids, aliases, maps_to, prerequisites, difficulty tiers
+├── scripts/calibrate.py           general engine calibration (v2)
 ├── src/
 │   ├── api/                       FastAPI app (main.py, routes.py)
 │   ├── engines/                   skill_extractor, profile_builder, similarity, gap_analyzer, roadmap_generator
+│   ├── general/                   v2: m1_client, requirements, evidence, embeddings, matcher, calibration
 │   ├── models/                    schemas.py (Pydantic) + schema_m2.json
 │   └── parsers/                   resume_parser (PDF/DOCX/TXT/OCR), section_segmenter
-└── tests/                         fixtures/, mocks/ (Module 1 data), test_*.py
+└── tests/                         fixtures/, mocks/ (Module 1 data), calibration/ (v2 profiles), test_*.py
 ```
 
-Module 2 never imports Module 1 or Module 3. Module 1 data arrives as plain request fields through the integration layer.
+Module 2 never imports Module 1 or Module 3. Module 1 data arrives as plain request fields through the integration layer (v1), or over Module 1's REST API (v2 general engine).

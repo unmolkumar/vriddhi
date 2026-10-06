@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11) adds 48 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -329,3 +329,179 @@ pytest module-2-skill-gap/tests/ -v
 | 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap`, one change per commit, author Chaitanya Sharma |
 
 Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analysis`, `POST /api/v1/skills/extract`, `GET /api/v1/health` on port **8002** (OpenAPI at `/docs`).
+
+---
+
+## 11. General engine (v2) — A1
+
+**Status:** A1 only (requirements, evidence, matching, calibration). There is no public endpoint yet; scoring, verdicts, roadmaps and `/api/v2/*` are A2. Everything in §1–10 (v1, `/api/v1/*`, the 483-skill taxonomy, the gap analyzer) is unchanged; the new code lives in `src/general/` and nothing in v1 imports it.
+
+### 11.1 Design
+
+```
+module 1 (REST)                      resume / free text / typed skills / v1 profile
+  /occupations/search ─► Resolution            │
+  /occupations/{soc}/requirements              ▼
+          │                            evidence.py: EvidenceUnit(text, evidence_type, section, span, skill_ids)
+          ▼                                    │
+  requirements.py: filter + weight             │
+  RequirementItem(layer, weight, flags)        │
+          │                                    │
+          └──────────► matcher.py ◄────────────┘
+                 1. alias: same taxonomy skill  → met
+                 2. semantic: MiniLM cosine     → met / partial / missing (per item type)
+                 → RequirementMatch(status, similarity, reason, best evidence + span)
+```
+
+- **`m1_client.py`.** Calls module 1's four occupation endpoints over REST (`M1_BASE_URL`, default `http://localhost:8001`, 10 s timeout). Failures become `M1Error(code)`: `unreachable`, `timeout`, `not_found` or `bad_response`.
+  - Requirements, profiles and related lists are cached on disk under `data/cache/m1/<version>/`. Module 1 responses carry no `db_meta` yet, so the version is the API version from `/openapi.json`. If the version is unknown, nothing is cached.
+  - Search returns a `Resolution` with `low_confidence` (top match below `LOW_CONFIDENCE = 0.85`, or two different occupation families within `AMBIGUOUS_GAP = 0.05`) and `did_you_mean`.
+  - `FixtureM1Client` has the same interface over `tests/mocks/m1_occupation_requirements_export.json` (module 1 v2.0.0, 15 occupations).
+- **`requirements.py`.** Turns module 1 rows into `RequirementItem(soc, item_type, item_id, name, description, importance, level, source, reliable, layer, weight, flags)`.
+  - **Layers:** core (`market_skill`, `tech`, `tool`, `knowledge`, `task`, `dwa`), transferable (`skill`, `work_activity`), fit_indicator (`ability`: never something to learn).
+  - **Weight:** `importance_norm × LAYER_WEIGHT[layer] × reliability`, with `LAYER_WEIGHT` = core 1.0, transferable 0.5, fit_indicator 0.
+  - **Required level:** `level_norm`, or `DEFAULT_LEVEL[type]` when it is null (0.6 for tasks and DWAs, 0.5 otherwise).
+  - **Embedded text:** `"{name}: {description}"`, or just the name when the description repeats it or is module 1's generic "Extracted from Indian job postings".
+- **`evidence.py`.** Splits resume or free text into units, using v1's `section_segmenter`.
+  - Experience bullets become `work`, project bullets `project`, and everything else (summary, skills items, education) `mentioned`. Typed skills become `self`.
+  - Bullets are split into sentences, and skills sections into items (a "Software:" style label is stripped). Contact lines are dropped.
+  - Each unit keeps its character `span` in the source text and the taxonomy ids v1's dictionary finds in it.
+  - `from_resume` (v1 parser) and `from_profile` (a v1 `UserProfile`) are also supported.
+- **`embeddings.py`.** `all-MiniLM-L6-v2` by default (`EMBEDDING_MODEL` to change), CPU only, normalised vectors.
+  - Requirement vectors are cached as float16 `.npy` under `data/cache/embeddings/<model>/<soc>-<hash of the item texts>.npy` (gitignored), so an edited requirement list is re-encoded.
+- **`matcher.py`.** Each requirement is matched in two steps:
+  1. **Alias.** A tech, tool or market_skill requirement that the v1 taxonomy resolves to the same skill as a unit is `met`, with `reason: "alias"` ("Advanced Excel" meets "Microsoft Excel").
+  2. **Semantic.** Otherwise, the best cosine over all units is compared with that type's `(met, partial)` thresholds.
+
+  Every match returns its status, similarity, reason, and the deciding unit's text, type, section and span. `coverage()` is a **provisional** 0–1 score for calibration only. Within each item type, it is the weight-averaged credit (met 1, partial 0.5). The types are then combined by `TYPE_SHARE`, so an occupation with 474 tech rows isn't scored on tech alone. A2 replaces this score.
+
+### 11.2 Filters (module 1 v2.0 data issues)
+
+Each filter is a named constant. A drop is recorded in the per-occupation `FilterReport` (reason → names, and logged); a down-weight is recorded in the item's `flags`. Every filter is a no-op on clean data (test `test_clean_data_passes_through_untouched`).
+
+| Filter | Constant(s) | Applies to | Effect |
+|---|---|---|---|
+| duplicate | normalised (type, name) | all | drop; keep the higher-importance copy. Module 1 v2.0 exports **every tech row twice** (e.g. 237 of 474 for Accountants) |
+| unreliable | `reliable = 0` | all | drop |
+| low support | `MARKET_MIN_SHARE = 0.02`, `MARKET_MIN_POSTINGS = 3` (when a `posting_count` is sent) | market_skill | drop |
+| noise | `INDUSTRY_LABELS` (+ "IT Software - …" pattern), `INDIAN_PLACES`, `SENIORITY_WORDS`, `GENERIC_TITLES`, `BENEFITS`, `GENERIC_TERMS`, the occupation's own title and aliases; case-insensitive | market_skill | drop, with the list as the reason |
+| cap | `MARKET_CAP = 50` by share | market_skill | drop the tail |
+| off-domain | `OFF_DOMAIN_SIM = 0.18`, `OFF_DOMAIN_FACTOR = 0.3` | tech, tool | weight × 0.3, flag `off_domain(sim)`; never deleted |
+
+**Off-domain, measured.** The brief suggested comparing tech with the occupation's description and tasks. On the fixture, that let Epic Systems through for Accountants (0.34) and Apache Spark for Registered Nurses (0.28), while flagging Excel for Accountants. Comparing with the **title and module 1's domain labels** (major group, career cluster, Indian industry; `domain_texts()`) separates them cleanly:
+
+| Tech | Occupation | Description + tasks | Title + domain labels |
+|---|---|---|---|
+| Apache Spark | Registered Nurses | 0.28 | 0.11 (off) |
+| Epic Systems | Registered Nurses | 0.35 | 0.42 |
+| Epic Systems | Accountants | 0.34 | 0.12 (off) |
+| Intuit QuickBooks | Accountants | 0.63 | 0.44 |
+| Apache Subversion | Civil Engineers | 0.15 | 0.01 (off) |
+| Bentley MicroStation | Civil Engineers | 0.52 | 0.42 |
+
+General office software (Word, Outlook) also falls below 0.18 for non-office occupations and is down-weighted. That's acceptable, because it says nothing about the occupation.
+
+**Per-occupation result:**
+
+| Occupation | Rows | Kept | Dropped | Down-weighted |
+|---|---|---|---|---|
+| Registered Nurses | 280 | 220 | duplicate 43, unreliable 16, industry label 1 (Medical) | off-domain 10 |
+| Accountants and Auditors | 674 | 399 | duplicate 237, unreliable 37, industry label 1 (Hotels) | off-domain 39 (Epic, MEDITECH, SPSS, Word, …) |
+| Customer Service Reps | 417 | 256 | duplicate 112, unreliable 37, low support 11, industry label 1 (ITES) | off-domain 17 |
+| Mechanical Engineers | 418 | 266 | duplicate 92, low support 38, unreliable 21, industry label 1 (IT Hardware) | off-domain 31 |
+| Civil Engineers | 388 | 236 | duplicate 73, low support 55 (incl. Ahmedabad, BE, Basic, C++), unreliable 24 | off-domain 23 (SVN, Office, …) |
+| Electricians | 247 | 206 | duplicate 30, unreliable 10, industry label 1 (IT Hardware) | off-domain 14 |
+| Data Scientists | 1,603 | 234 | low support 1,245, duplicate 87, unreliable 37 | — |
+
+The full report for all 15 occupations is in `tests/calibration/results/all-MiniLM-L6-v2.json`.
+
+**Still noisy after the filters:**
+- Customer Service keeps HTML and Javascript (share 0.034, about 2 postings).
+- Graphic Designers keep "Design" (0.68, effectively the industry label).
+- Data Scientists keep only 7 market skills (ML, PYTHON, SQL, TensorFlow, …). Module 1 sends no posting counts, so the 0.02 share floor drops PyTorch (0.014) and NLP along with the noise. A `posting_count` field would let `MARKET_MIN_POSTINGS` keep them.
+
+### 11.3 Calibration
+
+`python scripts/calibrate.py [--tune] [--model …] [--grid-shift …]` scores every profile in `tests/calibration/profiles/` against every fixture occupation.
+- **Profiles:** 15, one per occupation, plus 3 partial ones (a GNM fresher nurse, an accounts assistant without GST or Tally, and an ITI apprentice). They are written in Indian context and paraphrased, not copied from O*NET. Two (customer care, truck driver) are free text rather than resume-shaped.
+- **Report:** top-1 and top-3 accuracy, the margin (own occupation minus the best other), per-type similarity of true vs false matches, filter reports, and the nurse sample.
+- **`--tune`:** a grid search over three threshold groups (name-like, task-like, generic), the partial gap, and five type-share presets. It maximises (top-1, top-3, worst margin, mean margin).
+
+**Results (15 full profiles):**
+
+| Setting | Top-1 | Top-3 | Mean margin | Worst margin |
+|---|---|---|---|---|
+| MiniLM, initial hand-set constants | 15/15 | 15/15 | +0.211 | +0.026 (Mechanical vs Graphic Designers) |
+| **MiniLM, tuned (shipped)** | **15/15** | **15/15** | **+0.283** | **+0.103** (Staff nurse vs Medical Assistants) |
+| bge-small-en-v1.5, MiniLM's thresholds | 11/15 | 15/15 | +0.016 | −0.016 |
+| bge-small-en-v1.5, its own tuning (grid +0.15) | 15/15 | 15/15 | +0.241 | +0.061 |
+
+MiniLM stays the default: it has a better worst margin and is smaller, and v1 already uses it. bge-small works on a compressed cosine scale (almost everything falls between 0.55 and 0.80), so it needs its own thresholds.
+
+**Partial profiles** still rank their own occupation first, with lower coverage than the full profile:
+
+| Partial profile | Own coverage | Full profile's coverage |
+|---|---|---|
+| Fresher nurse | 0.26 | 0.41 |
+| Accounts assistant without GST/Tally | 0.22 | 0.57 |
+| ITI apprentice | 0.33 | 0.39 |
+
+**Shipped constants (`matcher.py`):**
+
+| Item types | met | partial | TYPE_SHARE |
+|---|---|---|---|
+| tech, tool | 0.65 | 0.52 | 0.05 each |
+| market_skill | 0.65 | 0.52 | 0.30 |
+| task, dwa | 0.55 | 0.42 | 0.30, 0.10 |
+| knowledge | 0.50 | 0.37 | 0.10 |
+| skill, work_activity | 0.50 | 0.37 | 0.04 each |
+| ability | 0.50 | 0.37 | 0 (fit indicator) |
+
+**Best-evidence similarity, own occupation vs others (MiniLM, median):**
+
+| Item type | Own occupation | Others |
+|---|---|---|
+| market_skill | 0.65 | 0.26 |
+| task | 0.50 | 0.27 |
+| tech | 0.34 | 0.24 |
+| knowledge | 0.21 | 0.20 |
+| skill | 0.25 | 0.25 |
+| work_activity | 0.25 | 0.25 |
+| ability | 0.16 | 0.16 |
+
+Tasks and market skills carry the signal. The generic O*NET layers (skills, work activities, abilities, and mostly knowledge) are the **same 35/41/52/33 items for every occupation**, and resume text doesn't separate them semantically. A2 should infer them from the matched tasks and work history, not from text similarity. Tech names rarely appear in Indian resumes in O*NET's wording (1.7% met for the right occupation), so tech relies on the alias layer.
+
+**Overfitting caveat:** the thresholds and shares were tuned on the same 15 profiles they are tested on. The calibration tests (`tests/calibration/test_calibration.py`) require top-1 ≥ 13/15 and top-3 = 15/15, plus sanity checks:
+- the nurse profile scores Registered Nurses at least 0.10 above Electricians;
+- the accountant profile ranks Accountants in the top 2;
+- the data scientist profile ranks Data Scientists first;
+- each partial profile scores below its full profile.
+
+They need held-out profiles before the numbers are trusted beyond this set.
+
+**Sample, staff nurse vs Registered Nurses** (core requirements, heaviest first):
+- Met:
+  - "Administer medications…" ← "medication administration" (0.65)
+  - "Monitor, record, and report symptoms…" ← "Admitted patients, took history and assessed their condition" (0.64)
+  - "Consult and coordinate with healthcare team members…" ← "Prepare nursing care plans with the intensivist…" (0.56)
+  - "Direct or coordinate infection control programs…" ← "infection control" (0.71)
+- Partial:
+  - "Record patients' medical information and vital signs" (0.53)
+  - "Provide health care, first aid, immunizations…" (0.49)
+- Missing:
+  - "Maintain accurate, detailed reports and records" (0.38, against "clinical documentation")
+  - "Prescribe or recommend drugs…" (0.40)
+  - Knowledge "Psychology"
+  - All tech (Epic 0.42, MEDITECH 0.50): the profile names only "hospital EMR"
+
+### 11.4 Tests
+
+| File | Tests | Covers |
+|---|---|---|
+| `test_general_m1_client.py` | 8 | cache per module 1 version (and none when unknown), timeout/unreachable/404/500 as `M1Error`, search confidence, low confidence and ties, fixture twin |
+| `test_general_requirements.py` | 26 | layers, weights, default levels, dwa/tool, embedding text, duplicate, unreliable, support floor and posting count, each noise list, market cap, off-domain down-weight, domain texts, clean data untouched, the Accountants fixture report |
+| `test_general_evidence.py` | 4 | sections → work/project/mentioned, spans, sentence and skills-item splitting, contact lines dropped, free text, typed skills, v1 profile |
+| `test_general_matcher.py` | 5 | alias before semantics, best evidence and span, per-type thresholds, no evidence, provisional coverage |
+| `calibration/test_calibration.py` | 5 | top-1 ≥ 13/15 and top-3, nurse vs Electricians margin, Accountants top-2, Data Scientists top-1, partial < full (MiniLM; skipped if it can't load) |
+
+The v1 suite is untouched: **284 passed + 1 skipped (live Groq without a key) = 285**. With the general engine, the total is **332 passed, 1 skipped**.
