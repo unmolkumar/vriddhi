@@ -6,7 +6,7 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
-> **v2 in progress:** a general career engine for any occupation (module 1 v2.0 requirements, not just tech roles) is being built in `src/general/`. Phases A1 and A1b (requirements with provenance, evidence, semantic matching of core requirements, inferred generic layers, held-out calibration) are in; there is no public endpoint yet. Everything below (v1, `/api/v1/*`) is unchanged. Design and calibration results: [WORKING.md §11](WORKING.md#11-general-engine-v2--a1-and-a1b).
+> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–12](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c). Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
 
 ## Install
 
@@ -31,8 +31,8 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 357 tests (285 v1 + 72 general engine); the live Groq test is skipped without a key
-python module-2-skill-gap/scripts/calibrate.py          # general engine: tuning / held-out / new-occupation report
+pytest module-2-skill-gap/tests/ -v      # 404 tests (285 v1 + 119 general engine); the live Groq test is skipped without a key
+python module-2-skill-gap/scripts/calibrate.py --verdict   # general engine: tuning / held-out report, verdict threshold
 ```
 
 General engine settings (optional, root `.env`): `M1_BASE_URL` (default `http://localhost:8001`), `EMBEDDING_MODEL` (default `all-MiniLM-L6-v2`).
@@ -45,6 +45,9 @@ General engine settings (optional, root `.env`): `M1_BASE_URL` (default `http://
 | POST | `/api/v1/skills/gap_analysis` | Profile or typed skills + Module 1 target → gap analysis |
 | POST | `/api/v1/skills/extract` | Skills in a job description or other text (no levels or evidence) |
 | GET | `/api/v1/health` | Status, taxonomy size, similarity backend |
+| POST | `/api/v2/skills/gap_analysis` | Any occupation: role or SOC + free text / skills / v1 profile → score, verdict, gaps, alternatives, roadmap |
+| POST | `/api/v2/skills/analyze_resume` | Upload a resume + role or SOC → v1 profile + v2 gap analysis |
+| POST | `/api/v2/skills/match_text` | For module 3: a job's text (+ SOC) vs the user's evidence → job-level match |
 
 Errors always look like `{"error": {"code": "ENCRYPTED_FILE", "message": "..."}}`. Codes: `FILE_TOO_LARGE` (413), `TOO_MANY_PAGES` (413), `UNSUPPORTED_FORMAT` (415), `ENCRYPTED_FILE`, `CORRUPT_FILE`, `EMPTY_DOCUMENT`, `OCR_FAILED` (400), `INVALID_REQUEST` (422).
 
@@ -140,16 +143,81 @@ Skills carry `is_category`: broad fields like `cloud` or `devops` are explained 
 
 A full response for Module 1's Data Scientists target (from `/analyze_resume` profile) is in WORKING.md §5.4 and the test `test_worked_example_data_scientist`.
 
+## v2 (any occupation)
+
+Needs module 1 running (`M1_BASE_URL`, default `http://localhost:8001`); v2 returns `503 M1_UNAVAILABLE` when it isn't, and v1 is unaffected. The first request for an occupation takes about 20 s (preparing and encoding it and its related occupations); warm requests take 0.2–0.6 s on CPU.
+
+### Example: gap analysis for any role
+
+```bash
+curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: application/json" -d '{
+  "target_role": "staff nurse",
+  "free_text": "Staff Nurse, ICU | Aster Medcity, Kochi | Jun 2021 - Present\n- Look after 2-3 ventilated patients per shift; chart vitals, intake-output and GCS every hour.\n- Give IV and oral medicines as per the doctor'"'"'s orders ...",
+  "hours_per_week": 8
+}'
+```
+
+`target_role` is resolved through module 1 (Indian titles like "staff nurse", "CA" or "ITI electrician" work); send `soc_code` instead to skip resolution. Evidence can be `free_text` (resume text or a description in any style), `skills` (typed, self-reported) and/or `profile` (from `/api/v1/skills/analyze_resume`). Response, abridged (tuning nurse profile, module 1 v2.1 fixture):
+
+```json
+{
+  "resolution": {"soc_code": "29-1141.00", "title": "Registered Nurses", "confidence": 1.0, "method": "india_alias_exact",
+                 "low_confidence": false, "did_you_mean": []},
+  "match_score": 0.575,
+  "verdict": {"label": "good_fit", "reason": "Your evidence covers 57% of this role's weighted core requirements.",
+              "suggested_role": null},
+  "score_breakdown": {"skill_score": 0.575, "experience_years": 7.5, "experience_band": [2.0, 6.0],
+                      "experience_band_source": "job_zone", "experience_factor": 1.0,
+                      "by_type": {"task": {"share": 0.414, "coverage": 0.502, "items": 27},
+                                  "market_skill": {"share": 0.276, "coverage": 1.0, "items": 5}, "...": "..."}},
+  "strengths": [{"requirement": "Record patients' medical information and vital signs.", "item_type": "task",
+                 "status": "met", "similarity": 0.55, "credit": 1.0, "weight": 0.935, "provenance": "onet",
+                 "evidence": {"text": "chart vitals", "evidence_type": "work", "section": "experience",
+                              "span": [301, 313], "context_span": [227, 335]}}],
+  "gaps": [{"requirement": "Maintain accurate, detailed reports and records.", "item_type": "task", "status": "missing",
+            "similarity": 0.38, "credit": 0.0, "weight": 0.9225, "provenance": "onet", "evidence": null}],
+  "gaps_total": 96,
+  "draws_on": [{"name": "Medicine and Dentistry", "item_type": "knowledge", "importance": 0.84, "inferred": true,
+                "support": "Inform medical professionals regarding patient conditions and care."}],
+  "fit_indicators": [{"name": "Deductive Reasoning", "importance": 0.81, "level": 0.6}],
+  "close_alternatives": [],
+  "roadmap": {"items": [{"step": 1, "requirement": "Maintain accurate, detailed reports and records.", "status": "missing",
+                         "practice_ideas": ["Maintain medical facility records.",
+                                            "Maintain inventory of medical supplies or equipment."],
+                         "hours": {"low": 30, "high": 60}, "weeks": {"low": 4, "high": 8}}],
+              "total_hours": {"low": 220, "high": 440}, "hours_per_week": 8.0, "note": "Hours and weeks are estimated ranges ..."},
+  "provenance_summary": {"scored_items": {"onet": 107, "curated": 23}, "weight_share": {"onet": 0.91, "curated": 0.09},
+                         "note": "Curated rows are hand-written in module 1 and count at half weight ..."},
+  "m1_version": "2.1.0",
+  "warnings": []
+}
+```
+
+### Example: match a job's text (module 3)
+
+```bash
+curl -X POST http://localhost:8002/api/v2/skills/match_text -H "Content-Type: application/json" -d '{
+  "job_text": "ICU staff nurse wanted. Administer medications to patients, record vital signs and coordinate with doctors. BLS certification required.",
+  "soc_code": "29-1141.00",
+  "free_text": "Staff nurse for six years. I administer medications ..."
+}'
+```
+
+Returns `match_score` (0.6 × the job text's own score + 0.4 × the occupation's score), `job_text_score`, `occupation_score`, and `met` / `missing` items with evidence and provenance (`job_text` for the job's own clauses).
+
+Errors: 422 `INVALID_REQUEST`, 404 `ROLE_NOT_RESOLVED` / `OCCUPATION_NOT_FOUND`, 503 `M1_UNAVAILABLE`, 502 `M1_BAD_RESPONSE`, and v1's file errors for `/analyze_resume`.
+
 ## Layout
 
 ```text
 module-2-skill-gap/
 ├── data/taxonomy/skills.json      483 skills: ids, aliases, maps_to, prerequisites, difficulty tiers
-├── scripts/calibrate.py           general engine calibration (v2)
+├── scripts/                       calibrate.py, refetch_extra_occupations.py (v2)
 ├── src/
-│   ├── api/                       FastAPI app (main.py, routes.py)
+│   ├── api/                       FastAPI app (main.py, routes.py v1, routes_v2.py)
 │   ├── engines/                   skill_extractor, profile_builder, similarity, gap_analyzer, roadmap_generator
-│   ├── general/                   v2: m1_client, requirements, evidence, embeddings, matcher, calibration
+│   ├── general/                   v2: m1_client, requirements, evidence, embeddings, matcher, inference,
+│   │                              scoring, roadmap, service, schemas, calibration
 │   ├── models/                    schemas.py (Pydantic) + schema_m2.json
 │   └── parsers/                   resume_parser (PDF/DOCX/TXT/OCR), section_segmenter
 └── tests/                         fixtures/, mocks/ (Module 1 data), calibration/ (v2 profiles), test_*.py

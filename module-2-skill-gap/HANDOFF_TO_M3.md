@@ -12,6 +12,7 @@ Base URL: `http://localhost:8002` (Module 1 is on 8001). Start it with `cd modul
 | The gap against a target role | `POST /api/v1/skills/gap_analysis` (`target_role`, `required_skills`, `profile` or `manual_profile`) | `GapAnalysisResult` |
 | Skills in a job description | `POST /api/v1/skills/extract` (`{"text": ..., "use_llm": false}`) | `{"skills": [{id, display, maps_to, in_taxonomy, is_category, ...}], "warnings": []}`; `is_category: true` marks broad fields (ai, cloud, devops) that shouldn't be offered as a skill to learn |
 | A gap against one job listing | `/skills/extract` on the description, then `/skills/gap_analysis` with those ids as `required_skills` (INTEGRATION.md scenario 3) | `GapAnalysisResult` for that job |
+| **A match against one job, any occupation (v2)** | `POST /api/v2/skills/match_text` (`job_text`, optional `soc_code`, and the user's `free_text` / `skills` / `profile`) | `MatchTextResponse` (below) |
 
 Skill ids are the same snake_case ids Module 1 uses (`python`, `machine_learning`, `sql`, `cloud`, …). Variants resolve automatically (`apache_spark`, `Postgres`, `Tableau Desktop`).
 
@@ -65,9 +66,41 @@ The first five skills of the learning roadmap, in the order to learn them (prere
 ```
 The full `roadmap.milestones[]` adds estimated hours and weeks per skill. These are estimate ranges, not guarantees.
 
+## v2: `POST /api/v2/skills/match_text` (any occupation)
+
+Use this when the job isn't a tech role, or when you want a job-level score from the listing's own text. It needs module 1 running (`503 M1_UNAVAILABLE` otherwise; the v1 calls above don't).
+
+Request:
+```json
+{
+  "job_text": "ICU staff nurse wanted. Administer medications to patients, record vital signs and coordinate with doctors. BLS certification required.",
+  "soc_code": "29-1141.00",
+  "job_title": "Staff Nurse - ICU",
+  "free_text": "Staff nurse for six years. I administer medications ...",
+  "skills": ["BLS"],
+  "profile": null
+}
+```
+- `job_text`: the listing's description, 20–50,000 characters. It is split into clauses; clauses under 3 words ("Full time") are ignored.
+- `soc_code`: optional. When you know the job's occupation (from module 1's `/occupations/search` on the title), its core O*NET/market requirements are blended in.
+- The user's evidence: any of `free_text`, `skills` or a v1 `profile` (from `/api/v1/skills/analyze_resume`).
+
+Response fields:
+
+| Field | Meaning |
+|---|---|
+| `match_score` | 0–1. `blend × job_text_score + (1 − blend) × occupation_score`; `blend` is 0.6 with a `soc_code`, else 1.0 |
+| `job_text_score` | Weighted coverage of the job's own clauses by the user's evidence |
+| `occupation_score` | The user's v2 match score for `soc_code` (null without it) |
+| `met[]`, `missing[]` | Top 15 each: `requirement`, `status`, `similarity`, `credit`, `provenance` (`job_text` for the listing's clauses; `onet` / `india_postings` / `curated` for the occupation's), `evidence` (`text`, `evidence_type` work/project/mentioned/self, `span`) |
+| `job_requirements` | How many clauses were taken from the job text |
+| `m1_version`, `warnings` | Module 1 data version; notes such as unknown experience |
+
+Scores are comparable across jobs for the same user, so you can rank listings by `match_score` and show `missing[]` as the reasons. For the full picture of a role (verdict, alternatives, roadmap), call `POST /api/v2/skills/gap_analysis` once with the role or SOC. Contract: [`src/models/schema_m2_v2.json`](src/models/schema_m2_v2.json); formulas: WORKING.md §12.
+
 ## Errors
 
-Every error is `{"error": {"code": "...", "message": "..."}}`. Upload problems return 400/413/415 (`CORRUPT_FILE`, `ENCRYPTED_FILE`, `FILE_TOO_LARGE`, `UNSUPPORTED_FORMAT`, …), and invalid JSON returns 422 `INVALID_REQUEST`. If Module 2 is down, job search can still run on typed skills; per INTEGRATION.md, the product shouldn't fail because one module is unavailable.
+Every error is `{"error": {"code": "...", "message": "..."}}`. Upload problems return 400/413/415 (`CORRUPT_FILE`, `ENCRYPTED_FILE`, `FILE_TOO_LARGE`, `UNSUPPORTED_FORMAT`, …), and invalid JSON returns 422 `INVALID_REQUEST`. v2 adds 404 `OCCUPATION_NOT_FOUND` / `ROLE_NOT_RESOLVED`, 503 `M1_UNAVAILABLE` and 502 `M1_BAD_RESPONSE`. If Module 2 is down, job search can still run on typed skills; per INTEGRATION.md, the product shouldn't fail because one module is unavailable.
 
 ## Not in Module 2
 

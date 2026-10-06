@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11) adds 72 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–12) adds 119 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -332,9 +332,9 @@ Endpoints: `POST /api/v1/skills/analyze_resume`, `POST /api/v1/skills/gap_analys
 
 ---
 
-## 11. General engine (v2) — A1 and A1b
+## 11. General engine (v2) — A1, A1b and A1c
 
-**Status:** A1 (requirements, evidence, matching, calibration) plus A1b (provenance, core-only scoring, inferred generic layers, held-out calibration). There is no public endpoint yet; scoring, verdicts, roadmaps and `/api/v2/*` are A2. Everything in §1–10 (v1, `/api/v1/*`, the 483-skill taxonomy, the gap analyzer) is unchanged; the new code lives in `src/general/` and nothing in v1 imports it.
+**Status:** A1 (requirements, evidence, matching, calibration), A1b (provenance, core-only scoring, inferred generic layers, held-out calibration) and A1c (clause-level evidence, item-count scaling, a fresh held-out set). Scoring, verdicts, roadmaps and `/api/v2/*` are A2 (§12). Everything in §1–10 (v1, `/api/v1/*`, the 483-skill taxonomy, the gap analyzer) is unchanged; the new code lives in `src/general/` and nothing in v1 imports it.
 
 ### 11.1 Design
 
@@ -436,81 +436,197 @@ module 1 (REST)                      resume / free text / typed skills / v1 prof
 | Set | Profiles | Style | Used for |
 |---|---|---|---|
 | `tuning/` | 15 + 3 partial | mostly resume-shaped (2 free text) | tuning only |
-| `heldout/` | 15, one per export occupation | senior nursing superintendent, Hinglish pharmacist / accountant / civil engineer / truck driver, fresher clinic assistant and mechanical engineer, career changers (insurance → loans, HR → chef, DTP → designer), one-liners (teacher, electrician), bullet-only support agent, head of analytics | never tuned on |
-| `new/` | 10, for occupations outside the export | Physical Therapists, Plumbers, HR Specialists, Tellers, Lawyers, Pharmacy Technicians, Retail Salespersons, Software QA, Hotel Desk Clerks, Dental Hygienists | never tuned on |
+| `heldout/` (A1b) | 15, one per export occupation | senior nursing superintendent, Hinglish (pharmacist, accountant, civil engineer, truck driver), freshers, career changers, one-liners, bullet-only, head of analytics | never tuned on |
+| `new/` (A1b) | 10, one per extra occupation | resume-shaped | never tuned on |
+| `heldout2/` (A1c) | 15 export + 10 extra | career-break returnees, third-person bios, interview Q&A, LinkedIn "About", WhatsApp messages, a government posting, a cover letter, key-value tables, two-liners, Fiverr freelancer, Hindi narrative, a fresher with projects | never tuned on; the A2 gate |
 
-The 10 extra occupations were resolved through module 1's `/occupations/search` and fetched from `/profile` and `/requirements` on a local module 1 (v2.1 code). The local database predates v2.1 (`db_meta` 2.0.0), so these 10 have **no DWA, no tool and no curated rows, and v2.0's noisier market skills**. They show how the engine does on real O*NET data alone.
+**The 10 extra occupations:**
+- Physical Therapists, Plumbers, HR Specialists, Tellers, Lawyers, Pharmacy Technicians, Retail Salespersons, Software QA, Hotel Desk Clerks, Dental Hygienists.
+- They were resolved through module 1's `/occupations/search` and fetched from `/profile` and `/requirements` on a local module 1.
+- That database predates v2.1, so the fixture is **labelled as v2.0 data**: no DWA, tool or curated rows, and v2.0's noisier market skills.
+- `scripts/refetch_extra_occupations.py` refetches them over REST when a v2.1+ database is available.
 
 **Procedure:**
-1. `python scripts/calibrate.py --tune` searches the thresholds (name-like, task-like), the partial gap and five type-share presets on the **tuning profiles against the 15 export occupations only**.
+1. `python scripts/calibrate.py --tune` searches the thresholds (name-like, task-like), the partial gap and five type-share presets, on the **tuning profiles against the 15 export occupations only**.
 2. The result is frozen in `matcher.py`.
-3. `python scripts/calibrate.py` reports the held-out sets with those constants on the 25-occupation matrix.
+3. `python scripts/calibrate.py` reports every held-out set on the 25-occupation matrix.
 
-The held-out results were not used to change any constant.
+No held-out result was used to change a constant.
 
-**Frozen constants:**
+**A1c fixes**, applied before re-tuning (general correctness fixes for the A1b failures):
+1. **Clause-level evidence.** A free-text sentence with comma, semicolon or "and" parts yields the sentence plus one unit per part. Each part keeps its own `span`, plus the sentence's `context_span` (`evidence.clauses`, `MIN_CLAUSES = 2`). Skills-section items also split on "and".
+2. **Item-count scaling.** `effective_share = TYPE_SHARE × mean reliability × min(1, n_items / MIN_ITEMS_FOR_FULL_SHARE)` with `MIN_ITEMS_FOR_FULL_SHARE = 5`, renormalised over the types present. A one-item type can no longer swing 40% of the score.
+
+**Frozen constants (A1c):**
 
 | Core type | met | partial | TYPE_SHARE |
 |---|---|---|---|
-| tech, tool | 0.55 | 0.45 | 0.10 each |
-| market_skill | 0.55 | 0.45 | 0.40 |
+| tech, tool | 0.60 | 0.50 | 0.10 each |
+| market_skill | 0.60 | 0.50 | 0.40 |
 | task | 0.55 | 0.45 | 0.30 |
 | dwa | 0.55 | 0.45 | 0.10 |
 
-**Results (MiniLM, frozen constants):**
+**Results (MiniLM, frozen A1c constants, 25-occupation matrix unless noted):**
 
-| Set | Occupations | Top-1 | Top-3 | Mean margin | Worst margin |
-|---|---|---|---|---|---|
-| tuning, as tuned | 15 export | 15/15 | 15/15 | +0.335 | +0.144 (staff nurse) |
-| (a) tuning | 25 | 14/15 | 15/15 | +0.265 | −0.040 (pharmacist → Pharmacy Technicians) |
-| (b) held-out | 25 | 13/15 | 14/15 | +0.111 | −0.244 (fresher clinic assistant → Physical Therapists) |
-| (c) 10 new occupations | 25 | 8/10 | 10/10 | +0.130 | −0.129 (advocate → Retail Salespersons) |
-| (d) held-out, curated rows removed | 25 | 13/15 | 14/15 | +0.098 | −0.213 (same) |
-| held-out, like for like | 15 export | 14/15 | 14/15 | +0.146 | 0.000 (teacher one-liner) |
+| Set | Top-1 | Top-3 | Mean margin | Worst margin |
+|---|---|---|---|---|
+| tuning, as tuned (15 export occupations) | 15/15 | 15/15 | +0.359 | +0.166 |
+| tuning | 14/15 | 15/15 | +0.292 | −0.082 (pharmacist → Pharmacy Technicians) |
+| held-out (A1b) | 12/15 | 14/15 | +0.114 | −0.061 (teacher one-liner → Software QA) |
+| held-out (A1b), 15 export occupations | 15/15 | 15/15 | +0.143 | +0.003 |
+| 10 extra occupations (A1b `new/`) | 10/10 | 10/10 | +0.195 | +0.041 |
+| **held-out-2, 15 export-occupation profiles** | **13/15** | **15/15** | **+0.135** | −0.086 (pharmacist, third person → Pharmacy Technicians) |
+| **held-out-2, 10 extra-occupation profiles** | **10/10** | **10/10** | **+0.173** | +0.041 |
+| held-out-2 (export profiles), curated rows removed | 13/15 | 15/15 | +0.122 | −0.077 |
+| held-out-2 (export profiles), 15 export occupations | 14/15 | 15/15 | +0.177 | −0.041 (nurse after a career break → Medical Assistants) |
 
-**Reading the results:**
-- **The tuning-set numbers overstate accuracy.** Held-out top-1 drops from 15/15 to 13–14/15, and the mean margin halves (+0.335 → +0.146 like for like).
-- **Curated rows don't carry the result:** removing them, (d), keeps top-1 at 13/15 and lowers the mean margin by only 0.013.
-- **The 10 new occupations reach 8/10 top-1 and 10/10 top-3 on O*NET data alone.**
+**A2 gate** (held-out-2 top-1 ≥ 12/15 and extra-occupation top-1 ≥ 7/10): **passed**, at 13/15 and 10/10.
 
-**Failures and causes:**
+**What changed against A1b:**
+- **Fixed:**
+  - The teacher one-liner went from coverage 0.00 to 0.13. It is still rank 4, but no longer zero.
+  - The fresher clinic assistant and the advocate now rank their own occupation first.
+  - The extra occupations went from 8/10 to 10/10.
+- **New miss on the old held-out set:** the Hinglish truck driver ("gaadi nikalne se pehle tyre, brake…") scores 0.00 for every occupation. MiniLM is English-only, so Hinglish text barely embeds. The Hinglish accountant and civil engineer still pass, thanks to English domain terms (GST, Tally, BOQ). See open questions.
+- **Remaining misses are adjacent occupations:**
+  - Pharmacist → Pharmacy Technicians (both A1b and A1c);
+  - returning nurse → Medical Assistants (0.12 vs 0.16; the profile describes basic ward care).
 
-1. **Teacher one-liner, coverage 0.00 (rank 6–7).** The whole profile is one comma-separated sentence, so it becomes a single evidence unit that matches nothing above 0.45. *Fix (A2):* split long comma lists in free text into clauses.
-2. **Fresher clinic assistant → Physical Therapists (0.63 vs own 0.39), and advocate → Retail Salespersons (0.28 vs 0.15).** The extra occupations from the v2.0 database often have exactly one market skill, sometimes noise ("Teaching" for Physical Therapists and Tellers, "Strategy" for Retail). With `TYPE_SHARE["market_skill"] = 0.40`, one hit on that item supplies 40% of the score, and one miss costs 40%. Lawyers' tasks match the advocate well (0.68, 0.66, 0.65), but Lawyers score 0.15 because their single market skill misses. *Fixes:*
-   - scale a type's share by its item count (e.g. full share from 5 items);
-   - refetch the extra occupations from a v2.1 database (cleaned market skills, DWAs);
-   - re-tune both on the tuning set only.
-3. **Pharmacist → Pharmacy Technicians (−0.04)** and **showroom salesperson → Sales Representatives (−0.04).** These are adjacent occupations. The comparison is also uneven: Pharmacists have DWAs and curated tools, Pharmacy Technicians have neither. A2's verdict should present close runners-up as alternatives, not errors.
+  A2 presents such runners-up as close alternatives.
 
 **Best-evidence similarity, own vs other occupations** (tuning set, median):
 
 | Type | Own | Other |
 |---|---|---|
-| market_skill | 0.65 | 0.27 |
-| task | 0.50 | 0.28 |
-| dwa | 0.46 | 0.28 |
-| tech | 0.34 | 0.24 |
-| tool | 0.29 | 0.16 |
+| market_skill | 0.71 | 0.31 |
+| task | 0.52 | 0.29 |
+| dwa | 0.48 | 0.31 |
+| tech | 0.35 | 0.25 |
+| tool | 0.35 | 0.20 |
 
-In A1 the generic layers were 0.25 vs 0.25 (skill, work_activity), 0.21 vs 0.20 (knowledge) and 0.16 vs 0.16 (ability), which is why they are now inferred instead of matched.
-
-**Nurse sample** (tuning staff nurse vs Registered Nurses):
-- **Core:** "Administer medications…" met (0.65), "Monitor, record, and report symptoms…" met (0.64), "Record patients' medical information and vital signs" partial (0.53); Epic (0.42) missing, MEDITECH partial (0.50).
-- **Work activities:** Assisting and Caring for Others, Documenting/Recording Information, Communicating with Supervisors… and Making Decisions… are evidenced through met DWAs; Getting Information is not evidenced; the rest have no DWA data.
-- **Draws on:** Medicine and Dentistry is inferred (from a met DWA). Psychology, Customer and Personal Service, English Language, Administrative and the top 5 skills are listed but not inferred.
-- **Fit indicators:** Deductive Reasoning, Problem Sensitivity, Inductive Reasoning, Oral Comprehension, Oral Expression, Written Comprehension.
-
-The bge-small comparison from A1 (MiniLM kept as default) was not re-run for the core-only score.
-
-### 11.4 Tests
+### 11.4 Tests (general engine)
 
 | File | Tests | Covers |
 |---|---|---|
 | `test_general_m1_client.py` | 10 | cache per module 1 version (none when unknown), `/api/v1/meta` preferred and OpenAPI fallback, timeout/unreachable/404/500 as `M1Error`, search confidence, low confidence and ties, fixture files merging with their versions |
-| `test_general_requirements.py` | 34 | layers and scored types, weights, default levels, embedding text, provenance (curated source, `tool_*`, `tech_*`), curated weight and no share, duplicate, unreliable, safety-net floor and `posting_count` switch, noise lists, cap (curated exempt), off-domain for tech and low-share posting skills (curated and high-share exempt), domain texts, clean data untouched, v2.1 Accountants, v2.0 regression |
-| `test_general_evidence.py` | 4 | sections → work/project/mentioned, spans, sentence and skills-item splitting, contact lines, free text, typed skills, v1 profile |
-| `test_general_matcher.py` | 7 | core types only with provenance, alias before semantics, best evidence and span, per-type thresholds, no evidence, coverage with reliability-scaled shares |
-| `test_general_inference.py` | 7 | GWA from DWA/IWA ids, evidenced / not evidenced / no DWA data, draws-on inferred from a met DWA and never a gap, fit indicators |
-| `calibration/test_calibration.py` | 10 | tuning set (top-1 ≥ 13/15, top-3 15/15, nurse vs Electricians, Accountants top-2, Data Scientists top-1, partial < full); held-out floors one profile below the observed results for (b), (c), (d) and like-for-like; curated rows change top-1 by at most one (MiniLM; skipped if it can't load) |
+| `test_general_requirements.py` | 34 | layers, weights, default levels, embedding text, provenance (curated source, `tool_*`, `tech_*`), curated weight and no share, duplicate, unreliable, safety-net floor and `posting_count` switch, noise lists, cap, off-domain, domain texts, clean data untouched, v2.1 Accountants, v2.0 regression |
+| `test_general_evidence.py` | 5 | sections → work/project/mentioned, spans, clause units with `context_span`, list-like one-liner, contact lines, typed skills, v1 profile |
+| `test_general_matcher.py` | 8 | core types only with provenance, alias first, best evidence and span, per-type thresholds, coverage with reliability and item-count scaling, a one-item type can't swing the score |
+| `test_general_inference.py` | 7 | GWA from DWA/IWA ids, evidenced / not evidenced / no DWA data, draws-on inferred and never a gap, fit indicators |
+| `test_general_scoring.py` | 11 | credit by evidence type and required level, v1 evidence confidences, **the §12.1 worked example**, experience band and factor, verdicts incl. over-qualified |
+| `test_general_roadmap.py` | 6 | prerequisites first and listed (minus known), hours by taxonomy tier or type table and job zone, weeks, practice ideas (other unmet tasks above the bar) |
+| `test_general_service.py` | 10 | resolution (alias, SOC, not found, tie → did you mean), experience parsed / overridden / unknown, full output shape and spans, advice for self-reported evidence, close alternatives and search suggestions, over-qualified, experience penalty on alternatives, job-text clauses, match_text blend |
+| `test_api_v2.py` | 12 | `/api/v2` gap analysis (role, SOC, skills, v1 profile), validation 422s, 404 role/occupation, **503 when module 1 is down while v1 works**, analyze_resume (and v1 file errors), match_text, OpenAPI paths, `schema_m2_v2.json` drift |
+| `calibration/test_calibration.py` | 15 | tuning set (top-1 ≥ 13/15, nurse vs Electricians, Accountants top-2, Data Scientists top-1, partial < full); held-out floors one profile below the A1c results for every set; the A2 gate; curated rows change top-1 by at most one |
+| `calibration/test_latency.py` | 1 | warm `/gap_analysis` under 2 s with MiniLM |
 
-The v1 suite is untouched: **284 passed + 1 skipped (live Groq without a key) = 285**. With the general engine, the total is **356 passed, 1 skipped**.
+The v1 suite is untouched: **284 passed + 1 skipped (live Groq without a key) = 285**. With the general engine, the total is **403 passed, 1 skipped**.
+
+---
+
+## 12. General engine (v2) — A2: score, verdict, gaps, roadmap, API
+
+Code lives in `src/general/`:
+- `scoring.py`, `roadmap.py`, `service.py` and `schemas.py`;
+- routes in `src/api/routes_v2.py` (same app, port 8002);
+- the contract in `src/models/schema_m2_v2.json` (`python -m src.general.schemas`, drift-tested).
+
+Every constant below is named in its module.
+
+### 12.1 Match score
+
+```
+credit(item)       = min(1, EVIDENCE_STRENGTH[evidence type] / required level)   met
+                   = PARTIAL_CREDIT = 0.5                                         partial
+                   = 0                                                            missing
+EVIDENCE_STRENGTH  = v1's evidence confidence: work 0.90, project 0.75, mentioned 0.50, self 0.40
+required level     = level_norm, else DEFAULT_LEVEL[type] (task/dwa 0.6, others 0.5)
+
+effective_share(t) = TYPE_SHARE[t] × mean reliability of t × min(1, items in t / 5), renormalised
+skill_score        = Σ_t effective_share(t) × Σ_i∈t weight_i·credit_i / Σ_i∈t weight_i
+experience_factor  = 1 if years unknown or ≥ band.low
+                   = 1 − (1 − EXPERIENCE_MIN_FACTOR) × min(1, (band.low − years) / EXPERIENCE_GAP_YEARS)
+                     with EXPERIENCE_MIN_FACTOR = 0.8, EXPERIENCE_GAP_YEARS = 3
+match_score        = skill_score × experience_factor
+```
+
+**Experience band:** module 1's `/profile` → `indian_experience` (`typical_min`–`typical_max`) when it has postings behind it, else the O*NET job zone: `JOB_ZONE_YEARS` = 1: 0–1, 2: 0–2, 3: 1–4, 4: 2–6, 5: 4–10 years. Years come from `experience_years`, else the v1 profile, else the work history parsed from `free_text`. When none is known, the factor is 1 and a warning says so.
+
+**Worked example** (test `test_worked_example`). An occupation has 5 tasks and 5 posting-derived market skills, all at importance 0.8, in job zone 3. The candidate has no experience.
+- **Tasks:** 3 met by work or project evidence (credit 1), 1 partial (0.5), 1 missing. Coverage = (1 + 1 + 1 + 0.5 + 0) / 5 = **0.70**.
+- **Market skills:** 1 met by a typed skill (0.40 / 0.5 = 0.8), 1 met by work (1.0), 3 missing. Coverage = 1.8 / 5 = **0.36**.
+- **Shares:** 0.30 and 0.40, at full reliability with 5 items each, so renormalised 0.4286 and 0.5714.
+- **skill_score** = 0.4286 × 0.70 + 0.5714 × 0.36 = **0.5057**.
+- **Band:** job zone 3, 1–4 years. At 0 years: factor = 1 − 0.2 × (1/3) = **0.9333**.
+- **match_score** = 0.5057 × 0.9333 = **0.472**.
+
+### 12.2 Verdict
+
+| Label | When |
+|---|---|
+| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD = 0.29` |
+| `over_qualified` | ≥ threshold, years > band.high + `OVERQUALIFIED_EXTRA_YEARS = 3`, and a related occupation with a higher job zone also scores ≥ threshold. That occupation is returned as `suggested_role` |
+| `good_fit` | otherwise |
+
+**Calibration** (`python scripts/calibrate.py --verdict`, tuning set, A2 scores on each profile's own occupation):
+- The 15 full profiles score 0.295–0.656; the 3 partial profiles (fresher nurse, accountant without GST/Tally, ITI apprentice) score 0.176–0.288.
+- The threshold is the midpoint, 0.29. It separates the two groups, but the gap is thin (0.007): the truck driver's free-text profile sits at 0.295.
+- The verdict judges fit *for the chosen target*, not whether it's the right occupation. 5 of 15 full profiles also clear 0.29 on some other occupation (e.g. the pharmacist on Pharmacy Technicians, 0.60).
+
+### 12.3 Alternatives, gaps, strengths, generic layers
+
+- **Close alternatives.** Module 1's `/related` (first `RELATED_LIMIT = 5`) are prepared and scored with the same evidence; one within `ALTERNATIVE_MARGIN = 0.05` of the target's score, or above it, is returned ("You're also a close fit for X (0.61)" / "an even stronger fit"). When the role resolution is low-confidence, module 1's other search matches are added as "Did you mean X?". Related occupations module 1 can't return are skipped.
+- **Gaps and strengths.** Every core result carries status, similarity, credit, weight, required level, provenance, reason, flags and the deciding evidence (text, type, section, span, context span). Strengths are the top 10 met by weight × credit; gaps are partial or missing by weight (top 15, plus `gaps_total`). A requirement met only by `mentioned` or `self` evidence gets advice: *"You mention 'X', but nothing in your work or projects shows it. Add an example of where you did this."*
+- **Generic layers.** `draws_on` lists knowledge and skills (inferred or not) and `work_activities` lists GWAs evidenced through met DWAs (§11.1). Abilities appear only as `fit_indicators`. None of these is ever a gap.
+- **Provenance summary.** Core items and weight share per provenance, with a note when curated rows are present.
+
+### 12.4 Roadmap
+
+Missing and partial core items, heaviest first, up to `ROADMAP_MAX_ITEMS = 10`. Each item has:
+- **Order:** a taxonomy prerequisite of a heavier item moves ahead of it.
+- **Prerequisites:** tech, tool or market items that resolve to v1 taxonomy ids list that skill's prerequisites the evidence doesn't already show (Apache Spark → Python, SQL).
+- **Practice ideas:** the `PRACTICE_IDEAS = 2` nearest *other* unmet O*NET tasks or DWAs of the same occupation, at cosine ≥ `PRACTICE_MIN_SIM = 0.35`. For example, "Maintain accurate, detailed reports and records" → "Maintain medical facility records", "Maintain inventory of medical supplies or equipment".
+- **Hours, as estimated ranges.**
+  - Taxonomy skills use v1's difficulty-tier hours, halved for partial.
+  - Other items use `HOURS_PER_LEVEL[type]` (task 60, dwa 40, market skill 80, tech 50, tool 20) × the level still to reach × `JOB_ZONE_FACTOR` (0.5 / 0.75 / 1.0 / 1.25 / 1.5 for zones 1–5), ± 30%, rounded to 5 hours.
+  - With `hours_per_week`, the hours are also given as weeks.
+
+### 12.5 Endpoints
+
+| Method | Path | Body | Returns |
+|---|---|---|---|
+| POST | `/api/v2/skills/gap_analysis` | JSON: `target_role` or `soc_code`; one or more of `free_text`, `skills`, `profile` (v1 `UserProfile`); optional `experience_years`, `city`, `hours_per_week` | `resolution`, `match_score`, `verdict`, `score_breakdown`, `strengths`, `gaps`, `gaps_total`, `draws_on`, `work_activities`, `fit_indicators`, `close_alternatives`, `roadmap`, `provenance_summary`, `m1_version`, `warnings` |
+| POST | `/api/v2/skills/analyze_resume` | multipart `file` + `target_role` or `soc_code` (+ optional fields) | `{profile, gap_analysis}`. v1 parsing and the same file checks; the gap analysis runs on the resume text |
+| POST | `/api/v2/skills/match_text` | JSON: `job_text`, optional `soc_code`, `job_title`; `free_text` / `skills` / `profile` | `match_score`, `job_text_score`, `occupation_score`, `blend`, `met`, `missing`, `job_requirements` |
+
+**match_text** (for module 3):
+- The job text is clause-split. A split sentence is replaced by its clauses, clauses shorter than `JOB_MIN_WORDS = 3` are dropped, and at most 60 are kept.
+- Each clause is a task-like requirement with provenance `job_text`. They are scored like tasks.
+- With a `soc_code`: `match_score = JOB_TEXT_BLEND (0.6) × job_text_score + 0.4 × the occupation's match_score`.
+
+**Errors** (`{"error": {"code", "message"}}`):
+- 422 `INVALID_REQUEST`: no role, no evidence, malformed SOC.
+- 404 `ROLE_NOT_RESOLVED` and 404 `OCCUPATION_NOT_FOUND`.
+- 503 `M1_UNAVAILABLE` when module 1 is unreachable or times out; 502 `M1_BAD_RESPONSE`.
+- File errors as in v1 (400/413/415).
+
+v1 endpoints never call module 1 and keep working when it is down (tested).
+
+### 12.6 Performance
+
+Occupations are prepared once per process: filtered, weighted and encoded, with requirement vectors read from the disk cache. A request encodes only its own evidence.
+
+Measured on CPU with MiniLM, fixture client, `hours_per_week` set, through the HTTP test client:
+- **Warm:** 0.24 s for the nurse profile vs "staff nurse" and 0.15 s for the electrician (median of 5). The direct engine call was 0.3–0.6 s, including related occupations.
+- **Cold:** about 20 s on first use; most of it is preparing and encoding the target and its related occupations.
+
+`test_latency.py` checks warm < 2 s.
+
+### 12.7 Known limits
+
+- **Hinglish / Indian-language text:** MiniLM is English-only; see §11.3.
+- **Job-title lines are evidence too.** "Staff Nurse" meets "Direct or supervise less-skilled nursing personnel" at 0.66. A title says what someone was called, not what they did.
+- **US-centric O*NET tasks.** Some tasks don't fit Indian practice (e.g. Registered Nurses "Prescribe or recommend drugs") and show up as gaps.
+- **Long, generic O*NET tasks can miss clear evidence** ("Assemble, install, test, or maintain electrical wiring…" for the ITI electrician).
+- **The verdict threshold** rests on 3 partial profiles and a 0.007 gap (§12.2).
+- **The fixture client stands in for module 1's search and related lists:** documented Indian aliases plus title tokens, and related = same SOC major group. Live module 1 uses its alias table, 62k alternate titles and O*NET related occupations.
