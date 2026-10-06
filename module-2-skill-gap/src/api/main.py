@@ -10,6 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes import VERSION, error, router
+from src.api.routes_v2 import router_v2
 
 PORT = 8002
 
@@ -22,6 +23,7 @@ app = FastAPI(
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(router)
+app.include_router(router_v2)   # general engine; v1 above is unchanged
 
 
 @app.exception_handler(RequestValidationError)
