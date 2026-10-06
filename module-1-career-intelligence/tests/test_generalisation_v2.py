@@ -268,7 +268,7 @@ def test_static_export_file_validity():
         export_data = json.load(f)
 
     assert "metadata" in export_data
-    assert export_data["metadata"]["version"] == "2.0.0"
+    assert export_data["metadata"]["version"] in ["2.0.0", "2.1.0"]
     assert "occupations" in export_data
     assert len(export_data["occupations"]) == 15
 
@@ -277,3 +277,5 @@ def test_static_export_file_validity():
         occ_entry = export_data["occupations"][soc]
         assert occ_entry["total_requirements"] > 150
         assert len(occ_entry["requirements"]) == occ_entry["total_requirements"]
+        assert occ_entry["requirements_breakdown"]["dwa"] > 0
+        assert occ_entry["requirements_breakdown"]["tools"] > 0

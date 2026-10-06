@@ -38,9 +38,9 @@ def run_export():
 
     export_data = {
         "metadata": {
-            "version": "2.0.0",
+            "version": "2.1.0",
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "description": "Static mock export of unified requirements (v_occupation_requirements) for 15 cross-industry test occupations, supporting Module 2 & 3 semantic engine development and testing.",
+            "description": "Static export of unified requirements (v_occupation_requirements) for 15 cross-industry test occupations v2.1.0 (with DWAs, Tools, deduplicated Tech, cleaned Market Skills, and curated provenance).",
             "target_occupations_count": len(TEST_SOCS)
         },
         "occupations": {}
@@ -95,14 +95,22 @@ def run_export():
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(export_data, f, indent=2)
 
-    print(f"Export successfully written to {OUTPUT_PATH}")
+    import hashlib
+    with open(OUTPUT_PATH, "rb") as f:
+        f_hash = hashlib.sha256(f.read()).hexdigest()
+
+    c.execute("UPDATE db_meta SET export_hash = ? WHERE schema_version = '2.1.0'", (f_hash,))
+    conn.commit()
+
+    print(f"Export successfully written to {OUTPUT_PATH} (hash: {f_hash[:16]}...)")
     for soc, data in export_data["occupations"].items():
-        title_trunc = data["title"][:32]
+        title_trunc = data["title"][:28]
         tot = data["total_requirements"]
-        sk = data["requirements_breakdown"]["skills"]
-        kn = data["requirements_breakdown"]["knowledge"]
-        ab = data["requirements_breakdown"]["abilities"]
-        print(f"[{soc}] {title_trunc:32} -> {tot} reqs (skills:{sk}, know:{kn}, abils:{ab})")
+        dwa = data["requirements_breakdown"]["dwa"]
+        tl = data["requirements_breakdown"]["tools"]
+        tc = data["requirements_breakdown"]["tech"]
+        mk = data["requirements_breakdown"]["market_skills"]
+        print(f"[{soc}] {title_trunc:28} -> {tot:4d} reqs (dwa:{dwa:2d}, tools:{tl:2d}, tech:{tc:2d}, mkt:{mk:2d})")
 
 
 if __name__ == "__main__":

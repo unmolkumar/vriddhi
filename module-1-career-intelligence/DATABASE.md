@@ -29,27 +29,27 @@ This document details:
 | **`onet_abilities`** | Table | **47,320** | All 52 cognitive, physical, and sensory abilities required per occupation. |
 | **`onet_work_activities`** | Table | **37,351** | All 41 generalized work activities (GWA) with importance and level. |
 | **`onet_task_ratings`** | Table | **18,420** | Criticality ratings for tasks: importance (IM), relevance (RT), and frequency (FT). |
-| **`onet_dwa`** | Table | **24,087** | Granular Detailed Work Activities (DWA) and Intermediate Work Activities (IWA) linked to tasks. |
+| **`onet_dwa`** | Table | **192,696** | Granular Detailed Work Activities (DWA) and Intermediate Work Activities (IWA) linked to tasks. |
 | **`onet_tech_skills`** | Table | **31,821** | Software tools, commodity codes, commodity titles, and hot/in-demand technology indicators. |
-| **`onet_tools`** | Table | **95** | Equipment and specialized tools used across trades and clinical professions. |
-| **`onet_job_zones`** | Table | **923** | O\*NET Job Zones 1–5 with full experience, education, and vocational training narratives. |
+| **`onet_tools`** | Table | **250** | Equipment, machinery, clinical apparatus, and specialized tools across trades and professions. |
+| **`onet_job_zones`** | Table | **923** | O\*NET Job Zones 1–5 with full experience, education, and vocational training narratives (93 residual/all-other roles unzoned per O\*NET standard). |
 | **`onet_education`** | Table | **11,495** | Empirical education, training, and experience requirements distribution across 12 credential tiers. |
 | **`onet_alternate_titles`** | Table | **62,458** | Alternate titles and reported job titles for robust NLP and semantic title matching. |
 | **`onet_related_occupations`** | Table | **18,460** | Lateral career mobility pathways and related occupation mappings. |
 | **`onet_content_model`** | Table | **268** | Plain-English definitions and descriptions of every O\*NET skill, knowledge, ability, and activity element (ready to embed). |
 | **`city_aliases`** | Table | **583** | Indian city normalization collapsing colloquial names to canonical metros, tiers (1/2/3), and metro groups (e.g. Delhi NCR). |
 | **`india_title_aliases`** | Table | **64** | Indian colloquial job titles (e.g. *staff nurse*, *CA*, *site engineer*, *telecaller*, *ITI electrician*) mapped to SOC codes. |
-| **`posting_soc_map`** | Table | **41,125** | High-precision mapping from Indian & global job postings to standard SOC codes with confidence scores. |
+| **`posting_soc_map`** | Table | **41,125** | High-precision mapping from Indian & global job postings to standard SOC codes with dynamic confidence scoring. |
 | **`salary_soc_map`** | Table | **24,555** | Mapping from salary benchmarks to standard SOC codes. |
 | **`skill_context_soc_map`** | Table | **25,545** | Mapping from raw posting occupation contexts to standard SOC codes. |
 | **`salary_quality_flags`** | Table | **5,500** | Quality flags isolating synthetic data (Kaggle AI India), stale pre-2023 records, monthly pay confusion, and IQR outliers. |
-| **`skill_noise_terms`** | Table | **44** | EEO boilerplate (gender, religion, color...), employee benefits (dental, vision...), and numeric junk fragments. |
+| **`skill_noise_terms`** | Table | **600+** | Noise dictionary (PromptCloud 45 industries, Indian cities/states, EEO terms, employee benefits, seniority words, occupation titles). |
 | **`v_skill_demand_clean`** | View | **Clean** | `skill_demand` minus noise terms, joined to `skill_context_soc_map` for pristine SOC-level skill intelligence. |
-| **`skill_demand_by_soc`** | Table | **22,396** | Cleaned empirical skill demand grouped by SOC code and region (`india` vs `global`). |
+| **`skill_demand_by_soc`** | Table | **798** | Cleaned empirical skill demand (support >= 3, share >= 0.02, capped top 50 per SOC) + curated domain competencies. |
 | **`education_level_map_india`** | Table | **12** | Crosswalk mapping O\*NET education categories to Indian qualifications (10th, 12th, ITI/Diploma, Bachelor's, CA/MBBS, Master's, PhD). |
 | **`occupation_experience_india`** | Table | **385** | Empirical Indian min/max experience distributions with sample sizes ($n$) for 2023+ postings. |
 | **`occupation_salary_india`** | Table | **1,317** | Unflagged 2023+ Indian salary percentiles (p25 / p50 / p75) sliced by canonical city, experience bucket, and onsite/remote work mode. |
-| **`v_occupation_requirements`** | View | **206,193** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, tech, and market skills per SOC for M2 & M3. |
+| **`v_occupation_requirements`** | View | **216,212** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, tools, tech, and market skills per SOC for M2 & M3. |
 | **`job_postings_india`** | Table | **72,691** | Real Indian postings (Naukri, PromptCloud) with titles, companies, cities, INR salaries, and experience bands (UNTOUCHED). |
 | **`job_postings_global`** | Table | **115,000** | Global postings (LinkedIn) with standardized titles and salary signals (UNTOUCHED). |
 | **`salary_benchmarks`** | Table | **43,374** | Raw normalized salary records (UNTOUCHED). |
@@ -387,30 +387,41 @@ class CareerIntelDBReader:
 
 ---
 
-## 8. Version 2.0: Cross-Industry Generalisation Layer
+## 8. Version 2.1: Cross-Industry Generalisation Layer & Review Refinements
 
-Module 1 v2.0 expands Vriddhi beyond technology into a **universal career intelligence engine for every occupation across all industries** (Healthcare, Finance, Education, Sales, Trades, Logistics, Hospitality, Creative, and Tech).
+Module 1 v2.1 expands Vriddhi beyond technology into a **universal career intelligence engine for every occupation across all industries** (Healthcare, Finance, Education, Sales, Trades, Logistics, Hospitality, Creative, and Tech).
 
 ### 8.1. Unified Requirements Contract: `v_occupation_requirements`
 
-This view provides 206,193 requirement rows across all 1,016 O\*NET occupations:
+This view provides **216,212 deduplicated requirement rows** across all 1,016 O\*NET occupations:
 
 ```sql
 SELECT 
     soc_code,
     item_type,          -- 'skill' | 'knowledge' | 'ability' | 'work_activity' | 'dwa' | 'task' | 'tech' | 'tool' | 'market_skill'
-    item_id,            -- O*NET element ID or DWA ID
-    item_name,          -- Plain-English name (e.g. 'Reading Comprehension', 'Medicine and Dentistry')
+    item_id,            -- Unique identifier (O*NET element ID, DWA ID, task ID, tech_<slug>, tool_<slug>, or normalized skill)
+    item_name,          -- Plain-English name (e.g. 'Reading Comprehension', 'Medicine and Dentistry', 'Multimeter', 'Tally ERP')
     item_description,   -- Detailed narrative statement ready for embedding
     importance_norm,    -- Normalized importance [0.0, 1.0]
     level_norm,         -- Normalized proficiency level [0.0, 1.0] (NULL if not applicable)
     hot_technology,     -- 1 or 0
     in_demand,          -- 1 or 0
-    india_demand_share, -- Share of Indian postings requiring this skill [0.0, 1.0]
-    source,             -- 'onet' | 'india_postings' | 'global_postings'
+    india_demand_share, -- Share of Indian postings requiring this skill [0.0, 1.0] (NULL for curated domain skills)
+    source,             -- 'onet' | 'india_postings' | 'global_postings' | 'curated'
     reliable            -- 1 (high reliability, non-suppressed) or 0
 FROM v_occupation_requirements;
 ```
+
+#### v2.1 Refinements & Quality Assurances:
+1. **DWAs and Tools Fully Populated**: Every occupation includes Detailed Work Activities (`onet_dwa`) and specialized physical equipment tools (`onet_tools`). Clinical and trade occupations have extensive tooling (e.g., Electricians: 18 tools including conduit benders, multimeters; Nurses: 18 tools including infusion pumps, vital signs monitors; Chefs: 18 tools).
+2. **Deduplicated Tech Tools with Unique Slugs**: Tech items no longer carry ambiguous content model IDs (like `2.E.6.m`) or duplicate rows across commodities. Unique item IDs are prefixed (`tech_<slug>`, `tool_<slug>`).
+3. **Cleaned Market Skills & Noise Elimination**: Empirical posting skills filter out all 45 PromptCloud industry categories, Indian cities/states, EEO terms, employee benefits, seniority prefixes, and self-referential occupation titles. Requires minimum support ($\ge 3$ postings, share $\ge 0.02$, capped at top 50 per SOC).
+4. **Curated Domain Competencies Provenance**: Core vocational skills (e.g., *Tally ERP, GST Filing* for Accountants; *Electrical Wiring, ITI Standards* for Electricians) are explicitly labeled with `source = 'curated'`, `region = 'curated'`, `mentions = 0`, and `india_demand_share = NULL`.
+5. **Note on Unzoned Occupations in `onet_job_zones`**: 93 out of 1,016 occupations do not possess an assigned Job Zone in O\*NET 31.0. These are exclusively residual/catch-all occupations ending in `.99` (e.g., `11-9199.00 Managers, All Other`, `15-1299.00 Computer Occupations, All Other`, `17-2199.00 Engineers, All Other`) and military codes. O\*NET does not assign uniform job zones to residual categories due to the heterogeneity of roles grouped under "All Other".
+6. **DB Build Metadata & Integrity Verification (`db_meta`)**:
+   - `schema_version`: `'2.1.0'`
+   - `export_hash`: `'070ce4a909e8b1dbdb1efb8008331bd86db3fe0bfb965e4a7cf8e0cd828e2538'` (SHA-256 of `data/m1_occupation_requirements_export.json`)
+   - `table_counts`: Stored as JSON directly in `db_meta` for downstream M2/M3 assertions.
 
 ### 8.2. Additive REST API Endpoints
 

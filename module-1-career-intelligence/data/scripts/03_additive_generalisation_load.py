@@ -315,6 +315,226 @@ def load_onet_tech_and_tools(conn: sqlite3.Connection):
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_onet_tech_soc ON onet_tech_skills(soc_code)")
 
+TOOLS_SEED_DATA = {
+    # 47-2111.00 Electricians (18 equipment tools)
+    "47-2111.00": [
+        ("Digital multimeter", "41113630", "Multimeters"),
+        ("Conduit bender", "27111504", "Tube benders"),
+        ("Wire strippers", "27111514", "Wire strippers"),
+        ("Clamp-on ammeter / clamp meter", "41113637", "Current meters"),
+        ("Voltage tester", "41113641", "Voltage meters"),
+        ("Fish tape", "27112100", "Wire pullers"),
+        ("Lineman pliers", "27112112", "Pliers"),
+        ("Insulated screwdriver set", "27111701", "Screwdrivers"),
+        ("Cordless drill and driver", "27112700", "Power drills"),
+        ("Hydraulic knockout punch set", "27111500", "Punches"),
+        ("Cable cutters", "27111500", "Cutters"),
+        ("Circuit tracer", "41113600", "Circuit tracers"),
+        ("Megohmmeter (insulation resistance tester)", "41113600", "Resistance meters"),
+        ("Thermal imaging infrared camera", "41111700", "Infrared cameras"),
+        ("Step drill bit set", "27112800", "Drill bits"),
+        ("Wire crimping tool", "27111518", "Crimping pliers"),
+        ("Pipe and conduit threader", "27111500", "Threaders"),
+        ("Digital level", "41111600", "Levels"),
+    ],
+    # 29-1141.00 Registered Nurses (18 clinical tools)
+    "29-1141.00": [
+        ("Stethoscope", "42182103", "Stethoscopes"),
+        ("Electronic infusion pump", "42221804", "Infusion pumps"),
+        ("Pulse oximeter", "42181801", "Pulse oximeters"),
+        ("Sphygmomanometer (blood pressure cuff)", "42181601", "Blood pressure units"),
+        ("Automated external defibrillator (AED)", "42172101", "Defibrillators"),
+        ("Suction machine / aspirator", "42142400", "Medical suction units"),
+        ("Intravenous IV catheter and tubing", "42221500", "Intravenous equipment"),
+        ("Glucometer (blood glucose monitor)", "41116100", "Glucose monitors"),
+        ("Digital tympanic / infrared thermometer", "42182200", "Medical thermometers"),
+        ("Patient vital signs monitor", "42181800", "Patient monitors"),
+        ("Nebulizer compressor", "42271800", "Nebulizers"),
+        ("Foley catheterization kit", "42142700", "Urinary catheters"),
+        ("Crash cart with emergency medications", "42191800", "Medical carts"),
+        ("Wound dressing and suture removal kit", "42311500", "Surgical instruments"),
+        ("Syringe and hypodermic needle", "42142500", "Syringes"),
+        ("Otoscope / ophthalmoscope set", "42182000", "Medical exam instruments"),
+        ("Tourniquet", "42142600", "Tourniquets"),
+        ("Vascular Doppler ultrasound probe", "42181800", "Doppler probes"),
+    ],
+    # 35-1011.00 Chefs and Head Cooks (18 culinary tools)
+    "35-1011.00": [
+        ("Commercial convection oven", "48101501", "Commercial ovens"),
+        ("Chef's knife (French knife)", "27111500", "Kitchen knives"),
+        ("Commercial food processor", "48101500", "Food processors"),
+        ("Commercial meat slicer", "48101500", "Meat slicers"),
+        ("Immersion blender (stick blender)", "48101500", "Blenders"),
+        ("Commercial planetary mixer", "48101500", "Food mixers"),
+        ("Salamander broiler", "48101500", "Broilers"),
+        ("Commercial deep fryer", "48101500", "Deep fryers"),
+        ("Mandoline vegetable slicer", "48101500", "Food cutters"),
+        ("Digital thermocouple food thermometer", "41112200", "Food thermometers"),
+        ("Sous-vide immersion circulator", "48101500", "Cooking appliances"),
+        ("Commercial vacuum packaging machine", "24101500", "Packaging machines"),
+        ("Boning and filleting knife set", "27111500", "Specialty knives"),
+        ("Commercial induction cooktop", "48101500", "Cooktops"),
+        ("Chinois conical fine mesh strainer", "48101500", "Kitchen strainers"),
+        ("Digital kitchen scale", "41111500", "Scales"),
+        ("Commercial meat grinder", "48101500", "Food grinders"),
+        ("Diamond whetstone and honing steel", "27111900", "Sharpening stones"),
+    ],
+    # 17-2051.00 Civil Engineers (12 tools)
+    "17-2051.00": [
+        ("Total station electronic tachymeter", "41111600", "Surveying equipment"),
+        ("Theodolite optical transit", "41111600", "Theodolites"),
+        ("Concrete slump test cone kit", "41113700", "Concrete testing equipment"),
+        ("Schmidt rebound hammer", "41113700", "Hardness testers"),
+        ("Laser distance meter", "41111600", "Distance meters"),
+        ("Nuclear density gauge (soil compaction)", "41113700", "Density meters"),
+        ("Surveyor leveling rod and tripod", "41111600", "Leveling rods"),
+        ("GPS RTK geodetic receiver", "41111600", "GPS receivers"),
+        ("Core drilling machine for concrete/asphalt", "27112700", "Core drills"),
+        ("Soil sieve shaker and hydrometer", "41113700", "Soil testing equipment"),
+        ("Inclinometer casing probe", "41111600", "Inclinometers"),
+        ("Water quality sampling kit", "41113300", "Water test kits"),
+    ],
+    # 17-2141.00 Mechanical Engineers (11 tools)
+    "17-2141.00": [
+        ("Coordinate measuring machine (CMM)", "41111600", "Measuring machines"),
+        ("Digital vernier calipers and micrometers", "41111600", "Calipers"),
+        ("Dial indicator gauge", "41111600", "Dial indicators"),
+        ("Digital torque wrench", "27111700", "Torque wrenches"),
+        ("Digital storage oscilloscope", "41113600", "Oscilloscopes"),
+        ("Vibration analyzer / accelerometer sensor", "41111900", "Vibration meters"),
+        ("Strain gauge data acquisition system", "41112400", "Strain gauges"),
+        ("Optical tachometer / stroboscope", "41111900", "Tachometers"),
+        ("Ultrasonic thickness gauge", "41111600", "Thickness gauges"),
+        ("Dynamometer (torque and power tester)", "41113800", "Dynamometers"),
+        ("Infrared thermal imaging camera", "41111700", "Thermal cameras"),
+    ],
+    # 29-1051.00 Pharmacists (10 tools)
+    "29-1051.00": [
+        ("Electronic precision analytical balance", "41111500", "Balances"),
+        ("Mortar and pestle (glass and porcelain)", "42142600", "Compounding tools"),
+        ("Tablet and capsule counting tray", "42142600", "Pill counters"),
+        ("Laminar air flow clean bench", "41103500", "Clean hoods"),
+        ("Automated tablet blister packaging machine", "24101500", "Packaging machines"),
+        ("Automated prescription dispensing system", "42191800", "Dispensing systems"),
+        ("Graduated glass cylinders and volumetric flasks", "41121800", "Laboratory glassware"),
+        ("Ointment slab and flexible stainless steel spatula", "42142600", "Compounding slabs"),
+        ("Pharmacy vaccine refrigerator with data logger", "41103000", "Refrigerators"),
+        ("Autoclave steam sterilizer", "42281500", "Sterilizers"),
+    ],
+    # 31-9092.00 Medical Assistants (11 tools)
+    "31-9092.00": [
+        ("Electrocardiograph (ECG / EKG) machine", "42181800", "ECG machines"),
+        ("Aneroid sphygmomanometer and stethoscope", "42181600", "Diagnostic sets"),
+        ("Laboratory centrifuge", "41103900", "Centrifuges"),
+        ("Autoclave tabletop sterilizer", "42281500", "Sterilizers"),
+        ("Automated urine chemistry analyzer", "41116100", "Urine analyzers"),
+        ("Digital tympanic / forehead thermometer", "42182200", "Thermometers"),
+        ("Otoscope / ophthalmoscope diagnostic wall unit", "42182000", "Diagnostic sets"),
+        ("Blood glucose test meter", "41116100", "Glucometers"),
+        ("Peak flow respiratory meter", "42271600", "Peak flow meters"),
+        ("Audiometer for hearing screening", "42181500", "Audiometers"),
+        ("Phlebotomy venipuncture tray and collection tubes", "42142500", "Blood collection sets"),
+    ],
+    # 13-2011.00 Accountants and Auditors (8 tools)
+    "13-2011.00": [
+        ("10-key heavy-duty financial printing calculator", "44101800", "Calculators"),
+        ("High-speed sheet-fed document scanner", "43211700", "Document scanners"),
+        ("Barcode / QR code document scanner", "43211700", "Barcode scanners"),
+        ("Dual-monitor ergonomic workstation", "43211900", "Computer displays"),
+        ("Hardware security key / token (YubiKey)", "43211700", "Security tokens"),
+        ("Cross-cut secure document shredder", "44101600", "Paper shredders"),
+        ("Digital signature capture pad", "43211700", "Signature pads"),
+        ("Encrypted portable external SSD storage drive", "43201800", "Storage drives"),
+    ],
+    # 13-2072.00 Loan Officers (6 tools)
+    "13-2072.00": [
+        ("Financial amortization calculator", "44101800", "Calculators"),
+        ("High-speed duplex document scanner", "43211700", "Scanners"),
+        ("Digital signature pad", "43211700", "Signature pads"),
+        ("Multi-screen display terminal", "43211900", "Monitors"),
+        ("Secure shredder", "44101600", "Shredders"),
+        ("VoIP telephony communication console", "43221500", "Phones"),
+    ],
+    # 25-2031.00 Secondary School Teachers (8 tools)
+    "25-2031.00": [
+        ("Interactive whiteboard / smart board", "43211900", "Interactive displays"),
+        ("Digital document camera / visualizer", "45121500", "Document cameras"),
+        ("Multimedia classroom projector", "45111600", "Projectors"),
+        ("Science laboratory compound light microscope", "41111700", "Microscopes"),
+        ("Digital graphing calculator", "44101800", "Calculators"),
+        ("Wireless presentation remote / clicker", "43211700", "Remote controls"),
+        ("Laboratory Bunsen burner and safety equipment", "41103300", "Lab equipment"),
+        ("Digital sound amplification and lapel microphone", "52161500", "Microphones"),
+    ],
+    # 41-4012.00 Sales Representatives (6 tools)
+    "41-4012.00": [
+        ("Handheld wireless barcode scanner", "43211700", "Barcode scanners"),
+        ("Mobile point-of-sale (mPOS) card reader terminal", "43211700", "POS terminals"),
+        ("Business tablet computer with digital pen", "43211500", "Tablet computers"),
+        ("Laser distance meter for field measurement", "41111600", "Distance meters"),
+        ("Digital product sample demonstration display unit", "55121700", "Display cases"),
+        ("Wireless presentation pointer", "43211700", "Presentation remotes"),
+    ],
+    # 43-4051.00 Customer Service Representatives (5 tools)
+    "43-4051.00": [
+        ("Noise-canceling binaural USB telephony headset", "52161500", "Headsets"),
+        ("Dual-display ergonomic desktop computer system", "43211900", "Computer monitors"),
+        ("Automatic call distribution (ACD) telephony console", "43221500", "Telephones"),
+        ("Handheld barcode scanner", "43211700", "Barcode scanners"),
+        ("Ergonomic wrist-rest mechanical keyboard", "43211700", "Keyboards"),
+    ],
+    # 53-3032.00 Heavy and Tractor-Trailer Truck Drivers (10 tools)
+    "53-3032.00": [
+        ("Electronic logging device (ELD) telematics unit", "43221500", "Fleet tracking systems"),
+        ("Commercial truck GPS navigation unit", "43221500", "GPS receivers"),
+        ("Digital tire pressure gauge", "41112400", "Pressure gauges"),
+        ("Fifth-wheel kingpin puller release hook", "27112100", "Pulling tools"),
+        ("Heavy-duty ratchet cargo tie-down straps", "24101600", "Cargo straps"),
+        ("Adjustable cargo load lock bar", "24101600", "Cargo bars"),
+        ("Heavy-duty wheel chocks", "25172500", "Wheel chocks"),
+        ("Gladhand air hose lockout safety device", "46171500", "Safety locks"),
+        ("Citizen band (CB) two-way radio transceiver", "43221500", "Two-way radios"),
+        ("Heavy-duty hand truck / pallet jack", "24101500", "Material handling trucks"),
+    ],
+    # 27-1024.00 Graphic Designers (9 tools)
+    "27-1024.00": [
+        ("Digital graphics drawing tablet and pressure-sensitive stylus", "43211700", "Digitizers"),
+        ("Wide-color-gamut 4K calibrated IPS display monitor", "43211900", "Computer monitors"),
+        ("Hardware spectrophotometer / monitor colorimeter", "41113000", "Colorimeters"),
+        ("Pantone color matching swatch formula guide", "44122000", "Color guides"),
+        ("High-resolution flatbed artwork scanner", "43211700", "Scanners"),
+        ("Large-format professional pigment inkjet printer", "43212100", "Printers"),
+        ("Digital single-lens reflex (DSLR) camera kit", "45121500", "Digital cameras"),
+        ("Rotary paper trimmer and precision heavy-duty cutting mat", "44101600", "Paper cutters"),
+        ("Precision aluminum straightedge ruler and light box", "44111800", "Drafting tables"),
+    ],
+    # 15-2051.00 Data Scientists (5 tools)
+    "15-2051.00": [
+        ("High-performance multi-GPU workstation", "43211500", "Computers"),
+        ("Dual Ultra-HD 4K monitors", "43211900", "Monitors"),
+        ("Hardware security authentication key (FIDO2 / YubiKey)", "43211700", "Security tokens"),
+        ("External high-speed NVMe RAID storage array", "43201800", "Storage drives"),
+        ("Network attached storage (NAS) system", "43201800", "Storage servers"),
+    ]
+}
+
+
+def load_onet_tech_and_tools(conn: sqlite3.Connection):
+    t0 = time.time()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS onet_tech_skills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            soc_code TEXT NOT NULL,
+            example TEXT NOT NULL,
+            commodity_code TEXT,
+            commodity_title TEXT,
+            hot_technology INTEGER DEFAULT 0,
+            in_demand INTEGER DEFAULT 0
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_onet_tech_soc ON onet_tech_skills(soc_code)")
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS onet_tools (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -325,6 +545,9 @@ def load_onet_tech_and_tools(conn: sqlite3.Connection):
         )
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_onet_tools_soc ON onet_tools(soc_code)")
+
+    # Clear previous onet_tools to allow clean reload
+    cur.execute("DELETE FROM onet_tools")
 
     path = ONET_DIR / "software_skills.csv"
     if not path.exists():
@@ -345,6 +568,12 @@ def load_onet_tech_and_tools(conn: sqlite3.Connection):
                 if any(w in ex.lower() for w in ['pliers', 'scanner', 'printer', 'meter', 'welder', 'tester', 'kit', 'oscilloscope', 'wrench', 'drill', 'saw']):
                     tool_rows.append((soc, ex, cid, ctitle))
 
+    # Add comprehensive tools for clinical, trade, engineering and other professions
+    for soc, tools in TOOLS_SEED_DATA.items():
+        for ex, ccode, ctitle in tools:
+            tool_rows.append((soc, ex, ccode, ctitle))
+
+    cur.execute("DELETE FROM onet_tech_skills")
     cur.executemany("""
         INSERT INTO onet_tech_skills (soc_code, example, commodity_code, commodity_title, hot_technology, in_demand)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -922,7 +1151,7 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         if len(words) >= 2:
             p2 = " ".join(words[:2])
             if p2 not in prefix_dict:
-                prefix_dict[p2] = (v[0], 0.85, "prefix_match")
+                prefix_dict[p2] = (v[0], v[1], "prefix_match", k)
 
     def match_title(raw_t: str) -> Optional[Tuple[str, float, str]]:
         if not raw_t:
@@ -930,7 +1159,7 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         t = clean_title_for_matching(raw_t)
         if not t:
             return None
-        # O(1) dict lookups
+        # O(1) dict lookups for exact matches
         if t in alias_dict:
             return alias_dict[t]
         if t in alt_dict:
@@ -940,10 +1169,34 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         words = t.split()
         if len(words) >= 2:
             p2 = " ".join(words[:2])
+            target_info = None
             if p2 in alias_dict:
-                return (alias_dict[p2][0], 0.85, "alias_prefix_match")
-            if p2 in prefix_dict:
-                return prefix_dict[p2]
+                soc, bconf, _ = alias_dict[p2]
+                target_info = (soc, bconf, "alias_prefix_match", p2)
+            elif p2 in prefix_dict:
+                target_info = prefix_dict[p2]
+
+            if target_info:
+                soc_code, base_conf, meth, target_full = target_info
+
+                # Cross-domain safety guard: software titles must NOT map to civil engineering or trades
+                if soc_code == "17-2051.00" and any(sw in t for sw in ["software", "developer", "java", "python", "programming", "frontend", "backend", "full stack"]):
+                    return None
+                if soc_code == "47-2111.00" and any(sw in t for sw in ["software", "developer", "frontend", "backend"]):
+                    return None
+
+                # Compute token overlap / Jaccard similarity score
+                w_post = set(words)
+                w_target = set(target_full.split())
+                inter = w_post & w_target
+                union = w_post | w_target
+                jaccard = len(inter) / max(len(union), 1)
+                overlap_ratio = len(inter) / max(len(w_post), 1)
+
+                # Dynamic score between 0.55 and 0.88 based on token overlap
+                score = round(0.55 + 0.35 * (0.6 * jaccard + 0.4 * overlap_ratio), 3)
+                score = max(0.50, min(0.90, score))
+                return (soc_code, score, meth)
         return None
 
     # Map job_postings_india
@@ -1046,15 +1299,38 @@ NOISE_TERMS = [
     "veteran_status", "sexual_orientation", "gender_identity", "genetic_information",
     "race", "equal_opportunity", "minority", "female", "veteran", "protected_veteran",
     "affirmative_action", "marital_status", "creed", "citizenship", "gender_identity_or_expression",
-    # Employee benefits & corporate boilerplate
-    "dental", "vision", "health_insurance", "sick_leave", "sick_time_and_holidays",
-    "100__company_paid_health", "401k", "pto", "paid_time_off", "inc",
+    # Employee benefits & corporate compensation boilerplate
+    "dental", "vision", "health_insurance", "health insurance", "sick_leave", "sick leave",
+    "sick_time_and_holidays", "100__company_paid_health", "401k", "pto", "paid_time_off", "paid time off", "inc",
     "a_member_of_daikin_group", "and_stands_for_quality", "equal_employment_opportunity",
-    # Generic structural stopwords (kept tight)
-    "it_software___application_programming", "analytical",
+    "pf", "provident_fund", "provident fund", "gratuity", "insurance", "life_insurance", "life insurance",
+    "medical", "esi", "bonus", "incentives", "allowance", "per_diem", "per diem", "pension",
+    "leave_encashment", "leave encashment", "esop", "stock_options", "stock options", "relocation",
+    "cab_facility", "free_food", "subsidized_meals", "benefits", "salary",
+    # Seniority words & generic level descriptors
+    "senior", "junior", "entry_level", "entry level", "entry", "fresher", "freshers", "trainee",
+    "lead", "basic", "intern", "internship", "principal", "executive", "associate", "specialist",
+    "manager", "officer", "supervisor", "site_engineer", "site engineer", "engineer_trainee",
+    "engineer trainee", "focus", "level", "experienced", "intermediate", "expert", "director", "head",
+    # Indian cities, states and locations
+    "ahmedabad", "gujarat", "bengaluru", "bangalore", "karnataka", "mumbai", "bombay", "maharashtra",
+    "pune", "delhi", "new_delhi", "new delhi", "noida", "gurgaon", "gurugram", "haryana",
+    "hyderabad", "secunderabad", "telangana", "andhra_pradesh", "andhra pradesh", "chennai", "madras",
+    "tamil_nadu", "tamil nadu", "kolkata", "calcutta", "west_bengal", "west bengal", "jaipur", "rajasthan",
+    "surat", "kochi", "cochin", "kerala", "indore", "madhya_pradesh", "madhya pradesh", "chandigarh",
+    "punjab", "lucknow", "kanpur", "uttar_pradesh", "uttar pradesh", "nagpur", "bhopal", "patna",
+    "bihar", "vadodara", "baroda", "ghaziabad", "ludhiana", "agra", "nashik", "faridabad",
+    "meerut", "rajkot", "varanasi", "srinagar", "aurangabad", "dhanbad", "amritsar", "navi_mumbai",
+    "navi mumbai", "allahabad", "prayagraj", "howrah", "ranchi", "gwalior", "jabalpur", "coimbatore",
+    "vijayawada", "jodhpur", "madurai", "raipur", "kota", "guwahati", "solapur", "hubballi",
+    "bareilly", "moradabad", "mysore", "mysuru", "tiruchirappalli", "tiruppur", "salem", "aligarh",
+    "thiruvananthapuram", "trivandrum", "bhubaneswar", "odisha", "dehradun", "uttarakhand", "shimla",
+    "himachal_pradesh", "jammu", "kashmir", "goa", "panaji", "india",
+    # Generic structural stopwords & functional fragments
+    "it_software___application_programming", "analytical", "communication",
     # Salary & number fragments
     "000_85", "000_to__155", "000_annually", "100_000", "200_000", "per_annum",
-    "lakhs", "lpa", "inr", "salary", "bonus", "benefits"
+    "lakhs", "lpa", "inr"
 ]
 
 
@@ -1069,8 +1345,57 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
         )
     """)
 
-    noise_rows = [(t, "eeo" if t in ["gender", "religion", "color", "race", "disability", "national_origin"] else "generic") for t in NOISE_TERMS]
-    cur.executemany("INSERT OR IGNORE INTO skill_noise_terms (term, category) VALUES (?, ?)", noise_rows)
+    # Base noise rows
+    noise_dict = {}
+    for t in NOISE_TERMS:
+        cat = "eeo" if t in ["gender", "religion", "color", "race", "disability", "national_origin"] else "generic"
+        noise_dict[t.lower().strip()] = cat
+        noise_dict[t.lower().strip().replace(" ", "_")] = cat
+
+    # 1. Add all city aliases from city_aliases
+    cur.execute("SELECT DISTINCT LOWER(TRIM(raw_city)) FROM city_aliases UNION SELECT DISTINCT LOWER(TRIM(city_canonical)) FROM city_aliases")
+    for r in cur.fetchall():
+        if r[0]:
+            noise_dict[r[0]] = "location"
+            noise_dict[r[0].replace(" ", "_")] = "location"
+
+    # 2. Add all PromptCloud functional area / industry category strings
+    cur.execute("SELECT DISTINCT LOWER(TRIM(skills)) FROM job_postings_india WHERE source = 'naukri_promptcloud'")
+    for r in cur.fetchall():
+        val = r[0]
+        if val:
+            noise_dict[val] = "industry"
+            noise_dict[val.replace(" ", "_")] = "industry"
+            noise_dict[val.replace("-", "_")] = "industry"
+
+    # Also add known PromptCloud industries
+    promptcloud_industries = [
+        "hotels", "it_hardware", "it hardware", "ites", "financial_services", "financial services",
+        "medical", "hr", "analytics", "backend", "chip_design", "chip design", "application_development",
+        "application development", "production", "accounts", "teaching", "marketing", "supply_chain",
+        "supply chain", "legal", "site_engineering", "site engineering", "journalism", "strategy",
+        "defence_forces", "defence forces", "top_management", "top management", "travel", "export",
+        "packaging", "shipping", "banking", "telecom", "fmcg", "retail", "real_estate", "real estate"
+    ]
+    for ind in promptcloud_industries:
+        noise_dict[ind] = "industry"
+        noise_dict[ind.replace(" ", "_")] = "industry"
+
+    # 3. Add all occupation titles and aliases so titles never appear as skills of themselves
+    cur.execute("SELECT DISTINCT LOWER(TRIM(title)) FROM occupations")
+    for r in cur.fetchall():
+        if r[0] and len(r[0]) > 3:
+            noise_dict[r[0]] = "occupation_title"
+            noise_dict[r[0].replace(" ", "_")] = "occupation_title"
+
+    cur.execute("SELECT DISTINCT LOWER(TRIM(raw_title)) FROM india_title_aliases")
+    for r in cur.fetchall():
+        if r[0] and len(r[0]) > 3:
+            noise_dict[r[0]] = "occupation_title"
+            noise_dict[r[0].replace(" ", "_")] = "occupation_title"
+
+    noise_rows = [(k, v) for k, v in noise_dict.items() if k]
+    cur.executemany("INSERT OR REPLACE INTO skill_noise_terms (term, category) VALUES (?, ?)", noise_rows)
 
     cur.execute("""
         CREATE VIEW IF NOT EXISTS v_skill_demand_clean AS
@@ -1087,7 +1412,8 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
             m.soc_code
         FROM skill_demand sd
         LEFT JOIN skill_context_soc_map m ON sd.occupation_context = m.occupation_context
-        WHERE sd.skill_normalized NOT IN (SELECT term FROM skill_noise_terms)
+        WHERE LOWER(sd.skill_normalized) NOT IN (SELECT LOWER(term) FROM skill_noise_terms)
+          AND LOWER(sd.skill_name) NOT IN (SELECT LOWER(term) FROM skill_noise_terms)
           AND sd.skill_normalized NOT GLOB '*[0-9]*'
           AND (LENGTH(sd.skill_normalized) > 1 OR sd.skill_normalized IN ('c', 'r'))
     """)
@@ -1103,12 +1429,17 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
             share_of_postings REAL,
             first_year INTEGER,
             last_year INTEGER,
+            source TEXT DEFAULT 'india_postings',
             UNIQUE(soc_code, region, skill_normalized)
         )
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_demand_by_soc ON skill_demand_by_soc(soc_code, region)")
+    try:
+        cur.execute("ALTER TABLE skill_demand_by_soc ADD COLUMN source TEXT DEFAULT 'india_postings'")
+    except Exception:
+        pass
 
-    # 1. Aggregate from v_skill_demand_clean
+    # 1. Aggregate from v_skill_demand_clean with minimum support (mentions >= 3)
     cur.execute("""
         SELECT 
             soc_code,
@@ -1121,7 +1452,7 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
         FROM v_skill_demand_clean
         WHERE soc_code IS NOT NULL
         GROUP BY soc_code, region, skill_normalized
-        HAVING mentions >= 1
+        HAVING mentions >= 3
     """)
     agg_rows = cur.fetchall()
 
@@ -1129,49 +1460,53 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
     for r in agg_rows:
         soc_totals[(r[0], r[1])] += r[4]
 
-    final_rows = []
+    # Group by (soc, reg) and filter by share >= 0.02 and cap top 50
+    soc_groups = defaultdict(list)
     for r in agg_rows:
         soc, reg, sn, sname, mcnt, fyear, lyear = r
         tot = max(1, soc_totals[(soc, reg)])
         share = round(mcnt / tot, 4)
-        final_rows.append((soc, reg, sn, sname, mcnt, share, fyear, lyear))
+        if share >= 0.02:
+            src_tag = "india_postings" if reg == "india" else "global_postings"
+            soc_groups[(soc, reg)].append((soc, reg, sn, sname, mcnt, share, fyear, lyear, src_tag))
 
-    # 2. Extract high-signal Indian posting skills from mapped job_postings_india
-    cur.execute("""
-        SELECT m.soc_code, LOWER(p.title), LOWER(p.skills), p.listed_year
-        FROM job_postings_india p
-        JOIN posting_soc_map m ON p.id = m.posting_id AND m.posting_table = 'india'
-        WHERE m.soc_code IS NOT NULL
-    """)
-    indian_postings = cur.fetchall()
+    final_rows = []
+    for (soc, reg), items in soc_groups.items():
+        # Sort by share DESC, mentions DESC and cap at 50 per SOC
+        items.sort(key=lambda x: (x[5], x[4]), reverse=True)
+        final_rows.extend(items[:50])
 
+    # 2. Hand-curated domain competencies: labeled source='curated', share_of_postings=NULL
     domain_skill_definitions = {
-        '13-2011.00': [('accounting', 'Accounting', 140), ('tally', 'Tally ERP', 85), ('taxation', 'Taxation & TDS', 72), ('gst', 'GST Filing & Compliance', 65), ('excel', 'Advanced Excel', 90), ('auditing', 'Internal Auditing', 45), ('statutory_compliances', 'Statutory Compliances', 40), ('financial_reporting', 'Financial Reporting', 35)],
-        '29-1141.00': [('patient_care', 'Patient Care', 110), ('nursing', 'General Nursing', 95), ('icu_care', 'ICU / Critical Care', 60), ('clinical_documentation', 'Clinical Documentation', 50), ('infection_control', 'Infection Control Protocols', 45)],
-        '17-2051.00': [('site_engineering', 'Site Engineering', 120), ('civil_construction', 'Civil Construction', 95), ('autocad', 'AutoCAD Drafting', 75), ('structural_analysis', 'Structural Analysis', 50), ('quality_inspection', 'Quality & Material Testing', 45)],
-        '43-4051.00': [('customer_support', 'Customer Support', 180), ('telecalling', 'Telecalling & Voice Operations', 150), ('inbound_calling', 'Inbound Call Handling', 95), ('crm', 'CRM System Operations', 80), ('customer_relationship', 'Customer Relationship Management', 70)],
-        '47-2111.00': [('electrical_wiring', 'Electrical Wiring & Cabling', 85), ('electrical_maintenance', 'Preventive Maintenance', 70), ('iti_electrician', 'ITI Electrical Standards', 65), ('circuit_troubleshooting', 'Circuit Troubleshooting', 50)],
-        '41-4012.00': [('b2b_sales', 'B2B Field Sales', 130), ('client_acquisition', 'Lead Generation & Acquisition', 90), ('negotiation', 'Commercial Negotiation', 75), ('channel_sales', 'Channel Sales Distribution', 60)],
-        '35-1011.00': [('culinary_arts', 'Culinary Operations', 80), ('kitchen_management', 'Kitchen Management', 65), ('food_safety', 'Food Safety & HACCP', 60), ('menu_planning', 'Menu Costing & Planning', 45)],
-        '53-3032.00': [('heavy_vehicle_driving', 'Heavy Vehicle Navigation', 85), ('route_planning', 'Route & Logistics Planning', 60), ('vehicle_safety', 'Fleet & Highway Safety', 55)],
-        '27-1024.00': [('graphic_design', 'Graphic Design & Layout', 125), ('photoshop', 'Adobe Photoshop', 95), ('illustrator', 'Adobe Illustrator', 85), ('visual_branding', 'Visual Identity & Branding', 70), ('ui_design', 'UI / Digital Design', 60)],
-        '25-2031.00': [('curriculum_delivery', 'Curriculum Delivery', 90), ('classroom_management', 'Classroom Management', 80), ('pedagogy', 'Subject Pedagogy', 70), ('assessment_design', 'Student Assessment & Evaluation', 55)],
+        '13-2011.00': [('accounting', 'Accounting'), ('tally', 'Tally ERP'), ('taxation', 'Taxation & TDS'), ('gst', 'GST Filing & Compliance'), ('excel', 'Advanced Excel'), ('auditing', 'Internal Auditing'), ('statutory_compliances', 'Statutory Compliances'), ('financial_reporting', 'Financial Reporting')],
+        '29-1141.00': [('patient_care', 'Patient Care'), ('nursing', 'General Nursing'), ('icu_care', 'ICU / Critical Care'), ('clinical_documentation', 'Clinical Documentation'), ('infection_control', 'Infection Control Protocols')],
+        '17-2051.00': [('site_engineering', 'Site Engineering'), ('civil_construction', 'Civil Construction'), ('autocad', 'AutoCAD Drafting'), ('structural_analysis', 'Structural Analysis'), ('quality_inspection', 'Quality & Material Testing')],
+        '43-4051.00': [('customer_support', 'Customer Support'), ('telecalling', 'Telecalling & Voice Operations'), ('inbound_calling', 'Inbound Call Handling'), ('crm', 'CRM System Operations'), ('customer_relationship', 'Customer Relationship Management')],
+        '47-2111.00': [('electrical_wiring', 'Electrical Wiring & Cabling'), ('electrical_maintenance', 'Preventive Maintenance'), ('iti_electrician', 'ITI Electrical Standards'), ('circuit_troubleshooting', 'Circuit Troubleshooting')],
+        '41-4012.00': [('b2b_sales', 'B2B Field Sales'), ('client_acquisition', 'Lead Generation & Acquisition'), ('negotiation', 'Commercial Negotiation'), ('channel_sales', 'Channel Sales Distribution')],
+        '35-1011.00': [('culinary_arts', 'Culinary Operations'), ('kitchen_management', 'Kitchen Management'), ('food_safety', 'Food Safety & HACCP'), ('menu_planning', 'Menu Costing & Planning')],
+        '53-3032.00': [('heavy_vehicle_driving', 'Heavy Vehicle Navigation'), ('route_planning', 'Route & Logistics Planning'), ('vehicle_safety', 'Fleet & Highway Safety')],
+        '27-1024.00': [('graphic_design', 'Graphic Design & Layout'), ('photoshop', 'Adobe Photoshop'), ('illustrator', 'Adobe Illustrator'), ('visual_branding', 'Visual Identity & Branding'), ('ui_design', 'UI / Digital Design')],
+        '25-2031.00': [('curriculum_delivery', 'Curriculum Delivery'), ('classroom_management', 'Classroom Management'), ('pedagogy', 'Subject Pedagogy'), ('assessment_design', 'Student Assessment & Evaluation')],
     }
 
+    curated_rows = []
     for soc, skills in domain_skill_definitions.items():
-        tot_soc = sum(s[2] for s in skills)
-        for snorm, sname, mcnt in skills:
-            share = round(mcnt / max(1, tot_soc), 4)
-            final_rows.append((soc, 'india', snorm, sname, mcnt, share, 2023, 2026))
+        for snorm, sname in skills:
+            # Curated rows: region='curated', mentions=0, share_of_postings=None, source='curated'
+            curated_rows.append((soc, 'curated', snorm, sname, 0, None, 2023, 2026, 'curated'))
 
+    all_skill_rows = final_rows + curated_rows
+
+    cur.execute("DELETE FROM skill_demand_by_soc")
     cur.executemany("""
         INSERT OR REPLACE INTO skill_demand_by_soc
-        (soc_code, region, skill_normalized, skill_name, mentions, share_of_postings, first_year, last_year)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, final_rows)
+        (soc_code, region, skill_normalized, skill_name, mentions, share_of_postings, first_year, last_year, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, all_skill_rows)
 
     conn.commit()
-    print(f"  [v_skill_demand_clean / skill_demand_by_soc] {len(final_rows):,} rows ({time.time()-t0:.2f}s)")
+    print(f"  [v_skill_demand_clean / skill_demand_by_soc] {len(final_rows):,} posting skills + {len(curated_rows):,} curated skills ({time.time()-t0:.2f}s)")
 
 
 # -------------------------------------------------------------------------
@@ -1326,136 +1661,189 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
     t0 = time.time()
     cur = conn.cursor()
 
+    cur.execute("DROP VIEW IF EXISTS v_occupation_requirements")
     cur.execute("""
-        CREATE VIEW IF NOT EXISTS v_occupation_requirements AS
-        -- 1. O*NET Skills
+        CREATE VIEW v_occupation_requirements AS
         SELECT 
-            s.soc_code,
-            'skill' AS item_type,
-            s.element_id AS item_id,
-            s.element_name AS item_name,
-            COALESCE(cm.description, s.element_name) AS item_description,
-            s.importance_norm,
-            s.level_norm,
-            0 AS hot_technology,
-            0 AS in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            CASE WHEN s.recommend_suppress = 'Y' OR s.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
-        FROM onet_skills s
-        LEFT JOIN onet_content_model cm ON s.element_id = cm.element_id
+            soc_code,
+            item_type,
+            MIN(item_id) AS item_id,
+            item_name,
+            MAX(item_description) AS item_description,
+            MAX(importance_norm) AS importance_norm,
+            MAX(level_norm) AS level_norm,
+            MAX(hot_technology) AS hot_technology,
+            MAX(in_demand) AS in_demand,
+            MAX(india_demand_share) AS india_demand_share,
+            MIN(source) AS source,
+            MAX(reliable) AS reliable
+        FROM (
+            -- 1. O*NET Skills
+            SELECT 
+                s.soc_code,
+                'skill' AS item_type,
+                s.element_id AS item_id,
+                s.element_name AS item_name,
+                COALESCE(cm.description, s.element_name) AS item_description,
+                s.importance_norm,
+                s.level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                CASE WHEN s.recommend_suppress = 'Y' OR s.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
+            FROM onet_skills s
+            LEFT JOIN onet_content_model cm ON s.element_id = cm.element_id
 
-        UNION ALL
+            UNION ALL
 
-        -- 2. O*NET Knowledge
-        SELECT 
-            k.soc_code,
-            'knowledge' AS item_type,
-            k.element_id AS item_id,
-            k.element_name AS item_name,
-            COALESCE(cm.description, k.element_name) AS item_description,
-            k.importance_norm,
-            k.level_norm,
-            0 AS hot_technology,
-            0 AS in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            CASE WHEN k.recommend_suppress = 'Y' OR k.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
-        FROM onet_knowledge k
-        LEFT JOIN onet_content_model cm ON k.element_id = cm.element_id
+            -- 2. O*NET Knowledge
+            SELECT 
+                k.soc_code,
+                'knowledge' AS item_type,
+                k.element_id AS item_id,
+                k.element_name AS item_name,
+                COALESCE(cm.description, k.element_name) AS item_description,
+                k.importance_norm,
+                k.level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                CASE WHEN k.recommend_suppress = 'Y' OR k.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
+            FROM onet_knowledge k
+            LEFT JOIN onet_content_model cm ON k.element_id = cm.element_id
 
-        UNION ALL
+            UNION ALL
 
-        -- 3. O*NET Abilities
-        SELECT 
-            a.soc_code,
-            'ability' AS item_type,
-            a.element_id AS item_id,
-            a.element_name AS item_name,
-            COALESCE(cm.description, a.element_name) AS item_description,
-            a.importance_norm,
-            a.level_norm,
-            0 AS hot_technology,
-            0 AS in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            CASE WHEN a.recommend_suppress = 'Y' OR a.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
-        FROM onet_abilities a
-        LEFT JOIN onet_content_model cm ON a.element_id = cm.element_id
+            -- 3. O*NET Abilities
+            SELECT 
+                a.soc_code,
+                'ability' AS item_type,
+                a.element_id AS item_id,
+                a.element_name AS item_name,
+                COALESCE(cm.description, a.element_name) AS item_description,
+                a.importance_norm,
+                a.level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                CASE WHEN a.recommend_suppress = 'Y' OR a.not_relevant = 'Y' THEN 0 ELSE 1 END AS reliable
+            FROM onet_abilities a
+            LEFT JOIN onet_content_model cm ON a.element_id = cm.element_id
 
-        UNION ALL
+            UNION ALL
 
-        -- 4. O*NET Work Activities
-        SELECT 
-            w.soc_code,
-            'work_activity' AS item_type,
-            w.element_id AS item_id,
-            w.element_name AS item_name,
-            COALESCE(cm.description, w.element_name) AS item_description,
-            w.importance_norm,
-            w.level_norm,
-            0 AS hot_technology,
-            0 AS in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            1 AS reliable
-        FROM onet_work_activities w
-        LEFT JOIN onet_content_model cm ON w.element_id = cm.element_id
+            -- 4. O*NET Work Activities
+            SELECT 
+                w.soc_code,
+                'work_activity' AS item_type,
+                w.element_id AS item_id,
+                w.element_name AS item_name,
+                COALESCE(cm.description, w.element_name) AS item_description,
+                w.importance_norm,
+                w.level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                1 AS reliable
+            FROM onet_work_activities w
+            LEFT JOIN onet_content_model cm ON w.element_id = cm.element_id
 
-        UNION ALL
+            UNION ALL
 
-        -- 5. O*NET Tasks
-        SELECT 
-            tr.soc_code,
-            'task' AS item_type,
-            tr.task_id AS item_id,
-            tr.task_description AS item_name,
-            tr.task_description AS item_description,
-            ROUND(MAX(0.0, MIN(1.0, (COALESCE(tr.importance, 3.0) - 1.0) / 4.0)), 4) AS importance_norm,
-            NULL AS level_norm,
-            0 AS hot_technology,
-            0 AS in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            1 AS reliable
-        FROM onet_task_ratings tr
+            -- 5. O*NET Tasks
+            SELECT 
+                tr.soc_code,
+                'task' AS item_type,
+                tr.task_id AS item_id,
+                tr.task_description AS item_name,
+                tr.task_description AS item_description,
+                ROUND(MAX(0.0, MIN(1.0, (COALESCE(tr.importance, 3.0) - 1.0) / 4.0)), 4) AS importance_norm,
+                NULL AS level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                1 AS reliable
+            FROM onet_task_ratings tr
 
-        UNION ALL
+            UNION ALL
 
-        -- 6. Technology Skills (Tools & Software)
-        SELECT 
-            ts.soc_code,
-            'tech' AS item_type,
-            COALESCE(ts.commodity_code, ts.example) AS item_id,
-            ts.example AS item_name,
-            COALESCE(ts.commodity_title, ts.example) AS item_description,
-            CASE WHEN ts.hot_technology = 1 THEN 0.85 ELSE 0.50 END AS importance_norm,
-            NULL AS level_norm,
-            ts.hot_technology,
-            ts.in_demand,
-            NULL AS india_demand_share,
-            'onet' AS source,
-            1 AS reliable
-        FROM onet_tech_skills ts
+            -- 6. Detailed Work Activities (DWA)
+            SELECT 
+                d.soc_code,
+                'dwa' AS item_type,
+                d.dwa_id AS item_id,
+                d.dwa_title AS item_name,
+                d.dwa_title AS item_description,
+                0.70 AS importance_norm,
+                NULL AS level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                1 AS reliable
+            FROM onet_dwa d
 
-        UNION ALL
+            UNION ALL
 
-        -- 7. Empirical Indian Market Skills
-        SELECT 
-            ds.soc_code,
-            'market_skill' AS item_type,
-            ds.skill_normalized AS item_id,
-            ds.skill_name AS item_name,
-            'Extracted from Indian job postings' AS item_description,
-            ROUND(MAX(0.1, MIN(1.0, ds.share_of_postings * 2.0)), 4) AS importance_norm,
-            NULL AS level_norm,
-            0 AS hot_technology,
-            1 AS in_demand,
-            ds.share_of_postings AS india_demand_share,
-            'india_postings' AS source,
-            1 AS reliable
-        FROM skill_demand_by_soc ds
-        WHERE ds.region = 'india'
+            -- 7. Technology Skills (Software & Digital Tools)
+            SELECT 
+                ts.soc_code,
+                'tech' AS item_type,
+                'tech_' || LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(ts.example, ' ', '_'), '/', '_'), '-', '_'), '(', ''), ')', '')) AS item_id,
+                ts.example AS item_name,
+                COALESCE(ts.commodity_title, ts.example) AS item_description,
+                CASE WHEN ts.hot_technology = 1 THEN 0.85 ELSE 0.50 END AS importance_norm,
+                NULL AS level_norm,
+                ts.hot_technology,
+                ts.in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                1 AS reliable
+            FROM onet_tech_skills ts
+
+            UNION ALL
+
+            -- 8. Tools & Equipment (Physical Equipment, Instruments, Machinery)
+            SELECT 
+                t.soc_code,
+                'tool' AS item_type,
+                'tool_' || LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(t.example, ' ', '_'), '/', '_'), '-', '_'), '(', ''), ')', '')) AS item_id,
+                t.example AS item_name,
+                COALESCE(t.commodity_title, t.example) AS item_description,
+                0.65 AS importance_norm,
+                NULL AS level_norm,
+                0 AS hot_technology,
+                0 AS in_demand,
+                NULL AS india_demand_share,
+                'onet' AS source,
+                1 AS reliable
+            FROM onet_tools t
+
+            UNION ALL
+
+            -- 9. Empirical Indian Market Skills & Curated Domain Competencies
+            SELECT 
+                ds.soc_code,
+                'market_skill' AS item_type,
+                ds.skill_normalized AS item_id,
+                ds.skill_name AS item_name,
+                CASE WHEN ds.source = 'curated' THEN 'Curated domain competency' ELSE 'Extracted from Indian job postings' END AS item_description,
+                CASE WHEN ds.source = 'curated' THEN 0.80 ELSE ROUND(MAX(0.1, MIN(1.0, ds.share_of_postings * 2.0)), 4) END AS importance_norm,
+                NULL AS level_norm,
+                0 AS hot_technology,
+                1 AS in_demand,
+                CASE WHEN ds.source = 'curated' THEN NULL ELSE ds.share_of_postings END AS india_demand_share,
+                ds.source AS source,
+                1 AS reliable
+            FROM skill_demand_by_soc ds
+            WHERE ds.region IN ('india', 'curated')
+        )
+        GROUP BY soc_code, item_type, item_name
     """)
 
     cur.execute("""
@@ -1464,24 +1852,55 @@ def load_unified_requirements_and_meta(conn: sqlite3.Connection):
             built_at TEXT NOT NULL,
             onet_version TEXT NOT NULL,
             sources_hash TEXT NOT NULL,
-            notes TEXT
+            notes TEXT,
+            table_counts TEXT,
+            export_hash TEXT
         )
     """)
+    for col in ["table_counts", "export_hash"]:
+        try:
+            cur.execute(f"ALTER TABLE db_meta ADD COLUMN {col} TEXT")
+        except Exception:
+            pass
 
-    h = hashlib.sha256(b"vriddhi_generalised_labor_intelligence_v2").hexdigest()[:16]
+    # Compute row counts for all key tables
+    table_names = [
+        "occupations", "onet_skills", "onet_knowledge", "onet_abilities",
+        "onet_work_activities", "onet_tasks", "onet_task_ratings", "onet_dwa",
+        "onet_tools", "onet_tech_skills", "onet_job_zones", "india_title_aliases",
+        "posting_soc_map", "salary_soc_map", "skill_demand_by_soc"
+    ]
+    counts = {}
+    for t in table_names:
+        try:
+            cur.execute(f"SELECT COUNT(*) FROM {t}")
+            counts[t] = cur.fetchone()[0]
+        except Exception:
+            pass
+    try:
+        cur.execute("SELECT COUNT(*) FROM v_occupation_requirements")
+        counts["v_occupation_requirements"] = cur.fetchone()[0]
+    except Exception:
+        pass
+
+    counts_json = json.dumps(counts, indent=2)
+
+    h = hashlib.sha256(b"vriddhi_generalised_labor_intelligence_v2_1").hexdigest()[:16]
     cur.execute("""
-        INSERT OR REPLACE INTO db_meta (schema_version, built_at, onet_version, sources_hash, notes)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT OR REPLACE INTO db_meta (schema_version, built_at, onet_version, sources_hash, notes, table_counts, export_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (
-        "2.0.0",
+        "2.1.0",
         datetime.utcnow().isoformat() + "Z",
         "31.0",
         h,
-        "Vriddhi Generalised Labor Intelligence Database covering all industries additive release"
+        "Vriddhi Generalised Labor Intelligence Database v2.1.0 (DWA, Tools, Deduplicated Tech, Cleaned Market Skills, Curated Provenance)",
+        counts_json,
+        None
     ))
 
     conn.commit()
-    print(f"  [v_occupation_requirements & db_meta] configured ({time.time()-t0:.2f}s)")
+    print(f"  [v_occupation_requirements & db_meta] configured v2.1.0 ({time.time()-t0:.2f}s)")
 
 
 # -------------------------------------------------------------------------
