@@ -242,6 +242,24 @@
           ],
           "default": null,
           "title": "Context Span"
+        },
+        "translated": {
+          "default": false,
+          "description": "text is an English rewrite of original_text",
+          "title": "Translated",
+          "type": "boolean"
+        },
+        "original_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Text"
         }
       },
       "required": [
@@ -506,6 +524,18 @@
           "title": "Match Score",
           "type": "number"
         },
+        "fit_percent": {
+          "description": "User-facing: threshold -> 50, typical full profile -> 80",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Fit Percent",
+          "type": "integer"
+        },
+        "fit_label": {
+          "description": "Strong fit / Good fit / Developing / Early stage",
+          "title": "Fit Label",
+          "type": "string"
+        },
         "verdict": {
           "$ref": "#/$defs/Verdict"
         },
@@ -529,6 +559,21 @@
         "gaps_total": {
           "title": "Gaps Total",
           "type": "integer"
+        },
+        "not_applicable_in_india": {
+          "description": "Excluded from scoring: outside the scope of practice in India",
+          "items": {
+            "$ref": "#/$defs/NotApplicableItem"
+          },
+          "title": "Not Applicable In India",
+          "type": "array"
+        },
+        "role_history": {
+          "items": {
+            "$ref": "#/$defs/RoleHistoryItem"
+          },
+          "title": "Role History",
+          "type": "array"
         },
         "draws_on": {
           "items": {
@@ -579,6 +624,8 @@
       "required": [
         "resolution",
         "match_score",
+        "fit_percent",
+        "fit_label",
         "verdict",
         "score_breakdown",
         "strengths",
@@ -598,14 +645,24 @@
     "GeneralRoadmap": {
       "properties": {
         "items": {
+          "description": "Main roadmap, at most ROADMAP_MAX_ITEMS by weight",
           "items": {
             "$ref": "#/$defs/RoadmapItem"
           },
           "title": "Items",
           "type": "array"
         },
+        "later": {
+          "description": "The remaining gaps, for after the main roadmap",
+          "items": {
+            "$ref": "#/$defs/LaterItem"
+          },
+          "title": "Later",
+          "type": "array"
+        },
         "total_hours": {
-          "$ref": "#/$defs/HourRange"
+          "$ref": "#/$defs/HourRange",
+          "description": "Main roadmap only"
         },
         "total_weeks": {
           "anyOf": [
@@ -659,6 +716,39 @@
         "high"
       ],
       "title": "HourRange",
+      "type": "object"
+    },
+    "LaterItem": {
+      "properties": {
+        "requirement": {
+          "title": "Requirement",
+          "type": "string"
+        },
+        "item_type": {
+          "title": "Item Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "met",
+            "partial",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "requirement",
+        "item_type",
+        "status",
+        "weight"
+      ],
+      "title": "LaterItem",
       "type": "object"
     },
     "MatchTextRequest": {
@@ -856,6 +946,30 @@
       "title": "MatchTextResponse",
       "type": "object"
     },
+    "NotApplicableItem": {
+      "properties": {
+        "requirement": {
+          "title": "Requirement",
+          "type": "string"
+        },
+        "item_type": {
+          "title": "Item Type",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Why it's outside the scope of practice in India",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement",
+        "item_type",
+        "reason"
+      ],
+      "title": "NotApplicableItem",
+      "type": "object"
+    },
     "ProvenanceSummary": {
       "properties": {
         "scored_items": {
@@ -941,6 +1055,7 @@
           "enum": [
             "alias",
             "semantic",
+            "implied_by_role",
             "none"
           ],
           "title": "Reason",
@@ -1029,6 +1144,12 @@
           "title": "Weight",
           "type": "number"
         },
+        "implied_by_role": {
+          "default": false,
+          "description": "Only implied by a past title; listed after real gaps",
+          "title": "Implied By Role",
+          "type": "boolean"
+        },
         "prerequisites": {
           "description": "From the v1 taxonomy, not yet in your evidence",
           "items": {
@@ -1071,6 +1192,53 @@
         "hours"
       ],
       "title": "RoadmapItem",
+      "type": "object"
+    },
+    "RoleHistoryItem": {
+      "properties": {
+        "title": {
+          "description": "A past or current job title from the evidence",
+          "title": "Title",
+          "type": "string"
+        },
+        "years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Years"
+        },
+        "soc_code": {
+          "title": "Soc Code",
+          "type": "string"
+        },
+        "occupation_title": {
+          "title": "Occupation Title",
+          "type": "string"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "applies_to_target": {
+          "description": "Gives the target's tasks implied partial credit",
+          "title": "Applies To Target",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "years",
+        "soc_code",
+        "occupation_title",
+        "confidence",
+        "applies_to_target"
+      ],
+      "title": "RoleHistoryItem",
       "type": "object"
     },
     "RoleOption": {

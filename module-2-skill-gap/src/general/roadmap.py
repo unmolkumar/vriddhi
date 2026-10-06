@@ -19,7 +19,7 @@ from src.general.matcher import RequirementMatch, requirement_skill_id
 from src.general.scoring import PARTIAL_CREDIT
 from src.models.schemas import HourRange
 
-ROADMAP_MAX_ITEMS = 10
+ROADMAP_MAX_ITEMS = 8            # the rest go to `later`
 HOURS_PER_LEVEL = {"task": 60, "dwa": 40, "market_skill": 80, "tech": 50, "tool": 20}   # hours for a full level 0 -> 1
 JOB_ZONE_FACTOR = {1: 0.5, 2: 0.75, 3: 1.0, 4: 1.25, 5: 1.5}
 HOURS_SPREAD = (0.7, 1.3)        # range around the estimate

@@ -195,9 +195,10 @@ class FixtureM1Client:
             title_words = set(re.findall(r"[a-z]+", occ["title"].lower()))
             stems = {w.rstrip("s") for w in title_words}
             hit = len({w.rstrip("s") for w in words} & stems)
-            if hit:
+            if hit:                         # share of the query matched, averaged with share of the title matched
+                conf = 0.5 * hit / max(len(words), 1) + 0.5 * hit / max(len(stems), 1)
                 matches.append(OccupationMatch(soc_code=soc, title=occ["title"], method="token_match",
-                                               confidence=round(min(1.0, hit / max(len(words), 1)), 2)))
+                                               confidence=round(min(1.0, conf), 2)))
         return resolution(q, sorted(matches, key=lambda m: -m.confidence)[:k])
 
     def requirements(self, soc: str) -> list[dict]:

@@ -24,13 +24,26 @@ EVIDENCE_STRENGTH = {
 PARTIAL_CREDIT = 0.5
 WEAK_EVIDENCE = ("mentioned", "self")     # met only by these -> advice to show it in work or projects
 
+# Role history (A3): a past title that resolves to the occupation gives its core tasks/DWAs without real evidence
+# an implied partial credit, by years, always below PARTIAL_CREDIT; never 'met'.
+IMPLIED_TYPES = ("task", "dwa")
+IMPLIED_CREDIT_PER_YEAR = 0.08
+IMPLIED_CREDIT_MAX = 0.4
+IMPLIED_CREDIT_UNKNOWN_YEARS = 0.1       # a title with no dates (resume header)
+ROLE_MIN_CONFIDENCE = 0.7                # module 1 search confidence for a past title to count
+
 # Experience. Band from module 1's Indian postings (profile.indian_experience), else the O*NET job zone.
 JOB_ZONE_YEARS = {1: (0.0, 1.0), 2: (0.0, 2.0), 3: (1.0, 4.0), 4: (2.0, 6.0), 5: (4.0, 10.0)}
 EXPERIENCE_MIN_FACTOR = 0.8      # far below the band, the score keeps 80%
 EXPERIENCE_GAP_YEARS = 3.0       # ... reached this many years below the band's minimum
 
+# fit_percent: piecewise-linear, GOOD_FIT_THRESHOLD -> 50, FIT_MEDIAN_FULL (median full-profile own-occupation
+# score on the tuning set) -> 80, the same slope above it, capped at 100; 0 -> 0. Constants from tuning only.
+FIT_MEDIAN_FULL = 0.62            # A3 tuning set
+FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Early stage"))
+
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
-GOOD_FIT_THRESHOLD = 0.29        # midpoint of tuning-set partial max 0.288 and full min 0.295 (a thin gap)
+GOOD_FIT_THRESHOLD = 0.36        # A3 tuning: full min 0.364, partial/wrong max 0.357 (see WORKING.md 12.2)
 OVERQUALIFIED_EXTRA_YEARS = 3.0  # years above the band's maximum
 
 
@@ -41,12 +54,20 @@ class Band(NamedTuple):
 
 
 def credit(m: RequirementMatch) -> float:
+    if m.reason == "implied_by_role":
+        return m.implied_credit or 0.0
     if m.status == "missing":
         return 0.0
     if m.status == "partial":
         return PARTIAL_CREDIT
     strength = EVIDENCE_STRENGTH.get(m.evidence_type or "self", EVIDENCE_STRENGTH["self"])
     return min(1.0, strength / max(m.item.level, 1e-6))
+
+
+def implied_credit(years: float | None) -> float:
+    if years is None:
+        return IMPLIED_CREDIT_UNKNOWN_YEARS
+    return min(IMPLIED_CREDIT_MAX, IMPLIED_CREDIT_PER_YEAR * years)
 
 
 def skill_score(matches: list[RequirementMatch]) -> float:
@@ -68,6 +89,20 @@ def by_type(matches: list[RequirementMatch]) -> dict[str, dict]:
         out[t] = {"share": round(raw[t] / total, 4), "items": len(ms),
                   "coverage": round(sum(m.item.weight * credit(m) for m in ms) / w, 4) if w else 0.0}
     return out
+
+
+def fit_percent(score: float) -> int:
+    """User-facing 0-100 from the raw match score (see FIT_MEDIAN_FULL)."""
+    t, m = GOOD_FIT_THRESHOLD, FIT_MEDIAN_FULL
+    if score <= 0:
+        return 0
+    if score < t:
+        return round(50 * score / t)
+    return min(100, round(50 + 30 * (score - t) / (m - t)))
+
+
+def fit_label(percent: int) -> str:
+    return next(label for floor, label in FIT_LABELS if percent >= floor)
 
 
 def experience_band(profile: dict | None) -> Band | None:

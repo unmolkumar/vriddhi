@@ -66,6 +66,8 @@ class EvidenceRef(BaseModel):
     section: str
     span: tuple[int, int] | None = Field(default=None, description="Offsets in free_text")
     context_span: tuple[int, int] | None = None
+    translated: bool = Field(default=False, description="text is an English rewrite of original_text")
+    original_text: str | None = None
 
 
 class RequirementResult(BaseModel):
@@ -78,7 +80,7 @@ class RequirementResult(BaseModel):
     weight: float
     required_level: float
     provenance: Provenance
-    reason: Literal["alias", "semantic", "none"]
+    reason: Literal["alias", "semantic", "implied_by_role", "none"]
     evidence: EvidenceRef | None = None
     advice: str | None = None
     flags: list[str] = Field(default_factory=list)
@@ -125,6 +127,28 @@ class FitIndicatorItem(BaseModel):
     level: float
 
 
+class NotApplicableItem(BaseModel):
+    requirement: str
+    item_type: str
+    reason: str = Field(description="Why it's outside the scope of practice in India")
+
+
+class RoleHistoryItem(BaseModel):
+    title: str = Field(description="A past or current job title from the evidence")
+    years: float | None
+    soc_code: str
+    occupation_title: str
+    confidence: float
+    applies_to_target: bool = Field(description="Gives the target's tasks implied partial credit")
+
+
+class LaterItem(BaseModel):
+    requirement: str
+    item_type: str
+    status: Status
+    weight: float
+
+
 class CloseAlternative(BaseModel):
     soc_code: str
     title: str
@@ -140,6 +164,7 @@ class RoadmapItem(BaseModel):
     status: Status
     provenance: Provenance
     weight: float
+    implied_by_role: bool = Field(default=False, description="Only implied by a past title; listed after real gaps")
     prerequisites: list[str] = Field(default_factory=list, description="From the v1 taxonomy, not yet in your evidence")
     practice_ideas: list[str] = Field(default_factory=list, description="Nearest unmet O*NET tasks/DWAs to practise on")
     hours: HourRange = Field(description="Estimated range")
@@ -147,8 +172,9 @@ class RoadmapItem(BaseModel):
 
 
 class GeneralRoadmap(BaseModel):
-    items: list[RoadmapItem]
-    total_hours: HourRange
+    items: list[RoadmapItem] = Field(description="Main roadmap, at most ROADMAP_MAX_ITEMS by weight")
+    later: list[LaterItem] = Field(default_factory=list, description="The remaining gaps, for after the main roadmap")
+    total_hours: HourRange = Field(description="Main roadmap only")
     total_weeks: HourRange | None = None
     hours_per_week: float | None = None
     note: str
@@ -163,11 +189,16 @@ class ProvenanceSummary(BaseModel):
 class GapAnalysisV2Response(BaseModel):
     resolution: RoleResolution
     match_score: float = Field(ge=0, le=1)
+    fit_percent: int = Field(ge=0, le=100, description="User-facing: threshold -> 50, typical full profile -> 80")
+    fit_label: str = Field(description="Strong fit / Good fit / Developing / Early stage")
     verdict: Verdict
     score_breakdown: ScoreBreakdown
     strengths: list[RequirementResult]
     gaps: list[RequirementResult]
     gaps_total: int
+    not_applicable_in_india: list[NotApplicableItem] = Field(
+        default_factory=list, description="Excluded from scoring: outside the scope of practice in India")
+    role_history: list[RoleHistoryItem] = Field(default_factory=list)
     draws_on: list[DrawsOnItem]
     work_activities: list[WorkActivityItem]
     fit_indicators: list[FitIndicatorItem]
