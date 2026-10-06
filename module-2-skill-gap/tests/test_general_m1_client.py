@@ -3,7 +3,8 @@ import httpx
 import pytest
 
 from src.general.m1_client import (
-    LOW_CONFIDENCE, FixtureM1Client, M1Client, M1Error, OccupationMatch, resolution,
+    EXTRA_FIXTURE_PATH, FIXTURE_PATH, LOW_CONFIDENCE, FixtureM1Client, M1Client, M1Error, OccupationMatch,
+    resolution,
 )
 
 RN = "29-1141.00"
@@ -94,8 +95,29 @@ def test_low_confidence_and_ties_ask_did_you_mean():
 
 def test_fixture_client_mirrors_the_interface():
     f = FixtureM1Client()
-    assert f.version() == "2.0.0" and len(f.occupations) == 15
+    assert f.version() == "2.1.0" and len(f.occupations) == 15
     assert f.search("registered nurse").matches[0].soc_code == RN
-    assert len(f.requirements(RN)) == 280 and f.profile(RN)["title"] == "Registered Nurses"
+    assert len(f.requirements(RN)) == 291 and f.profile(RN)["title"] == "Registered Nurses"
     with pytest.raises(M1Error):
         f.requirements("00-0000.00")
+
+
+def test_fixture_files_merge_and_keep_their_versions():
+    f = FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH)
+    assert len(f.occupations) == 25
+    assert f.version_of(RN) == "2.1.0" and f.version_of("23-1011.00") == "2.0.0"
+    assert f.version() == "2.0.0+2.1.0"
+
+
+def test_meta_endpoint_is_preferred_when_module_1_has_it(tmp_path):
+    def with_meta(request):
+        if request.url.path == "/api/v1/meta":
+            return httpx.Response(200, json={"db_meta": {"schema_version": "2.2.0", "export_hash": "f81d5eb087e03531aa"}})
+        return _m1()(request)
+    calls = []
+    client = _client(with_meta, tmp_path, calls)
+    assert client.version() == "2.2.0+f81d5eb087e03531"
+    client.requirements(RN)
+    assert (tmp_path / "2.2.0_f81d5eb087e03531" / f"{RN}.requirements.json").exists()   # sanitised dir name
+    assert "/openapi.json" not in calls
+    assert _client(_m1(), tmp_path).version() == "2.0.0"           # no /meta yet: the OpenAPI version

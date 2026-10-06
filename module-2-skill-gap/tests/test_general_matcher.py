@@ -1,4 +1,5 @@
-"""General engine (v2) - matcher: alias layer first, per-type thresholds, best evidence, provisional coverage.
+"""General engine (v2) - matcher: core types only, alias layer first, per-type thresholds, best evidence,
+provenance, provisional coverage.
 
 Uses a deterministic bag-of-words encoder, so no model download is needed.
 """
@@ -10,7 +11,7 @@ import pytest
 
 from src.general.evidence import EvidenceUnit
 from src.general.matcher import THRESHOLDS, TYPE_SHARE, coverage, match, status_of
-from src.general.requirements import normalise
+from src.general.requirements import CURATED_WEIGHT, SCORED_TYPES, normalise
 
 
 class WordEncoder:
@@ -71,13 +72,19 @@ def test_semantic_status_reason_and_best_evidence(encoder):
     assert payroll.status == "missing" and payroll.reason == "none"
 
 
-def test_thresholds_are_per_item_type():
+def test_thresholds_cover_core_types_only():
     met, partial = THRESHOLDS["task"]
     assert status_of("task", met) == "met" and status_of("task", partial) == "partial"
     assert status_of("task", partial - 0.01) == "missing"
-    assert THRESHOLDS["tech"][0] != THRESHOLDS["knowledge"][0]
-    sim = THRESHOLDS["knowledge"][0]
-    assert status_of("knowledge", sim) == "met" and status_of("tech", sim) == "missing"
+    assert set(THRESHOLDS) == set(SCORED_TYPES)
+
+
+def test_only_core_requirements_are_matched_and_carry_provenance(encoder):
+    items, _ = normalise(rows() + [{"soc_code": "s", "item_type": "skill", "item_name": "Active Listening",
+                                    "importance_norm": 0.7, "reliable": 1}])
+    matches = match(items, units(), encoder)
+    assert {m.item.item_type for m in matches} == {"tech", "task"}        # ability and skill are inferred instead
+    assert all(m.provenance == m.item.provenance == "onet" for m in matches)
 
 
 def test_no_evidence_means_everything_missing(encoder):
@@ -85,10 +92,21 @@ def test_no_evidence_means_everything_missing(encoder):
     assert {m.status for m in match(items, [], encoder)} == {"missing"}
 
 
-def test_coverage_balances_types_and_ignores_abilities(encoder):
+def test_coverage_balances_core_types(encoder):
     items, _ = normalise(rows())
     matches = match(items, units(), encoder)
-    # tech: 1 of 1 met; task: weight 0.9 met of 1.6; ability has weight 0 and share 0
+    # tech: 1 of 1 met; task: weight 0.9 met of 1.6
     tech, task = TYPE_SHARE["tech"], TYPE_SHARE["task"]
     expected = (tech * 1.0 + task * 0.9 / 1.6) / (tech + task)
+    assert coverage(matches) == pytest.approx(expected)
+
+
+def test_a_type_made_of_curated_rows_counts_at_its_reliability(encoder):
+    curated = [{"soc_code": "s", "item_type": "market_skill", "item_name": "Bank reconciliation", "source": "curated",
+                "importance_norm": 0.8, "reliable": 1}]
+    items, _ = normalise(rows() + curated)
+    matches = match(items, units() + [EvidenceUnit(text="Bank reconciliation", evidence_type="work",
+                                                   section="experience")], encoder)
+    tech, task, mk = TYPE_SHARE["tech"], TYPE_SHARE["task"], TYPE_SHARE["market_skill"] * CURATED_WEIGHT
+    expected = (tech * 1.0 + task * 0.9 / 1.6 + mk * 1.0) / (tech + task + mk)
     assert coverage(matches) == pytest.approx(expected)
