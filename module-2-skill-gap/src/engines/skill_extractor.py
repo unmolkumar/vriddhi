@@ -159,6 +159,32 @@ def coarser_ids(skill_id: str) -> list[str]:
     return out
 
 
+CATEGORY_CHILDREN_LIMIT = 4
+
+
+def category_children(skill_id: str, limit: int = CATEGORY_CHILDREN_LIMIT) -> list[str]:
+    """Concrete skills under a category, nearest first, then the most central ('cloud' -> aws, azure, gcp, ...).
+
+    Walks maps_to downwards (skills whose chain reaches the category). Centrality = how many skills map into
+    the child. Empty when the taxonomy has nothing under the category.
+    """
+    tax = taxonomy()
+    below: dict[str, list[str]] = {}
+    for s in tax["skills"]:
+        if s.get("maps_to"):
+            below.setdefault(s["maps_to"], []).append(s["id"])
+    out, frontier, depth, ranked = [], [skill_id], 0, []
+    while frontier:
+        depth += 1
+        nxt = [c for f in frontier for c in below.get(f, [])]
+        ranked += [(depth, -len(below.get(c, [])), tax["by_id"][c]["difficulty_tier"], c) for c in nxt]
+        frontier = nxt
+    for *_, c in sorted(ranked):
+        if not tax["by_id"][c].get("is_category") and c not in out:
+            out.append(c)
+    return out[:limit]
+
+
 def _mid_sentence(text: str, start: int) -> bool:
     i = start - 1
     while i >= 0 and text[i] in " \t":
@@ -191,8 +217,8 @@ def _context_ok(rule: str | None, text: str, start: int, end: int, skills_contex
 
 
 def _hit(entry: dict, source: str, surface: str) -> SkillHit:
-    return SkillHit(id=entry["id"], display=entry["display"], category=entry["category"],
-                    in_taxonomy=True, source=source, matches=[surface])
+    return SkillHit(id=entry["id"], display=entry["display"], category=entry["category"], in_taxonomy=True,
+                    is_category=entry.get("is_category", False), source=source, matches=[surface])
 
 
 def _dictionary_pass(text: str, skills_context: bool) -> dict[str, SkillHit]:
