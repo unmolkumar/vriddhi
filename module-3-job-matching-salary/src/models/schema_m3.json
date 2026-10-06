@@ -730,6 +730,17 @@
           "title": "Stale",
           "type": "boolean"
         },
+        "fetched_at": {
+          "description": "When this listing was fetched from its provider",
+          "format": "date-time",
+          "title": "Fetched At",
+          "type": "string"
+        },
+        "age_hours": {
+          "description": "Hours since fetched_at",
+          "title": "Age Hours",
+          "type": "number"
+        },
         "salary": {
           "$ref": "#/$defs/SalaryRange"
         },
@@ -857,6 +868,8 @@
         "publisher",
         "source_url",
         "stale",
+        "fetched_at",
+        "age_hours",
         "salary",
         "match_score",
         "classification",
@@ -1160,6 +1173,43 @@
           "title": "Stale",
           "type": "boolean"
         },
+        "fetched_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "When the oldest returned listing was fetched",
+          "title": "Fetched At"
+        },
+        "age_hours": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hours since fetched_at",
+          "title": "Age Hours"
+        },
+        "data_age": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "e.g. 'fetched 10 h ago'",
+          "title": "Data Age"
+        },
         "warnings": {
           "items": {
             "type": "string"
@@ -1183,6 +1233,9 @@
         "provider_trace",
         "sources",
         "stale",
+        "fetched_at",
+        "age_hours",
+        "data_age",
         "warnings"
       ],
       "title": "JobSearchResponse",
@@ -1234,7 +1287,7 @@
       "type": "object"
     },
     "MarketPercentiles": {
-      "description": "Module 1's market_salary_percentiles object, as POST /api/v1/career/analyze returns it (values in LPA).\noverall_usd is accepted and ignored.",
+      "description": "Module 1's market_salary_percentiles object, as POST /api/v1/career/analyze returns it (values in LPA).\noverall_usd is accepted and ignored. Older module 1 sends no remote_inr_lpa (remote mixed into overall).",
       "properties": {
         "overall_inr_lpa": {
           "anyOf": [
@@ -1245,7 +1298,20 @@
               "type": "null"
             }
           ],
-          "default": null
+          "default": null,
+          "description": "On-site and hybrid (all roles in older module 1)"
+        },
+        "remote_inr_lpa": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PercentileBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pure remote roles; used only when the request accepts remote work only"
         },
         "by_experience_inr_lpa": {
           "additionalProperties": {
@@ -1985,7 +2051,8 @@
               "enum": [
                 "experience_bucket",
                 "experience_x_city_ratio",
-                "overall"
+                "overall",
+                "remote"
               ],
               "type": "string"
             },
@@ -2388,14 +2455,38 @@
       "type": "object"
     },
     "SourceCheck": {
-      "description": "Module 1's percentile median against JSearch's estimate, when both were available.",
+      "description": "Module 1's percentiles against JSearch's estimate, when both were available (INR per year).",
       "properties": {
+        "module_1_p25": {
+          "title": "Module 1 P25",
+          "type": "integer"
+        },
         "module_1_median": {
           "title": "Module 1 Median",
           "type": "integer"
         },
+        "module_1_p75": {
+          "title": "Module 1 P75",
+          "type": "integer"
+        },
+        "module_1_sample_size": {
+          "title": "Module 1 Sample Size",
+          "type": "integer"
+        },
+        "jsearch_min": {
+          "title": "Jsearch Min",
+          "type": "integer"
+        },
         "jsearch_median": {
           "title": "Jsearch Median",
+          "type": "integer"
+        },
+        "jsearch_max": {
+          "title": "Jsearch Max",
+          "type": "integer"
+        },
+        "jsearch_sample_size": {
+          "title": "Jsearch Sample Size",
           "type": "integer"
         },
         "gap_pct": {
@@ -2407,13 +2498,35 @@
           "description": "Within SALARY_SOURCE_TOLERANCE",
           "title": "Agree",
           "type": "boolean"
+        },
+        "primary": {
+          "description": "The source the estimate uses",
+          "enum": [
+            "module_1",
+            "jsearch"
+          ],
+          "title": "Primary",
+          "type": "string"
+        },
+        "rule": {
+          "description": "'module_1_agrees' or 'PREFER_LARGER_INDIA_SAMPLE'",
+          "title": "Rule",
+          "type": "string"
         }
       },
       "required": [
+        "module_1_p25",
         "module_1_median",
+        "module_1_p75",
+        "module_1_sample_size",
+        "jsearch_min",
         "jsearch_median",
+        "jsearch_max",
+        "jsearch_sample_size",
         "gap_pct",
-        "agree"
+        "agree",
+        "primary",
+        "rule"
       ],
       "title": "SourceCheck",
       "type": "object"

@@ -29,7 +29,8 @@ MIN_CITY_SAMPLES = 50          # a module 1 city band smaller than this doesn't 
 SMALL_SAMPLE = 100             # module 1 bands below this many points get less confidence ...
 SMALL_SAMPLE_PENALTY = 0.1     # ... by this much
 SALARY_SOURCE_TOLERANCE = 0.25 # module 1 and JSearch medians within 25% agree
-DISAGREE_PENALTY = 0.15        # confidence lost when they don't
+DISAGREE_PENALTY = 0.1         # confidence lost when they don't
+PREFER_LARGER_INDIA_SAMPLE = "PREFER_LARGER_INDIA_SAMPLE"  # disagreeing sources: the larger India sample is primary
 JSEARCH_CONFIDENCE = {"VERY_HIGH": 0.70, "HIGH": 0.60, "MEDIUM": 0.50, "LOW": 0.35}  # JSearch's own label
 JSEARCH_DEFAULT_CONFIDENCE = 0.45
 IQR_K = 1.5                    # Tukey fences for outliers
@@ -127,8 +128,9 @@ def weighted_percentile(points: list[tuple[float, int]], q: float) -> float:
 
 
 # Module 1's experience tiers: entry <3 years, mid 3-5, senior >5. Senior has no upper bound; the candidate is
-# positioned over 5-12 years.
-M1_TIER_BANDS = {"entry": (0.0, 3.0), "mid": (3.0, 5.0), "senior": (5.0, 12.0)}
+# positioned over 5 to M1_SENIOR_CAP_YEARS.
+M1_SENIOR_CAP_YEARS = 12.0
+M1_TIER_BANDS = {"entry": (0.0, 3.0), "mid": (3.0, 5.0), "senior": (5.0, M1_SENIOR_CAP_YEARS)}
 M1_CITY = {"Delhi": "Delhi NCR", "Noida": "Delhi NCR", "Gurugram": "Delhi NCR"}  # our names -> module 1's metro
 
 
@@ -138,7 +140,7 @@ class M1Salary(NamedTuple):
     p50: float
     p75: float
     sample_size: int
-    method: str                      # experience_bucket | experience_x_city_ratio | overall
+    method: str                      # experience_bucket | experience_x_city_ratio | overall | remote
     band: ExperienceBand | None      # the experience tier the figures describe
     detail: str
 
@@ -147,13 +149,18 @@ def experience_tier(years: float) -> str:
     return "entry" if years < 3 else "mid" if years <= 5 else "senior"
 
 
-def m1_salary(pct: MarketPercentiles, years: float, city: str | None) -> M1Salary | None:
+def m1_salary(pct: MarketPercentiles, years: float, city: str | None, *, remote_only: bool = False) -> M1Salary | None:
     """Adapter for module 1's market_salary_percentiles (LPA).
 
-    The candidate's experience tier, scaled by city p50 / overall p50 when that city band has at least
-    MIN_CITY_SAMPLES points; the tier alone otherwise. Falls back to the overall band when the tier is
-    missing or under MIN_PERCENTILE_SAMPLE.
+    On-site/hybrid by default: the candidate's experience tier, scaled by city p50 / overall p50 when that city
+    band has at least MIN_CITY_SAMPLES points; the tier alone otherwise. Falls back to the overall band when the
+    tier is missing or under MIN_PERCENTILE_SAMPLE. With remote_only (the request accepts remote work only),
+    module 1's remote_inr_lpa band as is, when it has MIN_PERCENTILE_SAMPLE points; older module 1 has none.
     """
+    remote = pct.remote_inr_lpa
+    if remote_only and remote and remote.sample_size >= MIN_PERCENTILE_SAMPLE:
+        return M1Salary(remote.p25 * 100_000, remote.p50 * 100_000, remote.p75 * 100_000, remote.sample_size,
+                        "remote", None, "remote roles, all experience levels")
     tier = experience_tier(years)
     band, method = pct.by_experience_inr_lpa.get(tier), "experience_bucket"
     if band is None or band.sample_size < MIN_PERCENTILE_SAMPLE:
@@ -168,6 +175,9 @@ def m1_salary(pct: MarketPercentiles, years: float, city: str | None) -> M1Salar
         detail += f" x {m1_city} ratio {factor:.2f}"
     elif city_band:
         detail += f"; {m1_city} band not used ({city_band.sample_size} points, need {MIN_CITY_SAMPLES})"
+    if remote_only:
+        detail += ("; no remote band from module 1" if remote is None else
+                   f"; remote band not used ({remote.sample_size} points, need {MIN_PERCENTILE_SAMPLE})")
     lo, mid, hi = (v * factor * 100_000 for v in (band.p25, band.p50, band.p75))
     return M1Salary(lo, mid, hi, band.sample_size, method,
                     ExperienceBand(min=M1_TIER_BANDS[tier][0], max=M1_TIER_BANDS[tier][1]) if tier else None, detail)
@@ -202,8 +212,8 @@ def estimate_market(jobs: list[Job], *, histogram_fn: Callable[[], dict[int, int
         tried.append(f"module_1_percentiles ({percentiles.sample_size} points, need {MIN_PERCENTILE_SAMPLE})")
 
     if jsearch_estimate:
-        conf = JSEARCH_CONFIDENCE.get(jsearch_estimate.get("confidence", ""), JSEARCH_DEFAULT_CONFIDENCE)
-        est = _estimate(jsearch_estimate["min"], jsearch_estimate["median"], jsearch_estimate["max"], conf,
+        est = _estimate(jsearch_estimate["min"], jsearch_estimate["median"], jsearch_estimate["max"],
+                        _jsearch_confidence(jsearch_estimate),
                         jsearch_estimate.get("sample_size", 0), ["jsearch_salary_estimate"], excluded)
         est.note += (f" From JSearch's salary estimate ({jsearch_estimate.get('publisher') or 'aggregated'} data, "
                      f"{jsearch_estimate.get('sample_size', 0):,} salaries).")
@@ -236,29 +246,47 @@ def estimate_market(jobs: list[Job], *, histogram_fn: Callable[[], dict[int, int
 
 
 def _from_percentiles(m1: M1Salary, js: dict | None, excluded: dict[str, int]) -> SalaryEstimate:
-    """Module 1's percentiles, checked against JSearch's estimate when there is one. Agreeing sources keep
-    module 1's range; disagreeing ones are both reported, the range stretched to cover both medians, the
-    median split between them, and confidence lowered. Neither is silently dropped."""
+    """Module 1's percentiles, checked against JSearch's estimate when there is one.
+
+    Medians within SALARY_SOURCE_TOLERANCE: module 1 stays primary. Beyond it, PREFER_LARGER_INDIA_SAMPLE:
+    the source with more India-located salaries is primary (module 1 on a tie), the other stays in
+    source_check with its numbers and the gap, and confidence drops by DISAGREE_PENALTY."""
     n = m1.sample_size
-    conf = min(CONFIDENCE["posted_cap"], 0.55 + 0.05 * math.log10(n)) - (SMALL_SAMPLE_PENALTY if n < SMALL_SAMPLE else 0)
-    lo, mid, hi, sources, check = m1.p25, m1.p50, m1.p75, ["module_1_percentiles"], None
-    note = f" Based on module 1's {n:,} salary points for the role ({m1.detail})."
-    if js:
-        gap = (js["median"] - m1.p50) / m1.p50
-        check = SourceCheck(module_1_median=_round(m1.p50), jsearch_median=_round(js["median"]),
-                            gap_pct=round(gap * 100, 1), agree=abs(gap) <= SALARY_SOURCE_TOLERANCE)
-        if check.agree:
-            note += f" JSearch's estimate agrees (median {lpa(js['median'])} LPA)."
-        else:
-            sources.append("jsearch_salary_estimate")
-            lo, hi, mid = min(lo, js["median"]), max(hi, js["median"]), (m1.p50 + js["median"]) / 2
-            conf -= DISAGREE_PENALTY
-            note += (f" JSearch's estimate differs by {abs(check.gap_pct):g}% (median {lpa(js['median'])} vs "
-                     f"{lpa(m1.p50)} LPA), so the range covers both and the confidence is lower.")
-    est = _estimate(lo, mid, hi, conf, n, sources, excluded)
-    est.method, est.source_check = m1.method, check
-    est.note += note
+    m1_conf = min(CONFIDENCE["posted_cap"], 0.55 + 0.05 * math.log10(n)) - (SMALL_SAMPLE_PENALTY if n < SMALL_SAMPLE else 0)
+    m1_note = f" Based on module 1's {n:,} salary points for the role ({m1.detail})."
+    if not js:
+        est = _estimate(m1.p25, m1.p50, m1.p75, m1_conf, n, ["module_1_percentiles"], excluded)
+        est.method, est.note = m1.method, est.note + m1_note
+        return est
+    gap = (js["median"] - m1.p50) / m1.p50
+    js_n = js.get("sample_size", 0)
+    agree = abs(gap) <= SALARY_SOURCE_TOLERANCE
+    use_js = not agree and js_n > n
+    check = SourceCheck(
+        module_1_p25=_round(m1.p25), module_1_median=_round(m1.p50), module_1_p75=_round(m1.p75), module_1_sample_size=n,
+        jsearch_min=_round(js["min"]), jsearch_median=_round(js["median"]), jsearch_max=_round(js["max"]),
+        jsearch_sample_size=js_n, gap_pct=round(gap * 100, 1), agree=agree,
+        primary="jsearch" if use_js else "module_1", rule="module_1_agrees" if agree else PREFER_LARGER_INDIA_SAMPLE)
+    if agree:
+        est = _estimate(m1.p25, m1.p50, m1.p75, m1_conf, n, ["module_1_percentiles"], excluded)
+        est.method = m1.method
+        est.note += m1_note + f" JSearch's estimate agrees (median {lpa(js['median'])} LPA)."
+    elif use_js:
+        est = _estimate(js["min"], js["median"], js["max"], _jsearch_confidence(js) - DISAGREE_PENALTY, js_n,
+                        ["jsearch_salary_estimate"], excluded)
+        est.note += (f" From JSearch's estimate ({js_n:,} India salaries). Module 1's median ({lpa(m1.p50)} LPA, "
+                     f"{n:,} points) differs by {abs(check.gap_pct):g}%; the larger India sample is used.")
+    else:
+        est = _estimate(m1.p25, m1.p50, m1.p75, m1_conf - DISAGREE_PENALTY, n, ["module_1_percentiles"], excluded)
+        est.method = m1.method
+        est.note += m1_note + (f" JSearch's median ({lpa(js['median'])} LPA, {js_n:,} salaries) differs by "
+                               f"{abs(check.gap_pct):g}%; module 1 has the larger India sample, so it is used.")
+    est.source_check = check
     return est
+
+
+def _jsearch_confidence(js: dict) -> float:
+    return JSEARCH_CONFIDENCE.get(js.get("confidence", ""), JSEARCH_DEFAULT_CONFIDENCE)
 
 
 def candidate_value(market: SalaryEstimate, *, match_score: float, years: float,
