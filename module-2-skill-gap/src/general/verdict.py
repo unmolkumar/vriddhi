@@ -91,9 +91,9 @@ def label_for(score: float, units: int, related: float, threshold: float, thresh
     return "insufficient_evidence" if short and related >= min_related else "under_skilled"
 
 
-QUESTION_MAX_WORDS = 14
+QUESTION_MAX_WORDS = 18
 _QUESTION_TAIL = re.compile(r",?\s+(?:using|such as|including|according to|in order to|to ensure|to determine|based on|"
-                            r"to meet|in accordance with|in locations).*$|;.*$", re.IGNORECASE)
+                            r"to meet|in accordance with|in locations)\b.*$|;.*$", re.IGNORECASE)
 
 
 def _first_clause(text: str) -> str:

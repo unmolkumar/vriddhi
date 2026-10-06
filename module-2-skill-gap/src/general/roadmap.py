@@ -117,9 +117,9 @@ def order(gaps: list[RequirementMatch], known: set[str]) -> list[RequirementMatc
 # --- A3b: ranking by expected score gain --------------------------------------------------------------------
 # Generic office/productivity software: a separate `basics` list unless the occupation's market skills name it.
 BASIC_SOFTWARE = re.compile(
-    r"(microsoft (word|excel|outlook|access|powerpoint|office|windows|onenote|teams|exchange|sharepoint)|"
+    r"\b(microsoft (word|excel|outlook|access|powerpoint|office|windows|onenote|teams|exchange|sharepoint)|"
     r"office suite|google (docs|sheets|drive|slides|workspace)|gmail|adobe acrobat|web browser|email|e-mail|"
-    r"word processing|spreadsheet software|presentation software|operating system|internet browser)", re.IGNORECASE)
+    r"word processing|spreadsheet software|presentation software|operating system|internet browser)\b", re.IGNORECASE)
 
 
 def expected_gain(matches: list[RequirementMatch], credit) -> dict[str, float]:
