@@ -79,8 +79,11 @@ def test_onet_tables_content_coverage():
     c.execute("SELECT COUNT(*) FROM onet_task_ratings")
     assert c.fetchone()[0] > 15000
 
-    c.execute("SELECT COUNT(*) FROM onet_dwa")
-    assert c.fetchone()[0] > 20000
+    # DWAs populated without duplication (COUNT(*) == COUNT(DISTINCT soc, task, dwa))
+    c.execute("SELECT COUNT(*), COUNT(DISTINCT soc_code || '|' || task_id || '|' || dwa_id) FROM onet_dwa")
+    total_dwa, distinct_dwa = c.fetchone()
+    assert total_dwa == 24087
+    assert total_dwa == distinct_dwa
 
     conn.close()
 

@@ -29,7 +29,7 @@ This document details:
 | **`onet_abilities`** | Table | **47,320** | All 52 cognitive, physical, and sensory abilities required per occupation. |
 | **`onet_work_activities`** | Table | **37,351** | All 41 generalized work activities (GWA) with importance and level. |
 | **`onet_task_ratings`** | Table | **18,420** | Criticality ratings for tasks: importance (IM), relevance (RT), and frequency (FT). |
-| **`onet_dwa`** | Table | **264,957** | Granular Detailed Work Activities (DWA) and Intermediate Work Activities (IWA) linked to tasks. |
+| **`onet_dwa`** | Table | **24,087** | Granular Detailed Work Activities (DWA) and Intermediate Work Activities (IWA) linked to tasks (COUNT(*) = COUNT(DISTINCT soc,task,dwa)). |
 | **`onet_tech_skills`** | Table | **31,821** | Software tools, commodity codes, commodity titles, and hot/in-demand technology indicators. |
 | **`onet_tools`** | Table | **43,372** | Official O\*NET Tools Used: equipment, machinery, clinical apparatus, and specialized tools across all ~1,000 occupations. |
 | **`onet_job_zones`** | Table | **923** | O\*NET Job Zones 1–5 with full experience, education, and vocational training narratives (93 residual/all-other roles unzoned per O\*NET standard). |
@@ -39,17 +39,17 @@ This document details:
 | **`onet_content_model`** | Table | **268** | Plain-English definitions and descriptions of every O\*NET skill, knowledge, ability, and activity element (ready to embed). |
 | **`city_aliases`** | Table | **583** | Indian city normalization collapsing colloquial names to canonical metros, tiers (1/2/3), and metro groups (e.g. Delhi NCR). |
 | **`india_title_aliases`** | Table | **64** | Indian colloquial job titles (e.g. *staff nurse*, *CA*, *site engineer*, *telecaller*, *ITI electrician*) mapped to SOC codes. |
-| **`posting_soc_map`** | Table | **41,125** | High-precision mapping from Indian & global job postings to standard SOC codes with dynamic confidence scoring. |
+| **`posting_soc_map`** | Table | **41,123** | High-precision mapping from Indian & global job postings to standard SOC codes with dynamic confidence scoring. |
 | **`salary_soc_map`** | Table | **24,555** | Mapping from salary benchmarks to standard SOC codes. |
-| **`skill_context_soc_map`** | Table | **25,545** | Mapping from raw posting occupation contexts to standard SOC codes. |
+| **`skill_context_soc_map`** | Table | **7,422** | Mapping from raw posting occupation contexts to standard SOC codes. |
 | **`salary_quality_flags`** | Table | **5,500** | Quality flags isolating synthetic data (Kaggle AI India), stale pre-2023 records, monthly pay confusion, and IQR outliers. |
-| **`skill_noise_terms`** | Table | **600+** | Noise dictionary (PromptCloud 45 industries, Indian cities/states, EEO terms, employee benefits, seniority words, occupation titles). |
+| **`skill_noise_terms`** | Table | **3,061** | Noise dictionary (PromptCloud 45 industries, Indian cities/states, EEO terms, employee benefits, seniority words, occupation titles). |
 | **`v_skill_demand_clean`** | View | **Clean** | `skill_demand` minus noise terms, joined to `skill_context_soc_map` for pristine SOC-level skill intelligence. |
-| **`skill_demand_by_soc`** | Table | **1,638** | Cleaned empirical skill demand (posting_count >= 3, capped top 50 per SOC, normalized names) + curated domain competencies. |
+| **`skill_demand_by_soc`** | Table | **1,691** | Cleaned empirical skill demand (posting_count >= 3, capped top 50 per SOC, normalized names) + curated domain competencies. |
 | **`education_level_map_india`** | Table | **12** | Crosswalk mapping O\*NET education categories to Indian qualifications (10th, 12th, ITI/Diploma, Bachelor's, CA/MBBS, Master's, PhD). |
 | **`occupation_experience_india`** | Table | **385** | Empirical Indian min/max experience distributions with sample sizes ($n$) for 2023+ postings. |
 | **`occupation_salary_india`** | Table | **1,317** | Unflagged 2023+ Indian salary percentiles (p25 / p50 / p75) sliced by canonical city, experience bucket, and onsite/remote work mode. |
-| **`v_occupation_requirements`** | View | **260,173** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, official tools, tech, and market skills per SOC for M2 & M3. |
+| **`v_occupation_requirements`** | View | **260,226** | **Unified contract view** providing all skills, knowledge, abilities, tasks, DWAs, official tools, tech, and market skills per SOC for M2 & M3. |
 | **`job_postings_india`** | Table | **72,691** | Real Indian postings (Naukri, PromptCloud) with titles, companies, cities, INR salaries, and experience bands (UNTOUCHED). |
 | **`job_postings_global`** | Table | **115,000** | Global postings (LinkedIn) with standardized titles and salary signals (UNTOUCHED). |
 | **`salary_benchmarks`** | Table | **43,374** | Raw normalized salary records (UNTOUCHED). |
@@ -469,7 +469,7 @@ All new endpoints are strictly additive under `/api/v1/occupations`:
 ```json
 {
   "schema_version": "2.2.0",
-  "built_at": "2026-10-06T11:52:14.914479+00:00",
+  "built_at": "2026-10-06T13:38:43.606713+00:00",
   "onet_version": "31.0",
   "sources_hash": "8fdb1999026a10b9",
   "notes": "Vriddhi Generalised Labor Intelligence Database v2.2.0 (Official O*NET Tools, Top-50 Market Skills with posting_count, Normalized Names, Neutral Curated Weights)",
@@ -480,17 +480,17 @@ All new endpoints are strictly additive under `/api/v1/occupations`:
     "onet_abilities": 47320,
     "onet_work_activities": 37351,
     "onet_task_ratings": 18420,
-    "onet_dwa": 264957,
+    "onet_dwa": 24087,
     "onet_tools": 43372,
     "onet_tech_skills": 31821,
     "onet_job_zones": 923,
     "india_title_aliases": 64,
-    "posting_soc_map": 41125,
+    "posting_soc_map": 41123,
     "salary_soc_map": 24555,
-    "skill_demand_by_soc": 1638,
-    "v_occupation_requirements": 260173
+    "skill_demand_by_soc": 1691,
+    "v_occupation_requirements": 260226
   },
-  "export_hash": "16edcf59eeb7fe79d40cb799e102f7d751a4b3697bc05d0610c1a5d42e150869"
+  "export_hash": "02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13"
 }
 ```
 
@@ -499,7 +499,7 @@ All new endpoints are strictly additive under `/api/v1/occupations`:
 ## 9. Test Occupations & Static Mock Export (v2.2.0)
 
 A static mock export covering **15 representative occupations across 8 diverse industries** is provided at:
-`data/m1_occupation_requirements_export.json` (hash: `16edcf59eeb7fe79...`)
+`data/m1_occupation_requirements_export.json` (hash: `02b93f2ab57d315d...`)
 
 | Industry Domain | Occupation | SOC Code | Total Reqs | Skills | Knowledge | Abilities | DWAs | Tools | Tech | Market Skills |
 |---|---|---|---|---|---|---|---|---|---|---|

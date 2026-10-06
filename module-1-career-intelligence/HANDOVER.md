@@ -21,7 +21,7 @@ Module 1 has been transformed from supporting ~7 tech roles into a **universal c
   - `salary_benchmarks`: **43,374** (unchanged)
   - `skill_demand`: **371,141** (unchanged)
 - **Backward Compatibility**: Existing endpoints (`/career/analyze`, `/rank`, `/search_by_domain`, `/compare`) continue to return identical schemas and pass all regression tests.
-- **Test Integrity**: All 18 legacy tests + 33 generalisation acceptance tests pass (51/51 green). All 165 Module 3 tests pass (163 passed, 2 skipped live API).
+- **Test Integrity**: All 18 legacy tests + 34 generalisation acceptance tests pass (52/52 green). All 165 Module 3 tests pass (163 passed, 2 skipped live API).
 
 ---
 
@@ -57,6 +57,10 @@ SELECT COUNT(*) FROM skill_demand;
 -- 7. Posting mapping methods and confidence
 SELECT method, COUNT(*), ROUND(AVG(confidence), 3) FROM posting_soc_map GROUP BY method;
 -- alt_title_exact: 3,248 (0.950) | india_alias: 652 (0.932) | prefix_match: 37,225 (0.850)
+
+-- 8. Clean DWAs (no duplicates, strictly idempotent ETL reload)
+SELECT COUNT(*), COUNT(DISTINCT soc_code || '_' || task_id || '_' || dwa_id) FROM onet_dwa;
+-- Expected: 24087, 24087 | Actual: 24087, 24087 (COUNT(*) = COUNT(DISTINCT soc, task, dwa))
 ```
 
 ---
@@ -75,7 +79,7 @@ All new tables and views live in `module-1-career-intelligence/data/career_intel
 | `onet_abilities` | 47,320 | All 52 abilities | Same schema as `onet_skills` |
 | `onet_work_activities` | 37,351 | All 41 Generalized Work Activities | Same schema as `onet_skills` |
 | `onet_task_ratings` | 18,420 | Official task importance & frequency | `soc_code, task_id, importance (IM), relevance (RT), frequency (FT expected value)` |
-| `onet_dwa` | 264,957 | Tasks mapped to DWAs & IWAs | `soc_code, task_id, dwa_id, dwa_title, iwa_id, iwa_title` |
+| `onet_dwa` | 24,087 | Tasks mapped to DWAs & IWAs | `soc_code, task_id, dwa_id, dwa_title, iwa_id, iwa_title` |
 | `onet_tech_skills` | 31,821 | Software tools & commodity codes | `soc_code, example, commodity_code, commodity_title, hot_technology, in_demand` |
 | `onet_tools` | 43,372 | Official O\*NET Tools Used | `soc_code, example, commodity_code, commodity_title` |
 | `onet_job_zones` | 923 | Preparation levels 1 to 5 | `soc_code, job_zone, name, experience_text, education_text, training_text, svp_range` |
@@ -123,14 +127,14 @@ To solve the issue where Module 1 on-site salaries ran 16–37% above JSearch / 
 
 - **`skill_noise_terms`** (44 rows): EEO boilerplate (`gender`, `religion`, `color`, `race`, `national_origin`, `disability`...), employee benefits (`dental`, `vision`, `health_insurance`, `sick_time_and_holidays`, `401k`...), and numeric salary fragments.
 - **`v_skill_demand_clean`**: View joining raw `skill_demand` to `skill_context_soc_map`, excluding all noise terms.
-- **`skill_demand_by_soc`** (1,638 rows): Cleaned empirical skill demand grouped by SOC and region (`india` vs `global`). Filtered by `posting_count >= 3`, capped at top 50 per SOC, with display names normalized (`ML` → `Machine Learning`, `Python`, `SQL`, `AWS`, etc.) and columns `posting_count` and `soc_posting_total` exposed. Curated domain competencies have `importance_norm = 0.50` (neutral).
+- **`skill_demand_by_soc`** (1,691 rows): Cleaned empirical skill demand grouped by SOC and region (`india` vs `global`). Filtered by `posting_count >= 3`, capped at top 50 per SOC, with display names normalized (`ML` → `Machine Learning`, `Python`, `SQL`, `AWS`, etc.) and columns `posting_count` and `soc_posting_total` exposed. Curated domain competencies have `importance_norm = 0.50` (neutral).
 - **`city_aliases`** (583 rows): Maps Indian cities to canonical names, tier (1/2/3), and metro groups (`Bengaluru`, `Gurugram` / `Delhi NCR`, `Hyderabad`, `Pune`, `Mumbai MMR`, `Chandigarh Tri-city`, etc.).
 
 ---
 
 ### 3.5. Unified Requirements Contract: `v_occupation_requirements` (P0.7)
 
-**`v_occupation_requirements`** (**260,173 rows**) is the primary contract consumed by Module 2 and Module 3:
+**`v_occupation_requirements`** (**260,226 rows**) is the primary contract consumed by Module 2 and Module 3:
 
 ```sql
 SELECT 
@@ -227,7 +231,7 @@ Exposes database build metadata and schema verification info directly from `db_m
 ## 5. 15 Test Occupations & Static Mock Fixture (v2.2.0)
 
 The static mock fixture file is generated and saved in the repository:
-[`data/m1_occupation_requirements_export.json`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/m1_occupation_requirements_export.json) (hash: `16edcf59eeb7fe79...`)
+[`data/m1_occupation_requirements_export.json`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/data/m1_occupation_requirements_export.json) (hash: `02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13`)
 
 Covering the **15 cross-industry test occupations**:
 
@@ -268,8 +272,8 @@ Covering the **15 cross-industry test occupations**:
 
 ## 7. Verification & Test Suite Summary
 
-- **Module 1**: **51 / 51 tests passed (100% green)** in 22.33s.
-- **Module 3**: **163 passed, 2 skipped (165 total tests, 100% green)** in 3.90s.
+- **Module 1**: **52 / 52 tests passed (100% green)** in 20.88s.
+- **Module 3**: **163 passed, 2 skipped (165 total tests, 100% green)** in 3.43s.
 - **Documentation Updated**:
   - [`DATABASE.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/DATABASE.md)
   - [`WORKING.md`](file:///c:/Users/anmol/stuff/projects/vriddhi/module-1-career-intelligence/WORKING.md)
@@ -299,4 +303,15 @@ Covering the **15 cross-industry test occupations**:
 | **2. Indian market skills: now too few** | Real `india_postings` dropped to 17 rows; Data Scientists lost PyTorch, TensorFlow, SQL, AWS; names uppercase (`ML`, `PYTHON`). | **Fixed**: Replaced percentage share floor with support threshold `posting_count >= 3`, capped at top 50 per SOC. Added columns `posting_count` and `soc_posting_total` to `skill_demand_by_soc` and `v_occupation_requirements`. Restored all top technical skills for Data Scientists (50 skills: ML, Python, SQL, TensorFlow, Deep Learning, PyTorch, AWS, etc.). Normalized all skill names (`ML` → `Machine Learning`, `Python`, `SQL`, `AWS`). |
 | **3. Curated items outrank real data** | Curated skills had fixed `importance_norm = 0.80` while real posting skills had `share * 2` (0.20), causing curated items to dominate real Indian demand. | **Fixed**: Curated domain competencies are assigned a neutral `importance_norm = 0.50`. Real posting skills scale dynamically up to 1.00 based on posting frequency (`Machine Learning` = 1.00, `Python` = 0.52), ensuring empirical Indian market demand always outranks curated items. |
 | **4. Expose build version over API** | M2/M3 cache requirements per M1 build; need `GET /api/v1/meta`. | **Fixed**: Added `GET /api/v1/meta` returning `db_meta` containing `schema_version`, `built_at`, `export_hash`, and exact `table_counts`. |
+
+---
+
+## 10. Review Feedback (v2.2 Rebuild / Round 3) Resolution Matrix
+
+| Review Item | Feedback (Round 3) | Resolution in Rebuilt v2.2.0 |
+|---|---|---|
+| **0. WhatsApp DB was v2.1, not v2.2** | WhatsApp file had only 2.0.0 and 2.1.0 in `db_meta`, and 250 tools. | **Clarified**: The file transferred earlier via WhatsApp was the previous v2.1.0 build artifact. The rebuilt v2.2.0 database (`career_intel.db`) contains the complete 2.2.0 entry in `db_meta`, the full 43,372 official O\*NET tools, and pristine deduplicated DWAs. |
+| **1. DWA ETL Loader Duplication Bug** | `onet_dwa` had accumulated 192,696 rows (and earlier up to 264,957 = ~11 copies) because every run appended DWAs instead of replacing them. | **Fixed**: Updated `03_additive_generalisation_load.py` to enforce strict clear-and-reload (`DELETE FROM onet_dwa`) and in-memory deduplication `list(dict.fromkeys(rows))` before insert. Implemented `DELETE FROM` across all additive tables to guarantee 100% idempotent ETL. `onet_dwa` now has exactly **24,087** rows. |
+| **2. Invariant Verification Test** | Add test that `COUNT(*) = COUNT(DISTINCT soc, task, dwa)`. | **Added**: Implemented `test_onet_dwa_idempotent_deduplication` in `tests/test_generalisation_v2.py`. Verifies `total_dwa == 24087` and `total_dwa == distinct_dwa`. All 52 tests pass in M1; all 165 tests pass in M3. |
+| **3. Export SHA-256 Alignment** | Export fixture rebuilt and synchronized with `db_meta`. | **Fixed**: Re-exported `data/m1_occupation_requirements_export.json`. Hash synchronized in `db_meta` to `02b93f2ab57d315d65f8c60eb5279ad1f4e0d5026cc560170cb19e25daaf0d13`. |
 
