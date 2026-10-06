@@ -23,7 +23,9 @@ MIN_UNIT_CHARS = 3
 _CONTACT = re.compile(r"@|\+?\d[\d\s-]{8,}\d|linkedin\.com|github\.com", re.IGNORECASE)
 _BULLET = re.compile(r"^\s*[-•*▪●◦·>]+\s*")
 _SENTENCE = re.compile(r"(?<=[.!?;])\s+(?=[A-Z0-9])")
-_LIST_ITEM = re.compile(r"\s*[,|;•·▪●/]\s*|\n")
+_LIST_ITEM = re.compile(r"\s*[,|;•·▪●/]\s*|\s+and\s+|\n", re.IGNORECASE)
+_CLAUSE = re.compile(r"\s*[,;]\s*|\s+and\s+", re.IGNORECASE)
+MIN_CLAUSES = 2                # a sentence with this many list parts also yields one unit per part
 
 
 class EvidenceUnit(BaseModel):
@@ -31,42 +33,70 @@ class EvidenceUnit(BaseModel):
     evidence_type: EvidenceType
     section: str = Field(description="Resume section ('experience', 'skills', ...), 'free_text', 'profile' or 'typed'")
     span: tuple[int, int] | None = Field(default=None, description="Character offsets in the source text")
+    context_span: tuple[int, int] | None = Field(
+        default=None, description="For a clause split out of a list-like sentence: the whole sentence's span")
     skill_ids: list[str] = Field(default_factory=list, description="Taxonomy skills the v1 dictionary finds here")
 
 
-def _units_of(section: str, body: str) -> list[str]:
+def clauses(sentence: str) -> list[str]:
+    """The parts of a list-like sentence ('12 yrs, CBSE, classes 8-10 physics and chemistry'), or [] when it has
+    fewer than MIN_CLAUSES usable parts."""
+    parts = [p.strip(" .") for p in _CLAUSE.split(sentence)]
+    parts = [p for p in parts if len(p) >= MIN_UNIT_CHARS]
+    return parts if len(parts) >= MIN_CLAUSES else []
+
+
+def _units_of(section: str, body: str) -> list[tuple[str, list[str]]]:
+    """(piece, its clauses) per sentence; skills-section items are pieces with no clauses."""
     if section == "skills":
         out = []
         for line in body.splitlines():
             line = re.sub(r"^[^:]{1,30}:\s*", "", _BULLET.sub("", line))      # "Software: Tally, Excel" -> items
-            out += [p.strip() for p in _LIST_ITEM.split(line) if p.strip()]
+            out += [(p.strip(), []) for p in _LIST_ITEM.split(line) if p.strip()]
         return out
     out = []
     for line in body.splitlines():
         line = _BULLET.sub("", line).strip()
         if line:
-            out += [s.strip() for s in _SENTENCE.split(line) if s.strip()]
+            out += [(s.strip(), clauses(s.strip())) for s in _SENTENCE.split(line) if s.strip()]
     return out
 
 
+def _find(text: str, piece: str, cursor: int) -> tuple[int, int] | None:
+    start = text.find(piece, cursor)
+    start = text.find(piece) if start < 0 else start
+    return (start, start + len(piece)) if start >= 0 else None
+
+
 def from_text(text: str, *, default_section: str = "free_text") -> list[EvidenceUnit]:
-    """Resume-style or free text -> units. Text with no recognised headings is one 'free_text' section."""
+    """Resume-style or free text -> units. Text with no recognised headings is one 'free_text' section.
+
+    A list-like sentence (comma / semicolon / 'and' parts) yields the sentence and one unit per part; each part
+    keeps its own span and the sentence's span as context_span.
+    """
     sections = segment(text or "")
     units, cursor = [], 0
     for section, body in sections.items():
         name = default_section if section == "header" and len(sections) == 1 else section
         is_skills = name == "skills"
-        for piece in _units_of(name, body):
+        kind = SECTION_TYPE.get(name, "mentioned")
+        for piece, parts in _units_of(name, body):
             if len(piece) < MIN_UNIT_CHARS or _CONTACT.search(piece):
                 continue
-            start = text.find(piece, cursor)
-            start = text.find(piece) if start < 0 else start
-            span = (start, start + len(piece)) if start >= 0 else None
-            if start >= 0:
-                cursor = start
+            span = _find(text, piece, cursor)
+            if span:
+                cursor = span[0]
             hits = extract_skills(piece, use_llm=False, skills_context=is_skills)
-            units.append(EvidenceUnit(text=piece, evidence_type=SECTION_TYPE.get(name, "mentioned"), section=name,
-                                      span=span, skill_ids=[h.id for h in hits]))
+            units.append(EvidenceUnit(text=piece, evidence_type=kind, section=name, span=span,
+                                      skill_ids=[h.id for h in hits]))
+            part_cursor = span[0] if span else 0
+            for part in parts:
+                part_span = _find(text, part, part_cursor)
+                if part_span:
+                    part_cursor = part_span[1]
+                units.append(EvidenceUnit(
+                    text=part, evidence_type=kind, section=name, span=part_span, context_span=span,
+                    skill_ids=[h.id for h in extract_skills(part, use_llm=False, skills_context=True)]))
     return units
 
 
