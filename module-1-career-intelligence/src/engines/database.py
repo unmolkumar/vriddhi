@@ -752,7 +752,8 @@ class CareerDatabase:
             query = """
                 SELECT soc_code, item_type, item_id, item_name, item_description,
                        importance_norm, level_norm, hot_technology, in_demand,
-                       india_demand_share, source, reliable
+                       india_demand_share, source, reliable,
+                       posting_count, soc_posting_total
                 FROM v_occupation_requirements
                 WHERE soc_code = ?
             """
@@ -894,3 +895,30 @@ class CareerDatabase:
                 LIMIT ?
             """, (clean_soc, limit))
             return [dict(r) for r in cursor.fetchall()]
+
+    def get_db_meta(self) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve database build metadata and schema verification info.
+        """
+        import json
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute("""
+                    SELECT schema_version, built_at, onet_version, sources_hash, notes, table_counts, export_hash
+                    FROM db_meta
+                    ORDER BY schema_version DESC
+                    LIMIT 1
+                """)
+                row = cursor.fetchone()
+                if not row:
+                    return None
+                data = dict(row)
+                if data.get("table_counts") and isinstance(data["table_counts"], str):
+                    try:
+                        data["table_counts"] = json.loads(data["table_counts"])
+                    except Exception:
+                        pass
+                return data
+            except Exception:
+                return None

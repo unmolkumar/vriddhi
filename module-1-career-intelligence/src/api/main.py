@@ -4,12 +4,12 @@ FastAPI REST API server.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import router as career_router, occupations_router
+from .routes import router as career_router, occupations_router, meta_router
 
 app = FastAPI(
     title="Vriddhi Career Intelligence & Forecasting Engine",
     description="Module 1: Historical job analysis, current demand scoring, task-level AI exposure, and 5-year career forecasting.",
-    version="2.0.0"
+    version="2.2.0"
 )
 
 # Enable CORS for internal cross-module and integration UI communication
@@ -23,6 +23,7 @@ app.add_middleware(
 
 app.include_router(career_router)
 app.include_router(occupations_router)
+app.include_router(meta_router)
 
 
 @app.get("/health", tags=["Health"])
