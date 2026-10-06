@@ -39,11 +39,11 @@ EXPERIENCE_GAP_YEARS = 3.0       # ... reached this many years below the band's 
 
 # fit_percent: piecewise-linear, GOOD_FIT_THRESHOLD -> 50, FIT_MEDIAN_FULL (median full-profile own-occupation
 # score on the tuning set) -> 80, the same slope above it, capped at 100; 0 -> 0. Constants from tuning only.
-FIT_MEDIAN_FULL = 0.62            # A3 tuning set
+FIT_MEDIAN_FULL = 0.60            # A3 tuning set, frozen thresholds
 FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Early stage"))
 
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
-GOOD_FIT_THRESHOLD = 0.36        # A3 tuning: full min 0.364, partial/wrong max 0.357 (see WORKING.md 12.2)
+GOOD_FIT_THRESHOLD = 0.3254      # A3 tuning: full min 0.3257, partial/wrong max 0.3250 (WORKING.md 13.4)
 OVERQUALIFIED_EXTRA_YEARS = 3.0  # years above the band's maximum
 
 
