@@ -1,0 +1,18 @@
+Aditya Rao
+Data Scientist, Bengaluru
+
+Experience
+Data Scientist | Flipkart, Bengaluru | 2021 - Present
+- Build demand forecasting and churn prediction models in Python with scikit-learn and XGBoost.
+- Analyse large clickstream datasets in Spark and SQL to find drivers of conversion.
+- Run A/B tests and explain results to product managers with clear charts in Tableau.
+- Deploy models as APIs on AWS and monitor their accuracy in production.
+
+Data Analyst | Mu Sigma, Bengaluru | 2019 - 2021
+- Statistical analysis and dashboards for a US retail client.
+
+Skills
+Python, SQL, scikit-learn, TensorFlow, PyTorch, Spark, statistics, machine learning, NLP, Tableau, AWS
+
+Education
+M.Tech Computer Science, IIIT Bangalore, 2019
