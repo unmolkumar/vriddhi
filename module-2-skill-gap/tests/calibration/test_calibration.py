@@ -2,7 +2,7 @@
 
 Tuning set: thresholds were tuned on it, against the 15 export occupations; the A1 assertions stay.
 Held-out sets: never tuned on. Floors sit one profile below the results first observed with the frozen constants
-(WORKING.md section 11.3), so they catch regressions without pretending to more accuracy than measured.
+(WORKING.md section 11.3); non-English sentences use the committed translations (tests/calibration/translations.json), so they catch regressions without pretending to more accuracy than measured.
 Skips when the embedding model can't load (first run offline). Encodings are cached under data/cache/embeddings.
 """
 import pytest
@@ -12,18 +12,20 @@ from src.general.embeddings import DEFAULT_MODEL, Encoder
 
 RN, ELECTRICIANS, ACCOUNTANTS, DATA_SCIENTISTS = "29-1141.00", "47-2111.00", "13-2011.00", "15-2051.00"
 CLEAR_MARGIN = 0.10
-# set: (top-1 floor, top-3 floor, mean-margin floor), one profile below the A1c results with the frozen constants:
-# b 12/15 14/15 +0.114 | c 10/10 10/10 +0.195 | d 12/15 14/15 +0.094 | e 13/15 15/15 +0.135 | f 10/10 10/10 +0.173 |
-# g 13/15 15/15 +0.122 | b vs export15 15/15 +0.143 | e vs export15 14/15 15/15 +0.177
+# set: (top-1 floor, top-3 floor, mean-margin floor), one profile below the A3 results with the frozen constants
+# (MiniLM + committed translations): b 14/15 15/15 +0.140 | c 10/10 10/10 +0.228 | d 14/15 14/15 +0.125 |
+# e 13/15 15/15 +0.163 | f 10/10 10/10 +0.184 | g 13/15 15/15 +0.157 | h 4/5 5/5 +0.142 |
+# b vs export15 15/15 +0.173 | e vs export15 14/15 15/15 +0.200
 HELDOUT_FLOORS = {
-    "b_heldout": (11, 13, 0.08),
-    "c_new_occupations": (9, 9, 0.16),
-    "d_heldout_no_curated": (11, 13, 0.06),
-    "e_heldout2": (12, 14, 0.10),
-    "f_heldout2_extra_occupations": (9, 9, 0.14),
-    "g_heldout2_no_curated": (12, 14, 0.09),
-    "b_heldout_vs_export15": (14, 14, 0.11),
-    "e_heldout2_vs_export15": (13, 14, 0.14),
+    "b_heldout": (13, 14, 0.11),
+    "c_new_occupations": (9, 9, 0.19),
+    "d_heldout_no_curated": (13, 13, 0.09),
+    "e_heldout2": (12, 14, 0.13),
+    "f_heldout2_extra_occupations": (9, 9, 0.15),
+    "g_heldout2_no_curated": (12, 14, 0.12),
+    "h_hinglish": (3, 4, 0.10),
+    "b_heldout_vs_export15": (14, 14, 0.14),
+    "e_heldout2_vs_export15": (13, 14, 0.17),
 }
 A2_GATE = {"e_heldout2": 12, "f_heldout2_extra_occupations": 7}
 
@@ -100,6 +102,7 @@ def heldout(built, export_socs):
             ("e_heldout2", ("heldout2",), False, None, export_socs, None),
             ("f_heldout2_extra_occupations", ("heldout2",), False, None, None, export_socs),
             ("g_heldout2_no_curated", ("heldout2",), True, None, export_socs, None),
+            ("h_hinglish", ("hinglish",), False, None, None, None),
             ("b_heldout_vs_export15", ("heldout",), False, export_socs, None, None),
             ("e_heldout2_vs_export15", ("heldout2",), False, export_socs, export_socs, None)):
         ps, os_ = cal.subset(profiles, occupations, sets=sets, socs=socs, profile_socs=only, exclude_profile_socs=exclude)

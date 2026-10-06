@@ -40,12 +40,12 @@ def test_resolution_alias_soc_and_failures(engine):
 
 
 def test_experience_years_parsed_overridden_or_unknown(engine):
-    _, years, warnings = engine.evidence(GapAnalysisV2Request(soc_code=RN, free_text=NURSE))
-    assert years == 6.0 and not warnings
-    _, years, _ = engine.evidence(GapAnalysisV2Request(soc_code=RN, free_text=NURSE, experience_years=2))
-    assert years == 2
-    _, years, warnings = engine.evidence(GapAnalysisV2Request(soc_code=RN, skills=["nursing"]))
-    assert years is None and "Experience years unknown" in warnings[0]
+    ev = engine.evidence(GapAnalysisV2Request(soc_code=RN, free_text=NURSE))
+    assert ev.years == 6.0 and not ev.warnings
+    assert ev.history and ev.history[0][0] == "Staff Nurse"
+    assert engine.evidence(GapAnalysisV2Request(soc_code=RN, free_text=NURSE, experience_years=2)).years == 2
+    ev = engine.evidence(GapAnalysisV2Request(soc_code=RN, skills=["nursing"]))
+    assert ev.years is None and "Experience years unknown" in ev.warnings[0]
 
 
 def test_gap_analysis_output(engine):
