@@ -11,6 +11,7 @@ replaces it with the real scoring.
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 from functools import lru_cache
 from typing import Literal, NamedTuple
 
@@ -27,14 +28,15 @@ Status = Literal["met", "partial", "missing"]
 # (met, partial) cosine per core item type, MiniLM; tuned on tests/calibration/profiles/tuning only, then frozen
 # (WORKING.md section 11.3).
 THRESHOLDS: dict[str, tuple[float, float]] = {
-    "tech": (0.55, 0.45), "tool": (0.55, 0.45), "market_skill": (0.55, 0.45),
+    "tech": (0.60, 0.50), "tool": (0.60, 0.50), "market_skill": (0.60, 0.50),
     "task": (0.55, 0.45), "dwa": (0.55, 0.45),
 }
 ALIAS_TYPES = ("tech", "tool", "market_skill")
 CREDIT = {"met": 1.0, "partial": 0.5, "missing": 0.0}
-# Provisional coverage: share of each core item type in the score. A type's share is scaled by its items' mean
-# reliability (curated and off-domain factors), then renormalised over the types present.
+# Share of each core item type in the score. A type's share is scaled by its items' mean reliability (curated and
+# off-domain factors) and by min(1, items / MIN_ITEMS_FOR_FULL_SHARE), then renormalised over the types present.
 TYPE_SHARE = {"task": 0.30, "dwa": 0.10, "market_skill": 0.40, "tech": 0.10, "tool": 0.10}
+MIN_ITEMS_FOR_FULL_SHARE = 5
 
 
 class RequirementMatch(BaseModel):
@@ -122,22 +124,34 @@ def match(items: list[RequirementItem], units: list[EvidenceUnit], encoder: Enco
     return classify(core, units, score(core, units, encoder, cache_key=cache_key), thresholds)
 
 
-def coverage(matches: list[RequirementMatch], type_share: dict[str, float] = TYPE_SHARE) -> float:
-    """Provisional 0-1 score over core types: per type, the weight-averaged credit (met 1, partial 0.5); the
-    types combined by TYPE_SHARE x the type's mean reliability, so a SOC with 237 tech rows isn't scored on tech
-    alone, and a type made only of curated rows counts half."""
+def effective_share(type_share: float, weight: float, base_weight: float, n_items: int) -> float:
+    """TYPE_SHARE x the type's mean reliability x min(1, n_items / MIN_ITEMS_FOR_FULL_SHARE); renormalised by the
+    caller over the types present. A one-item type can't swing 40% of the score."""
+    if weight <= 0 or base_weight <= 0:
+        return 0.0
+    return type_share * (weight / base_weight) * min(1.0, n_items / MIN_ITEMS_FOR_FULL_SHARE)
+
+
+def coverage(matches: list[RequirementMatch], type_share: dict[str, float] = TYPE_SHARE,
+             credit: Callable[[RequirementMatch], float] | None = None) -> float:
+    """0-1 score over core types: per type, the weight-averaged credit (default met 1, partial 0.5); the types
+    combined by effective_share(), so a SOC with 237 tech rows isn't scored on tech alone, a type made only of
+    curated rows counts half, and a type with one item counts a fifth."""
+    credit = credit or (lambda m: CREDIT[m.status])
     num: dict[str, float] = {}
     den: dict[str, float] = {}
     base: dict[str, float] = {}
+    count: dict[str, int] = {}
     for m in matches:
         t = m.item.item_type
         if t not in type_share:
             continue
-        num[t] = num.get(t, 0.0) + m.item.weight * CREDIT[m.status]
+        num[t] = num.get(t, 0.0) + m.item.weight * credit(m)
         den[t] = den.get(t, 0.0) + m.item.weight
         base[t] = base.get(t, 0.0) + m.item.base_weight
-    shares = {t: type_share[t] * den[t] / base[t] for t in den if den[t] > 0 and base[t] > 0}
+        count[t] = count.get(t, 0) + 1
+    shares = {t: effective_share(type_share[t], den[t], base[t], count[t]) for t in den}
     total = sum(shares.values())
     if total <= 0:
         return 0.0
-    return sum(shares[t] / total * num[t] / den[t] for t in shares)
+    return sum(shares[t] / total * num[t] / den[t] for t in shares if shares[t] > 0)

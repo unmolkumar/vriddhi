@@ -4,6 +4,7 @@ Profile sets (tests/calibration/profiles/<set>/<soc>_<name>.txt):
   tuning   15 profiles (+3 partial) for the 15 export occupations; the only set thresholds are tuned on
   heldout  15 more for the same occupations, in other styles; never used for tuning
   new      10 for occupations outside the export (fetched from a live module 1, no curated data)
+  heldout2 25 more (15 export + 10 extra occupations) in yet other styles, written after A1b; never used for tuning
 Used by scripts/calibrate.py and tests/calibration. Similarities are computed once per (profile, occupation);
 thresholds and type shares are then re-applied cheaply.
 """
@@ -22,7 +23,7 @@ from src.general.m1_client import EXTRA_FIXTURE_PATH, FIXTURE_PATH, FixtureM1Cli
 from src.general.requirements import SCORED_TYPES, FilterReport, RequirementItem, domain_texts, normalise
 
 PROFILES_DIR = Path(__file__).resolve().parents[2] / "tests" / "calibration" / "profiles"
-SETS = ("tuning", "heldout", "new")
+SETS = ("tuning", "heldout", "new", "heldout2")
 PARTIAL_PREFIX = "partial_"
 TYPES = list(SCORED_TYPES)
 
@@ -109,7 +110,9 @@ def pair_coverage(p: Pair, thresholds: dict[str, tuple[float, float]], type_shar
     den = np.bincount(idx, weights=w, minlength=len(TYPES))
     bas = np.bincount(idx, weights=base, minlength=len(TYPES))
     reliability = np.divide(den, bas, out=np.zeros_like(den), where=bas > 0)
-    share = np.array([type_share.get(t, 0.0) for t in TYPES]) * reliability * (den > 0)
+    counts = np.bincount(idx, minlength=len(TYPES))
+    share = (np.array([type_share.get(t, 0.0) for t in TYPES]) * reliability * (den > 0)
+             * np.minimum(1.0, counts / matcher.MIN_ITEMS_FOR_FULL_SHARE))
     if share.sum() <= 0:
         return 0.0
     return float((share / share.sum() * np.divide(num, den, out=np.zeros_like(num), where=den > 0)).sum())
@@ -179,7 +182,11 @@ def build(encoder: Encoder | None = None, client: FixtureM1Client | None = None,
 
 
 def subset(profiles: list[Profile], occupations: list[Occupation], *, sets: tuple[str, ...] | None = None,
-           socs: set[str] | None = None) -> tuple[list[Profile], list[Occupation]]:
-    """Profiles of some sets, against some occupations."""
-    return ([p for p in profiles if sets is None or p.set in sets],
-            [o for o in occupations if socs is None or o.soc in socs])
+           socs: set[str] | None = None, profile_socs: set[str] | None = None,
+           exclude_profile_socs: set[str] | None = None) -> tuple[list[Profile], list[Occupation]]:
+    """Profiles of some sets (optionally only those written for, or not for, some occupations), against some
+    occupations."""
+    ps = [p for p in profiles if (sets is None or p.set in sets)
+          and (profile_socs is None or p.soc in profile_socs)
+          and (exclude_profile_socs is None or p.soc not in exclude_profile_socs)]
+    return ps, [o for o in occupations if socs is None or o.soc in socs]
