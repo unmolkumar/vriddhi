@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–13) adds 142 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–14) adds 169 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -564,7 +564,7 @@ match_score        = skill_score × experience_factor
 
 | Label | When |
 |---|---|
-| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD` (0.29 in A2; **0.3254 since A3**, §13.4) |
+| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD` (0.29 in A2; 0.3254 in A3; **0.22 since A3b, with `insufficient_evidence` for short descriptions**, §14.1) |
 | `over_qualified` | ≥ threshold, years > band.high + `OVERQUALIFIED_EXTRA_YEARS = 3`, and a related occupation with a higher job zone also scores ≥ threshold. That occupation is returned as `suggested_role` |
 | `good_fit` | otherwise |
 
@@ -769,7 +769,7 @@ Most of the earlier "~20 s cold" was loading the model (once per process). With 
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Same FastAPI service on port 8002 (`uvicorn src.api.main:app --port 8002`). Module 1 is reached only over REST (`M1_BASE_URL`). Offline fixtures cover all tests; `scripts/prewarm_embeddings.py --all-fixture` runs without module 1 |
 | 2 | Contract compliance | ✅ | Pydantic request/response models in `src/general/schemas.py`, exported to `src/models/schema_m2_v2.json` with a drift test (`test_v2_schema_export_is_current`). v2 accepts v1's `UserProfile`. Errors use INTEGRATION.md's `{"error": {"code", "message"}}` |
-| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/` → **426 passed, 1 skipped** (the live Groq test without a key). The v1 suite is unchanged at 284 + 1 skipped; 142 tests cover the general engine, including held-out floors and the A2 gate |
+| 3 | 100% passing tests | ✅ | A3: 426 passed, 1 skipped. **Superseded by §14.7 (A3b): 453 passed, 1 skipped** |
 | 4 | Error handling | ✅ | Module 1 down → 503 `M1_UNAVAILABLE` for v2 while v1 keeps working (tested). Unknown role → 404 `ROLE_NOT_RESOLVED`; unknown SOC → 404 `OCCUPATION_NOT_FOUND`; bad module 1 response → 502. Invalid input → 422; v1's file errors on `/v2/analyze_resume`. Groq missing or failing → original text plus a warning. Related occupations module 1 can't return are skipped |
 | 5 | Zero cross-module imports | ✅ | `src/general` imports only `src.*` (module 2) and third-party packages. Module 1 data comes over REST or from fixture files; `career_intel.db` is never opened |
 | 6 | Documentation | ✅ | README (v2 quick start, env vars, payload examples), this file §11–13 (design, formulas, worked example, calibration, limits), HANDOFF_TO_M3 (`/api/v2/skills/match_text` contract and example) |
@@ -781,3 +781,174 @@ Most of the earlier "~20 s cold" was loading the model (once per process). With 
 - **Roadmap ordering.** The main roadmap is ordered by weight, as specified, so heavy O*NET software (Epic, Outlook, Word) can fill it for a nurse or an electrician. Ranking by expected score gain (each item's share of its type × its missing credit) would favour tasks; worth deciding before the UI uses it.
 - **Education lines are still evidence** (e.g. "B.Sc Nursing…" as partial evidence of supervision).
 - **Not yet validated on live module 1 data.** `/related` (alternatives, over-qualified, related roles in role history) still uses the fixture stand-in, and the 10 extra occupations are module 1 v2.0 data.
+
+---
+
+## 14. General engine (v2) — A3b: short descriptions, roadmap ranking, module 1 v2.2
+
+Where this section changes a value in §11–13, this section wins.
+
+### 14.1 Verdict for short descriptions
+
+A short description can't show much of an occupation, so a low score from little text means "not shown yet", not "under-skilled".
+
+**Evidence volume** (`verdict.volume`, returned as `evidence_volume`):
+- `units`: substantive evidence sentences or items. Clause copies, title lines, education lines and answers to questions are not counted. A unit has at least `MIN_UNIT_WORDS = 2` words.
+- `related_share`: the share of the core requirements (with the score's type shares and item-count scaling) that have any evidence at cosine ≥ `RELATED_FLOOR = 0.35`, or are met or partial through an alias, role history or an answer.
+- `short`: `units < SHORT_UNITS`.
+
+**Verdict:**
+
+| Condition | Label |
+|---|---|
+| score ≥ `GOOD_FIT_THRESHOLD = 0.22` (`GOOD_FIT_THRESHOLD_SHORT = 0.17` when short) | `good_fit`, or `over_qualified` (§12.2) |
+| below, short (`SHORT_UNITS = 3`) and `related_share ≥ MIN_RELATED_SHARE = 0.05` | `insufficient_evidence` |
+| otherwise | `under_skilled` |
+
+**With `insufficient_evidence`:**
+- **Provisional fit:** `fit_provisional: true` and `fit_range` {low: the current `fit_percent`, high: the fit if the questions were all answered yes}.
+- **`follow_up_questions`:** 3–5 questions (`QUESTIONS_MIN`, `QUESTIONS_MAX`) from the heaviest core requirements with no evidence yet. Tasks, DWAs and market skills come first, then tech and tools; one per phrase.
+  - Templates: "In your work, do you {requirement without its example tail}?", "Have you used {tool} in your work?", "Do you have experience with {market skill}?".
+  - With `GROQ_API_KEY`, Groq rewrites them in plain English for the occupation (cached). On any failure the templates are kept.
+- **Answering:** the request takes `answers: [{requirement_id, answer: yes|no|some, detail?}]`.
+  - `yes`: the requirement is met by self-reported evidence (credit 0.40 / required level).
+  - `some`: partial at `ANSWER_SOME_CREDIT = 0.3`.
+  - `no`: no change.
+  - Answered items carry `reason: "answered"` and evidence "You answered yes: {detail}". A `detail` also becomes a self-reported evidence unit.
+  - Answers raise the score and `related_share` but not `units`, so a short description keeps getting the next questions until the score clears the threshold.
+
+**Tuning** (`python scripts/calibrate.py --verdict`, tuning profiles only): a grid over the two thresholds, `SHORT_UNITS` and `MIN_RELATED_SHARE`, minimising a cost.
+
+| Profile kind | `good_fit` | `insufficient_evidence` | `under_skilled` |
+|---|---|---|---|
+| full | 0 | 1 | 5 |
+| partial | 4 | 1 | 0 |
+| wrong role | 5 | 2 | 0 |
+
+The tuning profiles (48) are `tuning/` and `verdict_tuning/` (A3), plus `tuning_short/` (A3b): 12 short-style practitioners (WhatsApp, two-liners, Q&A, third person, typed skill lists), 4 short partial and 3 short wrong-role profiles. `FIT_MEDIAN_FULL = 0.42` is the median full-profile score in that set.
+
+**Validation** ("acceptable" = full → good_fit or insufficient_evidence; partial → under_skilled or insufficient_evidence; wrong role → under_skilled):
+
+| Set | Acceptable | full: good / insufficient / under | partial: good / insufficient / under | wrong: good / insufficient / under |
+|---|---|---|---|---|
+| tuning (48) | 47 | 24 / 3 / **0** | 1 / 4 / 10 | 0 / 0 / 6 |
+| **fresh validation, `verdict_validation2/` (20, never tuned on)** | **19** | 7 / 3 / **0** | 1 / 4 / 0 | 0 / 0 / 5 |
+| A3 validation: held-out-2 full + `verdict_validation/` (24) | 15 | 5 / 1 / **9** | 0 / 1 / 5 | 0 / 0 / 3 |
+
+**Reading the validation results:**
+- **Fresh validation:** no practitioner is called `under_skilled`. That includes one-line practitioners (ICU nurse, ITI wireman, trailer driver, pharmacist), who get `good_fit` or `insufficient_evidence`. One partial profile (a canteen kitchen helper, 0.19) is called a good fit.
+- **A3 validation:** 9 held-out-2 practitioners are still `under_skilled`: third-person, cover letter, Q&A, key-value, WhatsApp-with-bullets.
+  - They have 4–9 units, so they aren't "short", and score 0.02–0.21.
+  - Their `related_share` is 0.56–0.85, while every wrong-role profile in any set is ≤ 0.41.
+  - A rule of "`insufficient_evidence` when related_share ≥ ~0.45, at any length" would fix all nine. It comes from looking at validation data, so it is **not shipped**; it needs a decision and a new fresh set.
+
+### 14.2 Roadmap ranking
+
+`roadmap.plan` ranks missing and partial core items by **expected score gain**: the type's effective share (reliability, item count, renormalised, as in the score) × the item's share of its type's weight × the credit still missing. Role-implied items rank after real gaps; taxonomy prerequisites still move ahead.
+
+The main roadmap is at most `ROADMAP_MAX_ITEMS = 8` items, of which at most `ROADMAP_MAX_TECH = 3` are tech/tool. Generic office and productivity software goes to `roadmap.basics` unless the occupation's market skills name it (e.g. Excel for Accountants via "Advanced Excel"): Word, Excel, Outlook, Access, PowerPoint, Office, Windows, SharePoint, Exchange, Google Docs/Sheets/Drive, Adobe Acrobat, email, browsers, `BASIC_SOFTWARE`. Everything else goes to `later`.
+
+Examples (tuning profiles):
+- **Staff nurse:**
+  - main: General Nursing; Record patients' medical information and vital signs; Assess needs…; Perform physical examinations…; Consult with institutions…; Inform physician…; Engage in nursing research; Administer non-intravenous medications;
+  - basics: Access, Office, Outlook, PowerPoint, SharePoint, Windows, Exchange, Google Docs.
+- **ITI electrician:**
+  - main: ITI Electrical Standards; Circuit Troubleshooting; Place conduit…; Connect wires to circuit breakers…; Direct or train workers…; Diagnose malfunctioning systems…; Inspect electrical systems…; Install ground leads…;
+  - basics: Outlook, Word, Acrobat, Excel, Office, Windows.
+
+### 14.3 Education lines
+
+The Education section, and lines elsewhere that name a degree (v1's degree pattern) with an institution, a year, or ≤ 8 words, become `education` units (`evidence.is_education_line`). They are never task, DWA or tool evidence and carry no taxonomy ids. They still support "draws on" (knowledge inference) and are returned as `qualifications`. "B.Sc Nursing, Government College of Nursing, 2019" no longer counts towards supervising nursing personnel (test `test_nurse_title_line_is_role_history_not_evidence`).
+
+### 14.4 Module 1 v2.2
+
+- **Fixtures.**
+  - `tests/mocks/m1_occupation_requirements_export.json` is v2.2.0 (15 occupations, 771 O*NET tool rows, posting-backed market skills with `posting_count`/`soc_posting_total`, curated market skills at importance 0.50, `india_relevant` flags).
+  - The v2.0 and v2.1 copies stay for filter regression tests.
+  - The 10 extra occupations were refetched from a live module 1 v2.2 (§14.6).
+- **Provenance.** `tool_*` ids are hand-written only before v2.2 (`REAL_TOOLS_FROM = (2, 2)`, keyed on the data's module 1 version); from v2.2 they are O*NET Tools Used.
+- **Market support.** `posting_count ≥ 3` is used automatically when present. Module 1 already keeps ≥ 3 postings and the top 50.
+- **Not applicable in India.** Module 1's `india_relevant = 0` rows (v2.2: Registered Nurses prescribing, with module 1's reason) are merged with the local list (§13.1), which still covers Pharmacists and Medical Assistants.
+- **Version.** `GET /api/v1/meta` is used for the cache version (`2.2.0+<export hash>`).
+
+**Calibration on v2.2.** Frozen A3 constants on v2.2 fell from 49/55 to 47/55 held-out top-1: the real tools are hundreds of specific equipment names that resumes rarely mention. Re-tuning on the tuning set only (allowed by the brief) gave:
+- tech, tool and market_skill 0.55/0.45; task and DWA 0.60/0.50;
+- `TYPE_SHARE` task 0.40, DWA 0.20, market_skill 0.30, tech 0.05, tool 0.05.
+
+| Set (25 occupations) | A3 constants, v2.1 export | A3 constants, v2.2 export | **A3b re-tuned, all v2.2** |
+|---|---|---|---|
+| tuning | 14/15 | 14/15 | **15/15**, +0.328 |
+| held-out | 12/15 | 11/15 | **14/15**, +0.111 |
+| A1b extra occupations | 10/10 | 10/10 | **10/10**, +0.169 |
+| held-out, curated removed | 12/15 | 11/15 | **14/15**, +0.082 |
+| held-out-2, export occupations | 13/15 | 12/15 | **13/15**, +0.124 |
+| held-out-2, extra occupations | 10/10 | 10/10 | **10/10**, +0.129 |
+| held-out-2, curated removed | 12/15 | 12/15 | **11/15**, +0.097 |
+| Hinglish / Hindi | 4/5 | 4/5 | **3/5**, +0.120 |
+| **held-out top-1, all sets** | 49/55 | 47/55 | **50/55** |
+
+The first two columns already include A3b's evidence changes (education lines). The last column also uses the 10 extra occupations from live v2.2.
+
+**Regressions to note:**
+- Mean margins are lower (e.g. held-out +0.140 → +0.111).
+- Held-out-2 without curated rows: 12 → 11.
+- Hinglish: 4/5 → 3/5. The Hinglish nurse now loses to a neighbour.
+- Strong profiles saturate `fit_percent` at 100, since the threshold is now 0.22 and the median 0.42.
+
+The A2 gate passes (13/15, 10/10).
+
+### 14.5 Short-description examples (MiniLM, v2.2 fixture, template questions)
+
+| Profile | Before answering | Answers | After |
+|---|---|---|---|
+| WhatsApp nurse: "hi mam i am staff nurse 3 yrs govt hospital medicine ward. injection, BP checking, dressing" | `insufficient_evidence`, 0.043, fit 10 (range 10–26), units 1, related 0.56 | yes, yes, some | `insufficient_evidence`, 0.078, fit 18 (range 18–33), next 5 questions |
+| Two-line electrician: "Electrician, 7 years. / House wiring and repair work." | `insufficient_evidence`, 0.143, fit 32 (range 32–52), units 2, related 0.52 | yes, yes, no | **`good_fit`**, 0.180, fit 41 |
+
+Nurse questions:
+1. "In your work, do you record patients' medical information and vital signs?"
+2. "…administer medications to patients and monitor patients for reactions or side effects?"
+3. "…maintain accurate, detailed reports and records?"
+4. "…monitor, record, and report symptoms or changes in patients' conditions?"
+5. "…provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation?"
+
+Electrician questions:
+1. "…prepare sketches or follow blueprints?"
+2. "…place conduit, pipes, or tubing, inside designated partitions, walls, or other concealed areas?"
+3. "…use a variety of tools or equipment?"
+4. "…plan layout and installation of electrical wiring, equipment, or fixtures?"
+5. "…test electrical systems or continuity of circuits…?"
+
+### 14.6 Live check (module 1 v2.2 on port 8001)
+
+Module 1's current code ran against its own database file in place, with no copy, and was queried only over REST.
+- **`/api/v1/meta`:** schema 2.2.0, built 2026-10-06T13:38Z, export hash 02b93f2a…. `table_counts.onet_dwa` = **24,087**.
+- **DWA duplication:**
+  - Across all 1,016 occupations, `/requirements?item_type=dwa` returned **18,583 rows for 923 occupations, all distinct (soc, dwa)**: no duplication in what module 1 serves.
+  - The table's 24,087 rows are task-level (several tasks map to one DWA).
+  - The **264,957** in module 1's DATABASE.md and HANDOVER.md doesn't match the live count and looks like a stale doc number.
+- **`/related`:** returns real neighbours with job zones (Registered Nurses → Acute Care Nurses (4), Nurse Practitioners (5), Critical Care Nurses (4), Clinical Nurse Specialists (5), LPNs (3)). `relatedness_tier` is null, so role history's "closely related" rule (`ROLE_RELATED_TIERS`) never applies live.
+- **Over-qualified:**
+  - The tuning staff nurse (7.5 years; module 1's Indian-postings band 1.3–3.3 years) is `over_qualified`, with Clinical Nurse Specialists (job zone 5) suggested.
+  - The 22-year nursing superintendent is `good_fit` (0.31). Live search resolved her titles poorly ("Lt. Col." → Industrial Ecologists, "Nursing Superintendent" → Nursing Assistants); such non-applying, low-confidence titles are now hidden from `role_history` (`ROLE_DISPLAY_MIN_CONFIDENCE = 0.9`).
+- **Close alternatives:** none returned for the nurse, pharmacist and electrician tuning profiles; their related occupations scored more than 0.05 below the target.
+- **Refetch:** `scripts/refetch_extra_occupations.py` refreshed the 10 extra occupations from this module 1 (§14.4).
+
+### 14.7 Readiness checklist (AGENTS.md §18) for the v2 engine, A3b
+
+| # | Gate criterion | Status | Evidence |
+|---|---|---|---|
+| 1 | Self-contained execution | ✅ | Same service on port 8002. Module 1 only over REST (`M1_BASE_URL`); offline fixtures for every test; prewarm script and `M2_PREWARM_SOCS` |
+| 2 | Contract compliance | ✅ | `src/general/schemas.py` → `src/models/schema_m2_v2.json` with a drift test; v2 accepts v1's `UserProfile`; INTEGRATION.md error shape |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/` → **453 passed, 1 skipped** (live Groq without a key). The v1 suite is unchanged (284 + 1 skipped); 169 general-engine tests, including held-out floors, the A2 gate and the fresh verdict validation |
+| 4 | Error handling | ✅ | Module 1 down → 503 `M1_UNAVAILABLE` while v1 works; 404/502/422 as documented; Groq translation and question rephrase fail safe to the original text or templates |
+| 5 | Zero cross-module imports | ✅ | `src/general` imports only module 2 and third-party packages; `career_intel.db` is never opened by module 2 |
+| 6 | Documentation | ✅ | README (quick start, env vars, payloads incl. answers), §11–14, HANDOFF_TO_M3 |
+| 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap` |
+
+### 14.8 Known limits after A3b
+
+- **Verdict on oblique, not short, descriptions** (§14.1): 9 of 15 held-out-2 practitioners are still `under_skilled`. A related-share rule fixes them but needs a decision and fresh validation.
+- **Hinglish:** 3/5 on v2.2 (4/5 in A3).
+- **`fit_percent` saturates at 100** for strong profiles.
+- **Module 1 data:** `relatedness_tier` is missing from `/related`, and the DATABASE.md DWA count is stale.
+- **Over-qualified** relies on module 1's Indian experience bands, which can be narrow (1.3–3.3 years for Registered Nurses); a 7.5-year staff nurse is told she is over-qualified.

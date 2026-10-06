@@ -96,7 +96,7 @@ Response fields:
 | `job_requirements` | How many clauses were taken from the job text |
 | `m1_version`, `warnings` | Module 1 data version; notes such as unknown experience |
 
-Job-title lines in the user's evidence count as role history: with a `soc_code`, a past title in that occupation gives its tasks an implied partial credit (`reason: "implied_by_role"`, never `met`). Requirements outside the scope of practice in India (e.g. nurses prescribing) are left out. Scores are comparable across jobs for the same user, so you can rank listings by `match_score` and show `missing[]` as the reasons. For the full picture of a role (verdict, alternatives, roadmap), call `POST /api/v2/skills/gap_analysis` once with the role or SOC. Contract: [`src/models/schema_m2_v2.json`](src/models/schema_m2_v2.json); formulas: WORKING.md §12.
+Education lines (degrees, institutions) are not task evidence either. Job-title lines in the user's evidence count as role history: with a `soc_code`, a past title in that occupation gives its tasks an implied partial credit (`reason: "implied_by_role"`, never `met`). Requirements outside the scope of practice in India (e.g. nurses prescribing) are left out. Scores are comparable across jobs for the same user, so you can rank listings by `match_score` and show `missing[]` as the reasons. For the full picture of a role (verdict, alternatives, roadmap), call `POST /api/v2/skills/gap_analysis` once with the role or SOC. Contract: [`src/models/schema_m2_v2.json`](src/models/schema_m2_v2.json); formulas: WORKING.md §12.
 
 ## Errors
 

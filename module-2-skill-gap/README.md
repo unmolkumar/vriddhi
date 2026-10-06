@@ -6,7 +6,7 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
-> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–13](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §13.7. Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
+> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–14](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §14.7. Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
 
 ## Install
 
@@ -31,7 +31,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 427 tests (285 v1 + 142 general engine); the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 454 tests (285 v1 + 169 general engine); the live Groq test is skipped without a key
 python module-2-skill-gap/scripts/calibrate.py --verdict   # general engine: tuning / held-out report, verdict threshold
 ```
 
@@ -41,7 +41,7 @@ General engine (v2) settings, all optional, in the root `.env`:
 |---|---|---|
 | `M1_BASE_URL` | `http://localhost:8001` | Module 1's REST API (occupation search, requirements, profile, related) |
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Sentence embeddings (CPU) |
-| `GROQ_API_KEY`, `GROQ_MODEL` | none, `openai/gpt-oss-120b` | Rewriting Hinglish / Hindi sentences in English before matching (also v1's optional LLM pass). Without a key they are matched as written, with a warning |
+| `GROQ_API_KEY`, `GROQ_MODEL` | none, `openai/gpt-oss-120b` | Rewriting Hinglish / Hindi sentences in English before matching, and rephrasing follow-up questions (also v1's optional LLM pass). Without a key: sentences matched as written (with a warning), template questions |
 | `M2_PREWARM_SOCS` | none | Comma-separated SOCs to prepare in the background at startup, e.g. `29-1141.00,47-2111.00` |
 
 ## Endpoints
@@ -179,7 +179,7 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
 }'
 ```
 
-`target_role` is resolved through module 1 (Indian titles like "staff nurse", "CA" or "ITI electrician" work); send `soc_code` instead to skip resolution. Evidence can be `free_text` (resume text or a description in any style), `skills` (typed, self-reported) and/or `profile` (from `/api/v1/skills/analyze_resume`). Response, abridged (tuning nurse profile, module 1 v2.1 fixture; one item per list):
+`target_role` is resolved through module 1 (Indian titles like "staff nurse", "CA" or "ITI electrician" work); send `soc_code` instead to skip resolution. Evidence can be `free_text` (resume text or a description in any style), `skills` (typed, self-reported) and/or `profile` (from `/api/v1/skills/analyze_resume`). Response, abridged (tuning nurse profile, module 1 v2.2 fixture; one item per list):
 
 ```json
 {
@@ -190,15 +190,20 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
   "method": "india_alias_exact",
   "low_confidence": false
  },
- "match_score": 0.6509,
- "fit_percent": 86,
+ "match_score": 0.5805,
+ "fit_percent": 100,
  "fit_label": "Strong fit",
  "verdict": {
   "label": "good_fit",
-  "reason": "Your evidence covers 65% of this role's weighted core requirements."
+  "reason": "Your evidence covers 58% of this role's weighted core requirements."
+ },
+ "evidence_volume": {
+  "units": 18,
+  "related_share": 0.9564,
+  "short": false
  },
  "score_breakdown": {
-  "skill_score": 0.6509,
+  "skill_score": 0.5805,
   "experience_years": 7.5,
   "experience_band": [
    2.0,
@@ -209,11 +214,32 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
  },
  "strengths": [
   {
-   "requirement": "Record patients' medical information and vital signs.",
+   "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
    "item_type": "task",
    "status": "met",
-   "similarity": 0.5502,
+   "similarity": 0.6395,
    "credit": 1.0,
+   "weight": 0.9025,
+   "provenance": "onet",
+   "reason": "semantic",
+   "evidence": {
+    "text": "Admitted patients, took history and assessed their condition on arrival.",
+    "evidence_type": "work",
+    "section": "experience",
+    "span": [
+     800,
+     872
+    ]
+   }
+  }
+ ],
+ "gaps": [
+  {
+   "requirement": "Record patients' medical information and vital signs.",
+   "item_type": "task",
+   "status": "partial",
+   "similarity": 0.5502,
+   "credit": 0.5,
    "weight": 0.935,
    "provenance": "onet",
    "reason": "semantic",
@@ -228,31 +254,12 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
    }
   }
  ],
- "gaps": [
-  {
-   "requirement": "Maintain accurate, detailed reports and records.",
-   "item_type": "task",
-   "status": "partial",
-   "similarity": 0.3831,
-   "credit": 0.4,
-   "weight": 0.9225,
-   "provenance": "onet",
-   "reason": "implied_by_role",
-   "evidence": {
-    "text": "7.5 years as Staff Nurse",
-    "evidence_type": "work",
-    "section": "role_history",
-    "span": null
-   },
-   "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it."
-  }
- ],
- "gaps_total": 92,
+ "gaps_total": 257,
  "not_applicable_in_india": [
   {
    "requirement": "Prescribe or recommend drugs, medical devices, or other forms of treatment, such as physical therapy, inhalation therapy, or related therapeutic procedures.",
    "item_type": "task",
-   "reason": "Registered nurses in India do not have prescribing authority; prescriptions are written by registered medical practitioners."
+   "reason": "Prescription of scheduled medications is legally reserved for registered medical practitioners (MBBS/MD) under Indian medical regulations"
   }
  ],
  "role_history": [
@@ -265,13 +272,16 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
    "applies_to_target": true
   }
  ],
+ "qualifications": [
+  "B.Sc Nursing, Government College of Nursing, Thiruvananthapuram, 2019"
+ ],
  "draws_on": [
   {
    "name": "Medicine and Dentistry",
    "item_type": "knowledge",
    "importance": 0.84,
    "inferred": true,
-   "support": "Inform medical professionals regarding patient conditions and care."
+   "support": "Monitor patient conditions during treatments, procedures, or activities."
   }
  ],
  "close_alternatives": [],
@@ -279,46 +289,73 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
   "items": [
    {
     "step": 1,
-    "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+    "requirement": "General Nursing",
     "status": "partial",
     "practice_ideas": [
-     "Refer students or patients to specialized health resources or community agencies furnishing assistance.",
-     "Refer patients to other healthcare practitioners or health resources."
+     "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+     "Engage in research activities related to nursing."
     ],
     "hours": {
-     "low": 15,
+     "low": 20,
      "high": 30
     },
     "weeks": {
-     "low": 2,
+     "low": 3,
      "high": 4
     }
    }
   ],
-  "later": "<84 more items>",
+  "basics": [
+   "Microsoft Access",
+   "Microsoft Office software",
+   "Microsoft Outlook"
+  ],
+  "later": "<238 more items>",
   "total_hours": {
-   "low": 140,
-   "high": 285
+   "low": 120,
+   "high": 230
   },
   "total_weeks": {
-   "low": 18,
-   "high": 36
+   "low": 15,
+   "high": 29
   }
  },
  "provenance_summary": {
   "scored_items": {
-   "onet": 104,
-   "curated": 23
+   "onet": 286,
+   "curated": 5
   },
   "weight_share": {
-   "onet": 0.9075,
-   "curated": 0.0925
+   "onet": 0.9921,
+   "curated": 0.0079
   }
  },
- "m1_version": "2.1.0",
+ "m1_version": "2.2.0",
  "warnings": []
 }
 ```
+
+### Short descriptions: follow-up questions and answers
+
+A short description that shows something related to the role (and doesn't clear the good-fit threshold) gets `"verdict": {"label": "insufficient_evidence"}` instead of `under_skilled`, with `fit_provisional: true`, a `fit_range`, and 3–5 `follow_up_questions` built from the role's heaviest requirements not shown yet:
+
+```json
+{"match_score": 0.1429, "fit_percent": 32, "fit_provisional": true, "fit_range": {"low": 32, "high": 52},
+ "verdict": {"label": "insufficient_evidence", "reason": "Your description is short (2 items) and shows 14% of this role's weighted core requirements so far. Answer the questions below to give a fuller picture."},
+ "evidence_volume": {"units": 2, "related_share": 0.5235, "short": true},
+ "follow_up_questions": [{"requirement_id": "...", "requirement": "Prepare sketches or follow blueprints to determine the location of wiring or equipment ...",
+                          "item_type": "task", "question": "In your work, do you prepare sketches or follow blueprints?"}]}
+```
+
+(two-line electrician: "Electrician, 7 years. House wiring and repair work."). Send the answers with the same request; `yes` counts as self-reported evidence, `some` as partial, `no` changes nothing:
+
+```json
+{"target_role": "electrician", "free_text": "Electrician, 7 years.\nHouse wiring and repair work.",
+ "answers": [{"requirement_id": "<from follow_up_questions>", "answer": "yes", "detail": "conduit layouts for new flats"},
+             {"requirement_id": "<...>", "answer": "some"}]}
+```
+
+Here three answers (yes, yes, no) move the electrician to `good_fit` (fit 41). The roadmap also returns `basics` (generic office software) next to the main items and `later`.
 
 ### Example: match a job's text (module 3)
 
