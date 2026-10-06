@@ -105,8 +105,8 @@ def test_fixture_client_mirrors_the_interface():
 def test_fixture_files_merge_and_keep_their_versions():
     f = FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH)
     assert len(f.occupations) == 25
-    assert f.version_of(RN) == "2.2.0" and f.version_of("23-1011.00") == "2.0.0"
-    assert f.version() == "2.0.0+2.2.0"
+    assert f.version_of(RN) == "2.2.0" and f.version_of("23-1011.00").startswith("2.2.0+")   # refetched live (A3b)
+    assert f.version() == "+".join(sorted({"2.2.0", f.version_of("23-1011.00")}))
 
 
 def test_meta_endpoint_is_preferred_when_module_1_has_it(tmp_path):
