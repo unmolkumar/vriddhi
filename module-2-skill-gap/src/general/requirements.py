@@ -118,6 +118,45 @@ class FilterReport(BaseModel):
         self.dropped.setdefault(reason, []).append(name)
 
 
+# --- requirement-side clauses ---------------------------------------------------------------------------
+CLAUSE_TYPES = ("task", "dwa")       # long O*NET sentences; names (tech, tools, market skills) stay whole
+MAX_REQUIREMENT_CLAUSES = 8
+_EXAMPLE_TAIL = re.compile(r",?\s+(?:using|such as|including|according to|in order to|to ensure|to determine)\b.*$"
+                           r"|;.*$", re.IGNORECASE)
+_VERB_LIST = re.compile(r"^((?:[A-Za-z-]+,\s+)+(?:or|and)\s+[A-Za-z-]+|[A-Za-z-]+\s+(?:or|and)\s+[A-Za-z-]+)\s+(.+)$")
+_ADJ_OR = re.compile(r"^([A-Za-z-]+)\s+or\s+[A-Za-z-]+\s+(.+)$")
+
+
+def requirement_clauses(text: str) -> list[str]:
+    """Shorter forms of a long task/DWA sentence, so one concrete piece of evidence can meet it:
+    'Assemble, install, test, or maintain electrical or electronic wiring, equipment, ..., using hand tools'
+    -> the sentence without its example tail, and one clause per verb with the first object
+    ('install electrical or electronic wiring', 'install electrical wiring', ...)."""
+    full = text.rstrip(". ")
+    core = _EXAMPLE_TAIL.sub("", full).strip()
+    out = [core] if core and core != full else []
+    m = _VERB_LIST.match(core)
+    if m:
+        verbs = [re.sub(r"^(?:or|and)\s+", "", v.strip()) for v in re.split(r",\s*|\s+(?:or|and)\s+", m.group(1))]
+        head = re.split(r",\s+(?!or\b|and\b)", m.group(2))[0]
+        simple = _ADJ_OR.sub(r"\1 \2", head)             # 'electrical or electronic wiring' -> 'electrical wiring'
+        out += [f"{v} {simple}" for v in verbs if v and v.lower() not in ("or", "and")]
+    halves = re.split(r",?\s+and\s+", core, maxsplit=1)
+    if len(halves) == 2 and all(len(h.split()) >= 3 for h in halves):
+        out += halves                                       # 'Administer medications to patients' / 'monitor ...'
+    seen, clauses = {full.lower()}, []
+    for c in out:
+        if c.lower() not in seen and len(c.split()) >= 2:
+            seen.add(c.lower())
+            clauses.append(c)
+    return clauses[:MAX_REQUIREMENT_CLAUSES]
+
+
+def requirement_texts(item: "RequirementItem") -> list[str]:
+    """What a requirement is matched with: its text, plus clauses for long task/DWA sentences."""
+    return [item.text] + (requirement_clauses(item.name) if item.item_type in CLAUSE_TYPES else [])
+
+
 def provenance_of(row: dict) -> Provenance:
     """onet | india_postings | curated. 'tool_*' ids are hand-written in module 1 v2.1 whatever their source says."""
     source = row.get("source") or "onet"

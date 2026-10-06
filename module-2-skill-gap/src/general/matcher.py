@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 from src.engines.skill_extractor import extract_skills, resolve_skill
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import EvidenceUnit
-from src.general.requirements import SCORED_TYPES, Provenance, RequirementItem
+from src.general.requirements import SCORED_TYPES, Provenance, RequirementItem, requirement_texts
 
 Status = Literal["met", "partial", "missing"]
 
@@ -44,12 +44,15 @@ class RequirementMatch(BaseModel):
     provenance: Provenance = Field(description="onet | india_postings | curated (same as item.provenance)")
     status: Status
     similarity: float
-    reason: Literal["alias", "semantic", "none"]
+    reason: Literal["alias", "semantic", "implied_by_role", "none"]
+    implied_credit: float | None = Field(default=None, description="For implied_by_role: credit from role history")
     evidence_text: str | None = None
     evidence_type: str | None = None
     evidence_section: str | None = None
     evidence_span: tuple[int, int] | None = None
     evidence_context_span: tuple[int, int] | None = None
+    evidence_translated: bool = False
+    evidence_original: str | None = None
 
 
 class Scored(NamedTuple):
@@ -68,30 +71,55 @@ def requirement_skill_id(name: str) -> str | None:
     return None if entry.get("is_category") else entry["id"]
 
 
+def expand(items: list[RequirementItem]) -> tuple[list[str], np.ndarray]:
+    """Rows to embed: each item's text, then its clauses (requirement_texts). starts[i] = item i's first row."""
+    texts, starts = [], []
+    for item in items:
+        starts.append(len(texts))
+        texts += requirement_texts(item)
+    return texts, np.array(starts, dtype=int)
+
+
+def best_rows(sims: np.ndarray, starts: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Per item: the best similarity over its rows and all units, and that unit's index."""
+    row_best = sims.max(axis=1)
+    row_unit = sims.argmax(axis=1)
+    best = np.maximum.reduceat(row_best, starts)
+    ends = np.append(starts[1:], len(row_best))
+    unit = np.array([row_unit[s + int(np.argmax(row_best[s:e]))] for s, e in zip(starts, ends)], dtype=int)
+    return best, unit
+
+
 def score(items: list[RequirementItem], units: list[EvidenceUnit], encoder: Encoder, *,
-          cache_key: str | None = None, req_vectors: np.ndarray | None = None,
+          cache_key: str | None = None, req_vectors: np.ndarray | None = None, starts: np.ndarray | None = None,
           unit_vectors: np.ndarray | None = None) -> list[Scored]:
-    """Best evidence per requirement (similarity, unit) and the alias unit, before thresholds."""
+    """Best evidence per requirement (similarity = max over the requirement's text and its clauses, unit) and the
+    alias unit, before thresholds. req_vectors/starts come from expand() (one row per item when starts is None)."""
     if not items:
         return []
     if req_vectors is None:
-        texts = [i.text for i in items]
+        texts, starts = expand(items)
         req_vectors = encoder.encode_cached(cache_key, texts) if cache_key else encoder.encode(texts)
+    if starts is None:
+        starts = np.arange(len(items))
     if unit_vectors is None:
         unit_vectors = encoder.encode([u.text for u in units])
     sims = cosine(req_vectors, unit_vectors)
     by_skill: dict[str, int] = {}
     for idx, u in enumerate(units):
-        for sid in u.skill_ids:
-            by_skill.setdefault(sid, idx)
+        if u.matchable:
+            for sid in u.skill_ids:
+                by_skill.setdefault(sid, idx)
+    if sims.shape[1]:
+        masked = np.where(np.array([u.matchable for u in units])[None, :], sims, -1.0)
+        best, unit = best_rows(masked, starts)
     out = []
     for r, item in enumerate(items):
         alias = None
         if item.item_type in ALIAS_TYPES and (sid := requirement_skill_id(item.name)):
             alias = by_skill.get(sid)
-        if sims.shape[1]:
-            best = int(np.argmax(sims[r]))
-            out.append(Scored(float(sims[r, best]), best, alias))
+        if sims.shape[1] and best[r] > -1.0:
+            out.append(Scored(float(best[r]), int(unit[r]), alias))
         else:
             out.append(Scored(0.0, None, alias))
     return out
@@ -116,7 +144,8 @@ def classify(items: list[RequirementItem], units: list[EvidenceUnit], scored: li
             item=item, provenance=item.provenance, status=status, similarity=round(sim, 4), reason=reason,
             evidence_text=u.text if u else None, evidence_type=u.evidence_type if u else None,
             evidence_section=u.section if u else None, evidence_span=u.span if u else None,
-            evidence_context_span=u.context_span if u else None))
+            evidence_context_span=u.context_span if u else None,
+            evidence_translated=bool(u and u.translated), evidence_original=u.original_text if u else None))
     return out
 
 
