@@ -46,18 +46,18 @@ def test_worked_example():
                m(i["t4"], "partial", "work"), m(i["t5"], "missing"),
                m(i["m1"], "met", "self"), m(i["m2"], "met", "work"),
                m(i["m3"], "missing"), m(i["m4"], "missing"), m(i["m5"], "missing")]
-    # shares: task 0.30, market 0.40 (5 items each, full reliability) -> 0.4286 / 0.5714
+    # shares: task 0.40, market 0.30 (5 items each, full reliability) -> 0.5714 / 0.4286
     # task coverage (1 + 1 + 1 + 0.5 + 0) / 5 = 0.70; market (0.4/0.5 = 0.8, 1, 0, 0, 0) / 5 = 0.36
     skill = scoring.skill_score(matches)
-    assert skill == pytest.approx(0.3 / 0.7 * 0.70 + 0.4 / 0.7 * 0.36)          # 0.5057
+    assert skill == pytest.approx(0.4 / 0.7 * 0.70 + 0.3 / 0.7 * 0.36)          # 0.5543
     band = scoring.experience_band({"job_zone": {"job_zone": 3}})
     assert band == (1.0, 4.0, "job_zone")
     factor = scoring.experience_factor(0.0, band)                                # 1 year short of the band
     assert factor == pytest.approx(1 - 0.2 * (1 / 3))                             # 0.9333
-    assert skill * factor == pytest.approx(0.4720, abs=1e-4)
+    assert skill * factor == pytest.approx(0.5173, abs=1e-4)
     by_type = scoring.by_type(matches)
-    assert by_type["task"] == {"share": 0.4286, "coverage": 0.7, "items": 5}
-    assert by_type["market_skill"] == {"share": 0.5714, "coverage": 0.36, "items": 5}
+    assert by_type["task"] == {"share": 0.5714, "coverage": 0.7, "items": 5}
+    assert by_type["market_skill"] == {"share": 0.4286, "coverage": 0.36, "items": 5}
 
 
 def test_experience_band_prefers_indian_postings():

@@ -44,6 +44,8 @@ def test_nurse_title_line_is_role_history_not_evidence(engine):
     r = analyze(engine, "tuning/29-1141.00_staff_nurse.txt", target_role="staff nurse")
     supervise = by_name(r, "Direct or supervise less-skilled nursing")
     assert supervise.evidence is None or "Staff Nurse" != supervise.evidence.text
+    assert supervise.evidence is None or "B.Sc Nursing" not in supervise.evidence.text   # A3b: education excluded
+    assert any("B.Sc Nursing" in q for q in r.qualifications)
     assert any(h.soc_code == "29-1141.00" and h.applies_to_target for h in r.role_history)
     assert any(n.requirement.startswith("Prescribe or recommend drugs") for n in r.not_applicable_in_india)
 
