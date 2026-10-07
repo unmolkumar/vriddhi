@@ -1,0 +1,5 @@
+Profile: Aspiring data scientist
+Education: B.Sc Statistics, 2024
+Learning: Python and pandas online course, Kaggle beginner competitions
+Project: Titanic survival prediction notebook
+Experience: None yet

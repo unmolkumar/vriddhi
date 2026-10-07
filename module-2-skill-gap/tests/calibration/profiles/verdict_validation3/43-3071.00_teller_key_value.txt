@@ -1,0 +1,6 @@
+Role: Cashier-cum-teller
+Bank: Regional rural bank, Bihar
+Experience: 7 years
+Counter work: Cash deposits and withdrawals, cheque checking, passbook updates
+Cash: Note counting machine, fake note detection, daily cash balancing with the branch manager
+Other: Opening accounts with KYC, DD and RTGS forms for customers

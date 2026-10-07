@@ -148,3 +148,23 @@ def test_no_practitioner_in_the_fresh_verdict_validation_is_under_skilled(built)
         labels[f.stem] = r.verdict.label
     assert len(labels) == 10 and "under_skilled" not in labels.values(), labels
     assert verdict.SHORT_UNITS >= 1
+
+
+@pytest.mark.parametrize("profile_set", ["verdict_validation3", "verdict_validation2"])
+def test_validation_verdicts_never_call_practitioners_under_skilled_or_others_good_fit(profile_set):
+    """A4: on validation sets never tuned on, no full profile is under_skilled and no partial or wrong-role profile is
+    a good fit (verdict_validation3 was written after the A4 constants were frozen)."""
+    from src.general.schemas import GapAnalysisV2Request
+    from src.general.service import GeneralEngine
+    from src.general.translate import FixtureTranslator
+
+    engine = GeneralEngine(client=cal.FixtureM1Client(cal.FIXTURE_PATH, cal.EXTRA_FIXTURE_PATH),
+                           encoder=Encoder(DEFAULT_MODEL), translator=FixtureTranslator(), rephraser=None, normaliser=None)
+    bad = {}
+    for f in sorted((cal.PROFILES_DIR / profile_set).glob("*.txt")):
+        soc = f.name.removeprefix(cal.PARTIAL_PREFIX).removeprefix(cal.WRONG_PREFIX).split("_")[0]
+        label = engine.analyze(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8"))).verdict.label
+        full = not f.name.startswith((cal.PARTIAL_PREFIX, cal.WRONG_PREFIX))
+        if (full and label == "under_skilled") or (not full and label == "good_fit"):
+            bad[f.stem] = label
+    assert not bad, bad
