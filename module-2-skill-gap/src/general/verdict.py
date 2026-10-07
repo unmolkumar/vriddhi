@@ -5,9 +5,14 @@ A short description can't show much of an occupation, so a low score from little
   units          substantive evidence sentences/items (matchable, >= MIN_UNIT_WORDS words, not clause copies)
   related_share  share of the core requirements (type shares and item-count scaling, like the score) with any
                  evidence at cosine >= RELATED_FLOOR, or met/partial by alias, role history or an answer
-The verdict (thresholds tuned on the tuning sets only, WORKING.md section 14):
-  score >= GOOD_FIT_THRESHOLD                                        -> good_fit (or over_qualified)
+  focus          share of the substantive units related to the occupation at all (cosine >= RELATED_FLOOR)
+  other_role     a confidently resolved past title in another occupation, and none close to this one
+The verdict (thresholds tuned on the tuning sets only, WORKING.md sections 14 and 15):
+  score >= threshold (+ OTHER_ROLE_EXTRA with other_role)            -> good_fit (or over_qualified)
+  other_role                                                         -> under_skilled (a career change)
   units < SHORT_UNITS and related_share >= MIN_RELATED_SHARE         -> insufficient_evidence (+ follow-up questions)
+  related_share >= OBLIQUE_RELATED_SHARE and focus >= FOCUS_MIN      -> insufficient_evidence (oblique write-ups:
+                                                                        third person, cover letter, Q&A, key-value)
   otherwise                                                          -> under_skilled
 """
 from __future__ import annotations
@@ -34,7 +39,11 @@ RELATED_FLOOR = 0.35            # cosine at which evidence is "related" to a req
 # Tuned together with scoring.GOOD_FIT_THRESHOLD on the tuning sets only (scripts/calibrate.py --verdict).
 SHORT_UNITS = 3                 # fewer substantive units than this is a short description
 MIN_RELATED_SHARE = 0.05        # ... and at least this much of the occupation must be touched for "insufficient"
-GOOD_FIT_THRESHOLD_SHORT = 0.17  # good-fit threshold for short descriptions
+GOOD_FIT_THRESHOLD_SHORT = 0.20  # good-fit threshold for short descriptions (A4; 0.17 in A3b)
+# A4, tuned with the above on the tuning sets (incl. tuning_oblique) only; None switches a rule off.
+OBLIQUE_RELATED_SHARE: float | None = 0.50
+FOCUS_MIN = 0.0                 # tried as a guard against career changers; the search never chose it
+OTHER_ROLE_EXTRA: float | None = 0.0   # other_role on: no insufficient_evidence, no extra good-fit margin
 QUESTIONS_MAX = 5
 QUESTIONS_MIN = 3
 QUESTION_TYPES = ("task", "dwa", "market_skill", "tool", "tech")
@@ -49,6 +58,10 @@ class EvidenceVolume(BaseModel):
     units: int = Field(description="Substantive evidence sentences or items")
     related_share: float = Field(description="Share of the core requirements with any related evidence")
     short: bool = Field(description="units < SHORT_UNITS")
+    focus: float = Field(default=1.0, description="Share of the substantive units related to this occupation "
+                                                  "(cosine >= RELATED_FLOOR to one of its core requirements)")
+    other_role: str | None = Field(default=None, description="A past job title that resolves to an occupation not "
+                                                             "close to this one")
 
 
 class FollowUpQuestion(BaseModel):
@@ -58,37 +71,65 @@ class FollowUpQuestion(BaseModel):
     question: str
 
 
-def volume(units: list[EvidenceUnit], matches: list[RequirementMatch]) -> EvidenceVolume:
+def substantive(u: EvidenceUnit) -> bool:
+    return u.matchable and u.context_span is None and u.section != "answers" and len(u.text.split()) >= MIN_UNIT_WORDS
+
+
+def volume(units: list[EvidenceUnit], matches: list[RequirementMatch], unit_sims=None,
+           other_role: str | None = None) -> EvidenceVolume:
     """Answers to follow-up questions raise related_share (and the score) but not the unit count: a short
-    description stays short, so it keeps getting questions until the score clears the threshold."""
-    n = sum(1 for u in units if u.matchable and u.context_span is None and u.section != "answers"
-            and len(u.text.split()) >= MIN_UNIT_WORDS)
+    description stays short, so it keeps getting questions until the score clears the threshold. unit_sims: each
+    unit's best cosine against the occupation's core requirements (for focus)."""
+    idx = [i for i, u in enumerate(units) if substantive(u)]
     related = coverage(matches, credit=lambda m: 1.0 if (m.status != "missing" or m.similarity >= RELATED_FLOOR) else 0.0)
-    return EvidenceVolume(units=n, related_share=round(related, 4), short=n < SHORT_UNITS)
+    focus = (sum(1 for i in idx if unit_sims[i] >= RELATED_FLOOR) / len(idx)) if (unit_sims is not None and idx) else 1.0
+    return EvidenceVolume(units=len(idx), related_share=round(related, 4), short=len(idx) < SHORT_UNITS,
+                          focus=round(focus, 4), other_role=other_role)
 
 
 def decide(score: float, vol: EvidenceVolume, years, band, better_fit) -> tuple[str, str]:
-    """(label, reason): scoring.verdict, with under_skilled split by evidence volume."""
+    """(label, reason): scoring.verdict, with under_skilled split by evidence volume (label_for)."""
     label, reason = scoring.verdict(score, years, band, better_fit, threshold_for(vol))
-    if label == "under_skilled" and vol.short and vol.related_share >= MIN_RELATED_SHARE:
-        return "insufficient_evidence", (
-            f"Your description is short ({vol.units} item{'s' if vol.units != 1 else ''}) and shows {score:.0%} of this "
-            f"role's weighted core requirements so far. Answer the questions below to give a fuller picture.")
+    if label != "under_skilled":
+        return label, reason
+    rule = label_for(score, vol.units, vol.related_share, vol.focus, vol.other_role is not None, *params())
+    if rule == "insufficient_evidence":
+        what = (f"Your description is short ({vol.units} item{'s' if vol.units != 1 else ''})" if vol.short
+                else f"Your description touches {vol.related_share:.0%} of this role's core requirements")
+        return "insufficient_evidence", (f"{what} but clearly shows only {score:.0%} of its weighted core requirements so "
+                                         "far. Answer the questions below to give a fuller picture.")
+    if vol.other_role:
+        reason += f" Your past roles point to {vol.other_role}."
     return label, reason
 
 
+def params() -> tuple:
+    """The shipped verdict constants, in label_for's order."""
+    return (scoring.GOOD_FIT_THRESHOLD, GOOD_FIT_THRESHOLD_SHORT, SHORT_UNITS, MIN_RELATED_SHARE,
+            OBLIQUE_RELATED_SHARE, FOCUS_MIN, OTHER_ROLE_EXTRA)
+
+
 def threshold_for(vol: EvidenceVolume) -> float:
-    return GOOD_FIT_THRESHOLD_SHORT if (vol.short and GOOD_FIT_THRESHOLD_SHORT is not None)         else scoring.GOOD_FIT_THRESHOLD
+    t = GOOD_FIT_THRESHOLD_SHORT if (vol.short and GOOD_FIT_THRESHOLD_SHORT is not None) else scoring.GOOD_FIT_THRESHOLD
+    return t + (OTHER_ROLE_EXTRA if (vol.other_role and OTHER_ROLE_EXTRA is not None) else 0.0)
 
 
-def label_for(score: float, units: int, related: float, threshold: float, threshold_short: float | None,
-              short_units: int, min_related: float) -> str:
+def label_for(score: float, units: int, related: float, focus: float, other: bool, threshold: float,
+              threshold_short: float | None, short_units: int, min_related: float, oblique_related: float | None,
+              focus_min: float, other_extra: float | None) -> str:
     """The verdict rule on its own (good_fit / insufficient_evidence / under_skilled), for the threshold search."""
     short = units < short_units
-    t = threshold_short if (short and threshold_short is not None) else threshold
+    other = other and other_extra is not None
+    t = (threshold_short if (short and threshold_short is not None) else threshold) + (other_extra if other else 0.0)
     if score >= t:
         return "good_fit"
-    return "insufficient_evidence" if short and related >= min_related else "under_skilled"
+    if other:
+        return "under_skilled"
+    if short and related >= min_related:
+        return "insufficient_evidence"
+    if oblique_related is not None and related >= oblique_related and focus >= focus_min:
+        return "insufficient_evidence"
+    return "under_skilled"
 
 
 QUESTION_MAX_WORDS = 18

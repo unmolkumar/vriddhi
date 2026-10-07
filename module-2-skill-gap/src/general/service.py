@@ -41,6 +41,7 @@ GAPS_TOP = 15
 SEARCH_K = 5
 ROLE_TITLES_MAX = 6            # past titles resolved per request
 ROLE_DISPLAY_MIN_CONFIDENCE = 0.9   # a past title that doesn't apply to the target is shown only above this
+OTHER_ROLE_MIN_CONFIDENCE = 0.9     # module 1 search confidence for a past title to mark a career change
 # Module 1 /related tiers close enough for a past title to imply the target's tasks (fixture stand-ins excluded).
 ROLE_RELATED_TIERS = {"Primary-Short", "Primary-Long"}
 # When module 1 sends no tiers at all (relatedness_tier null), the first few by its order (index_val) count as close.
@@ -335,7 +336,7 @@ class GeneralEngine:
         matches = verdict.apply_answers(matches, answers)
         skill = scoring.skill_score(matches)
         match_score = skill * factor
-        vol = verdict.volume(units, matches)
+        vol = self._volume(occ, units, unit_vectors, matches, roles)
 
         alternatives, better_fit = self._alternatives(occ, units, unit_vectors, years, roles, match_score, warnings)
         if resolution.low_confidence:
@@ -386,6 +387,14 @@ class GeneralEngine:
             roadmap=self._roadmap(occ, gaps, matches, units, req.hours_per_week),
             provenance_summary=self._provenance(occ),
             m1_version=occ.version, warnings=warnings)
+
+    def _volume(self, occ: OccupationData, units, unit_vectors, matches, roles) -> verdict.EvidenceVolume:
+        sims = cosine(unit_vectors, occ.vectors).max(axis=1) if len(units) and len(occ.vectors) else None
+        # other_role: a confidently resolved past title in another SOC major group, and no title close to the target
+        close = self.roles_for(occ, roles)
+        strong = [r for r in roles if r.confidence >= OTHER_ROLE_MIN_CONFIDENCE and r.soc[:2] != occ.soc[:2]]
+        other = strong[0].occupation_title if strong and not close else None
+        return verdict.volume(units, matches, sims, other)
 
     def _alternatives(self, occ, units, unit_vectors, years, roles, target_score, warnings):
         try:

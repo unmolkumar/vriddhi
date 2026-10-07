@@ -332,6 +332,25 @@
         "short": {
           "title": "Short",
           "type": "boolean"
+        },
+        "focus": {
+          "default": 1.0,
+          "description": "Share of the substantive units related to this occupation",
+          "title": "Focus",
+          "type": "number"
+        },
+        "other_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A past job title in an occupation not close to this one",
+          "title": "Other Role"
         }
       },
       "required": [

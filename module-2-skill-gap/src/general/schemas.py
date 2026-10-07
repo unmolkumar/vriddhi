@@ -162,6 +162,8 @@ class EvidenceVolumeOut(BaseModel):
     units: int = Field(description="Substantive evidence sentences or items")
     related_share: float = Field(description="Share of the core requirements with any related evidence")
     short: bool
+    focus: float = Field(default=1.0, description="Share of the substantive units related to this occupation")
+    other_role: str | None = Field(default=None, description="A past job title in an occupation not close to this one")
 
 
 class FollowUpQuestionOut(BaseModel):

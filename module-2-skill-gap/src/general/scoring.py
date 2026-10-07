@@ -47,7 +47,7 @@ FIT_MEDIAN_FULL = 0.42            # A3b tuning sets, module 1 v2.2, frozen thres
 FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Early stage"))
 
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
-GOOD_FIT_THRESHOLD = 0.22        # A3b: tuned with verdict.py's thresholds on the tuning sets (WORKING.md 14.1)
+GOOD_FIT_THRESHOLD = 0.29        # A4: tuned with verdict.py's thresholds on the tuning sets (WORKING.md 15); 0.22 in A3b
 OVERQUALIFIED_EXTRA_YEARS = 2.0  # years above the band's maximum
 
 
