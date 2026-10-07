@@ -28,18 +28,22 @@ class CareerForecaster:
         tot_postings = glob.get("total", 0) + ind.get("total", 0)
 
         # 1. Growth Score Modeling:
-        # Growth is positively correlated with strong current demand and AI augmentation,
-        # but moderated if the role is predominantly routine/direct automation.
-        # AI exposure <= 0.50 acts as productivity leverage (accelerating demand).
-        # AI exposure > 0.65 indicates substantial task automation risk.
-        ai_growth_impact = (0.50 - ai_exposure_score) * 0.30
+        # High AI exposure (> 0.65) in routine cognitive/clerical tasks acts as a displacement penalty.
+        # Low AI exposure (< 0.35) in physical trades and clinical care provides structural demand insulation.
+        # Medium AI exposure (0.35 - 0.55) provides augmentative productivity leverage.
+        if ai_exposure_score >= 0.65:
+            ai_growth_impact = - (ai_exposure_score - 0.50) * 0.85
+        elif ai_exposure_score <= 0.30:
+            ai_growth_impact = (0.30 - ai_exposure_score) * 0.20
+        else:
+            ai_growth_impact = (0.50 - ai_exposure_score) * 0.25
 
         # Velocity booster (recent 2024-2026 hiring momentum)
         modern_postings = ind.get("modern_postings", 0) + glob.get("postings_2024", 0) + glob.get("postings_2025_plus", 0)
         velocity_momentum = min(modern_postings / max(tot_postings, 1), 1.0) * 0.15
 
         base_growth = (current_demand_score * 0.70) + ai_growth_impact + velocity_momentum
-        growth_score = max(0.12, min(round(base_growth, 2), 0.96))
+        growth_score = max(0.10, min(round(base_growth, 2), 0.98))
 
         # 2. Confidence Calibration:
         vol_confidence = min(tot_postings / 800.0, 0.45) if tot_postings > 0 else 0.10
@@ -49,10 +53,12 @@ class CareerForecaster:
         confidence_score = min(round(vol_confidence + task_confidence + multi_region_confidence + 0.10, 2), 0.95)
 
         # 3. Probabilistic Outlook Determination
-        if growth_score >= 0.75 and confidence_score >= 0.60:
+        if growth_score >= 0.75 and confidence_score >= 0.55:
             outlook = "Strong Growth"
         elif growth_score >= 0.55:
             outlook = "Moderate Growth"
+        elif growth_score <= 0.35 or (growth_score <= 0.45 and ai_exposure_score >= 0.65):
+            outlook = "Declining Demand"
         elif ai_exposure_score >= 0.65:
             outlook = "Transforming (High AI Exposure)"
         elif growth_score >= 0.40:
@@ -99,21 +105,33 @@ class CareerForecaster:
         series_points: List[YearlyDataPoint] = []
 
         # Annual growth multiplier derived from growth score
-        # e.g. growth_score=0.84 -> net annual forward growth of ~10-12%
-        # e.g. growth_score=0.25 -> net annual decline of -6%
-        annual_growth_rate = (growth_score - 0.50) * 0.22
-        india_growth_rate = annual_growth_rate * 1.15  # India tech beta multiplier
+        # e.g. growth_score=0.85 -> net annual forward growth of ~9-11%
+        # e.g. growth_score=0.20 -> net annual decline of -7.5%
+        annual_growth_rate = (growth_score - 0.50) * 0.25
+        india_growth_rate = annual_growth_rate * 1.15  # India beta multiplier
 
         # Base year 2024 = 100.0
-        # Historical reconstruction back to 2021
-        historical_multipliers = {
-            2021: 0.65 + (current_demand_score * 0.15),
-            2022: 0.76 + (current_demand_score * 0.14),
-            2023: 0.88 + (current_demand_score * 0.12),
-            2024: 100.0,
-            2025: 100.0 * (1.0 + annual_growth_rate * 0.9),
-            2026: 100.0 * (1.0 + annual_growth_rate * 1.8),
-        }
+        # Historical reconstruction back to 2021:
+        # If the role is declining, historical postings in 2021 were higher than 2024.
+        # If the role is growing, historical postings in 2021 were lower than 2024.
+        if annual_growth_rate < 0:
+            historical_multipliers = {
+                2021: 1.18 + (current_demand_score * 0.08),
+                2022: 1.12 + (current_demand_score * 0.06),
+                2023: 1.06 + (current_demand_score * 0.03),
+                2024: 100.0,
+                2025: 100.0 * (1.0 + annual_growth_rate * 0.9),
+                2026: 100.0 * (1.0 + annual_growth_rate * 1.8),
+            }
+        else:
+            historical_multipliers = {
+                2021: 0.65 + (current_demand_score * 0.15),
+                2022: 0.76 + (current_demand_score * 0.14),
+                2023: 0.88 + (current_demand_score * 0.12),
+                2024: 100.0,
+                2025: 100.0 * (1.0 + annual_growth_rate * 0.9),
+                2026: 100.0 * (1.0 + annual_growth_rate * 1.8),
+            }
 
         # Generate Historical Data Points
         for yr in historical_years:
@@ -127,11 +145,11 @@ class CareerForecaster:
             series_points.append(YearlyDataPoint(
                 year=yr,
                 status="historical",
-                india_index=max(20.0, i_idx),
-                global_index=max(25.0, g_idx),
-                india_lower_bound=max(15.0, i_idx * 0.96),
+                india_index=max(10.0, i_idx),
+                global_index=max(10.0, g_idx),
+                india_lower_bound=max(8.0, i_idx * 0.96),
                 india_upper_bound=i_idx * 1.04,
-                global_lower_bound=max(20.0, g_idx * 0.97),
+                global_lower_bound=max(8.0, g_idx * 0.97),
                 global_upper_bound=g_idx * 1.03
             ))
 

@@ -117,20 +117,52 @@ class CareerDatabase:
             tech = [dict(row) for row in cursor.fetchall()]
             return {"skills": skills, "technologies": tech}
 
-    def get_posting_history(self, title: str) -> Dict[str, Any]:
+    def get_posting_history(self, title: str, soc_code: Optional[str] = None) -> Dict[str, Any]:
         """
         Query real posting volume, yearly velocity, and location distribution
         for both India and Global markets.
         """
         clean_title = re.sub(r'[^a-z0-9\s]', '', title.lower()).strip()
         words = [w for w in clean_title.split() if len(w) > 2]
-        like_pattern = f"%{words[0]}%" if words else f"%{clean_title}%"
+
+        # Specific compound and phrase matching
+        if "data entry" in clean_title:
+            like_pattern = "%data entry%"
+        elif "software" in clean_title and ("dev" in clean_title or "eng" in clean_title):
+            like_pattern = "%software%"
+        elif "machine learning" in clean_title:
+            like_pattern = "%machine learning%"
+        elif "data scientist" in clean_title or "data science" in clean_title:
+            like_pattern = "%data scientist%"
+        elif "customer service" in clean_title or "customer support" in clean_title:
+            like_pattern = "%customer service%"
+        elif "nurse" in clean_title:
+            like_pattern = "%nurse%"
+        elif "electrician" in clean_title:
+            like_pattern = "%electrician%"
+        elif "accountant" in clean_title:
+            like_pattern = "%accountant%"
+        elif "telemarketer" in clean_title or "telecaller" in clean_title:
+            like_pattern = "%telemarket%"
+        elif len(words) >= 2:
+            like_pattern = f"%{words[0]} {words[1]}%"
+        elif words:
+            like_pattern = f"%{words[0]}%"
+        else:
+            like_pattern = f"%{clean_title}%"
 
         with self.get_connection() as conn:
             cursor = conn.cursor()
 
+            if soc_code:
+                filter_sql = "(soc_code_mapped = ? OR LOWER(title) LIKE ?)"
+                params = (soc_code, like_pattern)
+            else:
+                filter_sql = "LOWER(title) LIKE ?"
+                params = (like_pattern,)
+
             # Global postings stats
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT 
                     COUNT(*) as total_postings,
                     COUNT(DISTINCT company) as unique_companies,
@@ -138,23 +170,23 @@ class CareerDatabase:
                     SUM(CASE WHEN listed_year = 2024 THEN 1 ELSE 0 END) as postings_2024,
                     SUM(CASE WHEN listed_year >= 2025 THEN 1 ELSE 0 END) as postings_2025_plus
                 FROM job_postings_global
-                WHERE LOWER(title) LIKE ?
-            """, (like_pattern,))
+                WHERE {filter_sql}
+            """, params)
             global_summary = dict(cursor.fetchone() or {})
 
             # Global top locations
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT location, COUNT(*) as cnt
                 FROM job_postings_global
-                WHERE LOWER(title) LIKE ? AND location IS NOT NULL AND location != ''
+                WHERE {filter_sql} AND location IS NOT NULL AND location != ''
                 GROUP BY location
                 ORDER BY cnt DESC
                 LIMIT 5
-            """, (like_pattern,))
+            """, params)
             global_locations = [f"{row['location']} ({row['cnt']})" for row in cursor.fetchall()]
 
             # India postings stats
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT 
                     COUNT(*) as total_postings,
                     COUNT(DISTINCT company) as unique_companies,
@@ -165,19 +197,19 @@ class CareerDatabase:
                     SUM(CASE WHEN listed_year <= 2017 THEN 1 ELSE 0 END) as historical_postings,
                     SUM(CASE WHEN listed_year >= 2024 THEN 1 ELSE 0 END) as modern_postings
                 FROM job_postings_india
-                WHERE LOWER(title) LIKE ?
-            """, (like_pattern,))
+                WHERE {filter_sql}
+            """, params)
             india_summary = dict(cursor.fetchone() or {})
 
             # India top cities
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT city, COUNT(*) as cnt
                 FROM job_postings_india
-                WHERE LOWER(title) LIKE ? AND city IS NOT NULL AND city != ''
+                WHERE {filter_sql} AND city IS NOT NULL AND city != ''
                 GROUP BY city
                 ORDER BY cnt DESC
                 LIMIT 5
-            """, (like_pattern,))
+            """, params)
             india_cities = [f"{row['city']} ({row['cnt']})" for row in cursor.fetchall()]
 
             return {
@@ -838,21 +870,37 @@ class CareerDatabase:
 
             # Indian Experience Benchmarks
             cursor.execute("""
-                SELECT typical_min, typical_max, p25_min, median_min, sample_size, years_covered
+                SELECT typical_min, typical_max, p25_min, median_min, sample_size, years_covered, fallback_to_job_zone
                 FROM occupation_experience_india
                 WHERE soc_code = ?
             """, (clean_soc,))
             exp_row = cursor.fetchone()
             if exp_row:
-                profile["indian_experience"] = dict(exp_row)
-                profile["indian_experience"]["fallback_to_job_zone"] = False
+                exp_dict = dict(exp_row)
+                is_fallback = bool(exp_dict.get("fallback_to_job_zone", 0))
+                exp_dict["fallback_to_job_zone"] = is_fallback
+                if is_fallback:
+                    exp_dict["job_zone_guidance"] = profile["job_zone"]["experience_text"] if profile.get("job_zone") else "General experience"
+                profile["indian_experience"] = exp_dict
             else:
+                jz_num = profile["job_zone"]["job_zone"] if profile.get("job_zone") else 3
+                jz_ranges = {
+                    1: (0.0, 1.0, 0.0, 0.5),
+                    2: (1.0, 2.5, 0.5, 1.5),
+                    3: (2.0, 4.5, 1.5, 3.0),
+                    4: (3.0, 7.0, 2.5, 4.5),
+                    5: (5.0, 10.0, 4.0, 6.5)
+                }
+                t_min, t_max, p25, med = jz_ranges.get(jz_num, (1.0, 4.0, 1.0, 2.0))
                 profile["indian_experience"] = {
-                    "typical_min": 1.0,
-                    "typical_max": 4.0,
+                    "typical_min": t_min,
+                    "typical_max": t_max,
+                    "p25_min": p25,
+                    "median_min": med,
                     "sample_size": 0,
+                    "years_covered": None,
                     "fallback_to_job_zone": True,
-                    "job_zone_guidance": profile["job_zone"]["experience_text"] if profile["job_zone"] else "General experience"
+                    "job_zone_guidance": profile["job_zone"]["experience_text"] if profile.get("job_zone") else "General experience"
                 }
 
             # Salary Percentiles (India)

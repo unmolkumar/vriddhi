@@ -26,21 +26,33 @@ app.include_router(occupations_router)
 app.include_router(meta_router)
 
 
+import os
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import RedirectResponse
+
+# Mount temporary UI static directory if it exists
+ui_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ui")
+if os.path.exists(ui_dir):
+    app.mount("/ui", StaticFiles(directory=ui_dir, html=True), name="ui")
+
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     return {
         "status": "healthy",
         "module": "module-1-career-intelligence",
-        "version": "1.0.0"
+        "version": "2.2.0"
     }
 
 
 @app.get("/", include_in_schema=False)
 async def root():
+    if os.path.exists(ui_dir):
+        return RedirectResponse(url="/ui/")
     return {
         "engine": "Vriddhi Career Intelligence & Forecasting Engine",
         "module": "module-1-career-intelligence",
-        "version": "1.0.0",
+        "version": "2.2.0",
         "docs_url": "/docs",
         "health_check": "/health"
     }

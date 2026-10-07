@@ -291,6 +291,8 @@ def load_onet_dwa(conn: sqlite3.Connection):
                 iwa_id, iwa_name = iwa_map.get(dwa_id, (None, None))
                 rows.append((soc, tid, dwa_id, dwa_name, iwa_id, iwa_name))
 
+    rows = list(dict.fromkeys(rows))
+    cur.execute("DELETE FROM onet_dwa")
     cur.executemany("""
         INSERT INTO onet_dwa (soc_code, task_id, dwa_id, dwa_title, iwa_id, iwa_title)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -440,6 +442,7 @@ def load_onet_job_zones(conn: sqlite3.Connection):
                     info.get('edu'), info.get('train'), info.get('svp')
                 ))
 
+    cur.execute("DELETE FROM onet_job_zones")
     cur.executemany("""
         INSERT OR REPLACE INTO onet_job_zones
         (soc_code, job_zone, name, experience_text, education_text, training_text, svp_range)
@@ -494,6 +497,7 @@ def load_onet_education(conn: sqlite3.Connection):
             if soc and eid:
                 rows.append((soc, eid, ename, scale, cat, desc, val))
 
+    cur.execute("DELETE FROM onet_education")
     cur.executemany("""
         INSERT INTO onet_education
         (soc_code, element_id, element_name, scale_id, category, category_description, percent)
@@ -571,6 +575,7 @@ def load_onet_metadata_and_titles(conn: sqlite3.Connection):
                 if soc and t:
                     alt_rows.append((soc, t, clean_title_for_matching(t), '', 'sample_reported'))
 
+    cur.execute("DELETE FROM onet_alternate_titles")
     cur.executemany("""
         INSERT INTO onet_alternate_titles (soc_code, title, title_normalized, short_title, source)
         VALUES (?, ?, ?, ?, ?)
@@ -584,11 +589,12 @@ def load_onet_metadata_and_titles(conn: sqlite3.Connection):
                 soc = r.get('O*NET-SOC Code', '').strip()
                 rsoc = r.get('Related O*NET-SOC Code', '').strip()
                 rt = r.get('Related Title', '').strip()
-                tier = parse_int(r.get('Relatedness Tier'))
+                tier = r.get('Relatedness Tier', '').strip() or None
                 idx = parse_int(r.get('Index'))
                 if soc and rsoc:
                     rel_rows.append((soc, rsoc, rt, tier, idx))
 
+    cur.execute("DELETE FROM onet_related_occupations")
     cur.executemany("""
         INSERT INTO onet_related_occupations (soc_code, related_soc_code, related_title, relatedness_tier, index_val)
         VALUES (?, ?, ?, ?, ?)
@@ -605,6 +611,7 @@ def load_onet_metadata_and_titles(conn: sqlite3.Connection):
                 if eid and ename:
                     cm_rows.append((eid, ename, desc))
 
+    cur.execute("DELETE FROM onet_content_model")
     cur.executemany("""
         INSERT OR REPLACE INTO onet_content_model (element_id, element_name, description)
         VALUES (?, ?, ?)
@@ -622,6 +629,7 @@ def load_onet_metadata_and_titles(conn: sqlite3.Connection):
                 if soc and eid:
                     int_rows.append((soc, eid, ename, val))
 
+    cur.execute("DELETE FROM onet_interests")
     cur.executemany("""
         INSERT INTO onet_interests (soc_code, element_id, interest_name, score)
         VALUES (?, ?, ?, ?)
@@ -685,6 +693,7 @@ def load_occupation_domains(conn: sqlite3.Connection):
         )
         rows.append((s, prefix, group_title, cluster, ind))
 
+    cur.execute("DELETE FROM occupation_domains")
     cur.executemany("""
         INSERT OR REPLACE INTO occupation_domains 
         (soc_code, soc_major_group, major_group_title, career_cluster, india_industry)
@@ -774,6 +783,7 @@ def load_city_aliases(conn: sqlite3.Connection):
             clean_name = re.sub(r'^[-\s]+', '', c).title()
             rows.append((c, clean_name, "Other", 3, clean_name))
 
+    cur.execute("DELETE FROM city_aliases")
     cur.executemany("""
         INSERT OR REPLACE INTO city_aliases (raw_city, city_canonical, state, tier, metro_group)
         VALUES (?, ?, ?, ?, ?)
@@ -884,6 +894,7 @@ def load_india_title_aliases(conn: sqlite3.Connection):
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_india_alias_title ON india_title_aliases(raw_title)")
 
+    cur.execute("DELETE FROM india_title_aliases")
     cur.executemany("""
         INSERT OR REPLACE INTO india_title_aliases (raw_title, soc_code, confidence, notes)
         VALUES (?, ?, ?, ?)
@@ -1014,6 +1025,7 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         if m:
             post_rows.append(("india", pid, m[0], m[1], m[2], 1))
 
+    cur.execute("DELETE FROM posting_soc_map")
     cur.executemany("""
         INSERT OR REPLACE INTO posting_soc_map (posting_table, posting_id, soc_code, confidence, method, rank)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -1028,6 +1040,7 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         if m:
             sal_rows.append((sid, m[0], m[1], m[2], 1))
 
+    cur.execute("DELETE FROM salary_soc_map")
     cur.executemany("""
         INSERT OR REPLACE INTO salary_soc_map (salary_id, soc_code, confidence, method, rank)
         VALUES (?, ?, ?, ?, ?)
@@ -1042,6 +1055,7 @@ def build_soc_mapping_tables(conn: sqlite3.Connection):
         if m:
             ctx_rows.append((ctx, m[0], m[1], m[2]))
 
+    cur.execute("DELETE FROM skill_context_soc_map")
     cur.executemany("""
         INSERT OR REPLACE INTO skill_context_soc_map (occupation_context, soc_code, confidence, method)
         VALUES (?, ?, ?, ?)
@@ -1087,6 +1101,7 @@ def load_salary_quality_flags(conn: sqlite3.Connection):
         elif reg == 'india' and sal_usd and sal_usd > 200000:
             flags.append((sid, 'outlier', f'Extremely high domestic salary point (${sal_usd:.0f})'))
 
+    cur.execute("DELETE FROM salary_quality_flags")
     cur.executemany("""
         INSERT INTO salary_quality_flags (salary_id, flag, reason)
         VALUES (?, ?, ?)
@@ -1199,6 +1214,7 @@ def load_clean_skill_demand(conn: sqlite3.Connection):
             noise_dict[r[0]] = "occupation_title"
             noise_dict[r[0].replace(" ", "_")] = "occupation_title"
 
+    cur.execute("DELETE FROM skill_noise_terms")
     noise_rows = [(k, v) for k, v in noise_dict.items() if k]
     cur.executemany("INSERT OR REPLACE INTO skill_noise_terms (term, category) VALUES (?, ?)", noise_rows)
 
@@ -1434,34 +1450,86 @@ def load_occupation_empirical_facts(conn: sqlite3.Connection):
             p25_min REAL,
             median_min REAL,
             sample_size INTEGER NOT NULL,
-            years_covered TEXT
+            years_covered TEXT,
+            fallback_to_job_zone INTEGER DEFAULT 0
         )
     """)
+    try:
+        cur.execute("ALTER TABLE occupation_experience_india ADD COLUMN fallback_to_job_zone INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
 
+    # Map soc_code -> job_zone (1-5)
+    jz_map = {}
+    cur.execute("SELECT soc_code, job_zone FROM onet_job_zones")
+    for soc, jz in cur.fetchall():
+        if jz:
+            jz_map[soc] = jz
+    cur.execute("SELECT soc_code, job_zone FROM occupations WHERE job_zone IS NOT NULL")
+    for soc, jz in cur.fetchall():
+        if soc not in jz_map and jz:
+            jz_map[soc] = jz
+
+    # Standard experience defaults per Job Zone (typical_min, typical_max, p25_min, median_min)
+    jz_defaults = {
+        1: (0.0, 1.0, 0.0, 0.5),    # Job Zone 1: Little or no prep
+        2: (1.0, 2.5, 0.5, 1.5),    # Job Zone 2: Some prep (several months to 1-2 yrs)
+        3: (2.0, 4.5, 1.5, 3.0),    # Job Zone 3: Medium prep (1-3 yrs)
+        4: (3.0, 7.0, 2.5, 4.5),    # Job Zone 4: Considerable prep (several years, e.g. nursing/accounting)
+        5: (5.0, 10.0, 4.0, 6.5),   # Job Zone 5: Extensive prep (5+ yrs)
+    }
+
+    # Gather 2023+ postings only (spec requirement)
     cur.execute("""
         SELECT 
             m.soc_code,
-            AVG(p.experience_min) as avg_min,
-            AVG(p.experience_max) as avg_max,
-            COUNT(p.id) as sample_size,
-            MIN(p.listed_year) || '-' || MAX(p.listed_year) as years_cov
+            p.experience_min,
+            p.experience_max,
+            p.listed_year
         FROM job_postings_india p
         JOIN posting_soc_map m ON p.id = m.posting_id AND m.posting_table = 'india'
         WHERE p.experience_min IS NOT NULL
-        GROUP BY m.soc_code
+          AND p.listed_year >= 2023
     """)
-    exp_rows = []
-    for r in cur.fetchall():
-        soc, amin, amax, cnt, ycov = r
-        if amin is not None:
-            lo = max(0.0, round(amin, 1))
-            hi = max(lo + 1.0, round(amax or (lo + 3.0), 1))
-            exp_rows.append((soc, lo, hi, lo, lo + 1.0, cnt, ycov))
+    soc_postings = defaultdict(list)
+    for soc, exp_min, exp_max, yr in cur.fetchall():
+        soc_postings[soc].append((exp_min, exp_max, yr))
 
+    cur.execute("SELECT soc_code FROM occupations")
+    all_socs = [r[0] for r in cur.fetchall()]
+
+    exp_rows = []
+    for soc in all_socs:
+        postings = soc_postings.get(soc, [])
+        if len(postings) >= 30:
+            # Empirical 2023+ data
+            mins = sorted([p[0] for p in postings if p[0] is not None])
+            maxs = sorted([p[1] for p in postings if p[1] is not None] or [m + 3.0 for m in mins])
+            years = [p[2] for p in postings if p[2] is not None]
+            cnt = len(postings)
+
+            avg_min = sum(mins) / len(mins)
+            avg_max = sum(maxs) / len(maxs)
+            lo = max(0.0, round(avg_min, 1))
+            hi = max(lo + 1.0, round(avg_max, 1))
+            p25 = round(mins[int(len(mins) * 0.25)], 1)
+            med = round(mins[int(len(mins) * 0.50)], 1)
+            ycov = f"{min(years)}-{max(years)}" if years else "2024-2026"
+            exp_rows.append((soc, lo, hi, p25, med, cnt, ycov, 0))
+        else:
+            # Fall back to Job Zone when n < 30 (or no 2023+ postings)
+            jz = jz_map.get(soc)
+            t_min, t_max, p25, med = jz_defaults.get(jz, (1.0, 4.0, 1.0, 2.0))
+            cnt = len(postings)
+            years = [p[2] for p in postings if p[2] is not None]
+            ycov = f"{min(years)}-{max(years)}" if years else None
+            exp_rows.append((soc, t_min, t_max, p25, med, cnt, ycov, 1))
+
+    cur.execute("DELETE FROM occupation_experience_india")
     cur.executemany("""
         INSERT OR REPLACE INTO occupation_experience_india
-        (soc_code, typical_min, typical_max, p25_min, median_min, sample_size, years_covered)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (soc_code, typical_min, typical_max, p25_min, median_min, sample_size, years_covered, fallback_to_job_zone)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, exp_rows)
 
     cur.execute("""
@@ -1523,6 +1591,7 @@ def load_occupation_empirical_facts(conn: sqlite3.Connection):
             ycov = f"{min(years)}-{max(years)}" if years else "2024-2026"
             occ_sal_rows.append((soc, city, exp_b, mode, p25, p50, p75, n, ycov))
 
+    cur.execute("DELETE FROM occupation_salary_india")
     cur.executemany("""
         INSERT OR REPLACE INTO occupation_salary_india
         (soc_code, city_canonical, experience_bucket, work_mode, p25, p50, p75, sample_size, years_covered)

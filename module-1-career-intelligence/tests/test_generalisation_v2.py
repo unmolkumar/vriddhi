@@ -79,8 +79,11 @@ def test_onet_tables_content_coverage():
     c.execute("SELECT COUNT(*) FROM onet_task_ratings")
     assert c.fetchone()[0] > 15000
 
-    c.execute("SELECT COUNT(*) FROM onet_dwa")
-    assert c.fetchone()[0] > 20000
+    # DWAs populated without duplication (COUNT(*) == COUNT(DISTINCT soc, task, dwa))
+    c.execute("SELECT COUNT(*), COUNT(DISTINCT soc_code || '|' || task_id || '|' || dwa_id) FROM onet_dwa")
+    total_dwa, distinct_dwa = c.fetchone()
+    assert total_dwa == 24087
+    assert total_dwa == distinct_dwa
 
     conn.close()
 
@@ -221,6 +224,7 @@ def test_related_occupations_endpoint(client):
     assert len(related) > 0
     assert all("related_soc_code" in r for r in related)
     assert all("related_title" in r for r in related)
+    assert all(r.get("relatedness_tier") in ["Primary-Short", "Primary-Long", "Supplemental"] for r in related)
     assert any("job_zone" in r and r["job_zone"] is not None for r in related)
 
 
@@ -377,4 +381,48 @@ def test_india_relevance_flags_on_requirements(client):
     for irr in irrelevant:
         assert irr["india_irrelevant_reason"] is not None
         assert "Indian" in irr["india_irrelevant_reason"] or "regulations" in irr["india_irrelevant_reason"]
+
+
+# 15. Acceptance v2.2: onet_related_occupations.relatedness_tier Population
+def test_relatedness_tier_populated_all_rows():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM onet_related_occupations WHERE relatedness_tier IS NULL")
+    null_count = c.fetchone()[0]
+    assert null_count == 0
+
+    c.execute("SELECT DISTINCT relatedness_tier FROM onet_related_occupations")
+    tiers = {r[0] for r in c.fetchall()}
+    assert tiers == {"Primary-Short", "Primary-Long", "Supplemental"}
+    conn.close()
+
+
+# 16. Acceptance v2.2: 2023+ Experience Filter & Job Zone Fallback for Registered Nurses
+def test_experience_2023_plus_and_job_zone_fallback(client):
+    # Registered Nurses (29-1141.00) has zero 2023+ postings -> falls back to Job Zone 4
+    rn_res = client.get("/api/v1/occupations/29-1141.00/profile")
+    assert rn_res.status_code == 200
+    rn_prof = rn_res.json()
+    rn_exp = rn_prof["indian_experience"]
+
+    assert rn_exp["fallback_to_job_zone"] is True
+    assert rn_exp["sample_size"] == 0
+    assert rn_exp["years_covered"] is None
+    assert rn_exp["typical_min"] >= 3.0
+    assert rn_exp["typical_max"] >= 6.0
+    assert "job_zone_guidance" in rn_exp
+    assert "accountant" in rn_exp["job_zone_guidance"].lower() or "considerable" in rn_exp["job_zone_guidance"].lower()
+
+    # Data Scientists (15-2051.00) has 3200 empirical 2024-2026 postings -> empirical benchmark
+    ds_res = client.get("/api/v1/occupations/15-2051.00/profile")
+    assert ds_res.status_code == 200
+    ds_prof = ds_res.json()
+    ds_exp = ds_prof["indian_experience"]
+
+    assert ds_exp["fallback_to_job_zone"] is False
+    assert ds_exp["sample_size"] >= 30
+    assert ds_exp["years_covered"] == "2024-2026"
+    assert 3.0 <= ds_exp["typical_min"] <= 4.5
+    assert 6.0 <= ds_exp["typical_max"] <= 8.5
+
 

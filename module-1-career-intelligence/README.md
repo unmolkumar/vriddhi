@@ -5,6 +5,11 @@ Part of the **Vriddhi** Career Advisory Platform.
 Answers the foundational market question:
 > **"Which careers/jobs are likely to be valuable over the next five years?"**
 
+> 📖 **Integration & UI Documentation:**  
+> - **[UI & Feature Integration Guide](INTEGRATION_GUIDE.md)**: End-to-end integration walkthrough, endpoint docs, query params, JSON responses, and TypeScript interfaces for the Frontend & Integration developer.  
+> - **[Database Documentation](DATABASE.md)**: Full database schema catalog, entity counts, query patterns, and empirical distributions.  
+> - **[Handover Document](HANDOVER.md)**: v2.2.0 audit history and acceptance verification across all 1,016 occupations.
+
 ---
 
 ## Architecture Overview
