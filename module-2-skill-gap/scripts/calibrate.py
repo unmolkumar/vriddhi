@@ -265,11 +265,15 @@ def verdict_calibration(client, encoder, translator, validation_sets=("verdict_v
     checks["validation_a3"] = target_scores(engine, [f for f in files("heldout2") if f.name.split("_")[0] in export]
                                             + files("verdict_validation"))
     full = [r["score"] for r in tuning if r["kind"] == "full"]
+    good = [s for s in full if s >= shipped[0]]          # fit_percent anchors: full tuning profiles at a good fit
+    fit_anchors = {"median_good_fit": round(statistics.median(good), 2),
+                   "p90_good_fit": round(float(np.percentile(good, 90)), 2), "n": len(good)}
     names = ("good_fit_threshold", "good_fit_threshold_short", "short_units", "min_related_share",
              "oblique_related_share", "focus_min", "other_role_extra")
     return {"search_best": dict(zip(names, best)), "shipped": dict(zip(names, shipped)),
             "search_cost": verdict_cost(tuning, best, arrays)[0], "shipped_cost": verdict_cost(tuning, shipped, arrays)[0],
-            "median_full_tuning": round(statistics.median(full), 2), "tuning": confusion(tuning, shipped),
+            "median_full_tuning": round(statistics.median(full), 2), "fit_anchors": fit_anchors,
+            "tuning": confusion(tuning, shipped),
             **{k: confusion(rows, shipped) for k, rows in checks.items()},
             "rows": tuning + [r for rows in checks.values() for r in rows]}
 
@@ -317,7 +321,7 @@ def main() -> None:
         out["verdict_calibration"] = vc
         print(f"\n== verdict: shipped {vc['shipped']} (tuning cost {vc['shipped_cost']})")
         print(f"   search best on tuning {vc['search_best']} (cost {vc['search_cost']}); "
-              f"median full tuning score {vc['median_full_tuning']}")
+              f"median full tuning score {vc['median_full_tuning']}; fit_percent anchors {vc['fit_anchors']}")
         for label, c in vc.items():
             if isinstance(c, dict) and "confusion" in c:
                 print(f"  {label:22} acceptable {c['acceptable']}/{c['n']}  {c['confusion']}")

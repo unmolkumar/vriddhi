@@ -41,9 +41,12 @@ INDIA_BAND_MIN_YEAR = 2023       # ... and its newest posting year (years_covere
 EXPERIENCE_MIN_FACTOR = 0.8      # far below the band, the score keeps 80%
 EXPERIENCE_GAP_YEARS = 3.0       # ... reached this many years below the band's minimum
 
-# fit_percent: piecewise-linear, GOOD_FIT_THRESHOLD -> 50, FIT_MEDIAN_FULL (median full-profile own-occupation
-# score on the tuning set) -> 80, the same slope above it, capped at 100; 0 -> 0. Constants from tuning only.
-FIT_MEDIAN_FULL = 0.42            # A3b tuning sets, module 1 v2.2, frozen thresholds
+# fit_percent (A4): piecewise-linear through 0 -> 0, GOOD_FIT_THRESHOLD -> 50, FIT_MEDIAN_GOOD -> 80,
+# FIT_P90_GOOD -> 95, 1.0 -> FIT_CAP; 100 only when every core requirement is met. Anchors: the full tuning profiles
+# (incl. short and oblique) at or above the threshold, frozen constants (scripts/calibrate.py --verdict).
+FIT_MEDIAN_GOOD = 0.48
+FIT_P90_GOOD = 0.59
+FIT_CAP = 99
 FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Early stage"))
 
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
@@ -95,14 +98,15 @@ def by_type(matches: list[RequirementMatch]) -> dict[str, dict]:
     return out
 
 
-def fit_percent(score: float) -> int:
-    """User-facing 0-100 from the raw match score (see FIT_MEDIAN_FULL)."""
-    t, m = GOOD_FIT_THRESHOLD, FIT_MEDIAN_FULL
-    if score <= 0:
-        return 0
-    if score < t:
-        return round(50 * score / t)
-    return min(100, round(50 + 30 * (score - t) / (m - t)))
+def fit_percent(score: float, all_met: bool = False) -> int:
+    """User-facing 0-100 from the raw match score (see FIT_MEDIAN_GOOD); all_met: every core requirement met."""
+    if all_met:
+        return 100
+    xs = (0.0, GOOD_FIT_THRESHOLD, FIT_MEDIAN_GOOD, FIT_P90_GOOD, 1.0)
+    ys = (0, 50, 80, 95, FIT_CAP)
+    score = min(max(score, 0.0), 1.0)
+    i = next(k for k in range(1, len(xs)) if score <= xs[k])
+    return round(ys[i - 1] + (ys[i] - ys[i - 1]) * (score - xs[i - 1]) / (xs[i] - xs[i - 1]))
 
 
 def fit_label(percent: int) -> str:

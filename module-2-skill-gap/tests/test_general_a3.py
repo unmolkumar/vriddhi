@@ -172,9 +172,11 @@ def test_prescribing_is_not_applicable_for_nurses(engine):
 # --- fit percent and roadmap focus ----------------------------------------------------------------------------
 
 def test_fit_percent_piecewise_and_labels():
-    t, m = scoring.GOOD_FIT_THRESHOLD, scoring.FIT_MEDIAN_FULL
+    t, m, p90 = scoring.GOOD_FIT_THRESHOLD, scoring.FIT_MEDIAN_GOOD, scoring.FIT_P90_GOOD
     assert scoring.fit_percent(0) == 0 and scoring.fit_percent(t) == 50 and scoring.fit_percent(m) == 80
-    assert scoring.fit_percent(t / 2) == 25 and scoring.fit_percent(1.0) == 100
+    assert scoring.fit_percent(p90) == 95 and scoring.fit_percent(t / 2) == 25
+    assert scoring.fit_percent(1.0) == scoring.FIT_CAP == 99 and scoring.fit_percent(0.8, all_met=True) == 100
+    assert all(scoring.fit_percent(a / 100) <= scoring.fit_percent(b / 100) for a, b in zip(range(100), range(1, 101)))
     assert [scoring.fit_label(p) for p in (90, 60, 30, 10)] == ["Strong fit", "Good fit", "Developing", "Early stage"]
 
 
@@ -182,7 +184,7 @@ def test_roadmap_main_is_capped_and_the_rest_is_later(engine):
     r = engine.analyze(GapAnalysisV2Request(soc_code=RN, free_text="Gave injections.", hours_per_week=10))
     assert len(r.roadmap.items) == ROADMAP_MAX_ITEMS == 8 and r.roadmap.later
     assert r.roadmap.total_hours.low == sum(i.hours.low for i in r.roadmap.items)
-    assert r.fit_percent == scoring.fit_percent(r.match_score) and r.fit_label
+    assert r.fit_percent == scoring.fit_percent(r.match_score) and r.fit_label            # not all met
 
 
 # --- prewarm --------------------------------------------------------------------------------------------------

@@ -345,7 +345,7 @@ class GeneralEngine:
         label, reason = verdict.decide(match_score, vol, years, band, better_fit)
         suggested = RoleOption(soc_code=better_fit[0], title=better_fit[1], confidence=round(better_fit[2], 4)) \
             if label == "over_qualified" and better_fit else None
-        percent = scoring.fit_percent(match_score)
+        percent = scoring.fit_percent(match_score, all_met=bool(matches) and all(m.status == "met" for m in matches))
         questions, fit_range = [], None
         if label == "insufficient_evidence":
             questions = verdict.follow_up_questions(matches, occ.title, set(answers), self.rephraser)
