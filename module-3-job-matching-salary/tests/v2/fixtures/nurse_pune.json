@@ -1,0 +1,5440 @@
+{
+ "set": "tuning",
+ "role": "staff nurse",
+ "city": "Pune",
+ "now": "2026-10-07T04:21:18.569375+00:00",
+ "profiles": {
+  "full": {
+   "target_role": "staff nurse",
+   "soc_code": null,
+   "location": "Pune",
+   "preferred_locations": [],
+   "free_text": "Staff Nurse\n\nExperience\nStaff Nurse | Ruby Hall Clinic, Pune | Jul 2018 - Present\n- Care for 8-10 patients per shift in the medical-surgical ward: assess condition, record vital signs and update nursing notes.\n- Administer oral, IV and injectable medications as prescribed and watch for reactions.\n- Prepare patients for procedures, change dressings, manage IV lines and catheters.\n- Inform the doctor about changes in a patient's condition and follow up on orders.\n- Teach patients and families about medicines, wound care and diet before discharge.\n\nEducation\nB.Sc Nursing, 2018. BLS certified.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 6.0,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  },
+  "partial": {
+   "target_role": "staff nurse",
+   "soc_code": null,
+   "location": "Pune",
+   "preferred_locations": [],
+   "free_text": "Final-year GNM student. During clinical postings I helped staff nurses take temperature and BP, made beds and fed patients. Looking for my first nursing job.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 0.5,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  },
+  "other": {
+   "target_role": "staff nurse",
+   "soc_code": null,
+   "location": "Pune",
+   "preferred_locations": [],
+   "free_text": "Sales executive for a pharma distributor, 4 years. I visit chemists and clinics, take orders for medicines, collect payments and meet monthly targets.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 4.0,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  }
+ },
+ "listings": {
+  "staff nurse|Pune": {
+   "fetched_at": "2026-10-07T03:31:26.956417+00:00",
+   "source": "adzuna",
+   "total": 4,
+   "jobs": [
+    {
+     "job_id": "adzuna:5889511419",
+     "title": "Staff Nurse",
+     "company": "Apollo Telemedicine Networking Foundation",
+     "description": "To ensure best clinical services at the MMU; providing all defined health care services and following operational processes for optimal functioning of the Mobile Medical Unit. Objective  The paramedics will travel across the identified locations through the MMU.  Abide to follow standard medical ethics in treating the patients.  Maintain adequate levels of stock for materials, medicines and equipment in all treatment and consulting rooms  Ensuring no item is past its expiry date and that st…",
+     "description_quality": "ok",
+     "location": "Pune",
+     "location_raw": "Pune, Maharashtra",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": null,
+     "salary_max": null,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-09-18T21:31:27Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5889511419",
+     "last_observed_at": "2026-10-07T03:31:26.956417Z",
+     "stale": false,
+     "age_hours": null
+    },
+    {
+     "job_id": "adzuna:5889558721",
+     "title": "Staff Nurse",
+     "company": "Apollo Telemedicine Networking Foundation",
+     "description": "Designation Paramedic Department Telemedicine Role ANM/B.Sc.Nursing Reports to Assistant Project Manager Job purpose To ensure best clinical services at the MMU; providing all defined health care services and following operational processes for optimal functioning of the Mobile Medical Unit. Objective · The paramedics will travel across the identified locations through the MMU. · Abide to follow standard medical ethics in treating the patients. · Maintain adequate levels of stock for materials,…",
+     "description_quality": "ok",
+     "location": "Pune",
+     "location_raw": "Pune, Maharashtra",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": null,
+     "salary_max": null,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-09-18T21:51:42Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5889558721",
+     "last_observed_at": "2026-10-07T03:31:26.956417Z",
+     "stale": false,
+     "age_hours": null
+    },
+    {
+     "job_id": "adzuna:5904146518",
+     "title": "Nurse Technician",
+     "company": "2coms",
+     "description": "Job Title: Nurse Technician Location: Qatar Salary: QAR 2,800/ 73,688 INR per month Preferred Age: Up to 40 years Key Responsibilities: Assist with basic wound care and dressing changes. Collect urine, stool, and sputum specimens for laboratory testing. Monitor patients and report changes in condition to the supervising nurse. Assist nurses with medication preparation as directed. Communicate with patients and families regarding basic care procedures. Maintain accurate patient care documentatio…",
+     "description_quality": "ok",
+     "location": "Pune",
+     "location_raw": "Yerwada, Pune",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": 600000,
+     "salary_max": 800000,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-09-30T22:50:17Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5904146518",
+     "last_observed_at": "2026-10-07T03:31:26.956417Z",
+     "stale": false,
+     "age_hours": null
+    },
+    {
+     "job_id": "adzuna:5904372841",
+     "title": "Staff Nurse",
+     "company": "Happiest Resume",
+     "description": "A Medical degree and the successful completion of a residency and fellowship in urology. A state license and certification to practice urology. The ability to keep updated on the latest medical technologies. The flexibility to work irregular hours and remain on emergency call. Strong decision-making, problem-solving, and analytical skills. Good communication and interpersonal skills. Good teamworking, leadership, and organizational skills.",
+     "description_quality": "ok",
+     "location": "Pune",
+     "location_raw": "Pune, Maharashtra",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": 300000,
+     "salary_max": 500000,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-10-01T06:53:44Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5904372841",
+     "last_observed_at": "2026-10-07T03:31:26.956417Z",
+     "stale": false,
+     "age_hours": null
+    }
+   ]
+  },
+  "registered nurse|Pune": {
+   "fetched_at": "2026-10-07T03:31:26.956417+00:00",
+   "source": "adzuna",
+   "total": 1,
+   "jobs": [
+    {
+     "job_id": "adzuna:5904146518",
+     "title": "Nurse Technician",
+     "company": "2coms",
+     "description": "Job Title: Nurse Technician Location: Qatar Salary: QAR 2,800/ 73,688 INR per month Preferred Age: Up to 40 years Key Responsibilities: Assist with basic wound care and dressing changes. Collect urine, stool, and sputum specimens for laboratory testing. Monitor patients and report changes in condition to the supervising nurse. Assist nurses with medication preparation as directed. Communicate with patients and families regarding basic care procedures. Maintain accurate patient care documentatio…",
+     "description_quality": "ok",
+     "location": "Pune",
+     "location_raw": "Yerwada, Pune",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": 600000,
+     "salary_max": 800000,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-09-30T22:50:17Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5904146518",
+     "last_observed_at": "2026-10-07T03:31:26.956417Z",
+     "stale": false,
+     "age_hours": null
+    }
+   ]
+  }
+ },
+ "recorded": {
+  "GET /api/v1/occupations/search?k=5&q=staff nurse #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "29-1141.00",
+     "title": "Registered Nurses",
+     "confidence": 1.0,
+     "method": "india_alias_exact",
+     "matched_term": "staff nurse"
+    },
+    {
+     "soc_code": "29-1141.01",
+     "title": "Acute Care Nurses",
+     "confidence": 0.95,
+     "method": "onet_alt_title_exact",
+     "matched_term": "Staff Nurse"
+    },
+    {
+     "soc_code": "29-1141.03",
+     "title": "Critical Care Nurses",
+     "confidence": 0.95,
+     "method": "onet_alt_title_exact",
+     "matched_term": "Staff Nurse"
+    },
+    {
+     "soc_code": "29-1161.00",
+     "title": "Nurse Midwives",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Nurse Midwives"
+    },
+    {
+     "soc_code": "29-1151.00",
+     "title": "Nurse Anesthetists",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Nurse Anesthetists"
+    }
+   ]
+  },
+  "GET /api/v1/occupations/29-1141.00/profile? #": {
+   "status": 200,
+   "json": {
+    "soc_code": "29-1141.00",
+    "title": "Registered Nurses",
+    "description": "Assess patient health problems and needs, develop and implement nursing care plans, and maintain medical records. Administer nursing care to ill, injured, convalescent, or disabled patients. May advise patients on health maintenance and disease prevention or provide case management. Licensing or registration required.",
+    "domain": {
+     "soc_major_group": "29",
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "india_industry": "Medical / Healthcare / Hospital"
+    },
+    "job_zone": {
+     "job_zone": 4,
+     "name": "Job Zone Four: Considerable Preparation Needed",
+     "experience_text": "A considerable amount of work-related skill, knowledge, or experience is needed for these occupations. For example, an accountant must complete four years of college and work for several years in accounting to be considered qualified.",
+     "education_text": "Most of these occupations require a four-year bachelor's degree, but some do not.",
+     "training_text": "Employees in these occupations usually need several years of work-related experience, on-the-job training, and/or vocational training.",
+     "svp_range": "(7.0 to < 8.0)"
+    },
+    "indian_education": {
+     "primary_qualification": "Bachelor's Degree (B.Tech / B.Sc / B.Com / BA / BBA / MBBS)",
+     "distribution": [
+      {
+       "category": 6,
+       "category_description": "Bachelor's Degree",
+       "percent": 55.92,
+       "india_education_level": "Bachelor's Degree (B.Tech / B.Sc / B.Com / BA / BBA / MBBS)",
+       "hierarchy_level": 6
+      },
+      {
+       "category": 3,
+       "category_description": "Post-Secondary Certificate",
+       "percent": 22.5,
+       "india_education_level": "ITI / Vocational Certificate",
+       "hierarchy_level": 3
+      },
+      {
+       "category": 5,
+       "category_description": "Associate's Degree or other 2-year degree",
+       "percent": 19.39,
+       "india_education_level": "Diploma / Associate Degree",
+       "hierarchy_level": 5
+      },
+      {
+       "category": 8,
+       "category_description": "Master's Degree",
+       "percent": 1.43,
+       "india_education_level": "Master's Degree (M.Tech / MBA / M.Sc / MA / MS)",
+       "hierarchy_level": 8
+      },
+      {
+       "category": 2,
+       "category_description": "High School Diploma or the equivalent (such as a GED)",
+       "percent": 0.76,
+       "india_education_level": "10th / 12th Pass (HSC)",
+       "hierarchy_level": 2
+      },
+      {
+       "category": 1,
+       "category_description": "Less than a High School Diploma",
+       "percent": 0.0,
+       "india_education_level": "Below 10th Standard",
+       "hierarchy_level": 1
+      },
+      {
+       "category": 4,
+       "category_description": "Some College Courses",
+       "percent": 0.0,
+       "india_education_level": "Polytechnic / Vocational Diploma",
+       "hierarchy_level": 4
+      },
+      {
+       "category": 7,
+       "category_description": "Post-Baccalaureate Certificate",
+       "percent": 0.0,
+       "india_education_level": "Post Graduate Diploma (PGD)",
+       "hierarchy_level": 7
+      },
+      {
+       "category": 9,
+       "category_description": "Post-Master's Certificate",
+       "percent": 0.0,
+       "india_education_level": "Advanced PG Diploma / M.Phil",
+       "hierarchy_level": 9
+      },
+      {
+       "category": 10,
+       "category_description": "Doctor's Degree - Professional Practice (such as a J.D. for Law or an M.D. for Medicine)",
+       "percent": 0.0,
+       "india_education_level": "Professional Degree (CA / CS / LLB / MBBS)",
+       "hierarchy_level": 10
+      },
+      {
+       "category": 11,
+       "category_description": "Doctor's Degree - Research/Scholarship (such as a Ph.D.)",
+       "percent": 0.0,
+       "india_education_level": "Doctorate / PhD",
+       "hierarchy_level": 11
+      },
+      {
+       "category": 12,
+       "category_description": "Post-Doctoral Training",
+       "percent": 0.0,
+       "india_education_level": "Post-Doctoral Fellowship",
+       "hierarchy_level": 12
+      }
+     ]
+    },
+    "indian_experience": {
+     "typical_min": 1.3,
+     "typical_max": 3.3,
+     "p25_min": 1.3,
+     "median_min": 2.3,
+     "sample_size": 3,
+     "years_covered": "2015-2016",
+     "fallback_to_job_zone": false
+    },
+    "salary_percentiles_india": [],
+    "related_occupations": [
+     {
+      "related_soc_code": "29-1141.01",
+      "related_title": "Acute Care Nurses",
+      "relatedness_tier": null,
+      "index_val": 1
+     },
+     {
+      "related_soc_code": "29-1171.00",
+      "related_title": "Nurse Practitioners",
+      "relatedness_tier": null,
+      "index_val": 2
+     },
+     {
+      "related_soc_code": "29-1141.03",
+      "related_title": "Critical Care Nurses",
+      "relatedness_tier": null,
+      "index_val": 3
+     },
+     {
+      "related_soc_code": "29-1141.04",
+      "related_title": "Clinical Nurse Specialists",
+      "relatedness_tier": null,
+      "index_val": 4
+     },
+     {
+      "related_soc_code": "29-2061.00",
+      "related_title": "Licensed Practical and Licensed Vocational Nurses",
+      "relatedness_tier": null,
+      "index_val": 5
+     },
+     {
+      "related_soc_code": "29-1161.00",
+      "related_title": "Nurse Midwives",
+      "relatedness_tier": null,
+      "index_val": 6
+     },
+     {
+      "related_soc_code": "29-1141.02",
+      "related_title": "Advanced Practice Psychiatric Nurses",
+      "relatedness_tier": null,
+      "index_val": 7
+     },
+     {
+      "related_soc_code": "29-1151.00",
+      "related_title": "Nurse Anesthetists",
+      "relatedness_tier": null,
+      "index_val": 8
+     },
+     {
+      "related_soc_code": "29-1071.00",
+      "related_title": "Physician Assistants",
+      "relatedness_tier": null,
+      "index_val": 9
+     },
+     {
+      "related_soc_code": "31-1131.00",
+      "related_title": "Nursing Assistants",
+      "relatedness_tier": null,
+      "index_val": 10
+     }
+    ]
+   }
+  },
+  "GET /api/v1/occupations/29-1141.00/related?limit=20 #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1141.01",
+     "related_title": "Acute Care Nurses",
+     "relatedness_tier": null,
+     "index_val": 1,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1171.00",
+     "related_title": "Nurse Practitioners",
+     "relatedness_tier": null,
+     "index_val": 2,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1141.03",
+     "related_title": "Critical Care Nurses",
+     "relatedness_tier": null,
+     "index_val": 3,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1141.04",
+     "related_title": "Clinical Nurse Specialists",
+     "relatedness_tier": null,
+     "index_val": 4,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-2061.00",
+     "related_title": "Licensed Practical and Licensed Vocational Nurses",
+     "relatedness_tier": null,
+     "index_val": 5,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1161.00",
+     "related_title": "Nurse Midwives",
+     "relatedness_tier": null,
+     "index_val": 6,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1141.02",
+     "related_title": "Advanced Practice Psychiatric Nurses",
+     "relatedness_tier": null,
+     "index_val": 7,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1151.00",
+     "related_title": "Nurse Anesthetists",
+     "relatedness_tier": null,
+     "index_val": 8,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1071.00",
+     "related_title": "Physician Assistants",
+     "relatedness_tier": null,
+     "index_val": 9,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "31-1131.00",
+     "related_title": "Nursing Assistants",
+     "relatedness_tier": null,
+     "index_val": 10,
+     "major_group_title": "Healthcare Support Occupations",
+     "career_cluster": "Healthcare Support",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-2043.00",
+     "related_title": "Paramedics",
+     "relatedness_tier": null,
+     "index_val": 11,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1214.00",
+     "related_title": "Emergency Medicine Physicians",
+     "relatedness_tier": null,
+     "index_val": 12,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1215.00",
+     "related_title": "Family Medicine Physicians",
+     "relatedness_tier": null,
+     "index_val": 13,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-2042.00",
+     "related_title": "Emergency Medical Technicians",
+     "relatedness_tier": null,
+     "index_val": 14,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1211.00",
+     "related_title": "Anesthesiologists",
+     "relatedness_tier": null,
+     "index_val": 15,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1243.00",
+     "related_title": "Pediatric Surgeons",
+     "relatedness_tier": null,
+     "index_val": 16,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1218.00",
+     "related_title": "Obstetricians and Gynecologists",
+     "relatedness_tier": null,
+     "index_val": 17,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1216.00",
+     "related_title": "General Internal Medicine Physicians",
+     "relatedness_tier": null,
+     "index_val": 18,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1212.00",
+     "related_title": "Cardiologists",
+     "relatedness_tier": null,
+     "index_val": 19,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "29-1141.00",
+     "related_soc_code": "29-1229.02",
+     "related_title": "Hospitalists",
+     "relatedness_tier": null,
+     "index_val": 20,
+     "major_group_title": "Healthcare Practitioners and Technical",
+     "career_cluster": "Healthcare & Medicine",
+     "job_zone": 5
+    }
+   ]
+  },
+  "GET /api/v1/occupations/search?k=5&q=registered nurse #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "29-1141.00",
+     "title": "Registered Nurses",
+     "confidence": 0.88,
+     "method": "onet_title_partial",
+     "matched_term": "Registered Nurses"
+    },
+    {
+     "soc_code": "29-1141.03",
+     "title": "Critical Care Nurses",
+     "confidence": 0.82,
+     "method": "onet_alt_title_partial",
+     "matched_term": "Registered Nurse (RN)"
+    },
+    {
+     "soc_code": "29-1161.00",
+     "title": "Nurse Midwives",
+     "confidence": 0.82,
+     "method": "onet_alt_title_partial",
+     "matched_term": "Registered Nurse Midwife"
+    },
+    {
+     "soc_code": "29-1141.01",
+     "title": "Acute Care Nurses",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Acute Care Nurses"
+    },
+    {
+     "soc_code": "29-1151.00",
+     "title": "Nurse Anesthetists",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Nurse Anesthetists"
+    }
+   ]
+  },
+  "GET /api/v1/occupations/search?k=5&q=nurse technician #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "31-1131.00",
+     "title": "Nursing Assistants",
+     "confidence": 0.95,
+     "method": "onet_alt_title_exact",
+     "matched_term": "Nurse Technician"
+    },
+    {
+     "soc_code": "29-1161.00",
+     "title": "Nurse Midwives",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Nurse Midwives"
+    },
+    {
+     "soc_code": "29-1141.00",
+     "title": "Registered Nurses",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Registered Nurses"
+    },
+    {
+     "soc_code": "29-1141.01",
+     "title": "Acute Care Nurses",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Acute Care Nurses"
+    },
+    {
+     "soc_code": "29-1151.00",
+     "title": "Nurse Anesthetists",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Nurse Anesthetists"
+    }
+   ]
+  },
+  "POST /api/v2/skills/match_texts? #b753bbd44e153077": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.2322,
+      "job_text_score": 0.05,
+      "occupation_score": 0.5055,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "met",
+        "similarity": 0.7996,
+        "credit": 1.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "record vital signs",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          165,
+          183
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.8253,
+        "credit": 1.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "met",
+        "similarity": 0.6871,
+        "credit": 1.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0082,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Order, interpret, and evaluate diagnostic tests to identify and assess patient's condition.",
+        "item_type": "task",
+        "item_id": "1844",
+        "status": "met",
+        "similarity": 0.6071,
+        "credit": 1.0,
+        "weight": 0.8525,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition and follow up on orders.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          465
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1844",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Modify patient treatment plans as indicated by patients' responses and conditions.",
+        "item_type": "task",
+        "item_id": "1842",
+        "status": "met",
+        "similarity": 0.6385,
+        "credit": 1.0,
+        "weight": 0.835,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1842",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer local, inhalation, intravenous, or other anesthetics.",
+        "item_type": "task",
+        "item_id": "1854",
+        "status": "met",
+        "similarity": 0.766,
+        "credit": 1.0,
+        "weight": 0.7925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1854",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Prepare patients for and assist with examinations or treatments.",
+        "item_type": "task",
+        "item_id": "1847",
+        "status": "met",
+        "similarity": 0.8498,
+        "credit": 1.0,
+        "weight": 0.765,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Prepare patients for procedures",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          300,
+          331
+         ],
+         "context_span": [
+          300,
+          381
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1847",
+        "effective_weight": 0.007,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer anesthetics or sedatives to control pain.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.3",
+        "status": "met",
+        "similarity": 0.6128,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.3",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.8218,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Advise medical personnel regarding healthcare issues.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.b.6.f.1",
+        "status": "met",
+        "similarity": 0.6074,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.b.6.f.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Diagnose medical conditions.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.b.1.f.2",
+        "status": "met",
+        "similarity": 0.6056,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.b.1.f.2",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Inform medical professionals regarding patient conditions and care.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.2.d.1",
+        "status": "met",
+        "similarity": 0.7866,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.2.d.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor patient conditions during treatments, procedures, or activities.",
+        "item_type": "dwa",
+        "item_id": "4.A.1.a.2.e.7",
+        "status": "met",
+        "similarity": 0.6103,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.1.a.2.e.7",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor patient progress or responses to treatments.",
+        "item_type": "dwa",
+        "item_id": "4.A.1.a.2.e.1",
+        "status": "met",
+        "similarity": 0.6284,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.1.a.2.e.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Order medical diagnostic or clinical tests.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.c.3.b.1",
+        "status": "met",
+        "similarity": 0.6032,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition and follow up on orders.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          465
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.c.3.b.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "A Medical degree",
+        "item_type": "task",
+        "item_id": "job:56ecd769dbee",
+        "status": "missing",
+        "similarity": 0.3581,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56ecd769dbee",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "the successful completion of a residency",
+        "item_type": "task",
+        "item_id": "job:ed0d9d4e76f7",
+        "status": "missing",
+        "similarity": 0.3529,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ed0d9d4e76f7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "fellowship in urology",
+        "item_type": "task",
+        "item_id": "job:5dd6a2c55432",
+        "status": "missing",
+        "similarity": 0.3374,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5dd6a2c55432",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "A state license",
+        "item_type": "task",
+        "item_id": "job:185e5def2893",
+        "status": "missing",
+        "similarity": 0.2601,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:185e5def2893",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "certification to practice urology",
+        "item_type": "task",
+        "item_id": "job:bcf452d87276",
+        "status": "missing",
+        "similarity": 0.3147,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:bcf452d87276",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The flexibility to work irregular hours",
+        "item_type": "task",
+        "item_id": "job:317d777032af",
+        "status": "missing",
+        "similarity": 0.2299,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:317d777032af",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "remain on emergency call",
+        "item_type": "task",
+        "item_id": "job:6983f8966229",
+        "status": "missing",
+        "similarity": 0.3079,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:6983f8966229",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and analytical skills",
+        "item_type": "task",
+        "item_id": "job:8921ebed7ea7",
+        "status": "missing",
+        "similarity": 0.2181,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:8921ebed7ea7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and organizational skills",
+        "item_type": "task",
+        "item_id": "job:cf0c1d211235",
+        "status": "missing",
+        "similarity": 0.1898,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:cf0c1d211235",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The ability to keep updated on the latest medical technologies.",
+        "item_type": "task",
+        "item_id": "job:b2dc8446878e",
+        "status": "partial",
+        "similarity": 0.54,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:b2dc8446878e",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.03
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.4237,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4444,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3635,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "partial",
+        "similarity": 0.4645,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "update nursing notes",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          188,
+          208
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "partial",
+        "similarity": 0.3306,
+        "credit": 0.4,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": 0.005
+       }
+      ],
+      "job_requirements": 10,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "Staff Nurse"
+     },
+     {
+      "match_score": 0.5622,
+      "job_text_score": 0.6,
+      "occupation_score": 0.5055,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "report changes in condition to the supervising nurse",
+        "item_type": "task",
+        "item_id": "job:a28bcc6054ad",
+        "status": "met",
+        "similarity": 0.6652,
+        "credit": 1.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:a28bcc6054ad",
+        "effective_weight": 0.12,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Communicate with patients",
+        "item_type": "task",
+        "item_id": "job:038430ee3a78",
+        "status": "met",
+        "similarity": 0.6996,
+        "credit": 1.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Teach patients",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          468,
+          482
+         ],
+         "context_span": [
+          468,
+          550
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:038430ee3a78",
+        "effective_weight": 0.12,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "met",
+        "similarity": 0.7996,
+        "credit": 1.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "record vital signs",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          165,
+          183
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.8253,
+        "credit": 1.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "met",
+        "similarity": 0.6871,
+        "credit": 1.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0082,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Order, interpret, and evaluate diagnostic tests to identify and assess patient's condition.",
+        "item_type": "task",
+        "item_id": "1844",
+        "status": "met",
+        "similarity": 0.6071,
+        "credit": 1.0,
+        "weight": 0.8525,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition and follow up on orders.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          465
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1844",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Modify patient treatment plans as indicated by patients' responses and conditions.",
+        "item_type": "task",
+        "item_id": "1842",
+        "status": "met",
+        "similarity": 0.6385,
+        "credit": 1.0,
+        "weight": 0.835,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1842",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer local, inhalation, intravenous, or other anesthetics.",
+        "item_type": "task",
+        "item_id": "1854",
+        "status": "met",
+        "similarity": 0.766,
+        "credit": 1.0,
+        "weight": 0.7925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1854",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Prepare patients for and assist with examinations or treatments.",
+        "item_type": "task",
+        "item_id": "1847",
+        "status": "met",
+        "similarity": 0.8498,
+        "credit": 1.0,
+        "weight": 0.765,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Prepare patients for procedures",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          300,
+          331
+         ],
+         "context_span": [
+          300,
+          381
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1847",
+        "effective_weight": 0.007,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer anesthetics or sedatives to control pain.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.3",
+        "status": "met",
+        "similarity": 0.6128,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.3",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.8218,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Advise medical personnel regarding healthcare issues.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.b.6.f.1",
+        "status": "met",
+        "similarity": 0.6074,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.b.6.f.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Diagnose medical conditions.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.b.1.f.2",
+        "status": "met",
+        "similarity": 0.6056,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.b.1.f.2",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Inform medical professionals regarding patient conditions and care.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.2.d.1",
+        "status": "met",
+        "similarity": 0.7866,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.2.d.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor patient conditions during treatments, procedures, or activities.",
+        "item_type": "dwa",
+        "item_id": "4.A.1.a.2.e.7",
+        "status": "met",
+        "similarity": 0.6103,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.1.a.2.e.7",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "and sputum specimens for laboratory testing",
+        "item_type": "task",
+        "item_id": "job:5c5d8be19b32",
+        "status": "missing",
+        "similarity": 0.1897,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5c5d8be19b32",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "Assist nurses with medication preparation as directed.",
+        "item_type": "task",
+        "item_id": "job:ca2655f13bc5",
+        "status": "partial",
+        "similarity": 0.5747,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "injectable medications as prescribed",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          236,
+          272
+         ],
+         "context_span": [
+          212,
+          297
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ca2655f13bc5",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "families regarding basic care procedures",
+        "item_type": "task",
+        "item_id": "job:56cbf47e070d",
+        "status": "partial",
+        "similarity": 0.5895,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "families about medicines",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          487,
+          511
+         ],
+         "context_span": [
+          468,
+          550
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56cbf47e070d",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.4237,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4444,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3635,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "partial",
+        "similarity": 0.4645,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "update nursing notes",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          188,
+          208
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "partial",
+        "similarity": 0.3306,
+        "credit": 0.4,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": 0.005
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "partial",
+        "similarity": 0.4759,
+        "credit": 0.4,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0081,
+        "score_gain_if_met": 0.0049
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "partial",
+        "similarity": 0.4559,
+        "credit": 0.4,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0047
+       },
+       {
+        "requirement": "Perform administrative or managerial functions, such as taking responsibility for a unit's staff, budget, planning, or long-range goals.",
+        "item_type": "task",
+        "item_id": "1861",
+        "status": "partial",
+        "similarity": 0.378,
+        "credit": 0.4,
+        "weight": 0.855,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1861",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": 0.0047
+       },
+       {
+        "requirement": "Direct or coordinate infection control programs, advising or consulting with specified personnel about necessary precautions.",
+        "item_type": "task",
+        "item_id": "1860",
+        "status": "partial",
+        "similarity": 0.4743,
+        "credit": 0.4,
+        "weight": 0.845,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1860",
+        "effective_weight": 0.0077,
+        "score_gain_if_met": 0.0046
+       },
+       {
+        "requirement": "Conduct specified laboratory tests.",
+        "item_type": "task",
+        "item_id": "1857",
+        "status": "partial",
+        "similarity": 0.3722,
+        "credit": 0.4,
+        "weight": 0.8275,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1857",
+        "effective_weight": 0.0075,
+        "score_gain_if_met": 0.0045
+       },
+       {
+        "requirement": "Assess the needs of individuals, families, or communities, including assessment of individuals' home or work environments, to identify potential health or safety problems.",
+        "item_type": "task",
+        "item_id": "1849",
+        "status": "partial",
+        "similarity": 0.2876,
+        "credit": 0.4,
+        "weight": 0.7975,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1849",
+        "effective_weight": 0.0073,
+        "score_gain_if_met": 0.0044
+       },
+       {
+        "requirement": "Provide or arrange for training or instruction of auxiliary personnel or students.",
+        "item_type": "task",
+        "item_id": "1862",
+        "status": "partial",
+        "similarity": 0.3641,
+        "credit": 0.4,
+        "weight": 0.7725,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1862",
+        "effective_weight": 0.007,
+        "score_gain_if_met": 0.0042
+       }
+      ],
+      "job_requirements": 5,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j1",
+      "job_title": "Nurse Technician"
+     },
+     {
+      "match_score": 0.2022,
+      "job_text_score": 0.0,
+      "occupation_score": 0.5055,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "met",
+        "similarity": 0.7996,
+        "credit": 1.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "record vital signs",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          165,
+          183
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.8253,
+        "credit": 1.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "met",
+        "similarity": 0.6871,
+        "credit": 1.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0082,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Order, interpret, and evaluate diagnostic tests to identify and assess patient's condition.",
+        "item_type": "task",
+        "item_id": "1844",
+        "status": "met",
+        "similarity": 0.6071,
+        "credit": 1.0,
+        "weight": 0.8525,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition and follow up on orders.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          465
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1844",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Modify patient treatment plans as indicated by patients' responses and conditions.",
+        "item_type": "task",
+        "item_id": "1842",
+        "status": "met",
+        "similarity": 0.6385,
+        "credit": 1.0,
+        "weight": 0.835,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1842",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer local, inhalation, intravenous, or other anesthetics.",
+        "item_type": "task",
+        "item_id": "1854",
+        "status": "met",
+        "similarity": 0.766,
+        "credit": 1.0,
+        "weight": 0.7925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1854",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Prepare patients for and assist with examinations or treatments.",
+        "item_type": "task",
+        "item_id": "1847",
+        "status": "met",
+        "similarity": 0.8498,
+        "credit": 1.0,
+        "weight": 0.765,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Prepare patients for procedures",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          300,
+          331
+         ],
+         "context_span": [
+          300,
+          381
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1847",
+        "effective_weight": 0.007,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer anesthetics or sedatives to control pain.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.3",
+        "status": "met",
+        "similarity": 0.6128,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.3",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.8218,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Administer oral, intravenous and injectable medications as prescribed and watch for reactions.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          212,
+          297
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "Administer oral, IV and injectable medications as prescribed and watch for reactions.",
+         "rewrites": [
+          "IV -> intravenous"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Advise medical personnel regarding healthcare issues.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.b.6.f.1",
+        "status": "met",
+        "similarity": 0.6074,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.b.6.f.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Diagnose medical conditions.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.b.1.f.2",
+        "status": "met",
+        "similarity": 0.6056,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.b.1.f.2",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Inform medical professionals regarding patient conditions and care.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.2.d.1",
+        "status": "met",
+        "similarity": 0.7866,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.2.d.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor patient conditions during treatments, procedures, or activities.",
+        "item_type": "dwa",
+        "item_id": "4.A.1.a.2.e.7",
+        "status": "met",
+        "similarity": 0.6103,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.1.a.2.e.7",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Monitor patient progress or responses to treatments.",
+        "item_type": "dwa",
+        "item_id": "4.A.1.a.2.e.1",
+        "status": "met",
+        "similarity": 0.6284,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          440
+         ],
+         "context_span": [
+          384,
+          465
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.1.a.2.e.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Order medical diagnostic or clinical tests.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.c.3.b.1",
+        "status": "met",
+        "similarity": 0.6032,
+        "credit": 1.0,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Inform the doctor about changes in a patient's condition and follow up on orders.",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          384,
+          465
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.c.3.b.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "To ensure best clinical services at the MMU",
+        "item_type": "task",
+        "item_id": "job:2813b1ad7b87",
+        "status": "missing",
+        "similarity": 0.4249,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2813b1ad7b87",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "providing all defined health care services",
+        "item_type": "task",
+        "item_id": "job:96028b635de1",
+        "status": "missing",
+        "similarity": 0.3494,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:96028b635de1",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "following operational processes for optimal functioning of the Mobile Medical Unit",
+        "item_type": "task",
+        "item_id": "job:7c67fbe148bc",
+        "status": "missing",
+        "similarity": 0.4117,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:7c67fbe148bc",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "Objective  The paramedics will travel across the identified locations through the MMU.  Abide to follow standard medical ethics in treating the patients.",
+        "item_type": "task",
+        "item_id": "job:2379b65ea645",
+        "status": "missing",
+        "similarity": 0.4292,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2379b65ea645",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.4237,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4444,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3635,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "partial",
+        "similarity": 0.4645,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "update nursing notes",
+         "evidence_type": "work",
+         "section": "experience",
+         "span": [
+          188,
+          208
+         ],
+         "context_span": [
+          84,
+          209
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "partial",
+        "similarity": 0.3306,
+        "credit": 0.4,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": 0.005
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "partial",
+        "similarity": 0.4759,
+        "credit": 0.4,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0081,
+        "score_gain_if_met": 0.0049
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "partial",
+        "similarity": 0.4559,
+        "credit": 0.4,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0047
+       },
+       {
+        "requirement": "Perform administrative or managerial functions, such as taking responsibility for a unit's staff, budget, planning, or long-range goals.",
+        "item_type": "task",
+        "item_id": "1861",
+        "status": "partial",
+        "similarity": 0.378,
+        "credit": 0.4,
+        "weight": 0.855,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1861",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": 0.0047
+       },
+       {
+        "requirement": "Direct or coordinate infection control programs, advising or consulting with specified personnel about necessary precautions.",
+        "item_type": "task",
+        "item_id": "1860",
+        "status": "partial",
+        "similarity": 0.4743,
+        "credit": 0.4,
+        "weight": 0.845,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1860",
+        "effective_weight": 0.0077,
+        "score_gain_if_met": 0.0046
+       },
+       {
+        "requirement": "Conduct specified laboratory tests.",
+        "item_type": "task",
+        "item_id": "1857",
+        "status": "partial",
+        "similarity": 0.3722,
+        "credit": 0.4,
+        "weight": 0.8275,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1857",
+        "effective_weight": 0.0075,
+        "score_gain_if_met": 0.0045
+       },
+       {
+        "requirement": "Assess the needs of individuals, families, or communities, including assessment of individuals' home or work environments, to identify potential health or safety problems.",
+        "item_type": "task",
+        "item_id": "1849",
+        "status": "partial",
+        "similarity": 0.2876,
+        "credit": 0.4,
+        "weight": 0.7975,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "implied_by_role",
+        "evidence": {
+         "text": "8.5 years as Staff Nurse",
+         "evidence_type": "work",
+         "section": "role_history",
+         "span": null,
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "Your past role suggests this, but your description doesn't show it. Add an example of where you did it.",
+        "flags": [],
+        "requirement_id": "task:1849",
+        "effective_weight": 0.0073,
+        "score_gain_if_met": 0.0044
+       }
+      ],
+      "job_requirements": 4,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j2",
+      "job_title": "Staff Nurse"
+     }
+    ],
+    "warnings": []
+   }
+  },
+  "POST /api/v2/skills/match_texts? #53069936e64ed3ac": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.0231,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0578,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [],
+      "missing": [
+       {
+        "requirement": "A Medical degree",
+        "item_type": "task",
+        "item_id": "job:56ecd769dbee",
+        "status": "missing",
+        "similarity": 0.3567,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56ecd769dbee",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "the successful completion of a residency",
+        "item_type": "task",
+        "item_id": "job:ed0d9d4e76f7",
+        "status": "missing",
+        "similarity": 0.2948,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ed0d9d4e76f7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "fellowship in urology",
+        "item_type": "task",
+        "item_id": "job:5dd6a2c55432",
+        "status": "missing",
+        "similarity": 0.2525,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5dd6a2c55432",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "A state license",
+        "item_type": "task",
+        "item_id": "job:185e5def2893",
+        "status": "missing",
+        "similarity": 0.2104,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:185e5def2893",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "certification to practice urology",
+        "item_type": "task",
+        "item_id": "job:bcf452d87276",
+        "status": "missing",
+        "similarity": 0.2708,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:bcf452d87276",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The ability to keep updated on the latest medical technologies.",
+        "item_type": "task",
+        "item_id": "job:b2dc8446878e",
+        "status": "missing",
+        "similarity": 0.3687,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:b2dc8446878e",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The flexibility to work irregular hours",
+        "item_type": "task",
+        "item_id": "job:317d777032af",
+        "status": "missing",
+        "similarity": 0.2004,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:317d777032af",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "remain on emergency call",
+        "item_type": "task",
+        "item_id": "job:6983f8966229",
+        "status": "missing",
+        "similarity": 0.1478,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:6983f8966229",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and analytical skills",
+        "item_type": "task",
+        "item_id": "job:8921ebed7ea7",
+        "status": "missing",
+        "similarity": 0.3398,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:8921ebed7ea7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and organizational skills",
+        "item_type": "task",
+        "item_id": "job:cf0c1d211235",
+        "status": "missing",
+        "similarity": 0.2476,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:cf0c1d211235",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.3575,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.2873,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.3802,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0077,
+        "score_gain_if_met": 0.0077
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "missing",
+        "similarity": 0.4703,
+        "credit": 0.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": 0.0076
+       }
+      ],
+      "job_requirements": 10,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "Staff Nurse"
+     },
+     {
+      "match_score": 0.1431,
+      "job_text_score": 0.2,
+      "occupation_score": 0.0578,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [],
+      "missing": [
+       {
+        "requirement": "and sputum specimens for laboratory testing",
+        "item_type": "task",
+        "item_id": "job:5c5d8be19b32",
+        "status": "missing",
+        "similarity": 0.1445,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5c5d8be19b32",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "Communicate with patients",
+        "item_type": "task",
+        "item_id": "job:038430ee3a78",
+        "status": "missing",
+        "similarity": 0.4461,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:038430ee3a78",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "families regarding basic care procedures",
+        "item_type": "task",
+        "item_id": "job:56cbf47e070d",
+        "status": "missing",
+        "similarity": 0.3539,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56cbf47e070d",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "report changes in condition to the supervising nurse",
+        "item_type": "task",
+        "item_id": "job:a28bcc6054ad",
+        "status": "partial",
+        "similarity": 0.5178,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "During clinical postings I helped staff nurses take temperature",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          24,
+          87
+         ],
+         "context_span": [
+          24,
+          123
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:a28bcc6054ad",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "Assist nurses with medication preparation as directed.",
+        "item_type": "task",
+        "item_id": "job:ca2655f13bc5",
+        "status": "partial",
+        "similarity": 0.5801,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "During clinical postings I helped staff nurses take temperature and blood pressure, made beds and fed patients.",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          24,
+          123
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": "During clinical postings I helped staff nurses take temperature and BP, made beds and fed patients.",
+         "rewrites": [
+          "BP -> blood pressure"
+         ]
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ca2655f13bc5",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.3575,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.2873,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.3802,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0077,
+        "score_gain_if_met": 0.0077
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "missing",
+        "similarity": 0.4703,
+        "credit": 0.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": 0.0076
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "missing",
+        "similarity": 0.2484,
+        "credit": 0.0,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": 0.0076
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "missing",
+        "similarity": 0.4642,
+        "credit": 0.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0074,
+        "score_gain_if_met": 0.0074
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "missing",
+        "similarity": 0.3824,
+        "credit": 0.0,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0073,
+        "score_gain_if_met": 0.0073
+       },
+       {
+        "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluate patient care plans.",
+        "item_type": "task",
+        "item_id": "1843",
+        "status": "missing",
+        "similarity": 0.4403,
+        "credit": 0.0,
+        "weight": 0.87,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1843",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "missing",
+        "similarity": 0.4535,
+        "credit": 0.0,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       }
+      ],
+      "job_requirements": 5,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j1",
+      "job_title": "Nurse Technician"
+     },
+     {
+      "match_score": 0.0231,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0578,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [],
+      "missing": [
+       {
+        "requirement": "To ensure best clinical services at the MMU",
+        "item_type": "task",
+        "item_id": "job:2813b1ad7b87",
+        "status": "missing",
+        "similarity": 0.3894,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2813b1ad7b87",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "providing all defined health care services",
+        "item_type": "task",
+        "item_id": "job:96028b635de1",
+        "status": "missing",
+        "similarity": 0.3218,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:96028b635de1",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "following operational processes for optimal functioning of the Mobile Medical Unit",
+        "item_type": "task",
+        "item_id": "job:7c67fbe148bc",
+        "status": "missing",
+        "similarity": 0.2571,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:7c67fbe148bc",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "Objective  The paramedics will travel across the identified locations through the MMU.  Abide to follow standard medical ethics in treating the patients.",
+        "item_type": "task",
+        "item_id": "job:2379b65ea645",
+        "status": "missing",
+        "similarity": 0.3218,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2379b65ea645",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.3575,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.4,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.2873,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.013,
+        "score_gain_if_met": 0.013
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.3802,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0077,
+        "score_gain_if_met": 0.0077
+       },
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "missing",
+        "similarity": 0.4703,
+        "credit": 0.0,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": 0.0076
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "missing",
+        "similarity": 0.2484,
+        "credit": 0.0,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0076,
+        "score_gain_if_met": 0.0076
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "missing",
+        "similarity": 0.4642,
+        "credit": 0.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0074,
+        "score_gain_if_met": 0.0074
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "missing",
+        "similarity": 0.3824,
+        "credit": 0.0,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0073,
+        "score_gain_if_met": 0.0073
+       },
+       {
+        "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluate patient care plans.",
+        "item_type": "task",
+        "item_id": "1843",
+        "status": "missing",
+        "similarity": 0.4403,
+        "credit": 0.0,
+        "weight": 0.87,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1843",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "missing",
+        "similarity": 0.4535,
+        "credit": 0.0,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       },
+       {
+        "requirement": "Monitor all aspects of patient care, including diet and physical activity.",
+        "item_type": "task",
+        "item_id": "1845",
+        "status": "missing",
+        "similarity": 0.4474,
+        "credit": 0.0,
+        "weight": 0.86,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1845",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       }
+      ],
+      "job_requirements": 4,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j2",
+      "job_title": "Staff Nurse"
+     }
+    ],
+    "warnings": []
+   }
+  },
+  "POST /api/v2/skills/match_texts? #3a13c910140060b7": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.0333,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0833,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.697,
+        "credit": 0.8333,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.6059,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Patient Care",
+        "item_type": "market_skill",
+        "item_id": "patient_care",
+        "status": "met",
+        "similarity": 0.5631,
+        "credit": 1.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "clinics",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          72,
+          79
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"clinics\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:patient_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "A Medical degree",
+        "item_type": "task",
+        "item_id": "job:56ecd769dbee",
+        "status": "missing",
+        "similarity": 0.3776,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56ecd769dbee",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "the successful completion of a residency",
+        "item_type": "task",
+        "item_id": "job:ed0d9d4e76f7",
+        "status": "missing",
+        "similarity": 0.2544,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ed0d9d4e76f7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "fellowship in urology",
+        "item_type": "task",
+        "item_id": "job:5dd6a2c55432",
+        "status": "missing",
+        "similarity": 0.3956,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5dd6a2c55432",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "A state license",
+        "item_type": "task",
+        "item_id": "job:185e5def2893",
+        "status": "missing",
+        "similarity": 0.254,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:185e5def2893",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "certification to practice urology",
+        "item_type": "task",
+        "item_id": "job:bcf452d87276",
+        "status": "missing",
+        "similarity": 0.3315,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:bcf452d87276",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The ability to keep updated on the latest medical technologies.",
+        "item_type": "task",
+        "item_id": "job:b2dc8446878e",
+        "status": "missing",
+        "similarity": 0.3569,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:b2dc8446878e",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "The flexibility to work irregular hours",
+        "item_type": "task",
+        "item_id": "job:317d777032af",
+        "status": "missing",
+        "similarity": 0.2537,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:317d777032af",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "remain on emergency call",
+        "item_type": "task",
+        "item_id": "job:6983f8966229",
+        "status": "missing",
+        "similarity": 0.2276,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:6983f8966229",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and analytical skills",
+        "item_type": "task",
+        "item_id": "job:8921ebed7ea7",
+        "status": "missing",
+        "similarity": 0.28,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:8921ebed7ea7",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "and organizational skills",
+        "item_type": "task",
+        "item_id": "job:cf0c1d211235",
+        "status": "missing",
+        "similarity": 0.2618,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:cf0c1d211235",
+        "effective_weight": 0.06,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.425,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.3424,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.3411,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3708,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.2634,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": 0.0085
+       }
+      ],
+      "job_requirements": 10,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "Staff Nurse"
+     },
+     {
+      "match_score": 0.0933,
+      "job_text_score": 0.1,
+      "occupation_score": 0.0833,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.697,
+        "credit": 0.8333,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.6059,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Patient Care",
+        "item_type": "market_skill",
+        "item_id": "patient_care",
+        "status": "met",
+        "similarity": 0.5631,
+        "credit": 1.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "clinics",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          72,
+          79
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"clinics\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:patient_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "and sputum specimens for laboratory testing",
+        "item_type": "task",
+        "item_id": "job:5c5d8be19b32",
+        "status": "missing",
+        "similarity": 0.224,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:5c5d8be19b32",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "report changes in condition to the supervising nurse",
+        "item_type": "task",
+        "item_id": "job:a28bcc6054ad",
+        "status": "missing",
+        "similarity": 0.2915,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:a28bcc6054ad",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "Communicate with patients",
+        "item_type": "task",
+        "item_id": "job:038430ee3a78",
+        "status": "missing",
+        "similarity": 0.4091,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:038430ee3a78",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "families regarding basic care procedures",
+        "item_type": "task",
+        "item_id": "job:56cbf47e070d",
+        "status": "missing",
+        "similarity": 0.37,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:56cbf47e070d",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.12
+       },
+       {
+        "requirement": "Assist nurses with medication preparation as directed.",
+        "item_type": "task",
+        "item_id": "job:ca2655f13bc5",
+        "status": "partial",
+        "similarity": 0.5876,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ca2655f13bc5",
+        "effective_weight": 0.12,
+        "score_gain_if_met": 0.06
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.425,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.3424,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.3411,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3708,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.2634,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": 0.0085
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "missing",
+        "similarity": 0.2585,
+        "credit": 0.0,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": 0.0084
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "missing",
+        "similarity": 0.3604,
+        "credit": 0.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0082,
+        "score_gain_if_met": 0.0082
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "missing",
+        "similarity": 0.4483,
+        "credit": 0.0,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0081,
+        "score_gain_if_met": 0.0081
+       },
+       {
+        "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluate patient care plans.",
+        "item_type": "task",
+        "item_id": "1843",
+        "status": "missing",
+        "similarity": 0.4188,
+        "credit": 0.0,
+        "weight": 0.87,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1843",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0079
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "missing",
+        "similarity": 0.2621,
+        "credit": 0.0,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0079
+       }
+      ],
+      "job_requirements": 5,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j1",
+      "job_title": "Nurse Technician"
+     },
+     {
+      "match_score": 0.0333,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0833,
+      "blend": 0.6,
+      "soc_code": "29-1141.00",
+      "occupation_title": "Registered Nurses",
+      "met": [
+       {
+        "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+        "item_type": "task",
+        "item_id": "20413",
+        "status": "met",
+        "similarity": 0.697,
+        "credit": 0.8333,
+        "weight": 0.925,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:20413",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Administer non-intravenous medications.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.a.5.c.6",
+        "status": "met",
+        "similarity": 0.6059,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "take orders for medicines",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          81,
+          106
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"take orders for medicines\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.a.5.c.6",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Patient Care",
+        "item_type": "market_skill",
+        "item_id": "patient_care",
+        "status": "met",
+        "similarity": 0.5631,
+        "credit": 1.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "clinics",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          72,
+          79
+         ],
+         "context_span": [
+          51,
+          150
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"clinics\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:patient_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "To ensure best clinical services at the MMU",
+        "item_type": "task",
+        "item_id": "job:2813b1ad7b87",
+        "status": "missing",
+        "similarity": 0.4413,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2813b1ad7b87",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "providing all defined health care services",
+        "item_type": "task",
+        "item_id": "job:96028b635de1",
+        "status": "missing",
+        "similarity": 0.3841,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:96028b635de1",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "following operational processes for optimal functioning of the Mobile Medical Unit",
+        "item_type": "task",
+        "item_id": "job:7c67fbe148bc",
+        "status": "missing",
+        "similarity": 0.3107,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:7c67fbe148bc",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "Objective  The paramedics will travel across the identified locations through the MMU.  Abide to follow standard medical ethics in treating the patients.",
+        "item_type": "task",
+        "item_id": "job:2379b65ea645",
+        "status": "missing",
+        "similarity": 0.3264,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:2379b65ea645",
+        "effective_weight": 0.15,
+        "score_gain_if_met": 0.15
+       },
+       {
+        "requirement": "Clinical Documentation",
+        "item_type": "market_skill",
+        "item_id": "clinical_documentation",
+        "status": "missing",
+        "similarity": 0.425,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:clinical_documentation:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "General Nursing",
+        "item_type": "market_skill",
+        "item_id": "nursing",
+        "status": "missing",
+        "similarity": 0.3424,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:nursing:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "ICU / Critical Care",
+        "item_type": "market_skill",
+        "item_id": "icu_care",
+        "status": "missing",
+        "similarity": 0.3411,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:icu_care:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Infection Control Protocols",
+        "item_type": "market_skill",
+        "item_id": "infection_control",
+        "status": "missing",
+        "similarity": 0.3708,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:infection_control:curated",
+        "effective_weight": 0.0145,
+        "score_gain_if_met": 0.0145
+       },
+       {
+        "requirement": "Record patients' medical information and vital signs.",
+        "item_type": "task",
+        "item_id": "1841",
+        "status": "missing",
+        "similarity": 0.2634,
+        "credit": 0.0,
+        "weight": 0.935,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1841",
+        "effective_weight": 0.0085,
+        "score_gain_if_met": 0.0085
+       },
+       {
+        "requirement": "Maintain accurate, detailed reports and records.",
+        "item_type": "task",
+        "item_id": "1839",
+        "status": "missing",
+        "similarity": 0.2585,
+        "credit": 0.0,
+        "weight": 0.9225,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1839",
+        "effective_weight": 0.0084,
+        "score_gain_if_met": 0.0084
+       },
+       {
+        "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+        "item_type": "task",
+        "item_id": "1840",
+        "status": "missing",
+        "similarity": 0.3604,
+        "credit": 0.0,
+        "weight": 0.9025,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1840",
+        "effective_weight": 0.0082,
+        "score_gain_if_met": 0.0082
+       },
+       {
+        "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilitation in locations such as schools, hospitals, or industry.",
+        "item_type": "task",
+        "item_id": "1855",
+        "status": "missing",
+        "similarity": 0.4483,
+        "credit": 0.0,
+        "weight": 0.89,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1855",
+        "effective_weight": 0.0081,
+        "score_gain_if_met": 0.0081
+       },
+       {
+        "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluate patient care plans.",
+        "item_type": "task",
+        "item_id": "1843",
+        "status": "missing",
+        "similarity": 0.4188,
+        "credit": 0.0,
+        "weight": 0.87,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1843",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0079
+       },
+       {
+        "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular unit.",
+        "item_type": "task",
+        "item_id": "1846",
+        "status": "missing",
+        "similarity": 0.2621,
+        "credit": 0.0,
+        "weight": 0.865,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1846",
+        "effective_weight": 0.0079,
+        "score_gain_if_met": 0.0079
+       },
+       {
+        "requirement": "Monitor all aspects of patient care, including diet and physical activity.",
+        "item_type": "task",
+        "item_id": "1845",
+        "status": "missing",
+        "similarity": 0.3614,
+        "credit": 0.0,
+        "weight": 0.86,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:1845",
+        "effective_weight": 0.0078,
+        "score_gain_if_met": 0.0078
+       }
+      ],
+      "job_requirements": 4,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j2",
+      "job_title": "Staff Nurse"
+     }
+    ],
+    "warnings": []
+   }
+  }
+ }
+}

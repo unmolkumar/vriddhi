@@ -1,0 +1,2084 @@
+{
+ "set": "heldout",
+ "role": "school teacher",
+ "city": "Jaipur",
+ "now": "2026-10-07T04:19:41.304676+00:00",
+ "profiles": {
+  "full": {
+   "target_role": "school teacher",
+   "soc_code": null,
+   "location": "Jaipur",
+   "preferred_locations": [],
+   "free_text": "Secondary school teacher (Science), 10 years, CBSE school in Jaipur.\n- Teach physics and chemistry to classes 9 and 10; prepare lesson plans, worksheets and lab practicals.\n- Set and correct unit tests and term exams, keep marks records and write report cards.\n- Give extra classes to weak students and prepare toppers for board exams and olympiads.\n- Meet parents every term and handle classroom discipline as class teacher.\nB.Sc, B.Ed.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 10.0,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  },
+  "partial": {
+   "target_role": "school teacher",
+   "soc_code": null,
+   "location": "Jaipur",
+   "preferred_locations": [],
+   "free_text": "B.Ed student doing my internship. I taught class 7 science for four weeks under a mentor teacher and made two lesson plans and a working model.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 0.5,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  },
+  "other": {
+   "target_role": "school teacher",
+   "soc_code": null,
+   "location": "Jaipur",
+   "preferred_locations": [],
+   "free_text": "Warehouse supervisor, 6 years: receiving goods, managing pickers, stock counts in SAP and dispatch planning.\n",
+   "skills": [],
+   "profile": null,
+   "experience_years": 4.0,
+   "max_jobs": 50,
+   "force_refresh": false,
+   "use_jsearch": true,
+   "include_dropped": true
+  }
+ },
+ "listings": {
+  "school teacher|Jaipur": {
+   "fetched_at": "2026-10-07T03:41:12.651300+00:00",
+   "source": "adzuna",
+   "total": 1,
+   "jobs": [
+    {
+     "job_id": "adzuna:5895470065",
+     "title": "PRT Mother Teacher",
+     "company": "The Gurukulam School",
+     "description": "Hiring: PRT / Mother Teacher – TGS Jaipur The Gurukulam School (TGS), Jaipur is looking for a passionate and caring PRT / Mother Teacher to join our team. Key Responsibilities Handle primary classes and ensure a safe, positive learning environment. Plan and deliver engaging classroom activities. Support students in their academic and emotional development. Maintain regular communication with parents regarding student progress. Manage classroom discipline and daily routines. Conduct assessments …",
+     "description_quality": "ok",
+     "location": "Jaipur",
+     "location_raw": "Jaipur, Rajasthan",
+     "employment_type": "full_time",
+     "work_mode": "unknown",
+     "experience_min": null,
+     "experience_max": null,
+     "skills": [],
+     "skills_source": "none",
+     "skill_parents": {},
+     "skill_display": {},
+     "skill_is_category": {},
+     "skills_inferred": false,
+     "inferred_skills": [],
+     "salary_min": null,
+     "salary_max": null,
+     "currency": "INR",
+     "salary_is_predicted": false,
+     "posted_at": "2026-09-23T22:39:38Z",
+     "source": "adzuna",
+     "publisher": null,
+     "source_url": "https://www.adzuna.in/details/5895470065",
+     "last_observed_at": "2026-10-07T03:41:12.651300Z",
+     "stale": false,
+     "age_hours": null
+    }
+   ]
+  }
+ },
+ "recorded": {
+  "GET /api/v1/occupations/search?k=5&q=school teacher #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "25-2031.00",
+     "title": "Secondary School Teachers, Except Special and Career/Technical Education",
+     "confidence": 0.9,
+     "method": "india_alias_exact",
+     "matched_term": "school teacher"
+    },
+    {
+     "soc_code": "25-2011.00",
+     "title": "Preschool Teachers, Except Special Education",
+     "confidence": 0.88,
+     "method": "onet_title_partial",
+     "matched_term": "Preschool Teachers, Except Special Education"
+    },
+    {
+     "soc_code": "25-2021.00",
+     "title": "Elementary School Teachers, Except Special Education",
+     "confidence": 0.88,
+     "method": "onet_title_partial",
+     "matched_term": "Elementary School Teachers, Except Special Education"
+    },
+    {
+     "soc_code": "25-2022.00",
+     "title": "Middle School Teachers, Except Special and Career/Technical Education",
+     "confidence": 0.88,
+     "method": "onet_title_partial",
+     "matched_term": "Middle School Teachers, Except Special and Career/Technical Education"
+    },
+    {
+     "soc_code": "33-9094.00",
+     "title": "School Bus Monitors",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "School Bus Monitors"
+    }
+   ]
+  },
+  "GET /api/v1/occupations/25-2031.00/profile? #": {
+   "status": 200,
+   "json": {
+    "soc_code": "25-2031.00",
+    "title": "Secondary School Teachers, Except Special and Career/Technical Education",
+    "description": "Teach one or more subjects to students at the secondary school level.",
+    "domain": {
+     "soc_major_group": "25",
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "india_industry": "Education / Teaching / Training"
+    },
+    "job_zone": {
+     "job_zone": 4,
+     "name": "Job Zone Four: Considerable Preparation Needed",
+     "experience_text": "A considerable amount of work-related skill, knowledge, or experience is needed for these occupations. For example, an accountant must complete four years of college and work for several years in accounting to be considered qualified.",
+     "education_text": "Most of these occupations require a four-year bachelor's degree, but some do not.",
+     "training_text": "Employees in these occupations usually need several years of work-related experience, on-the-job training, and/or vocational training.",
+     "svp_range": "(7.0 to < 8.0)"
+    },
+    "indian_education": {
+     "primary_qualification": "Bachelor's Degree (B.Tech / B.Sc / B.Com / BA / BBA / MBBS)",
+     "distribution": [
+      {
+       "category": 6,
+       "category_description": "Bachelor's Degree",
+       "percent": 76.97,
+       "india_education_level": "Bachelor's Degree (B.Tech / B.Sc / B.Com / BA / BBA / MBBS)",
+       "hierarchy_level": 6
+      },
+      {
+       "category": 7,
+       "category_description": "Post-Baccalaureate Certificate",
+       "percent": 7.76,
+       "india_education_level": "Post Graduate Diploma (PGD)",
+       "hierarchy_level": 7
+      },
+      {
+       "category": 9,
+       "category_description": "Post-Master's Certificate",
+       "percent": 7.76,
+       "india_education_level": "Advanced PG Diploma / M.Phil",
+       "hierarchy_level": 9
+      },
+      {
+       "category": 5,
+       "category_description": "Associate's Degree or other 2-year degree",
+       "percent": 3.99,
+       "india_education_level": "Diploma / Associate Degree",
+       "hierarchy_level": 5
+      },
+      {
+       "category": 8,
+       "category_description": "Master's Degree",
+       "percent": 3.53,
+       "india_education_level": "Master's Degree (M.Tech / MBA / M.Sc / MA / MS)",
+       "hierarchy_level": 8
+      },
+      {
+       "category": 1,
+       "category_description": "Less than a High School Diploma",
+       "percent": 0.0,
+       "india_education_level": "Below 10th Standard",
+       "hierarchy_level": 1
+      },
+      {
+       "category": 2,
+       "category_description": "High School Diploma or the equivalent (such as a GED)",
+       "percent": 0.0,
+       "india_education_level": "10th / 12th Pass (HSC)",
+       "hierarchy_level": 2
+      },
+      {
+       "category": 3,
+       "category_description": "Post-Secondary Certificate",
+       "percent": 0.0,
+       "india_education_level": "ITI / Vocational Certificate",
+       "hierarchy_level": 3
+      },
+      {
+       "category": 4,
+       "category_description": "Some College Courses",
+       "percent": 0.0,
+       "india_education_level": "Polytechnic / Vocational Diploma",
+       "hierarchy_level": 4
+      },
+      {
+       "category": 10,
+       "category_description": "Doctor's Degree - Professional Practice (such as a J.D. for Law or an M.D. for Medicine)",
+       "percent": 0.0,
+       "india_education_level": "Professional Degree (CA / CS / LLB / MBBS)",
+       "hierarchy_level": 10
+      },
+      {
+       "category": 11,
+       "category_description": "Doctor's Degree - Research/Scholarship (such as a Ph.D.)",
+       "percent": 0.0,
+       "india_education_level": "Doctorate / PhD",
+       "hierarchy_level": 11
+      },
+      {
+       "category": 12,
+       "category_description": "Post-Doctoral Training",
+       "percent": 0.0,
+       "india_education_level": "Post-Doctoral Fellowship",
+       "hierarchy_level": 12
+      }
+     ]
+    },
+    "indian_experience": {
+     "typical_min": 2.5,
+     "typical_max": 5.0,
+     "p25_min": 2.5,
+     "median_min": 3.5,
+     "sample_size": 2,
+     "years_covered": "2015-2016",
+     "fallback_to_job_zone": false
+    },
+    "salary_percentiles_india": [],
+    "related_occupations": [
+     {
+      "related_soc_code": "25-2022.00",
+      "related_title": "Middle School Teachers, Except Special and Career/Technical Education",
+      "relatedness_tier": null,
+      "index_val": 1
+     },
+     {
+      "related_soc_code": "25-2021.00",
+      "related_title": "Elementary School Teachers, Except Special Education",
+      "relatedness_tier": null,
+      "index_val": 2
+     },
+     {
+      "related_soc_code": "25-3041.00",
+      "related_title": "Tutors",
+      "relatedness_tier": null,
+      "index_val": 3
+     },
+     {
+      "related_soc_code": "25-3011.00",
+      "related_title": "Adult Basic Education, Adult Secondary Education, and English as a Second Language Instructors",
+      "relatedness_tier": null,
+      "index_val": 4
+     },
+     {
+      "related_soc_code": "25-2058.00",
+      "related_title": "Special Education Teachers, Secondary School",
+      "relatedness_tier": null,
+      "index_val": 5
+     },
+     {
+      "related_soc_code": "25-2056.00",
+      "related_title": "Special Education Teachers, Elementary School",
+      "relatedness_tier": null,
+      "index_val": 6
+     },
+     {
+      "related_soc_code": "25-2057.00",
+      "related_title": "Special Education Teachers, Middle School",
+      "relatedness_tier": null,
+      "index_val": 7
+     },
+     {
+      "related_soc_code": "25-2023.00",
+      "related_title": "Career/Technical Education Teachers, Middle School",
+      "relatedness_tier": null,
+      "index_val": 8
+     },
+     {
+      "related_soc_code": "25-9042.00",
+      "related_title": "Teaching Assistants, Preschool, Elementary, Middle, and Secondary School, Except Special Education",
+      "relatedness_tier": null,
+      "index_val": 9
+     },
+     {
+      "related_soc_code": "25-2032.00",
+      "related_title": "Career/Technical Education Teachers, Secondary School",
+      "relatedness_tier": null,
+      "index_val": 10
+     }
+    ]
+   }
+  },
+  "GET /api/v1/occupations/25-2031.00/related?limit=20 #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2022.00",
+     "related_title": "Middle School Teachers, Except Special and Career/Technical Education",
+     "relatedness_tier": null,
+     "index_val": 1,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2021.00",
+     "related_title": "Elementary School Teachers, Except Special Education",
+     "relatedness_tier": null,
+     "index_val": 2,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-3041.00",
+     "related_title": "Tutors",
+     "relatedness_tier": null,
+     "index_val": 3,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-3011.00",
+     "related_title": "Adult Basic Education, Adult Secondary Education, and English as a Second Language Instructors",
+     "relatedness_tier": null,
+     "index_val": 4,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2058.00",
+     "related_title": "Special Education Teachers, Secondary School",
+     "relatedness_tier": null,
+     "index_val": 5,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2056.00",
+     "related_title": "Special Education Teachers, Elementary School",
+     "relatedness_tier": null,
+     "index_val": 6,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2057.00",
+     "related_title": "Special Education Teachers, Middle School",
+     "relatedness_tier": null,
+     "index_val": 7,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2023.00",
+     "related_title": "Career/Technical Education Teachers, Middle School",
+     "relatedness_tier": null,
+     "index_val": 8,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-9042.00",
+     "related_title": "Teaching Assistants, Preschool, Elementary, Middle, and Secondary School, Except Special Education",
+     "relatedness_tier": null,
+     "index_val": 9,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2032.00",
+     "related_title": "Career/Technical Education Teachers, Secondary School",
+     "relatedness_tier": null,
+     "index_val": 10,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-3021.00",
+     "related_title": "Self-Enrichment Teachers",
+     "relatedness_tier": null,
+     "index_val": 11,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2012.00",
+     "related_title": "Kindergarten Teachers, Except Special Education",
+     "relatedness_tier": null,
+     "index_val": 12,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2055.00",
+     "related_title": "Special Education Teachers, Kindergarten",
+     "relatedness_tier": null,
+     "index_val": 13,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-9044.00",
+     "related_title": "Teaching Assistants, Postsecondary",
+     "relatedness_tier": null,
+     "index_val": 14,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-1123.00",
+     "related_title": "English Language and Literature Teachers, Postsecondary",
+     "relatedness_tier": null,
+     "index_val": 15,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-1081.00",
+     "related_title": "Education Teachers, Postsecondary",
+     "relatedness_tier": null,
+     "index_val": 16,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-1121.00",
+     "related_title": "Art, Drama, and Music Teachers, Postsecondary",
+     "relatedness_tier": null,
+     "index_val": 17,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-9043.00",
+     "related_title": "Teaching Assistants, Special Education",
+     "relatedness_tier": null,
+     "index_val": 18,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 3
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-9031.00",
+     "related_title": "Instructional Coordinators",
+     "relatedness_tier": null,
+     "index_val": 19,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 5
+    },
+    {
+     "soc_code": "25-2031.00",
+     "related_soc_code": "25-2051.00",
+     "related_title": "Special Education Teachers, Preschool",
+     "relatedness_tier": null,
+     "index_val": 20,
+     "major_group_title": "Educational Instruction and Library",
+     "career_cluster": "Education & Training",
+     "job_zone": 4
+    }
+   ]
+  },
+  "GET /api/v1/occupations/search?k=5&q=secondary school teacher #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "25-2031.00",
+     "title": "Secondary School Teachers, Except Special and Career/Technical Education",
+     "confidence": 1.0,
+     "method": "india_alias_exact",
+     "matched_term": "secondary school teacher"
+    },
+    {
+     "soc_code": "33-9094.00",
+     "title": "School Bus Monitors",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "School Bus Monitors"
+    },
+    {
+     "soc_code": "53-3051.00",
+     "title": "Bus Drivers, School",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Bus Drivers, School"
+    },
+    {
+     "soc_code": "19-3034.00",
+     "title": "School Psychologists",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "School Psychologists"
+    },
+    {
+     "soc_code": "25-3021.00",
+     "title": "Self-Enrichment Teachers",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Self-Enrichment Teachers"
+    }
+   ]
+  },
+  "GET /api/v1/occupations/search?k=5&q=prt mother teacher #": {
+   "status": 200,
+   "json": [
+    {
+     "soc_code": "25-3021.00",
+     "title": "Self-Enrichment Teachers",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Self-Enrichment Teachers"
+    },
+    {
+     "soc_code": "25-1112.00",
+     "title": "Law Teachers, Postsecondary",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Law Teachers, Postsecondary"
+    },
+    {
+     "soc_code": "25-1054.00",
+     "title": "Physics Teachers, Postsecondary",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Physics Teachers, Postsecondary"
+    },
+    {
+     "soc_code": "25-1125.00",
+     "title": "History Teachers, Postsecondary",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "History Teachers, Postsecondary"
+    },
+    {
+     "soc_code": "25-3031.00",
+     "title": "Substitute Teachers, Short-Term",
+     "confidence": 0.7,
+     "method": "token_match",
+     "matched_term": "Substitute Teachers, Short-Term"
+    }
+   ]
+  },
+  "POST /api/v2/skills/match_texts? #5a343e5219663ba3": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.352,
+      "job_text_score": 0.3333,
+      "occupation_score": 0.3801,
+      "blend": 0.6,
+      "soc_code": "25-2031.00",
+      "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
+      "met": [
+       {
+        "requirement": "Manage classroom discipline",
+        "item_type": "task",
+        "item_id": "job:f42065861026",
+        "status": "met",
+        "similarity": 0.8637,
+        "credit": 0.8333,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "handle classroom discipline as class teacher",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          380,
+          424
+         ],
+         "context_span": [
+          352,
+          425
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"handle classroom discipline as class teacher\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "job:f42065861026",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Prepare materials and classrooms for class activities.",
+        "item_type": "task",
+        "item_id": "6643",
+        "status": "met",
+        "similarity": 0.6628,
+        "credit": 0.8333,
+        "weight": 0.825,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:6643",
+        "effective_weight": 0.008,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Establish clear objectives for all lessons, units, and projects, and communicate those objectives to students.",
+        "item_type": "task",
+        "item_id": "6641",
+        "status": "met",
+        "similarity": 0.6011,
+        "credit": 0.8333,
+        "weight": 0.735,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:6641",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Assign class work to students.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.b.1.f.5",
+        "status": "met",
+        "similarity": 0.6608,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Give extra classes to weak students",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          263,
+          298
+         ],
+         "context_span": [
+          263,
+          349
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"Give extra classes to weak students\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.b.1.f.5",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Document lesson plans.",
+        "item_type": "dwa",
+        "item_id": "4.A.3.b.6.l.1",
+        "status": "met",
+        "similarity": 0.7802,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.3.b.6.l.1",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Encourage students.",
+        "item_type": "dwa",
+        "item_id": "4.A.4.b.2.a.3",
+        "status": "met",
+        "similarity": 0.6674,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Give extra classes to weak students",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          263,
+          298
+         ],
+         "context_span": [
+          263,
+          349
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"Give extra classes to weak students\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.4.b.2.a.3",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Plan educational activities.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.b.2.l.6",
+        "status": "met",
+        "similarity": 0.6643,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.b.2.l.6",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Plan experiential learning activities.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.b.2.l.4",
+        "status": "met",
+        "similarity": 0.6068,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.b.2.l.4",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Prepare tests.",
+        "item_type": "dwa",
+        "item_id": "4.A.2.a.1.c.3",
+        "status": "met",
+        "similarity": 0.6227,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Set and correct unit tests and term exams, keep marks records and write report cards.",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          175,
+          260
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"Set and correct unit tests and term exams, keep marks records and write report cards.\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.2.a.1.c.3",
+        "effective_weight": 0.0031,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Confer with other staff members to plan and schedule lessons promoting learning, following approved curricula.",
+        "item_type": "task",
+        "item_id": "6661",
+        "status": "met",
+        "similarity": 0.6648,
+        "credit": 0.8333,
+        "weight": 0.6775,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"prepare lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:6661",
+        "effective_weight": 0.0066,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Confer with parents or guardians, other teachers, counselors, and administrators to resolve students' behavioral and academic problems.",
+        "item_type": "task",
+        "item_id": "6656",
+        "status": "met",
+        "similarity": 0.6222,
+        "credit": 0.8333,
+        "weight": 0.6775,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Meet parents every term and handle classroom discipline as class teacher.",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          352,
+          425
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"Meet parents every term and handle classroom discipline as class teacher.\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:6656",
+        "effective_weight": 0.0066,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Meet with parents and guardians to discuss their children's progress and to determine priorities for their children and their resource needs.",
+        "item_type": "task",
+        "item_id": "6655",
+        "status": "met",
+        "similarity": 0.8497,
+        "credit": 0.8333,
+        "weight": 0.6325,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Meet parents every term",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          352,
+          375
+         ],
+         "context_span": [
+          352,
+          425
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"Meet parents every term\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "task:6655",
+        "effective_weight": 0.0061,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Microsoft Excel",
+        "item_type": "tech",
+        "item_id": "tech_microsoft_excel",
+        "status": "met",
+        "similarity": 0.5866,
+        "credit": 1.0,
+        "weight": 0.255,
+        "required_level": 0.5,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "worksheets",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          142,
+          152
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"worksheets\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [
+         "off_domain(0.04)"
+        ],
+        "requirement_id": "tech:tech_microsoft_excel",
+        "effective_weight": 0.0005,
+        "score_gain_if_met": null
+       },
+       {
+        "requirement": "Classroom Management",
+        "item_type": "market_skill",
+        "item_id": "classroom_management",
+        "status": "met",
+        "similarity": 0.6307,
+        "credit": 1.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "handle classroom discipline as class teacher",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          380,
+          424
+         ],
+         "context_span": [
+          352,
+          425
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"handle classroom discipline as class teacher\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:classroom_management:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "Key Responsibilities Handle primary classes",
+        "item_type": "task",
+        "item_id": "job:aa27d4c98d80",
+        "status": "missing",
+        "similarity": 0.4859,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:aa27d4c98d80",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "ensure a safe",
+        "item_type": "task",
+        "item_id": "job:ee00ba79ffd8",
+        "status": "missing",
+        "similarity": 0.2042,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ee00ba79ffd8",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "positive learning environment",
+        "item_type": "task",
+        "item_id": "job:ac7c1659cc84",
+        "status": "missing",
+        "similarity": 0.3321,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ac7c1659cc84",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "deliver engaging classroom activities",
+        "item_type": "task",
+        "item_id": "job:d1364464c677",
+        "status": "partial",
+        "similarity": 0.5444,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "handle classroom discipline as class teacher",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          380,
+          424
+         ],
+         "context_span": [
+          352,
+          425
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:d1364464c677",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0429
+       },
+       {
+        "requirement": "Support students in their academic",
+        "item_type": "task",
+        "item_id": "job:3e4263300000",
+        "status": "partial",
+        "similarity": 0.5194,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Give extra classes to weak students",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          263,
+          298
+         ],
+         "context_span": [
+          263,
+          349
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:3e4263300000",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0429
+       },
+       {
+        "requirement": "Maintain regular communication with parents regarding student progress.",
+        "item_type": "task",
+        "item_id": "job:da3a3783be7c",
+        "status": "partial",
+        "similarity": 0.5737,
+        "credit": 0.5,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "semantic",
+        "evidence": {
+         "text": "Meet parents every term and handle classroom discipline as class teacher.",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          352,
+          425
+         ],
+         "context_span": null,
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:da3a3783be7c",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0429
+       },
+       {
+        "requirement": "Establish and enforce rules for behavior and procedures for maintaining order among students.",
+        "item_type": "task",
+        "item_id": "6639",
+        "status": "missing",
+        "similarity": 0.495,
+        "credit": 0.0,
+        "weight": 0.83,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6639",
+        "effective_weight": 0.008,
+        "score_gain_if_met": 0.008
+       },
+       {
+        "requirement": "Curriculum Delivery",
+        "item_type": "market_skill",
+        "item_id": "curriculum_delivery",
+        "status": "partial",
+        "similarity": 0.5152,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:curriculum_delivery:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0078
+       },
+       {
+        "requirement": "Student Assessment & Evaluation",
+        "item_type": "market_skill",
+        "item_id": "assessment_design",
+        "status": "partial",
+        "similarity": 0.4999,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "term exams",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          206,
+          216
+         ],
+         "context_span": [
+          175,
+          260
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:assessment_design:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0078
+       },
+       {
+        "requirement": "Subject Pedagogy",
+        "item_type": "market_skill",
+        "item_id": "pedagogy",
+        "status": "partial",
+        "similarity": 0.5012,
+        "credit": 0.5,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "semantic",
+        "evidence": {
+         "text": "prepare lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          120,
+          140
+         ],
+         "context_span": [
+          71,
+          172
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:pedagogy:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0078
+       },
+       {
+        "requirement": "Observe and evaluate students' performance, behavior, social development, and physical health.",
+        "item_type": "task",
+        "item_id": "6647",
+        "status": "missing",
+        "similarity": 0.4711,
+        "credit": 0.0,
+        "weight": 0.7325,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6647",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       },
+       {
+        "requirement": "Use computers, audio-visual aids, and other equipment and materials to supplement presentations.",
+        "item_type": "task",
+        "item_id": "6654",
+        "status": "missing",
+        "similarity": 0.4577,
+        "credit": 0.0,
+        "weight": 0.7275,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6654",
+        "effective_weight": 0.007,
+        "score_gain_if_met": 0.007
+       },
+       {
+        "requirement": "Enforce all administration policies and rules governing students.",
+        "item_type": "task",
+        "item_id": "6648",
+        "status": "missing",
+        "similarity": 0.4829,
+        "credit": 0.0,
+        "weight": 0.6875,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6648",
+        "effective_weight": 0.0067,
+        "score_gain_if_met": 0.0067
+       },
+       {
+        "requirement": "Provide students with disabilities with assistive devices, supportive technology, and assistance accessing facilities such as restrooms.",
+        "item_type": "task",
+        "item_id": "6670",
+        "status": "missing",
+        "similarity": 0.3298,
+        "credit": 0.0,
+        "weight": 0.6575,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6670",
+        "effective_weight": 0.0064,
+        "score_gain_if_met": 0.0064
+       },
+       {
+        "requirement": "Meet with other professionals to discuss individual students' needs and progress.",
+        "item_type": "task",
+        "item_id": "6658",
+        "status": "missing",
+        "similarity": 0.491,
+        "credit": 0.0,
+        "weight": 0.6525,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6658",
+        "effective_weight": 0.0063,
+        "score_gain_if_met": 0.0063
+       }
+      ],
+      "job_requirements": 7,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "PRT Mother Teacher"
+     }
+    ],
+    "warnings": []
+   }
+  },
+  "POST /api/v2/skills/match_texts? #bfbbaa174c6feaa7": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.0271,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0677,
+      "blend": 0.6,
+      "soc_code": "25-2031.00",
+      "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
+      "met": [
+       {
+        "requirement": "Document lesson plans.",
+        "item_type": "dwa",
+        "item_id": "4.A.3.b.6.l.1",
+        "status": "met",
+        "similarity": 0.7147,
+        "credit": 0.8333,
+        "weight": 0.7,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "semantic",
+        "evidence": {
+         "text": "made two lesson plans",
+         "evidence_type": "mentioned",
+         "section": "free_text",
+         "span": [
+          101,
+          122
+         ],
+         "context_span": [
+          34,
+          143
+         ],
+         "translated": false,
+         "original_text": null,
+         "rewrites": []
+        },
+        "advice": "You mention \"made two lesson plans\", but nothing in your work or projects shows it. Add an example of where you did this.",
+        "flags": [],
+        "requirement_id": "dwa:4.A.3.b.6.l.1",
+        "effective_weight": 0.0028,
+        "score_gain_if_met": null
+       }
+      ],
+      "missing": [
+       {
+        "requirement": "Key Responsibilities Handle primary classes",
+        "item_type": "task",
+        "item_id": "job:aa27d4c98d80",
+        "status": "missing",
+        "similarity": 0.3137,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:aa27d4c98d80",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "ensure a safe",
+        "item_type": "task",
+        "item_id": "job:ee00ba79ffd8",
+        "status": "missing",
+        "similarity": 0.1297,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ee00ba79ffd8",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "positive learning environment",
+        "item_type": "task",
+        "item_id": "job:ac7c1659cc84",
+        "status": "missing",
+        "similarity": 0.2976,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ac7c1659cc84",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "deliver engaging classroom activities",
+        "item_type": "task",
+        "item_id": "job:d1364464c677",
+        "status": "missing",
+        "similarity": 0.4674,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:d1364464c677",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Support students in their academic",
+        "item_type": "task",
+        "item_id": "job:3e4263300000",
+        "status": "missing",
+        "similarity": 0.4401,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:3e4263300000",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Maintain regular communication with parents regarding student progress.",
+        "item_type": "task",
+        "item_id": "job:da3a3783be7c",
+        "status": "missing",
+        "similarity": 0.3945,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:da3a3783be7c",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Manage classroom discipline",
+        "item_type": "task",
+        "item_id": "job:f42065861026",
+        "status": "missing",
+        "similarity": 0.4177,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:f42065861026",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Curriculum Delivery",
+        "item_type": "market_skill",
+        "item_id": "curriculum_delivery",
+        "status": "missing",
+        "similarity": 0.4228,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:curriculum_delivery:curated",
+        "effective_weight": 0.014,
+        "score_gain_if_met": 0.014
+       },
+       {
+        "requirement": "Student Assessment & Evaluation",
+        "item_type": "market_skill",
+        "item_id": "assessment_design",
+        "status": "missing",
+        "similarity": 0.3347,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:assessment_design:curated",
+        "effective_weight": 0.014,
+        "score_gain_if_met": 0.014
+       },
+       {
+        "requirement": "Subject Pedagogy",
+        "item_type": "market_skill",
+        "item_id": "pedagogy",
+        "status": "missing",
+        "similarity": 0.4456,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:pedagogy:curated",
+        "effective_weight": 0.014,
+        "score_gain_if_met": 0.014
+       },
+       {
+        "requirement": "Prepare students for later grades by encouraging them to explore learning opportunities and to persevere with challenging tasks.",
+        "item_type": "task",
+        "item_id": "6650",
+        "status": "missing",
+        "similarity": 0.4074,
+        "credit": 0.0,
+        "weight": 0.835,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6650",
+        "effective_weight": 0.0073,
+        "score_gain_if_met": 0.0073
+       },
+       {
+        "requirement": "Establish and enforce rules for behavior and procedures for maintaining order among students.",
+        "item_type": "task",
+        "item_id": "6639",
+        "status": "missing",
+        "similarity": 0.3459,
+        "credit": 0.0,
+        "weight": 0.83,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6639",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Instruct through lectures, discussions, and demonstrations in one or more subjects, such as English, mathematics, or social studies.",
+        "item_type": "task",
+        "item_id": "6640",
+        "status": "missing",
+        "similarity": 0.4558,
+        "credit": 0.0,
+        "weight": 0.83,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6640",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Prepare materials and classrooms for class activities.",
+        "item_type": "task",
+        "item_id": "6643",
+        "status": "missing",
+        "similarity": 0.4865,
+        "credit": 0.0,
+        "weight": 0.825,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6643",
+        "effective_weight": 0.0072,
+        "score_gain_if_met": 0.0072
+       },
+       {
+        "requirement": "Adapt teaching methods and instructional materials to meet students' varying needs and interests.",
+        "item_type": "task",
+        "item_id": "6644",
+        "status": "missing",
+        "similarity": 0.4632,
+        "credit": 0.0,
+        "weight": 0.81,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6644",
+        "effective_weight": 0.0071,
+        "score_gain_if_met": 0.0071
+       }
+      ],
+      "job_requirements": 7,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "PRT Mother Teacher"
+     }
+    ],
+    "warnings": []
+   }
+  },
+  "POST /api/v2/skills/match_texts? #ebe2c16548ca6802": {
+   "status": 200,
+   "json": {
+    "results": [
+     {
+      "match_score": 0.0,
+      "job_text_score": 0.0,
+      "occupation_score": 0.0,
+      "blend": 0.6,
+      "soc_code": "25-2031.00",
+      "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
+      "met": [],
+      "missing": [
+       {
+        "requirement": "Key Responsibilities Handle primary classes",
+        "item_type": "task",
+        "item_id": "job:aa27d4c98d80",
+        "status": "missing",
+        "similarity": 0.2735,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:aa27d4c98d80",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "ensure a safe",
+        "item_type": "task",
+        "item_id": "job:ee00ba79ffd8",
+        "status": "missing",
+        "similarity": 0.1461,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ee00ba79ffd8",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "positive learning environment",
+        "item_type": "task",
+        "item_id": "job:ac7c1659cc84",
+        "status": "missing",
+        "similarity": 0.1802,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:ac7c1659cc84",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "deliver engaging classroom activities",
+        "item_type": "task",
+        "item_id": "job:d1364464c677",
+        "status": "missing",
+        "similarity": 0.1926,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:d1364464c677",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Support students in their academic",
+        "item_type": "task",
+        "item_id": "job:3e4263300000",
+        "status": "missing",
+        "similarity": 0.0978,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:3e4263300000",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Maintain regular communication with parents regarding student progress.",
+        "item_type": "task",
+        "item_id": "job:da3a3783be7c",
+        "status": "missing",
+        "similarity": 0.1549,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:da3a3783be7c",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Manage classroom discipline",
+        "item_type": "task",
+        "item_id": "job:f42065861026",
+        "status": "missing",
+        "similarity": 0.2363,
+        "credit": 0.0,
+        "weight": 1.0,
+        "required_level": 0.6,
+        "provenance": "job_text",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "job:f42065861026",
+        "effective_weight": 0.0857,
+        "score_gain_if_met": 0.0857
+       },
+       {
+        "requirement": "Classroom Management",
+        "item_type": "market_skill",
+        "item_id": "classroom_management",
+        "status": "missing",
+        "similarity": 0.2801,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:classroom_management:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0156
+       },
+       {
+        "requirement": "Curriculum Delivery",
+        "item_type": "market_skill",
+        "item_id": "curriculum_delivery",
+        "status": "missing",
+        "similarity": 0.297,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:curriculum_delivery:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0156
+       },
+       {
+        "requirement": "Student Assessment & Evaluation",
+        "item_type": "market_skill",
+        "item_id": "assessment_design",
+        "status": "missing",
+        "similarity": 0.1106,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:assessment_design:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0156
+       },
+       {
+        "requirement": "Subject Pedagogy",
+        "item_type": "market_skill",
+        "item_id": "pedagogy",
+        "status": "missing",
+        "similarity": 0.1557,
+        "credit": 0.0,
+        "weight": 0.25,
+        "required_level": 0.5,
+        "provenance": "curated",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [
+         "curated"
+        ],
+        "requirement_id": "market_skill:pedagogy:curated",
+        "effective_weight": 0.0156,
+        "score_gain_if_met": 0.0156
+       },
+       {
+        "requirement": "Prepare students for later grades by encouraging them to explore learning opportunities and to persevere with challenging tasks.",
+        "item_type": "task",
+        "item_id": "6650",
+        "status": "missing",
+        "similarity": 0.2005,
+        "credit": 0.0,
+        "weight": 0.835,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6650",
+        "effective_weight": 0.0081,
+        "score_gain_if_met": 0.0081
+       },
+       {
+        "requirement": "Establish and enforce rules for behavior and procedures for maintaining order among students.",
+        "item_type": "task",
+        "item_id": "6639",
+        "status": "missing",
+        "similarity": 0.2033,
+        "credit": 0.0,
+        "weight": 0.83,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6639",
+        "effective_weight": 0.008,
+        "score_gain_if_met": 0.008
+       },
+       {
+        "requirement": "Instruct through lectures, discussions, and demonstrations in one or more subjects, such as English, mathematics, or social studies.",
+        "item_type": "task",
+        "item_id": "6640",
+        "status": "missing",
+        "similarity": 0.1914,
+        "credit": 0.0,
+        "weight": 0.83,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6640",
+        "effective_weight": 0.008,
+        "score_gain_if_met": 0.008
+       },
+       {
+        "requirement": "Prepare materials and classrooms for class activities.",
+        "item_type": "task",
+        "item_id": "6643",
+        "status": "missing",
+        "similarity": 0.1103,
+        "credit": 0.0,
+        "weight": 0.825,
+        "required_level": 0.6,
+        "provenance": "onet",
+        "reason": "none",
+        "evidence": null,
+        "advice": null,
+        "flags": [],
+        "requirement_id": "task:6643",
+        "effective_weight": 0.008,
+        "score_gain_if_met": 0.008
+       }
+      ],
+      "job_requirements": 7,
+      "m1_version": "2.2.0+02b93f2ab57d315d",
+      "warnings": [],
+      "job_id": "j0",
+      "job_title": "PRT Mother Teacher"
+     }
+    ],
+    "warnings": []
+   }
+  }
+ }
+}

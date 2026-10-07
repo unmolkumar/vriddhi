@@ -1,0 +1,1 @@
+Software tester, 4 years: manual and Selenium automation testing, writing test cases, logging bugs in Jira, API testing with Postman.

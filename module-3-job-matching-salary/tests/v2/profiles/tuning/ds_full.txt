@@ -1,0 +1,6 @@
+Data Scientist, 5 years (Bengaluru).
+- Built churn and demand-forecasting models in Python (pandas, scikit-learn, XGBoost) for a retail chain.
+- Wrote SQL on Snowflake to build features; ran A/B tests and explained results to product managers.
+- Deployed models as APIs with Docker on AWS SageMaker; monitored drift.
+- Fine-tuned a BERT model for review classification; built a RAG prototype with LangChain.
+M.Sc Statistics.
