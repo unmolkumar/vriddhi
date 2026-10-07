@@ -1,0 +1,985 @@
+{
+  "$defs": {
+    "DroppedListing": {
+      "properties": {
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "title",
+        "reason"
+      ],
+      "title": "DroppedListing",
+      "type": "object"
+    },
+    "ErrorDetail": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/ErrorDetail"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "ExperienceFit": {
+      "properties": {
+        "band": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Band"
+        },
+        "source": {
+          "enum": [
+            "posting",
+            "india_postings",
+            "job_zone",
+            "unknown"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "candidate_years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Candidate Years"
+        },
+        "fit": {
+          "title": "Fit",
+          "type": "number"
+        }
+      },
+      "required": [
+        "band",
+        "source",
+        "candidate_years",
+        "fit"
+      ],
+      "title": "ExperienceFit",
+      "type": "object"
+    },
+    "JobMatchV2": {
+      "properties": {
+        "method": {
+          "enum": [
+            "m2_match_texts",
+            "keywords"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "match_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Match Score",
+          "type": "number"
+        },
+        "classification": {
+          "enum": [
+            "Strong",
+            "Good",
+            "Partial",
+            "Weak"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "job_text_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Text Score"
+        },
+        "occupation_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occupation Score"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Occupation blended into the match (the listing's, else the target's)",
+          "title": "Soc Code"
+        },
+        "match_confidence": {
+          "description": "low: description too short for a reliable match",
+          "enum": [
+            "ok",
+            "low"
+          ],
+          "title": "Match Confidence",
+          "type": "string"
+        },
+        "job_requirements": {
+          "default": 0,
+          "title": "Job Requirements",
+          "type": "integer"
+        },
+        "met": {
+          "description": "Top requirements the user's evidence meets",
+          "items": {
+            "type": "string"
+          },
+          "title": "Met",
+          "type": "array"
+        },
+        "missing": {
+          "description": "Top missing/partial, by score gain",
+          "items": {
+            "$ref": "#/$defs/RequirementGap"
+          },
+          "title": "Missing",
+          "type": "array"
+        }
+      },
+      "required": [
+        "method",
+        "match_score",
+        "classification",
+        "soc_code",
+        "match_confidence"
+      ],
+      "title": "JobMatchV2",
+      "type": "object"
+    },
+    "JobSearchV2Request": {
+      "properties": {
+        "target_role": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text role, e.g. 'staff nurse'; resolved through module 1",
+          "title": "Target Role"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{2}-\\d{4}\\.\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "O*NET-SOC code, e.g. 47-2111.00",
+          "title": "Soc Code"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City or region, e.g. 'Delhi NCR', 'Pune'",
+          "title": "Location"
+        },
+        "preferred_locations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "title": "Preferred Locations",
+          "type": "array"
+        },
+        "free_text": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Resume text or a description of the user's work, any style",
+          "title": "Free Text"
+        },
+        "skills": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Skills",
+          "type": "array"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Module 2's UserProfile, passed to module 2 unchanged",
+          "title": "Profile"
+        },
+        "experience_years": {
+          "anyOf": [
+            {
+              "maximum": 60,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Years"
+        },
+        "max_jobs": {
+          "default": 50,
+          "description": "Listings matched and returned (relevant first)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Jobs",
+          "type": "integer"
+        },
+        "force_refresh": {
+          "default": false,
+          "description": "Ignore the cache and call the providers",
+          "title": "Force Refresh",
+          "type": "boolean"
+        },
+        "use_jsearch": {
+          "default": true,
+          "description": "Allow JSearch when Adzuna fails (200 calls/month)",
+          "title": "Use Jsearch",
+          "type": "boolean"
+        },
+        "include_dropped": {
+          "default": false,
+          "description": "List the off-target listings that were dropped",
+          "title": "Include Dropped",
+          "type": "boolean"
+        }
+      },
+      "title": "JobSearchV2Request",
+      "type": "object"
+    },
+    "JobSearchV2Response": {
+      "properties": {
+        "resolution": {
+          "$ref": "#/$defs/RoleResolutionV2"
+        },
+        "queries": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Queries",
+          "type": "array"
+        },
+        "cities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cities",
+          "type": "array"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/JobV2Result"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "relevance_summary": {
+          "$ref": "#/$defs/RelevanceSummary"
+        },
+        "dropped": {
+          "description": "Off-target listings (include_dropped)",
+          "items": {
+            "$ref": "#/$defs/DroppedListing"
+          },
+          "title": "Dropped",
+          "type": "array"
+        },
+        "unlocks": {
+          "items": {
+            "$ref": "#/$defs/UnlockV2"
+          },
+          "title": "Unlocks",
+          "type": "array"
+        },
+        "thresholds": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "match_score floors for Strong / Good / Partial",
+          "title": "Thresholds",
+          "type": "object"
+        },
+        "experience_band": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experience Band"
+        },
+        "experience_band_source": {
+          "default": "unknown",
+          "title": "Experience Band Source",
+          "type": "string"
+        },
+        "provider_trace": {
+          "items": {
+            "$ref": "#/$defs/ProviderAttempt"
+          },
+          "title": "Provider Trace",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "stale": {
+          "title": "Stale",
+          "type": "boolean"
+        },
+        "fetched_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fetched At"
+        },
+        "age_hours": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Age Hours"
+        },
+        "module_1_available": {
+          "title": "Module 1 Available",
+          "type": "boolean"
+        },
+        "module_2_available": {
+          "title": "Module 2 Available",
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "resolution",
+        "queries",
+        "cities",
+        "jobs",
+        "relevance_summary",
+        "unlocks",
+        "thresholds",
+        "provider_trace",
+        "sources",
+        "stale",
+        "module_1_available",
+        "module_2_available"
+      ],
+      "title": "JobSearchV2Response",
+      "type": "object"
+    },
+    "JobV2Result": {
+      "properties": {
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Location"
+        },
+        "work_mode": {
+          "title": "Work Mode",
+          "type": "string"
+        },
+        "employment_type": {
+          "title": "Employment Type",
+          "type": "string"
+        },
+        "posted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Posted At"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Url"
+        },
+        "description": {
+          "description": "As provided (Adzuna truncates to ~500 characters)",
+          "title": "Description",
+          "type": "string"
+        },
+        "salary_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Salary Min"
+        },
+        "salary_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Salary Max"
+        },
+        "salary_is_predicted": {
+          "title": "Salary Is Predicted",
+          "type": "boolean"
+        },
+        "relevance": {
+          "$ref": "#/$defs/ListingRelevance"
+        },
+        "match": {
+          "$ref": "#/$defs/JobMatchV2"
+        },
+        "experience": {
+          "$ref": "#/$defs/ExperienceFit"
+        },
+        "rank": {
+          "title": "Rank",
+          "type": "integer"
+        },
+        "rank_score": {
+          "title": "Rank Score",
+          "type": "number"
+        },
+        "rank_components": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Rank Components",
+          "type": "object"
+        },
+        "stale": {
+          "default": false,
+          "title": "Stale",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "job_id",
+        "title",
+        "company",
+        "location",
+        "work_mode",
+        "employment_type",
+        "posted_at",
+        "source",
+        "source_url",
+        "description",
+        "salary_min",
+        "salary_max",
+        "salary_is_predicted",
+        "relevance",
+        "match",
+        "experience",
+        "rank",
+        "rank_score",
+        "rank_components"
+      ],
+      "title": "JobV2Result",
+      "type": "object"
+    },
+    "ListingRelevance": {
+      "properties": {
+        "label": {
+          "enum": [
+            "on_target",
+            "adjacent",
+            "off_target",
+            "unknown"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The listing's occupation when module 1 resolved its title confidently",
+          "title": "Soc Code"
+        },
+        "occupation_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occupation Title"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "soc_code",
+        "confidence",
+        "reason"
+      ],
+      "title": "ListingRelevance",
+      "type": "object"
+    },
+    "ProviderAttempt": {
+      "properties": {
+        "provider": {
+          "enum": [
+            "adzuna",
+            "jsearch",
+            "snapshot"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "cache_hit",
+            "empty",
+            "not_configured",
+            "not_subscribed",
+            "timeout",
+            "error",
+            "used",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "jobs": {
+          "default": 0,
+          "title": "Jobs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "city",
+        "status"
+      ],
+      "title": "ProviderAttempt",
+      "type": "object"
+    },
+    "RelevanceSummary": {
+      "properties": {
+        "listings": {
+          "description": "After dedupe and expiry",
+          "title": "Listings",
+          "type": "integer"
+        },
+        "on_target": {
+          "title": "On Target",
+          "type": "integer"
+        },
+        "adjacent": {
+          "title": "Adjacent",
+          "type": "integer"
+        },
+        "off_target_dropped": {
+          "title": "Off Target Dropped",
+          "type": "integer"
+        },
+        "unknown": {
+          "default": 0,
+          "title": "Unknown",
+          "type": "integer"
+        },
+        "on_target_share": {
+          "title": "On Target Share",
+          "type": "number"
+        },
+        "beyond_max_jobs": {
+          "default": 0,
+          "description": "Relevant listings not matched because of max_jobs",
+          "title": "Beyond Max Jobs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "listings",
+        "on_target",
+        "adjacent",
+        "off_target_dropped",
+        "on_target_share"
+      ],
+      "title": "RelevanceSummary",
+      "type": "object"
+    },
+    "RequirementGap": {
+      "properties": {
+        "requirement": {
+          "title": "Requirement",
+          "type": "string"
+        },
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "item_type": {
+          "title": "Item Type",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "score_gain_if_met": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "How much this job's match_score would rise if it were met",
+          "title": "Score Gain If Met"
+        }
+      },
+      "required": [
+        "requirement",
+        "requirement_id",
+        "item_type",
+        "status",
+        "score_gain_if_met"
+      ],
+      "title": "RequirementGap",
+      "type": "object"
+    },
+    "RoleOptionV2": {
+      "properties": {
+        "soc_code": {
+          "title": "Soc Code",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "soc_code",
+        "title",
+        "confidence"
+      ],
+      "title": "RoleOptionV2",
+      "type": "object"
+    },
+    "RoleResolutionV2": {
+      "properties": {
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Query"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Soc Code"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Title"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "low_confidence": {
+          "title": "Low Confidence",
+          "type": "boolean"
+        },
+        "did_you_mean": {
+          "items": {
+            "$ref": "#/$defs/RoleOptionV2"
+          },
+          "title": "Did You Mean",
+          "type": "array"
+        }
+      },
+      "required": [
+        "query",
+        "soc_code",
+        "title",
+        "confidence",
+        "low_confidence"
+      ],
+      "title": "RoleResolutionV2",
+      "type": "object"
+    },
+    "UnlockV2": {
+      "properties": {
+        "requirement": {
+          "title": "Requirement",
+          "type": "string"
+        },
+        "requirement_ids": {
+          "description": "Grouped near-identical requirements",
+          "items": {
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "item_type": {
+          "title": "Item Type",
+          "type": "string"
+        },
+        "jobs_unlocked": {
+          "description": "Listings that would move to Good or Strong if this were met",
+          "title": "Jobs Unlocked",
+          "type": "integer"
+        },
+        "job_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Job Ids",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement",
+        "requirement_ids",
+        "item_type",
+        "jobs_unlocked",
+        "job_ids",
+        "message"
+      ],
+      "title": "UnlockV2",
+      "type": "object"
+    }
+  },
+  "title": "Module 3 general engine (v2) contracts"
+}
