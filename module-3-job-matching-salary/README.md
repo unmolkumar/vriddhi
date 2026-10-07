@@ -80,7 +80,7 @@ $r.market_salary.source_check    # module 1 vs JSearch: both numbers, the gap, a
 ## Test
 
 ```bash
-pytest module-3-job-matching-salary/tests/ -v      # 165 tests; the two live provider tests skip without keys
+pytest module-3-job-matching-salary/tests/ -v      # 190 tests (165 v1 + 25 v2); live tests skip without keys / modules 1-2
 ```
 
 ## Endpoints
@@ -91,6 +91,7 @@ pytest module-3-job-matching-salary/tests/ -v      # 165 tests; the two live pro
 | POST | `/api/v1/salary/estimate` | Market range for the role and city, and the candidate's estimated range |
 | POST | `/api/v1/salary/negotiate` | Target and reasonable minimum for a job (`job_id` from a search) or an offer (`posted_salary_min/max`) |
 | GET | `/api/v1/health` | Configured providers, module 2 URL, cache size |
+| POST | `/api/v2/jobs/search` | Any occupation: relevant listings matched by module 2, ranked, with unlocks ([v2 below](#v2-any-occupation-post-apiv2jobssearch)) |
 
 Errors: `{"error": {"code": "...", "message": "..."}}`: 422 `INVALID_REQUEST`, 404 `JOB_NOT_FOUND`, 500 `INTERNAL_ERROR`.
 
@@ -161,6 +162,56 @@ curl -X POST http://localhost:8003/api/v1/salary/negotiate -H "Content-Type: app
 ```
 
 The response has `negotiation` (`posted_salary`, `market_range`, `candidate_range`, `recommended_target`, `reasonable_minimum`, `confidence`, `reasons`), plus `market_salary`, `candidate_value` and `match_score`. All figures are estimates, not guarantees.
+
+## v2: any occupation (`POST /api/v2/jobs/search`)
+
+v2 searches, matches and ranks listings for **any** occupation. Module 1 resolves the role and judges each listing's title, and module 2's `POST /api/v2/skills/match_texts` matches the whole page against the user's evidence in one call. v1 above is unchanged.
+
+**Needs:**
+- module 1 at `M1_BASE_URL` (default `http://127.0.0.1:8001`);
+- module 2 at `M2_BASE_URL` (default `http://127.0.0.1:8002`, with `match_texts`);
+- Adzuna keys.
+
+Without module 1 it searches the raw phrase with no relevance check. Without module 2 it falls back to keyword matching. Either way the response says so in `module_1_available` / `module_2_available` and `warnings`. Design, thresholds and validation: [WORKING.md §15](WORKING.md).
+
+```bash
+curl -X POST http://localhost:8003/api/v2/jobs/search -H "Content-Type: application/json" -d '{
+  "target_role": "electrician", "location": "Delhi NCR", "experience_years": 9,
+  "free_text": "ITI Electrician, 9 years. Wire new flats: read the drawing, lay conduit, pull cables, fix DB and MCBs, earthing, fault finding with multimeter."
+}'
+```
+
+Response (trimmed: one job, live data, 7 October 2026):
+
+```json
+{"resolution": {"soc_code": "47-2111.00", "title": "Electricians", "confidence": 1.0, "low_confidence": false},
+ "queries": ["electrician"], "cities": ["Delhi", "Noida", "Gurugram"],
+ "relevance_summary": {"listings": 117, "on_target": 1, "adjacent": 20, "off_target_dropped": 96, "on_target_share": 0.0085},
+ "thresholds": {"Strong": 0.29, "Good": 0.12, "Partial": 0.06},
+ "jobs": [{"rank": 1, "title": "Electrician - Noida", "company": "Hunarstreet Technologies Pvt Ltd", "location": "Noida",
+           "relevance": {"label": "on_target", "reason": "Title contains 'electrician'."},
+           "match": {"method": "m2_match_texts", "match_score": 0.3233, "classification": "Strong", "job_text_score": 0.3519,
+                     "occupation_score": 0.2804, "match_confidence": "ok",
+                     "missing": [{"requirement": "Handle troubleshooting of programmable logic controller",
+                                  "requirement_id": "job:…", "item_type": "task", "status": "missing", "score_gain_if_met": 0.0667}]},
+           "experience": {"band": [1.0, 4.0], "source": "job_zone", "candidate_years": 9.0, "fit": 0.5},
+           "rank_score": 0.5349,
+           "rank_components": {"match": 0.3233, "relevance": 1.0, "experience": 0.5, "location": 1.0, "recency": 0.5713}}],
+ "unlocks": [],
+ "module_1_available": true, "module_2_available": true, "warnings": []}
+```
+
+For a beginner (an electrician's helper) the same search returns `unlocks` such as *"Learning Circuit Troubleshooting would move 6 more electrician jobs in Delhi NCR to a good match."*
+
+Request options:
+- `soc_code` instead of `target_role`;
+- `skills` / `profile` (module 2's `UserProfile`) instead of, or with, `free_text`;
+- `preferred_locations`;
+- `max_jobs` (default 50);
+- `use_jsearch` (default true: JSearch only when Adzuna returns nothing for a city);
+- `include_dropped` (list the off-target listings with reasons).
+
+Contract: [src/models/schema_m3_v2.json](src/models/schema_m3_v2.json).
 
 ## Layout
 

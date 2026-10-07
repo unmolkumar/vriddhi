@@ -313,7 +313,7 @@ Errors: `{"error": {"code", "message"}}`. Invalid input is 422 `INVALID_REQUEST`
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Own FastAPI service: `cd module-3-job-matching-salary && uvicorn src.api.main:app --port 8003`. Module-local SQLite, no database to provision; runs without provider keys (snapshot) and without module 2 (keyword matching) |
 | 2 | Contract compliance | ✅ | Spec job shape and `/api/v1/jobs/search` input/output; accepts module 2's profile and module 1's baseline and band as plain data; integration error shape; `src/models/schema_m3.json` (drift-tested) |
-| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **165 passed**, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call and never touch the real cache |
+| 3 | 100% passing tests | ✅ | `pytest module-3-job-matching-salary/tests/ -v` → **165 passed** for v1, including both live provider tests (Adzuna, JSearch). Offline tests fail on any real network call and never touch the real cache. With v2 (§15): 189 passed, 1 skipped |
 | 4 | Error handling | ✅ | Provider timeout, HTTP error, bad JSON, missing key and unsubscribed key → next provider, then snapshot; JSearch salary failure → next salary source with a warning; module 2 down → keyword matching for jobs and typed skills; no salary data → null estimate with a note; invalid input → 422; unknown job → 404; unexpected → 500 without a stack trace |
 | 5 | Zero cross-module imports | ✅ | `src/` imports only `src.*` and third-party packages; module 2 via HTTP, module 1 via request fields |
 | 6 | Documentation | ✅ | `README.md` (install, keys, run, test, payloads); this file (formulas, worked example, contracts) |
@@ -349,3 +349,138 @@ pytest module-3-job-matching-salary/tests/ -v
 - Typed skills resolve through module 2; if module 2 is down they're matched as keywords ("Postgres" then won't match `postgresql`).
 - `BROAD_SKILL_IDS` is only a fallback now; jobs extracted by the current module 2 carry its `is_category` flag.
 - Module 1's on-site percentiles run 16–37% above JSearch's in 5 of the 6 real pairs, so JSearch is primary for most demo roles until the two converge.
+
+---
+
+## 15. General engine v2 — B1 (any occupation)
+
+`POST /api/v2/jobs/search` searches, matches and ranks listings for any occupation. It is new code in `src/general/` behind its own route; v1 (`/api/v1/*`, its pipeline and its 165 tests) is unchanged. Salary for any occupation is phase B2: v2 doesn't estimate salary or rank on it yet.
+
+### 15.1 Pipeline
+
+```text
+ POST /api/v2/jobs/search {target_role | soc_code, location, free_text / skills / module 2 profile, experience_years?}
+   │
+   ├─ role: module 1 /occupations/search (top-k + confidence; "did you mean" below 0.75) or /profile for a soc_code
+   ├─ queries (relevance.build_queries, ≤ 3, deduplicated): the user's phrase, the O*NET title as a job-board phrase
+   │    ('Chefs and Head Cooks' → 'chef'), module 1's best alias/alternate title for the SOC
+   ├─ fetch (fetch.py) per query × city (Delhi NCR → Delhi, Noida, Gurugram): fresh cache 'v2:<query>' → Adzuna;
+   │    JSearch once per city only if Adzuna gave that city nothing for any query; stale snapshot otherwise; dedupe
+   ├─ relevance: every listing title → module 1 search (titles cached in SQLite) → on_target / adjacent / off_target
+   ├─ match: ONE module 2 POST /api/v2/skills/match_texts for the page (≤ 50 jobs, short ids j0…): cleaned job text,
+   │    the listing's SOC when confidently resolved to a related occupation, else the target SOC; re-blended (15.3)
+   ├─ rank: match .55 + relevance .15 + experience .10 + location .10 + recency .10 (no salary in v2 yet)
+   └─ unlocks: missing requirements that would lift the most listings to Good
+```
+
+**Fallbacks** (the request never fails for a dependency):
+- **Module 1 down:** the raw phrase is the only query, there's no SOC, relevance is `unknown`, and a warning says so.
+- **Module 2 down:** keyword overlap matching (`method: "keywords"`, `match_confidence: "low"`), with a warning.
+
+The response reports both in `module_1_available` and `module_2_available`.
+
+### 15.2 Listing relevance (relevance.py; designed on the tuning searches only)
+
+On the tuning searches, module 1 resolved most unfamiliar listing titles by token match at **0.70** to nonsense ("Senior Manager" → Spa Managers, "Engineer - Electrical" → Ship Engineers). So only resolutions at ≥ `RESOLVE_MIN_CONFIDENCE = 0.8` count, and the title's own words do the rest. Target terms are each query's head word: nurse, electrician, scientist, accountant, teacher, chef, sales. Head words only, so "data" doesn't pull in data-entry jobs.
+
+| Label | Rule | Ranking weight |
+|---|---|---|
+| `on_target` | resolves (≥ 0.8) to the target or a close related SOC (tiers `Primary-Short/Long`, or module 1's first 5 while tiers are missing), **or** the title contains a head word | 1.0 |
+| `adjacent` | resolves (≥ 0.8) to another related SOC, or shares a word stem with a head word ("Electrical Designer" for electrician) | 0.5 |
+| `off_target` | neither: resolves confidently to something unrelated, or only weakly / not at all. **Dropped**, reason kept (`dropped[]` with `include_dropped`) | — |
+
+The word rules come before "confidently elsewhere". That guards against module 1's misresolutions ("Teller" → Cashiers at 0.95 stays on target for tellers; tested).
+
+### 15.3 Matching and the re-blend
+
+Adzuna sends about 500 characters per listing, often all company introduction ("When you join Caterpillar…"). On the tuning searches this gave every clause equal weight as a requirement, which:
+- scored a 5-year data scientist at 0.08 against data-scientist listings;
+- produced nonsense unlocks ("Learning to objective The paramedics will travel…").
+
+Two changes, designed on tuning only:
+- **`clean_description`.** It drops:
+  - company-voice sentences (we / our / join / company / client …);
+  - salary, CTC, job-type, location and benefits lines;
+  - bare labels ("Responsibilities:");
+  - the cut-off last fragment.
+
+  The title is put in front when what's left is shorter than 200 characters.
+- **Re-blend.** `match = b × job_text_score + (1 − b) × occupation_score`, with `b = 0.6 × min(1, job requirement clauses / 8)`. A thin listing leans on its occupation's O*NET and market requirements; a full one gets module 2's own 0.6. Every `score_gain_if_met` is rescaled to the same blend.
+
+`match_confidence: "low"` marks descriptions under 200 characters or fewer than 3 requirement clauses.
+
+**Classification** (`THRESHOLDS`, tuned on tuning only):
+
+| Class | From | Basis |
+|---|---|---|
+| Strong | 0.29 | module 2's own good-fit threshold |
+| Good | 0.12 | the floor that best separates full practitioners' on-target listings from beginners' and other fields' (balanced accuracy 0.945 on tuning) |
+| Partial | 0.06 | half of Good |
+| Weak | below | |
+
+The thresholds are returned in every response.
+
+**Experience fit:** the posting's stated range (`4+` read as 4–7); else module 1's `/profile` Indian band, only when `sample_size ≥ 30` with data from 2023 on; else the job-zone band (same table as module 2). The score uses v1's `experience_component`; neutral 0.7 when the years are unknown.
+
+### 15.4 Unlocks
+
+Per listing below Good, take module 2's `missing[]` (with `requirement_id`, `score_gain_if_met`, re-blended).
+- **Skipped:** abilities, skills, knowledge, work activities and basic office software.
+- **Grouped:** by the same `requirement_id`, or text overlap ≥ 0.8.
+- **Counted:** the listings where `match + gain ≥ Good`.
+
+The top 5 come with a message, e.g. *"Learning Circuit Troubleshooting would move 6 more electrician jobs in Delhi NCR to a good match."* A full practitioner whose listings are all Good already gets no unlocks.
+
+### 15.5 Validation (live, 7 October 2026)
+
+Module 1 ran at `e84674a` from its own folder against its own `career_intel.db` (main's latest module 1 code returns 500 on `/profile` until the DB is rebuilt), module 2 from its branch (with `match_texts`), Adzuna live. Thresholds were tuned on the three tuning searches and frozen (commit `e40ca8a`) before the held-out profiles were written.
+
+**Fixes made after the freeze** (not tuning):
+- **Module 2 job ids:** provider ids over module 2's 120-character `job_id` limit made module 2 reject the whole page (now short ids `j0…`).
+- **JSearch:** it had been called when only a secondary query came back empty (now only when the whole city got nothing).
+- **Queries:** "sales" was singularised to "sale".
+
+**Listing relevance and fit ordering** (three profiles per search: full practitioner, beginner, someone from another field; medians on on-target listings):
+
+| Search | Listings | On-target share | Adjacent / dropped | Manual check of 20 titles (mine vs. system) | Full / beginner / other median | Full > beginner on the same listing |
+|---|---|---|---|---|---|---|
+| *Tuning* staff nurse — Pune | 3 | 100% | 0 / 0 | 2/3 ("Nurse Technician" should be adjacent) | 0.354 / 0.041 / 0.058 | 3/3 |
+| *Tuning* electrician — Delhi NCR | 117 | 0.9% | 20 / 96 | 20/20 | 0.323 / 0.032 / 0.0 | 21/21 |
+| *Tuning* data scientist — Bengaluru | 40 | 95% | 2 / 0 | 20/20 | 0.129 / 0.047 / 0.0 | 39/40 |
+| accountant — Mumbai | 49 | 61% | 19 / 0 | 20/20 | 0.365 / 0.025 / 0.0 | 49/49 |
+| school teacher — Jaipur | 1 | 100% | 0 / 0 | 0/1 ("PRT Mother Teacher" is primary: adjacent) | 0.355 / 0.032 / 0.0 | 1/1 |
+| chef — Bengaluru | 44 | 80% | 0 / 9 | 17/20 (two Commis roles, Kitchen Crew dropped) | 0.275 / 0.209 / 0.0 | 32/35 |
+| sales executive — Hyderabad | 69 | 74% | 1 / 17 | 13/20 (Business Development Executive ×3, BDM, SDR, Home Loan Executive dropped; Sales Compensation Analyst kept) | 0.198 / 0.002 / 0.017 | 50/50 |
+
+- **Other-field profiles** never reach Good on any listing (highest score 0.09, nurse search).
+- **Beginners** reach Good only as the chef trainee (all 35 chef listings), and once as the data-science graduate.
+- **School teacher:** the first held-out run (before the JSearch fix) had 10 listings, 9 of them from JSearch. Its manual check was 6/10: "PGT/TGT Mathematics" were dropped because they share no word with "school teacher".
+
+**Latency:** warm `/api/v2/jobs/search`, accountant — Mumbai, 49 listings matched, cached listings and titles: **1.1–1.3 s**. The cold first call is 12 s while module 2 prepares occupations. Warm searches across all runs: 0.1–4.3 s.
+
+**Quota used in this round:** about 19 Adzuna calls, and 3 JSearch calls (2 by v2 before the policy fix, 1 by v1's live provider test).
+
+### 15.6 Contracts, tests, files
+
+- `src/models/schema_m3_v2.json` (`python -m src.general.schemas`) with a drift test.
+- **Request:** `target_role` or `soc_code`, `location`, evidence (`free_text` / `skills` / `profile`), plus `experience_years`, `preferred_locations`, `max_jobs` (≤ 100), `force_refresh`, `use_jsearch`, `include_dropped`.
+- **Response:**
+  - `resolution`, `queries`, `cities`;
+  - `jobs[]`, each with `relevance`, `match` (`met`, `missing` with gains), `experience`, `rank_components`;
+  - `relevance_summary`, `dropped`, `unlocks`, `thresholds`;
+  - `provider_trace`, `fetched_at` / `age_hours`, `module_1_available` / `module_2_available`, `warnings`.
+- **Tests** (`tests/v2/`, 25):
+  - recorded live searches (electrician — Delhi NCR, staff nurse — Pune, school teacher — Jaipur; listings with tracking stripped, module 1 and 2 responses replayed by `replay.py`, which fails on any unrecorded request);
+  - board titles and queries, relevance rules incl. the teller guard;
+  - text cleaning, the re-blend arithmetic, experience bands, unlock grouping;
+  - module 1 and 2 down, the JSearch policy, the API and schema drift;
+  - one live search (skipped without Adzuna keys or modules 1/2).
+- **Total:** `pytest module-3-job-matching-salary/tests/` → **189 passed, 1 skipped** (v1's live JSearch test without `RAPIDAPI_KEY`). The v1 suite is unchanged at 165.
+
+### 15.7 Known limits and open questions (B1)
+
+- **Adzuna coverage.** Adzuna India has few listings for some trades: 3 nurse listings in Pune, 1 real electrician listing in Delhi NCR among 117 engineering/sales results, 1 teacher listing in Jaipur. JSearch (Naukri, LinkedIn via Google for Jobs) would add many, but has 200 calls a month. Should v2 call JSearch when Adzuna returns fewer than N relevant listings?
+- **Indian titles module 1 doesn't link.** PGT/TGT (teachers), Commis (chefs), BDE/BDM/SDR (sales) were dropped as off-target. A head-word synonym list per occupation, or module 1 aliases for them, would fix this; it needs a decision and a fresh check.
+- **Module 2 on strong resumes.** It scores a 5-year data-science resume at 0.13 for Data Scientists (`insufficient_evidence`; tasks 4% covered). The data-science full practitioner is therefore only Good, not Strong, on most listings.
+- **Unlock counts** are dominated by listings just under Good (six electrician listings at 0.11), so several unlocks show the same count.
+- **Title clauses as requirements.** When a short description has the title put in front, the title itself appears as a "missing" requirement ("Engineer - Electrical.").
