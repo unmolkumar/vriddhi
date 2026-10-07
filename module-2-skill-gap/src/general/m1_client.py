@@ -21,8 +21,10 @@ log = logging.getLogger(__name__)
 
 MODULE_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = MODULE_ROOT / "data" / "cache" / "m1"
-FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_occupation_requirements_export.json"          # v2.1, 15 SOCs
+FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_occupation_requirements_export.json"          # v2.2, 15 SOCs
 EXTRA_FIXTURE_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_heldout_occupations.json"   # 10 SOCs from a live module 1
+# Module 1's live search results for the past job titles in the calibration profiles (scripts/capture_title_search.py)
+TITLE_SEARCH_PATH = MODULE_ROOT / "tests" / "mocks" / "m1_title_search.json"
 # Module 1's india_title_aliases as documented in its HANDOVER.md, for the fixture's search only.
 FIXTURE_ALIASES = {
     "staff nurse": "29-1141.00", "nursing officer": "29-1141.00", "sister in charge": "29-1141.00",
@@ -170,6 +172,8 @@ class FixtureM1Client:
             for soc, occ in data["occupations"].items():
                 self.occupations[soc] = occ
                 self.versions[soc] = version
+        self.searches: dict[str, list[dict]] = (
+            json.loads(TITLE_SEARCH_PATH.read_text(encoding="utf-8"))["searches"] if TITLE_SEARCH_PATH.exists() else {})
 
     def version(self) -> str:
         return "+".join(sorted(set(self.versions.values()))) or "unknown"
@@ -183,12 +187,15 @@ class FixtureM1Client:
         return self.occupations[soc]
 
     def search(self, q: str, k: int = DEFAULT_K) -> Resolution:
-        """Module 1's documented Indian aliases (exact, 1.0), else token overlap with fixture titles. Module 1's real
-        search also uses 62k alternate titles."""
+        """Module 1's documented Indian aliases (exact, 1.0), then module 1's captured live results for past job titles
+        (TITLE_SEARCH_PATH; they may name occupations outside the fixture), else token overlap with fixture titles.
+        Module 1's real search also uses 62k alternate titles."""
         alias = FIXTURE_ALIASES.get(q.strip().lower())
         if alias in self.occupations:
             return resolution(q, [OccupationMatch(soc_code=alias, title=self.occupations[alias]["title"], confidence=1.0,
                                                   method="india_alias_exact", matched_term=q.strip().lower())])
+        if q.strip().lower() in self.searches:
+            return resolution(q, [OccupationMatch(**m) for m in self.searches[q.strip().lower()][:k]])
         words = set(re.findall(r"[a-z]+", q.lower()))
         matches = []
         for soc, occ in self.occupations.items():
