@@ -1,0 +1,6 @@
+Q: Have you worked as an electrician?
+A: I worked as a helper with a contractor for one year.
+Q: What did you do?
+A: I carried material, held the ladder and helped pull wires through pipes.
+Q: Can you wire a board on your own?
+A: Not yet, I am learning.

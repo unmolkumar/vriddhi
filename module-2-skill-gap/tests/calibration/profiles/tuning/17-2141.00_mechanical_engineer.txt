@@ -1,0 +1,19 @@
+Arjun Patel
+Mechanical Design Engineer, Ahmedabad
+
+Experience
+Design Engineer | Elecon Engineering, Vallabh Vidyanagar | 2020 - Present
+- Design gearboxes and couplings in SolidWorks and prepare 2D manufacturing drawings with GD&T.
+- Calculate loads, shaft sizes and bearing life, and run FEA in ANSYS to check stresses.
+- Read and interpret customer drawings and specifications before starting a design.
+- Work with the shop floor to fix fabrication and machining problems and reduce cost.
+- Carry out DFMEA and support testing of prototypes on the test rig.
+
+Graduate Engineer Trainee | Larsen & Toubro, Hazira | 2018 - 2020
+- Supported installation and maintenance of heavy machinery and pumps.
+
+Skills
+SolidWorks, AutoCAD, ANSYS, GD&T, FMEA, machine design, thermodynamics, HVAC basics
+
+Education
+B.E. Mechanical Engineering, Nirma University, 2018

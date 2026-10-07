@@ -1,0 +1,1445 @@
+{
+ "metadata": {
+  "m1_version": "2.2.0+02b93f2ab57d315d",
+  "captured_at": "2026-10-07T02:42:21.865579+00:00",
+  "k": 3,
+  "titles": 102
+ },
+ "searches": {
+  "accounts assistant": [
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   },
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   },
+   {
+    "soc_code": "31-9092.00",
+    "title": "Medical Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Medical Assistants"
+   }
+  ],
+  "aditya rao": [],
+  "adv. rajiv malhotra": [
+   {
+    "soc_code": "39-9041.00",
+    "title": "Residential Advisors",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Residential Advisors"
+   },
+   {
+    "soc_code": "41-3011.00",
+    "title": "Advertising Sales Agents",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Advertising Sales Agents"
+   },
+   {
+    "soc_code": "13-2052.00",
+    "title": "Personal Financial Advisors",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Personal Financial Advisors"
+   }
+  ],
+  "advocate": [
+   {
+    "soc_code": "21-1093.00",
+    "title": "Social and Human Service Assistants",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Advocate"
+   },
+   {
+    "soc_code": "23-2099.00",
+    "title": "Legal Support Workers, All Other",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Advocate"
+   }
+  ],
+  "ananya bose": [],
+  "anita rawat": [],
+  "anjali thomas": [],
+  "ankit agarwal": [],
+  "apprentice": [
+   {
+    "soc_code": "47-3013.00",
+    "title": "Helpers--Electricians",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Apprentice"
+   },
+   {
+    "soc_code": "47-3011.00",
+    "title": "Helpers--Brickmasons, Blockmasons, Stonemasons, and Tile and Marble Setters",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Mason Apprentice"
+   }
+  ],
+  "apprentice electrician": [
+   {
+    "soc_code": "47-2111.00",
+    "title": "Electricians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Electricians"
+   },
+   {
+    "soc_code": "47-3013.00",
+    "title": "Helpers--Electricians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Helpers--Electricians"
+   }
+  ],
+  "area sales executive": [
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Managers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   },
+   {
+    "soc_code": "11-1011.00",
+    "title": "Chief Executives",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Chief Executives"
+   }
+  ],
+  "area sales manager": [
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Area Sales Manager"
+   },
+   {
+    "soc_code": "11-9179.02",
+    "title": "Spa Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Spa Managers"
+   },
+   {
+    "soc_code": "19-1031.02",
+    "title": "Range Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Range Managers"
+   }
+  ],
+  "arjun mehta": [],
+  "arjun patel": [],
+  "articled assistant": [
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   },
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   },
+   {
+    "soc_code": "31-9092.00",
+    "title": "Medical Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Medical Assistants"
+   }
+  ],
+  "audit manager": [
+   {
+    "soc_code": "11-9199.02",
+    "title": "Compliance Managers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Audit Manager"
+   },
+   {
+    "soc_code": "11-9179.02",
+    "title": "Spa Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Spa Managers"
+   },
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Managers"
+   }
+  ],
+  "b.tech mechanical engineering": [
+   {
+    "soc_code": "17-3013.00",
+    "title": "Mechanical Drafters",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Mechanical Drafters"
+   },
+   {
+    "soc_code": "17-2141.00",
+    "title": "Mechanical Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Mechanical Engineers"
+   },
+   {
+    "soc_code": "49-9011.00",
+    "title": "Mechanical Door Repairers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Mechanical Door Repairers"
+   }
+  ],
+  "bank teller": [
+   {
+    "soc_code": "43-3071.00",
+    "title": "Tellers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Bank Teller"
+   },
+   {
+    "soc_code": "49-9091.00",
+    "title": "Coin, Vending, and Amusement Machine Servicers and Repairers",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Bank Teller Machine Mechanic"
+   },
+   {
+    "soc_code": "49-2011.00",
+    "title": "Computer, Automated Teller, and Office Machine Repairers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Computer, Automated Teller, and Office Machine Repairers"
+   }
+  ],
+  "chartered accountant": [
+   {
+    "soc_code": "13-2011.00",
+    "title": "Accountants and Auditors",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "chartered accountant"
+   }
+  ],
+  "civil site engineer": [
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "civil site engineer"
+   },
+   {
+    "soc_code": "53-5031.00",
+    "title": "Ship Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Ship Engineers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   }
+  ],
+  "clinic assistant / medical assistant": [
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   },
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   },
+   {
+    "soc_code": "31-9092.00",
+    "title": "Medical Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Medical Assistants"
+   }
+  ],
+  "clinical pharmacist": [
+   {
+    "soc_code": "29-1051.00",
+    "title": "Pharmacists",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Clinical Pharmacist"
+   },
+   {
+    "soc_code": "15-2051.02",
+    "title": "Clinical Data Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Clinical Data Managers"
+   },
+   {
+    "soc_code": "29-1141.04",
+    "title": "Clinical Nurse Specialists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Clinical Nurse Specialists"
+   }
+  ],
+  "credit officer": [
+   {
+    "soc_code": "13-2041.00",
+    "title": "Credit Analysts",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Credit Officer"
+   },
+   {
+    "soc_code": "43-4041.00",
+    "title": "Credit Authorizers, Checkers, and Clerks",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Credit Officer"
+   },
+   {
+    "soc_code": "13-2072.00",
+    "title": "Loan Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Loan Officers"
+   }
+  ],
+  "data analyst": [
+   {
+    "soc_code": "15-2051.01",
+    "title": "Business Intelligence Analysts",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "data analyst"
+   },
+   {
+    "soc_code": "13-2099.01",
+    "title": "Financial Quantitative Analysts",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Data Analyst"
+   },
+   {
+    "soc_code": "15-1243.00",
+    "title": "Database Architects",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Data Analyst"
+   }
+  ],
+  "data science intern": [
+   {
+    "soc_code": "15-2051.00",
+    "title": "Data Scientists",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Data Science Intern"
+   },
+   {
+    "soc_code": "43-9021.00",
+    "title": "Data Entry Keyers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Data Entry Keyers"
+   },
+   {
+    "soc_code": "15-1243.00",
+    "title": "Database Architects",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Database Architects"
+   }
+  ],
+  "data scientist": [
+   {
+    "soc_code": "15-2051.00",
+    "title": "Data Scientists",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "data scientist"
+   },
+   {
+    "soc_code": "15-1299.05",
+    "title": "Information Security Engineers",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Security Data Scientist"
+   },
+   {
+    "soc_code": "51-8099.01",
+    "title": "Biofuels Processing Technicians",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Biofuels Data Scientist"
+   }
+  ],
+  "deepak chauhan": [],
+  "dental hygienist": [
+   {
+    "soc_code": "29-1292.00",
+    "title": "Dental Hygienists",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Dental Hygienist"
+   },
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   },
+   {
+    "soc_code": "51-9081.00",
+    "title": "Dental Laboratory Technicians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Laboratory Technicians"
+   }
+  ],
+  "design engineer": [
+   {
+    "soc_code": "17-2011.00",
+    "title": "Aerospace Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Design Engineer"
+   },
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Design Engineer"
+   },
+   {
+    "soc_code": "17-2061.00",
+    "title": "Computer Hardware Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Design Engineer"
+   }
+  ],
+  "dr. neha kapoor": [],
+  "dr. swati rao": [],
+  "electrician": [
+   {
+    "soc_code": "47-2111.00",
+    "title": "Electricians",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "electrician"
+   },
+   {
+    "soc_code": "47-3013.00",
+    "title": "Helpers--Electricians",
+    "confidence": 0.88,
+    "method": "onet_title_partial",
+    "matched_term": "Helpers--Electricians"
+   }
+  ],
+  "farah shaikh": [],
+  "fresher": [],
+  "from insurance sales to lending": [
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Managers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   },
+   {
+    "soc_code": "41-2022.00",
+    "title": "Parts Salespersons",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Parts Salespersons"
+   }
+  ],
+  "gnm fresher": [],
+  "graduate engineer trainee": [
+   {
+    "soc_code": "53-5031.00",
+    "title": "Ship Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Ship Engineers"
+   },
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Civil Engineers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   }
+  ],
+  "graphic designer": [
+   {
+    "soc_code": "27-1024.00",
+    "title": "Graphic Designers",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "graphic designer"
+   },
+   {
+    "soc_code": "27-1014.00",
+    "title": "Special Effects Artists and Animators",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Web Graphic Designer"
+   },
+   {
+    "soc_code": "27-1023.00",
+    "title": "Floral Designers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Floral Designers"
+   }
+  ],
+  "head chef": [
+   {
+    "soc_code": "35-1011.00",
+    "title": "Chefs and Head Cooks",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Head Chef"
+   },
+   {
+    "soc_code": "53-7073.00",
+    "title": "Wellhead Pumpers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Wellhead Pumpers"
+   },
+   {
+    "soc_code": "53-7072.00",
+    "title": "Pump Operators, Except Wellhead Pumpers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Pump Operators, Except Wellhead Pumpers"
+   }
+  ],
+  "head of data science": [
+   {
+    "soc_code": "15-2051.00",
+    "title": "Data Scientists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Data Scientists"
+   },
+   {
+    "soc_code": "53-7073.00",
+    "title": "Wellhead Pumpers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Wellhead Pumpers"
+   },
+   {
+    "soc_code": "43-9021.00",
+    "title": "Data Entry Keyers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Data Entry Keyers"
+   }
+  ],
+  "head of data science & analytics": [
+   {
+    "soc_code": "15-2051.00",
+    "title": "Data Scientists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Data Scientists"
+   },
+   {
+    "soc_code": "53-7073.00",
+    "title": "Wellhead Pumpers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Wellhead Pumpers"
+   },
+   {
+    "soc_code": "43-9021.00",
+    "title": "Data Entry Keyers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Data Entry Keyers"
+   }
+  ],
+  "home baker": [
+   {
+    "soc_code": "51-3011.00",
+    "title": "Bakers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Bakers"
+   },
+   {
+    "soc_code": "31-1121.00",
+    "title": "Home Health Aides",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Home Health Aides"
+   },
+   {
+    "soc_code": "11-9171.00",
+    "title": "Funeral Home Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Funeral Home Managers"
+   }
+  ],
+  "home loan officer": [
+   {
+    "soc_code": "13-2072.00",
+    "title": "Loan Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Loan Officers"
+   },
+   {
+    "soc_code": "31-1121.00",
+    "title": "Home Health Aides",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Home Health Aides"
+   },
+   {
+    "soc_code": "55-1011.00",
+    "title": "Air Crew Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Air Crew Officers"
+   }
+  ],
+  "hr executive": [
+   {
+    "soc_code": "43-6011.00",
+    "title": "Executive Secretaries and Executive Administrative Assistants",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Human Resources Executive Assistant (HR Executive Assistant)"
+   },
+   {
+    "soc_code": "11-1011.00",
+    "title": "Chief Executives",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Chief Executives"
+   },
+   {
+    "soc_code": "43-6014.00",
+    "title": "Secretaries and Administrative Assistants, Except Legal, Medical, and Executive",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Secretaries and Administrative Assistants, Except Legal, Medical, and Executive"
+   }
+  ],
+  "hr intern": [
+   {
+    "soc_code": "29-1216.00",
+    "title": "General Internal Medicine Physicians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "General Internal Medicine Physicians"
+   }
+  ],
+  "imran qureshi": [],
+  "industrial electrician": [
+   {
+    "soc_code": "47-2111.00",
+    "title": "Electricians",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Industrial Electrician"
+   },
+   {
+    "soc_code": "17-2112.00",
+    "title": "Industrial Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Industrial Engineers"
+   },
+   {
+    "soc_code": "19-2041.03",
+    "title": "Industrial Ecologists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Industrial Ecologists"
+   }
+  ],
+  "insurance advisor": [
+   {
+    "soc_code": "13-2052.00",
+    "title": "Personal Financial Advisors",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Insurance Advisor"
+   },
+   {
+    "soc_code": "39-9041.00",
+    "title": "Residential Advisors",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Residential Advisors"
+   },
+   {
+    "soc_code": "13-2053.00",
+    "title": "Insurance Underwriters",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Insurance Underwriters"
+   }
+  ],
+  "iti electrician apprentice": [
+   {
+    "soc_code": "47-2111.00",
+    "title": "Electricians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Electricians"
+   },
+   {
+    "soc_code": "11-3013.00",
+    "title": "Facilities Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Facilities Managers"
+   },
+   {
+    "soc_code": "29-1171.00",
+    "title": "Nurse Practitioners",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nurse Practitioners"
+   }
+  ],
+  "junior engineer": [
+   {
+    "soc_code": "53-5031.00",
+    "title": "Ship Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Ship Engineers"
+   },
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Civil Engineers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   }
+  ],
+  "kavita reddy": [],
+  "kiran joshi": [],
+  "kitchen lead": [
+   {
+    "soc_code": "55-1019.00",
+    "title": "Military Officer Special and Tactical Operations Leaders, All Other",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Military Officer Special and Tactical Operations Leaders, All Other"
+   }
+  ],
+  "laboratory technician": [
+   {
+    "soc_code": "17-3029.00",
+    "title": "Engineering Technologists and Technicians, Except Drafters, All Other",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Laboratory Technician"
+   },
+   {
+    "soc_code": "19-4043.00",
+    "title": "Geological Technicians, Except Hydrologic Technicians",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Laboratory Technician"
+   },
+   {
+    "soc_code": "19-4099.00",
+    "title": "Life, Physical, and Social Science Technicians, All Other",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Laboratory Technician"
+   }
+  ],
+  "loan officer": [
+   {
+    "soc_code": "13-2072.00",
+    "title": "Loan Officers",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "loan officer"
+   },
+   {
+    "soc_code": "55-1011.00",
+    "title": "Air Crew Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Air Crew Officers"
+   },
+   {
+    "soc_code": "55-1016.00",
+    "title": "Infantry Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Infantry Officers"
+   }
+  ],
+  "lt. col.": [
+   {
+    "soc_code": "19-2041.03",
+    "title": "Industrial Ecologists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Industrial Ecologists"
+   },
+   {
+    "soc_code": "43-3011.00",
+    "title": "Bill and Account Collectors",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Bill and Account Collectors"
+   },
+   {
+    "soc_code": "29-1218.00",
+    "title": "Obstetricians and Gynecologists",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Obstetricians and Gynecologists"
+   }
+  ],
+  "maintenance electrician": [
+   {
+    "soc_code": "47-2111.00",
+    "title": "Electricians",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Maintenance Electrician"
+   },
+   {
+    "soc_code": "47-3013.00",
+    "title": "Helpers--Electricians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Helpers--Electricians"
+   },
+   {
+    "soc_code": "47-4051.00",
+    "title": "Highway Maintenance Workers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Highway Maintenance Workers"
+   }
+  ],
+  "manager": [
+   {
+    "soc_code": "11-9179.02",
+    "title": "Spa Managers",
+    "confidence": 0.88,
+    "method": "onet_title_partial",
+    "matched_term": "Spa Managers"
+   },
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.88,
+    "method": "onet_title_partial",
+    "matched_term": "Sales Managers"
+   },
+   {
+    "soc_code": "19-1031.02",
+    "title": "Range Managers",
+    "confidence": 0.88,
+    "method": "onet_title_partial",
+    "matched_term": "Range Managers"
+   }
+  ],
+  "manoj kumar": [],
+  "mechanical design engineer": [
+   {
+    "soc_code": "17-2141.00",
+    "title": "Mechanical Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Mechanical Design Engineer"
+   },
+   {
+    "soc_code": "53-5031.00",
+    "title": "Ship Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Ship Engineers"
+   },
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Civil Engineers"
+   }
+  ],
+  "medical assistant": [
+   {
+    "soc_code": "31-9092.00",
+    "title": "Medical Assistants",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "medical assistant"
+   },
+   {
+    "soc_code": "29-9093.00",
+    "title": "Surgical Assistants",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Surgical Medical Assistant"
+   },
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   }
+  ],
+  "medical representative": [
+   {
+    "soc_code": "41-4012.00",
+    "title": "Sales Representatives, Wholesale and Manufacturing, Except Technical and Scientific Products",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "medical representative"
+   },
+   {
+    "soc_code": "29-2042.00",
+    "title": "Emergency Medical Technicians",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Onsite Medical Representative (Onsite Medical Rep)"
+   },
+   {
+    "soc_code": "31-9092.00",
+    "title": "Medical Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Medical Assistants"
+   }
+  ],
+  "meena iyer": [],
+  "nursing intern": [
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   },
+   {
+    "soc_code": "29-1216.00",
+    "title": "General Internal Medicine Physicians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "General Internal Medicine Physicians"
+   },
+   {
+    "soc_code": "25-1072.00",
+    "title": "Nursing Instructors and Teachers, Postsecondary",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Instructors and Teachers, Postsecondary"
+   }
+  ],
+  "nursing superintendent": [
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   },
+   {
+    "soc_code": "11-9131.00",
+    "title": "Postmasters and Mail Superintendents",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Postmasters and Mail Superintendents"
+   },
+   {
+    "soc_code": "25-1072.00",
+    "title": "Nursing Instructors and Teachers, Postsecondary",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Instructors and Teachers, Postsecondary"
+   }
+  ],
+  "pgt mathematics": [],
+  "pharmacist": [
+   {
+    "soc_code": "29-1051.00",
+    "title": "Pharmacists",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "pharmacist"
+   },
+   {
+    "soc_code": "31-9095.00",
+    "title": "Pharmacy Aides",
+    "confidence": 0.82,
+    "method": "onet_alt_title_partial",
+    "matched_term": "Pharmacist Aide"
+   }
+  ],
+  "pharmacy assistant": [
+   {
+    "soc_code": "31-9095.00",
+    "title": "Pharmacy Aides",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Pharmacy Assistant"
+   },
+   {
+    "soc_code": "31-9091.00",
+    "title": "Dental Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Dental Assistants"
+   },
+   {
+    "soc_code": "31-1131.00",
+    "title": "Nursing Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nursing Assistants"
+   }
+  ],
+  "physiotherapist": [
+   {
+    "soc_code": "29-1123.00",
+    "title": "Physical Therapists",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Physiotherapist"
+   }
+  ],
+  "pooja mehta": [],
+  "pooja nair": [],
+  "pradeep nair": [],
+  "prakash menon": [],
+  "priya nair": [],
+  "qa engineer": [
+   {
+    "soc_code": "15-1253.00",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Quality Assurance Engineer (QA Engineer)"
+   },
+   {
+    "soc_code": "17-2112.00",
+    "title": "Industrial Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Quality Assurance Engineer (QA Engineer)"
+   },
+   {
+    "soc_code": "17-2141.02",
+    "title": "Automotive Engineers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Quality Assurance Engineer (QA Engineer)"
+   }
+  ],
+  "rahul deshmukh": [],
+  "ramesh gowda": [],
+  "real estate agent": [
+   {
+    "soc_code": "41-9022.00",
+    "title": "Real Estate Sales Agents",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Real Estate Agent"
+   },
+   {
+    "soc_code": "41-3041.00",
+    "title": "Travel Agents",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Travel Agents"
+   },
+   {
+    "soc_code": "41-9021.00",
+    "title": "Real Estate Brokers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Real Estate Brokers"
+   }
+  ],
+  "regional sales manager": [
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Regional Sales Manager"
+   },
+   {
+    "soc_code": "11-9179.02",
+    "title": "Spa Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Spa Managers"
+   },
+   {
+    "soc_code": "19-1031.02",
+    "title": "Range Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Range Managers"
+   }
+  ],
+  "registered pharmacist": [
+   {
+    "soc_code": "29-1051.00",
+    "title": "Pharmacists",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Registered Pharmacist"
+   },
+   {
+    "soc_code": "29-1141.00",
+    "title": "Registered Nurses",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Registered Nurses"
+   }
+  ],
+  "relationship executive": [
+   {
+    "soc_code": "11-1011.00",
+    "title": "Chief Executives",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Chief Executives"
+   },
+   {
+    "soc_code": "43-6011.00",
+    "title": "Executive Secretaries and Executive Administrative Assistants",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Executive Secretaries and Executive Administrative Assistants"
+   },
+   {
+    "soc_code": "43-6014.00",
+    "title": "Secretaries and Administrative Assistants, Except Legal, Medical, and Executive",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Secretaries and Administrative Assistants, Except Legal, Medical, and Executive"
+   }
+  ],
+  "ritu verma": [],
+  "rohit kumar": [],
+  "sales officer": [
+   {
+    "soc_code": "13-2072.00",
+    "title": "Loan Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Loan Officers"
+   },
+   {
+    "soc_code": "11-2022.00",
+    "title": "Sales Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Managers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   }
+  ],
+  "senior graphic designer": [
+   {
+    "soc_code": "27-1023.00",
+    "title": "Floral Designers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Floral Designers"
+   },
+   {
+    "soc_code": "27-1022.00",
+    "title": "Fashion Designers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Fashion Designers"
+   },
+   {
+    "soc_code": "27-1024.00",
+    "title": "Graphic Designers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Graphic Designers"
+   }
+  ],
+  "senior loan officer": [
+   {
+    "soc_code": "13-2072.00",
+    "title": "Loan Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Loan Officers"
+   },
+   {
+    "soc_code": "55-1011.00",
+    "title": "Air Crew Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Air Crew Officers"
+   },
+   {
+    "soc_code": "55-1016.00",
+    "title": "Infantry Officers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Infantry Officers"
+   }
+  ],
+  "senior physiotherapist": [],
+  "senior staff nurse": [
+   {
+    "soc_code": "29-1161.00",
+    "title": "Nurse Midwives",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Nurse Midwives"
+   },
+   {
+    "soc_code": "29-1141.00",
+    "title": "Registered Nurses",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Registered Nurses"
+   },
+   {
+    "soc_code": "29-1141.01",
+    "title": "Acute Care Nurses",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Acute Care Nurses"
+   }
+  ],
+  "shalini gupta": [],
+  "sister grace joseph": [],
+  "site engineer": [
+   {
+    "soc_code": "17-2051.00",
+    "title": "Civil Engineers",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "site engineer"
+   },
+   {
+    "soc_code": "53-5031.00",
+    "title": "Ship Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Ship Engineers"
+   },
+   {
+    "soc_code": "41-9031.00",
+    "title": "Sales Engineers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Sales Engineers"
+   }
+  ],
+  "sneha kulkarni": [],
+  "software tester": [
+   {
+    "soc_code": "15-1253.00",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Software Tester"
+   },
+   {
+    "soc_code": "15-1252.00",
+    "title": "Software Developers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Software Developers"
+   },
+   {
+    "soc_code": "15-1299.04",
+    "title": "Penetration Testers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Penetration Testers"
+   }
+  ],
+  "sous chef": [
+   {
+    "soc_code": "35-1011.00",
+    "title": "Chefs and Head Cooks",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Sous Chef"
+   },
+   {
+    "soc_code": "35-2012.00",
+    "title": "Cooks, Institution and Cafeteria",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Sous Chef"
+   }
+  ],
+  "staff nurse": [
+   {
+    "soc_code": "29-1141.00",
+    "title": "Registered Nurses",
+    "confidence": 1.0,
+    "method": "india_alias_exact",
+    "matched_term": "staff nurse"
+   },
+   {
+    "soc_code": "29-1141.01",
+    "title": "Acute Care Nurses",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Staff Nurse"
+   },
+   {
+    "soc_code": "29-1141.03",
+    "title": "Critical Care Nurses",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Staff Nurse"
+   }
+  ],
+  "store manager": [
+   {
+    "soc_code": "11-1021.00",
+    "title": "General and Operations Managers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Store Manager"
+   },
+   {
+    "soc_code": "41-1011.00",
+    "title": "First-Line Supervisors of Retail Sales Workers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Store Manager"
+   },
+   {
+    "soc_code": "11-9179.02",
+    "title": "Spa Managers",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "Spa Managers"
+   }
+  ],
+  "summer intern": [
+   {
+    "soc_code": "29-1216.00",
+    "title": "General Internal Medicine Physicians",
+    "confidence": 0.7,
+    "method": "token_match",
+    "matched_term": "General Internal Medicine Physicians"
+   }
+  ],
+  "sunita yadav": [],
+  "teller": [
+   {
+    "soc_code": "41-2011.00",
+    "title": "Cashiers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Teller"
+   },
+   {
+    "soc_code": "43-3071.00",
+    "title": "Tellers",
+    "confidence": 0.95,
+    "method": "onet_alt_title_exact",
+    "matched_term": "Teller"
+   },
+   {
+    "soc_code": "49-2011.00",
+    "title": "Computer, Automated Teller, and Office Machine Repairers",
+    "confidence": 0.88,
+    "method": "onet_title_partial",
+    "matched_term": "Computer, Automated Teller, and Office Machine Repairers"
+   }
+  ],
+  "tgt mathematics": [],
+  "vikram singh": [],
+  "vivek sharma": []
+ }
+}

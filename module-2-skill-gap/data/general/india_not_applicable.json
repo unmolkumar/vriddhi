@@ -1,0 +1,20 @@
+{
+  "description": "O*NET tasks and DWAs that are outside the legal scope of practice in India for that occupation. They are excluded from scoring and shown as not_applicable_in_india with the reason, never as gaps or roadmap items. Only clear legal or scope-of-practice cases belong here; module 1 should eventually provide an india_relevant flag per requirement.",
+  "items": [
+    {"soc": "29-1141.00", "item_type": "task", "item_id": "1859",
+     "name": "Prescribe or recommend drugs, medical devices, or other forms of treatment, such as physical therapy, inhalation therapy, or related therapeutic procedures.",
+     "reason": "Registered nurses in India do not have prescribing authority; prescriptions are written by registered medical practitioners."},
+    {"soc": "29-1141.00", "item_type": "dwa", "item_id": "4.A.4.c.3.f.3", "name": "Prescribe medications.",
+     "reason": "Registered nurses in India do not have prescribing authority; prescriptions are written by registered medical practitioners."},
+    {"soc": "29-1141.00", "item_type": "dwa", "item_id": "4.A.4.c.3.f.4", "name": "Prescribe assistive medical devices or related treatments.",
+     "reason": "Registered nurses in India do not have prescribing authority; prescriptions are written by registered medical practitioners."},
+    {"soc": "29-1051.00", "item_type": "dwa", "item_id": "4.A.4.c.3.f.3", "name": "Prescribe medications.",
+     "reason": "Pharmacists in India dispense against a registered medical practitioner's prescription; they do not prescribe (Pharmacy Practice Regulations, 2015)."},
+    {"soc": "29-1051.00", "item_type": "dwa", "item_id": "4.A.4.c.3.f.1", "name": "Prescribe treatments or therapies.",
+     "reason": "Pharmacists in India dispense against a registered medical practitioner's prescription; they do not prescribe (Pharmacy Practice Regulations, 2015)."},
+    {"soc": "31-9092.00", "item_type": "task", "item_id": "2031", "name": "Authorize drug refills and provide prescription information to pharmacies.",
+     "reason": "In India a refill needs a registered medical practitioner's prescription; clinic or medical assistants cannot authorise one."},
+    {"soc": "31-9092.00", "item_type": "dwa", "item_id": "4.A.4.c.3.f.2", "name": "Control prescription refills or authorizations.",
+     "reason": "In India a refill needs a registered medical practitioner's prescription; clinic or medical assistants cannot authorise one."}
+  ]
+}

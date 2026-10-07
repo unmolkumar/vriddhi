@@ -1,0 +1,6 @@
+Name: Varun Iyer
+Current role: Senior Engineer - HVAC Design, Blue Star Ltd, Chennai
+Experience: 7 years
+Work: heat load calculations for offices and hospitals; selection of chillers, AHUs and ducting; HVAC layout drawings in AutoCAD and Revit; checking vendor drawings; site visits during installation and commissioning; energy saving studies
+Software: AutoCAD, Revit MEP, HAP (Carrier), Excel
+Education: B.E. Mechanical, Anna University

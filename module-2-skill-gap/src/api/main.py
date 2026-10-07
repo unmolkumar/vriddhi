@@ -4,12 +4,16 @@ Port 8002 (module 1 uses 8001). OpenAPI docs at /docs.
 """
 from __future__ import annotations
 
+import os
+import threading
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes import VERSION, error, router
+from src.api.routes_v2 import get_engine, router_v2
 
 PORT = 8002
 
@@ -22,6 +26,18 @@ app = FastAPI(
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(router)
+app.include_router(router_v2)   # general engine; v1 above is unchanged
+
+PREWARM_ENV = "M2_PREWARM_SOCS"   # comma-separated SOCs to prepare at startup (in the background)
+
+
+def _prewarm() -> None:
+    socs = [s.strip() for s in os.getenv(PREWARM_ENV, "").split(",") if s.strip()]
+    if socs:
+        threading.Thread(target=lambda: get_engine().prewarm(socs), name="m2-prewarm", daemon=True).start()
+
+
+app.router.on_startup.append(_prewarm)
 
 
 @app.exception_handler(RequestValidationError)

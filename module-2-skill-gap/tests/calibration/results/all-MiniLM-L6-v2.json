@@ -1,0 +1,4553 @@
+{
+ "model": "all-MiniLM-L6-v2",
+ "export_version": "2.2.0+2.2.0+02b93f2ab57d315d",
+ "four_way": {
+  "a_tuning": {
+   "top1": 15,
+   "top3": 15,
+   "n": 15,
+   "mean_margin": 0.3173,
+   "worst": {
+    "profile": "tuning/29-1051.00_pharmacist",
+    "margin": 0.0855,
+    "runner_up": "29-2052.00"
+   },
+   "misses": {},
+   "ranks": {
+    "tuning/13-2011.00_chartered_accountant": 1,
+    "tuning/13-2072.00_loan_officer": 1,
+    "tuning/15-2051.00_data_scientist": 1,
+    "tuning/17-2051.00_civil_site_engineer": 1,
+    "tuning/17-2141.00_mechanical_engineer": 1,
+    "tuning/25-2031.00_school_teacher": 1,
+    "tuning/27-1024.00_graphic_designer": 1,
+    "tuning/29-1051.00_pharmacist": 1,
+    "tuning/29-1141.00_staff_nurse": 1,
+    "tuning/31-9092.00_medical_assistant": 1,
+    "tuning/35-1011.00_head_chef": 1,
+    "tuning/41-4012.00_sales_rep": 1,
+    "tuning/43-4051.00_customer_care": 1,
+    "tuning/47-2111.00_electrician": 1,
+    "tuning/53-3032.00_truck_driver": 1,
+    "tuning/partial_13-2011.00_accountant_no_gst": 3,
+    "tuning/partial_29-1141.00_fresher_nurse": 1,
+    "tuning/partial_47-2111.00_iti_apprentice": 1
+   },
+   "margins": {
+    "tuning/13-2011.00_chartered_accountant": 0.3761,
+    "tuning/13-2072.00_loan_officer": 0.2063,
+    "tuning/15-2051.00_data_scientist": 0.2731,
+    "tuning/17-2051.00_civil_site_engineer": 0.3965,
+    "tuning/17-2141.00_mechanical_engineer": 0.2411,
+    "tuning/25-2031.00_school_teacher": 0.4986,
+    "tuning/27-1024.00_graphic_designer": 0.428,
+    "tuning/29-1051.00_pharmacist": 0.0855,
+    "tuning/29-1141.00_staff_nurse": 0.2155,
+    "tuning/31-9092.00_medical_assistant": 0.3303,
+    "tuning/35-1011.00_head_chef": 0.5321,
+    "tuning/41-4012.00_sales_rep": 0.2013,
+    "tuning/43-4051.00_customer_care": 0.3272,
+    "tuning/47-2111.00_electrician": 0.3694,
+    "tuning/53-3032.00_truck_driver": 0.2785,
+    "tuning/partial_13-2011.00_accountant_no_gst": -0.027,
+    "tuning/partial_29-1141.00_fresher_nurse": 0.1128,
+    "tuning/partial_47-2111.00_iti_apprentice": 0.0349
+   }
+  },
+  "b_heldout": {
+   "top1": 14,
+   "top3": 15,
+   "n": 15,
+   "mean_margin": 0.1245,
+   "worst": {
+    "profile": "heldout/25-2031.00_teacher_oneliner",
+    "margin": -0.06,
+    "runner_up": "15-1253.00"
+   },
+   "misses": {
+    "heldout/25-2031.00_teacher_oneliner": {
+     "rank": 2,
+     "own": 0.114,
+     "runner_up": "15-1253.00",
+     "margin": -0.06
+    }
+   },
+   "ranks": {
+    "heldout/13-2011.00_accountant_hinglish": 1,
+    "heldout/13-2072.00_loan_officer_career_changer": 1,
+    "heldout/15-2051.00_head_of_analytics": 1,
+    "heldout/17-2051.00_civil_hinglish": 1,
+    "heldout/17-2141.00_mechanical_fresher": 1,
+    "heldout/25-2031.00_teacher_oneliner": 2,
+    "heldout/27-1024.00_dtp_to_designer": 1,
+    "heldout/29-1051.00_pharmacist_hinglish": 1,
+    "heldout/29-1141.00_nursing_superintendent_senior": 1,
+    "heldout/31-9092.00_clinic_assistant_fresher": 1,
+    "heldout/35-1011.00_home_baker_to_chef": 1,
+    "heldout/41-4012.00_regional_sales_manager": 1,
+    "heldout/43-4051.00_support_bullets_only": 1,
+    "heldout/47-2111.00_electrician_oneliner": 1,
+    "heldout/53-3032.00_driver_hinglish": 1
+   },
+   "margins": {
+    "heldout/13-2011.00_accountant_hinglish": 0.0752,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2617,
+    "heldout/15-2051.00_head_of_analytics": 0.2595,
+    "heldout/17-2051.00_civil_hinglish": 0.0146,
+    "heldout/17-2141.00_mechanical_fresher": 0.0245,
+    "heldout/25-2031.00_teacher_oneliner": -0.06,
+    "heldout/27-1024.00_dtp_to_designer": 0.1632,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.0612,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.2272,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.1074,
+    "heldout/35-1011.00_home_baker_to_chef": 0.3667,
+    "heldout/41-4012.00_regional_sales_manager": 0.0889,
+    "heldout/43-4051.00_support_bullets_only": 0.0344,
+    "heldout/47-2111.00_electrician_oneliner": 0.0813,
+    "heldout/53-3032.00_driver_hinglish": 0.1624
+   }
+  },
+  "c_new_occupations": {
+   "top1": 10,
+   "top3": 10,
+   "n": 10,
+   "mean_margin": 0.1955,
+   "worst": {
+    "profile": "new/13-1071.00_hr_executive",
+    "margin": 0.0203,
+    "runner_up": "43-4051.00"
+   },
+   "misses": {},
+   "ranks": {
+    "new/13-1071.00_hr_executive": 1,
+    "new/15-1253.00_qa_tester": 1,
+    "new/23-1011.00_advocate": 1,
+    "new/29-1123.00_physiotherapist": 1,
+    "new/29-1292.00_dental_hygienist": 1,
+    "new/29-2052.00_pharmacy_assistant": 1,
+    "new/41-2031.00_showroom_sales": 1,
+    "new/43-3071.00_bank_cashier": 1,
+    "new/43-4081.00_front_office": 1,
+    "new/47-2152.00_plumber_hinglish": 1
+   },
+   "margins": {
+    "new/13-1071.00_hr_executive": 0.0203,
+    "new/15-1253.00_qa_tester": 0.4153,
+    "new/23-1011.00_advocate": 0.1947,
+    "new/29-1123.00_physiotherapist": 0.2123,
+    "new/29-1292.00_dental_hygienist": 0.5091,
+    "new/29-2052.00_pharmacy_assistant": 0.1166,
+    "new/41-2031.00_showroom_sales": 0.0438,
+    "new/43-3071.00_bank_cashier": 0.0605,
+    "new/43-4081.00_front_office": 0.231,
+    "new/47-2152.00_plumber_hinglish": 0.1511
+   }
+  },
+  "d_heldout_no_curated": {
+   "top1": 13,
+   "top3": 15,
+   "n": 15,
+   "mean_margin": 0.0986,
+   "worst": {
+    "profile": "heldout/25-2031.00_teacher_oneliner",
+    "margin": -0.1082,
+    "runner_up": "15-1253.00"
+   },
+   "misses": {
+    "heldout/25-2031.00_teacher_oneliner": {
+     "rank": 2,
+     "own": 0.065,
+     "runner_up": "15-1253.00",
+     "margin": -0.108
+    },
+    "heldout/43-4051.00_support_bullets_only": {
+     "rank": 2,
+     "own": 0.056,
+     "runner_up": "41-2031.00",
+     "margin": -0.009
+    }
+   },
+   "ranks": {
+    "heldout/13-2011.00_accountant_hinglish": 1,
+    "heldout/13-2072.00_loan_officer_career_changer": 1,
+    "heldout/15-2051.00_head_of_analytics": 1,
+    "heldout/17-2051.00_civil_hinglish": 1,
+    "heldout/17-2141.00_mechanical_fresher": 1,
+    "heldout/25-2031.00_teacher_oneliner": 2,
+    "heldout/27-1024.00_dtp_to_designer": 1,
+    "heldout/29-1051.00_pharmacist_hinglish": 1,
+    "heldout/29-1141.00_nursing_superintendent_senior": 1,
+    "heldout/31-9092.00_clinic_assistant_fresher": 1,
+    "heldout/35-1011.00_home_baker_to_chef": 1,
+    "heldout/41-4012.00_regional_sales_manager": 1,
+    "heldout/43-4051.00_support_bullets_only": 2,
+    "heldout/47-2111.00_electrician_oneliner": 1,
+    "heldout/53-3032.00_driver_hinglish": 1
+   },
+   "margins": {
+    "heldout/13-2011.00_accountant_hinglish": 0.0098,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2811,
+    "heldout/15-2051.00_head_of_analytics": 0.2595,
+    "heldout/17-2051.00_civil_hinglish": 0.0695,
+    "heldout/17-2141.00_mechanical_fresher": 0.0132,
+    "heldout/25-2031.00_teacher_oneliner": -0.1082,
+    "heldout/27-1024.00_dtp_to_designer": 0.0749,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.0612,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.1052,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.1137,
+    "heldout/35-1011.00_home_baker_to_chef": 0.3296,
+    "heldout/41-4012.00_regional_sales_manager": 0.0285,
+    "heldout/43-4051.00_support_bullets_only": -0.0091,
+    "heldout/47-2111.00_electrician_oneliner": 0.063,
+    "heldout/53-3032.00_driver_hinglish": 0.187
+   }
+  },
+  "e_heldout2": {
+   "top1": 13,
+   "top3": 14,
+   "n": 15,
+   "mean_margin": 0.1222,
+   "worst": {
+    "profile": "heldout2/29-1051.00_pharmacist_third_person",
+    "margin": -0.0545,
+    "runner_up": "29-2052.00"
+   },
+   "misses": {
+    "heldout2/17-2051.00_structural_engineer_third_person": {
+     "rank": 5,
+     "own": 0.02,
+     "runner_up": "23-1011.00",
+     "margin": -0.008
+    },
+    "heldout2/29-1051.00_pharmacist_third_person": {
+     "rank": 2,
+     "own": 0.166,
+     "runner_up": "29-2052.00",
+     "margin": -0.054
+    }
+   },
+   "ranks": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 1,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 1,
+    "heldout2/15-2051.00_data_science_fresher": 1,
+    "heldout2/17-2051.00_structural_engineer_third_person": 5,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 1,
+    "heldout2/25-2031.00_tgt_kvs_government": 1,
+    "heldout2/27-1024.00_freelance_designer_gig": 1,
+    "heldout2/29-1051.00_pharmacist_third_person": 2,
+    "heldout2/29-1141.00_nurse_career_break": 1,
+    "heldout2/31-9092.00_medical_assistant_interview": 1,
+    "heldout2/35-1011.00_executive_chef_linkedin": 1,
+    "heldout2/41-4012.00_lubricants_two_liner": 1,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 1,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 1,
+    "heldout2/53-3032.00_trucker_qa": 1
+   },
+   "margins": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.1752,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.0954,
+    "heldout2/15-2051.00_data_science_fresher": 0.038,
+    "heldout2/17-2051.00_structural_engineer_third_person": -0.0078,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.142,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.3846,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.1575,
+    "heldout2/29-1051.00_pharmacist_third_person": -0.0545,
+    "heldout2/29-1141.00_nurse_career_break": 0.0466,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.1706,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.3037,
+    "heldout2/41-4012.00_lubricants_two_liner": 0.0585,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1376,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1771,
+    "heldout2/53-3032.00_trucker_qa": 0.008
+   }
+  },
+  "f_heldout2_extra_occupations": {
+   "top1": 10,
+   "top3": 10,
+   "n": 10,
+   "mean_margin": 0.1292,
+   "worst": {
+    "profile": "heldout2/29-1123.00_physio_whatsapp",
+    "margin": 0.0156,
+    "runner_up": "13-2072.00"
+   },
+   "misses": {},
+   "ranks": {
+    "heldout2/13-1071.00_hr_psu_government": 1,
+    "heldout2/15-1253.00_qa_two_liner": 1,
+    "heldout2/23-1011.00_corporate_lawyer_linkedin": 1,
+    "heldout2/29-1123.00_physio_whatsapp": 1,
+    "heldout2/29-1292.00_hygienist_career_break": 1,
+    "heldout2/29-2052.00_pharmacy_tech_keyvalue": 1,
+    "heldout2/41-2031.00_retail_qa": 1,
+    "heldout2/43-3071.00_teller_cover_letter": 1,
+    "heldout2/43-4081.00_reception_third_person": 1,
+    "heldout2/47-2152.00_plumber_interview": 1
+   },
+   "margins": {
+    "heldout2/13-1071.00_hr_psu_government": 0.0204,
+    "heldout2/15-1253.00_qa_two_liner": 0.2476,
+    "heldout2/23-1011.00_corporate_lawyer_linkedin": 0.0589,
+    "heldout2/29-1123.00_physio_whatsapp": 0.0156,
+    "heldout2/29-1292.00_hygienist_career_break": 0.2321,
+    "heldout2/29-2052.00_pharmacy_tech_keyvalue": 0.0733,
+    "heldout2/41-2031.00_retail_qa": 0.0207,
+    "heldout2/43-3071.00_teller_cover_letter": 0.2108,
+    "heldout2/43-4081.00_reception_third_person": 0.1994,
+    "heldout2/47-2152.00_plumber_interview": 0.2131
+   }
+  },
+  "g_heldout2_no_curated": {
+   "top1": 12,
+   "top3": 14,
+   "n": 15,
+   "mean_margin": 0.0987,
+   "worst": {
+    "profile": "heldout2/29-1051.00_pharmacist_third_person",
+    "margin": -0.0545,
+    "runner_up": "29-2052.00"
+   },
+   "misses": {
+    "heldout2/17-2051.00_structural_engineer_third_person": {
+     "rank": 9,
+     "own": 0.006,
+     "runner_up": "23-1011.00",
+     "margin": -0.021
+    },
+    "heldout2/29-1051.00_pharmacist_third_person": {
+     "rank": 2,
+     "own": 0.166,
+     "runner_up": "29-2052.00",
+     "margin": -0.054
+    },
+    "heldout2/29-1141.00_nurse_career_break": {
+     "rank": 2,
+     "own": 0.084,
+     "runner_up": "31-9092.00",
+     "margin": -0.011
+    }
+   },
+   "ranks": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 1,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 1,
+    "heldout2/15-2051.00_data_science_fresher": 1,
+    "heldout2/17-2051.00_structural_engineer_third_person": 9,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 1,
+    "heldout2/25-2031.00_tgt_kvs_government": 1,
+    "heldout2/27-1024.00_freelance_designer_gig": 1,
+    "heldout2/29-1051.00_pharmacist_third_person": 2,
+    "heldout2/29-1141.00_nurse_career_break": 2,
+    "heldout2/31-9092.00_medical_assistant_interview": 1,
+    "heldout2/35-1011.00_executive_chef_linkedin": 1,
+    "heldout2/41-4012.00_lubricants_two_liner": 1,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 1,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 1,
+    "heldout2/53-3032.00_trucker_qa": 1
+   },
+   "margins": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.1032,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.1252,
+    "heldout2/15-2051.00_data_science_fresher": 0.038,
+    "heldout2/17-2051.00_structural_engineer_third_person": -0.0213,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.1455,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.3568,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.0668,
+    "heldout2/29-1051.00_pharmacist_third_person": -0.0545,
+    "heldout2/29-1141.00_nurse_career_break": -0.0106,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.1791,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.2488,
+    "heldout2/41-4012.00_lubricants_two_liner": 0.0384,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1188,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1457,
+    "heldout2/53-3032.00_trucker_qa": 0.0001
+   }
+  },
+  "h_hinglish": {
+   "top1": 3,
+   "top3": 5,
+   "n": 5,
+   "mean_margin": 0.1122,
+   "worst": {
+    "profile": "hinglish/47-2111.00_electrician_devanagari",
+    "margin": -0.1029,
+    "runner_up": "47-2152.00"
+   },
+   "misses": {
+    "hinglish/29-1141.00_nurse_hinglish": {
+     "rank": 2,
+     "own": 0.286,
+     "runner_up": "31-9092.00",
+     "margin": -0.037
+    },
+    "hinglish/47-2111.00_electrician_devanagari": {
+     "rank": 2,
+     "own": 0.175,
+     "runner_up": "47-2152.00",
+     "margin": -0.103
+    }
+   },
+   "ranks": {
+    "hinglish/29-1141.00_nurse_hinglish": 2,
+    "hinglish/35-1011.00_chef_hinglish": 1,
+    "hinglish/43-3071.00_teller_hinglish": 1,
+    "hinglish/47-2111.00_electrician_devanagari": 2,
+    "hinglish/53-3032.00_driver_devanagari": 1
+   },
+   "margins": {
+    "hinglish/29-1141.00_nurse_hinglish": -0.0366,
+    "hinglish/35-1011.00_chef_hinglish": 0.3085,
+    "hinglish/43-3071.00_teller_hinglish": 0.1541,
+    "hinglish/47-2111.00_electrician_devanagari": -0.1029,
+    "hinglish/53-3032.00_driver_devanagari": 0.238
+   }
+  },
+  "b_heldout_vs_export15": {
+   "top1": 15,
+   "top3": 15,
+   "n": 15,
+   "mean_margin": 0.1562,
+   "worst": {
+    "profile": "heldout/17-2051.00_civil_hinglish",
+    "margin": 0.0146,
+    "runner_up": "27-1024.00"
+   },
+   "misses": {},
+   "ranks": {
+    "heldout/13-2011.00_accountant_hinglish": 1,
+    "heldout/13-2072.00_loan_officer_career_changer": 1,
+    "heldout/15-2051.00_head_of_analytics": 1,
+    "heldout/17-2051.00_civil_hinglish": 1,
+    "heldout/17-2141.00_mechanical_fresher": 1,
+    "heldout/25-2031.00_teacher_oneliner": 1,
+    "heldout/27-1024.00_dtp_to_designer": 1,
+    "heldout/29-1051.00_pharmacist_hinglish": 1,
+    "heldout/29-1141.00_nursing_superintendent_senior": 1,
+    "heldout/31-9092.00_clinic_assistant_fresher": 1,
+    "heldout/35-1011.00_home_baker_to_chef": 1,
+    "heldout/41-4012.00_regional_sales_manager": 1,
+    "heldout/43-4051.00_support_bullets_only": 1,
+    "heldout/47-2111.00_electrician_oneliner": 1,
+    "heldout/53-3032.00_driver_hinglish": 1
+   },
+   "margins": {
+    "heldout/13-2011.00_accountant_hinglish": 0.1087,
+    "heldout/13-2072.00_loan_officer_career_changer": 0.2617,
+    "heldout/15-2051.00_head_of_analytics": 0.321,
+    "heldout/17-2051.00_civil_hinglish": 0.0146,
+    "heldout/17-2141.00_mechanical_fresher": 0.0245,
+    "heldout/25-2031.00_teacher_oneliner": 0.0729,
+    "heldout/27-1024.00_dtp_to_designer": 0.1632,
+    "heldout/29-1051.00_pharmacist_hinglish": 0.1065,
+    "heldout/29-1141.00_nursing_superintendent_senior": 0.2272,
+    "heldout/31-9092.00_clinic_assistant_fresher": 0.1074,
+    "heldout/35-1011.00_home_baker_to_chef": 0.3991,
+    "heldout/41-4012.00_regional_sales_manager": 0.1793,
+    "heldout/43-4051.00_support_bullets_only": 0.058,
+    "heldout/47-2111.00_electrician_oneliner": 0.1209,
+    "heldout/53-3032.00_driver_hinglish": 0.1787
+   }
+  },
+  "e_heldout2_vs_export15": {
+   "top1": 14,
+   "top3": 15,
+   "n": 15,
+   "mean_margin": 0.1394,
+   "worst": {
+    "profile": "heldout2/17-2051.00_structural_engineer_third_person",
+    "margin": -0.0039,
+    "runner_up": "41-4012.00"
+   },
+   "misses": {
+    "heldout2/17-2051.00_structural_engineer_third_person": {
+     "rank": 3,
+     "own": 0.02,
+     "runner_up": "41-4012.00",
+     "margin": -0.004
+    }
+   },
+   "ranks": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 1,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 1,
+    "heldout2/15-2051.00_data_science_fresher": 1,
+    "heldout2/17-2051.00_structural_engineer_third_person": 3,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 1,
+    "heldout2/25-2031.00_tgt_kvs_government": 1,
+    "heldout2/27-1024.00_freelance_designer_gig": 1,
+    "heldout2/29-1051.00_pharmacist_third_person": 1,
+    "heldout2/29-1141.00_nurse_career_break": 1,
+    "heldout2/31-9092.00_medical_assistant_interview": 1,
+    "heldout2/35-1011.00_executive_chef_linkedin": 1,
+    "heldout2/41-4012.00_lubricants_two_liner": 1,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 1,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 1,
+    "heldout2/53-3032.00_trucker_qa": 1
+   },
+   "margins": {
+    "heldout2/13-2011.00_internal_auditor_linkedin": 0.1752,
+    "heldout2/13-2072.00_gold_loan_whatsapp": 0.0954,
+    "heldout2/15-2051.00_data_science_fresher": 0.1092,
+    "heldout2/17-2051.00_structural_engineer_third_person": -0.0039,
+    "heldout2/17-2141.00_hvac_engineer_keyvalue": 0.142,
+    "heldout2/25-2031.00_tgt_kvs_government": 0.3846,
+    "heldout2/27-1024.00_freelance_designer_gig": 0.1714,
+    "heldout2/29-1051.00_pharmacist_third_person": 0.0204,
+    "heldout2/29-1141.00_nurse_career_break": 0.0466,
+    "heldout2/31-9092.00_medical_assistant_interview": 0.1706,
+    "heldout2/35-1011.00_executive_chef_linkedin": 0.3037,
+    "heldout2/41-4012.00_lubricants_two_liner": 0.1065,
+    "heldout2/43-4051.00_bank_callcentre_cover_letter": 0.1614,
+    "heldout2/47-2111.00_industrial_electrician_hindi": 0.1771,
+    "heldout2/53-3032.00_trucker_qa": 0.0306
+   }
+  },
+  "gate": {
+   "passed": true,
+   "heldout2_top1_floor": 12,
+   "extra_top1_floor": 7
+  }
+ },
+ "distributions": {
+  "market_skill": {
+   "true_median": 0.602,
+   "false_median": 0.293,
+   "true_p90": 1.0,
+   "false_p90": 0.422
+  },
+  "tech": {
+   "true_median": 0.344,
+   "false_median": 0.247,
+   "true_p90": 0.552,
+   "false_p90": 0.364
+  },
+  "tool": {
+   "true_median": 0.326,
+   "false_median": 0.216,
+   "true_p90": 0.483,
+   "false_p90": 0.33
+  },
+  "task": {
+   "true_median": 0.536,
+   "false_median": 0.307,
+   "true_p90": 0.673,
+   "false_p90": 0.456
+  },
+  "dwa": {
+   "true_median": 0.484,
+   "false_median": 0.311,
+   "true_p90": 0.636,
+   "false_p90": 0.47
+  }
+ },
+ "verdict_calibration": {
+  "search_best": {
+   "good_fit_threshold": 0.29,
+   "good_fit_threshold_short": 0.2,
+   "short_units": 3,
+   "min_related_share": 0.05,
+   "oblique_related_share": 0.5,
+   "focus_min": 0.0,
+   "other_role_extra": 0.0
+  },
+  "shipped": {
+   "good_fit_threshold": 0.29,
+   "good_fit_threshold_short": 0.2,
+   "short_units": 3,
+   "min_related_share": 0.05,
+   "oblique_related_share": 0.5,
+   "focus_min": 0.0,
+   "other_role_extra": 0.0
+  },
+  "search_cost": 38.0,
+  "shipped_cost": 38.0,
+  "median_full_tuning": 0.27,
+  "fit_anchors": {
+   "median_good_fit": 0.48,
+   "p90_good_fit": 0.59,
+   "n": 18
+  },
+  "tuning": {
+   "confusion": {
+    "full": {
+     "good_fit": 22,
+     "insufficient_evidence": 18,
+     "under_skilled": 0
+    },
+    "partial": {
+     "good_fit": 0,
+     "insufficient_evidence": 16,
+     "under_skilled": 3
+    },
+    "wrong": {
+     "good_fit": 0,
+     "insufficient_evidence": 2,
+     "under_skilled": 12
+    }
+   },
+   "acceptable": 71,
+   "n": 73,
+   "full_called_under_skilled": [],
+   "non_full_called_good_fit": [],
+   "wrong_called_insufficient": [
+    "tuning_oblique/wrong_13-2072.00_sales_career_change_qa",
+    "tuning_oblique/wrong_29-1141.00_receptionist_qa"
+   ]
+  },
+  "verdict_validation3": {
+   "confusion": {
+    "full": {
+     "good_fit": 5,
+     "insufficient_evidence": 13,
+     "under_skilled": 0
+    },
+    "partial": {
+     "good_fit": 0,
+     "insufficient_evidence": 4,
+     "under_skilled": 3
+    },
+    "wrong": {
+     "good_fit": 0,
+     "insufficient_evidence": 5,
+     "under_skilled": 5
+    }
+   },
+   "acceptable": 30,
+   "n": 35,
+   "full_called_under_skilled": [],
+   "non_full_called_good_fit": [],
+   "wrong_called_insufficient": [
+    "verdict_validation3/wrong_13-2072.00_teacher_to_loans_cover_letter",
+    "verdict_validation3/wrong_27-1024.00_data_entry_third_person",
+    "verdict_validation3/wrong_29-1141.00_pharma_rep_qa",
+    "verdict_validation3/wrong_35-1011.00_delivery_short",
+    "verdict_validation3/wrong_43-4051.00_electrician_qa"
+   ]
+  },
+  "verdict_validation2": {
+   "confusion": {
+    "full": {
+     "good_fit": 5,
+     "insufficient_evidence": 5,
+     "under_skilled": 0
+    },
+    "partial": {
+     "good_fit": 0,
+     "insufficient_evidence": 5,
+     "under_skilled": 0
+    },
+    "wrong": {
+     "good_fit": 0,
+     "insufficient_evidence": 0,
+     "under_skilled": 5
+    }
+   },
+   "acceptable": 20,
+   "n": 20,
+   "full_called_under_skilled": [],
+   "non_full_called_good_fit": [],
+   "wrong_called_insufficient": []
+  },
+  "validation_a3": {
+   "confusion": {
+    "full": {
+     "good_fit": 3,
+     "insufficient_evidence": 12,
+     "under_skilled": 0
+    },
+    "partial": {
+     "good_fit": 0,
+     "insufficient_evidence": 3,
+     "under_skilled": 3
+    },
+    "wrong": {
+     "good_fit": 0,
+     "insufficient_evidence": 0,
+     "under_skilled": 3
+    }
+   },
+   "acceptable": 24,
+   "n": 24,
+   "full_called_under_skilled": [],
+   "non_full_called_good_fit": [],
+   "wrong_called_insufficient": []
+  },
+  "rows": [
+   {
+    "profile": "tuning/13-2011.00_chartered_accountant",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.5628,
+    "units": 15,
+    "related": 0.9548,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/13-2072.00_loan_officer",
+    "kind": "full",
+    "soc": "13-2072.00",
+    "score": 0.5484,
+    "units": 13,
+    "related": 0.9245,
+    "focus": 0.9231,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/15-2051.00_data_scientist",
+    "kind": "full",
+    "soc": "15-2051.00",
+    "score": 0.4403,
+    "units": 6,
+    "related": 0.895,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/17-2051.00_civil_site_engineer",
+    "kind": "full",
+    "soc": "17-2051.00",
+    "score": 0.5461,
+    "units": 12,
+    "related": 0.9353,
+    "focus": 0.9167,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/17-2141.00_mechanical_engineer",
+    "kind": "full",
+    "soc": "17-2141.00",
+    "score": 0.4208,
+    "units": 8,
+    "related": 0.9423,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/25-2031.00_school_teacher",
+    "kind": "full",
+    "soc": "25-2031.00",
+    "score": 0.5667,
+    "units": 12,
+    "related": 0.9555,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/27-1024.00_graphic_designer",
+    "kind": "full",
+    "soc": "27-1024.00",
+    "score": 0.4627,
+    "units": 8,
+    "related": 0.9422,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/29-1051.00_pharmacist",
+    "kind": "full",
+    "soc": "29-1051.00",
+    "score": 0.5205,
+    "units": 12,
+    "related": 0.9319,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/29-1141.00_staff_nurse",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.5955,
+    "units": 19,
+    "related": 0.956,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/31-9092.00_medical_assistant",
+    "kind": "full",
+    "soc": "31-9092.00",
+    "score": 0.6483,
+    "units": 11,
+    "related": 0.9304,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/35-1011.00_head_chef",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.5937,
+    "units": 12,
+    "related": 0.956,
+    "focus": 0.9167,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/41-4012.00_sales_rep",
+    "kind": "full",
+    "soc": "41-4012.00",
+    "score": 0.4444,
+    "units": 12,
+    "related": 0.8668,
+    "focus": 0.9167,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/43-4051.00_customer_care",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.4027,
+    "units": 9,
+    "related": 0.8359,
+    "focus": 0.7778,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/47-2111.00_electrician",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.4913,
+    "units": 11,
+    "related": 0.9014,
+    "focus": 0.9091,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/53-3032.00_truck_driver",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.2801,
+    "units": 10,
+    "related": 0.8746,
+    "focus": 0.8,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/partial_13-2011.00_accountant_no_gst",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.1409,
+    "units": 6,
+    "related": 0.7073,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/partial_29-1141.00_fresher_nurse",
+    "kind": "partial",
+    "soc": "29-1141.00",
+    "score": 0.2471,
+    "units": 7,
+    "related": 0.7519,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning/partial_47-2111.00_iti_apprentice",
+    "kind": "partial",
+    "soc": "47-2111.00",
+    "score": 0.2303,
+    "units": 4,
+    "related": 0.8426,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_13-2072.00_loan_trainee",
+    "kind": "partial",
+    "soc": "13-2072.00",
+    "score": 0.2422,
+    "units": 4,
+    "related": 0.6668,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_17-2051.00_civil_diploma_fresher",
+    "kind": "partial",
+    "soc": "17-2051.00",
+    "score": 0.0696,
+    "units": 3,
+    "related": 0.2158,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_25-2031.00_bed_student_teacher",
+    "kind": "partial",
+    "soc": "25-2031.00",
+    "score": 0.1075,
+    "units": 5,
+    "related": 0.8916,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_27-1024.00_design_student",
+    "kind": "partial",
+    "soc": "27-1024.00",
+    "score": 0.1103,
+    "units": 4,
+    "related": 0.4863,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_29-1051.00_bpharm_intern",
+    "kind": "partial",
+    "soc": "29-1051.00",
+    "score": 0.1229,
+    "units": 3,
+    "related": 0.6124,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_35-1011.00_commis_helper",
+    "kind": "partial",
+    "soc": "35-1011.00",
+    "score": 0.1052,
+    "units": 4,
+    "related": 0.5176,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_41-4012.00_sales_trainee",
+    "kind": "partial",
+    "soc": "41-4012.00",
+    "score": 0.0328,
+    "units": 3,
+    "related": 0.6604,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/partial_43-4051.00_fresher_bpo",
+    "kind": "partial",
+    "soc": "43-4051.00",
+    "score": 0.0179,
+    "units": 4,
+    "related": 0.4128,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/wrong_15-2051.00_chef_to_data_scientist",
+    "kind": "wrong",
+    "soc": "15-2051.00",
+    "score": 0.0,
+    "units": 3,
+    "related": 0.0441,
+    "focus": 0.3333,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/wrong_29-1141.00_designer_to_nurse",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.0612,
+    "units": 4,
+    "related": 0.2534,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_tuning/wrong_47-2111.00_accountant_to_electrician",
+    "kind": "wrong",
+    "soc": "47-2111.00",
+    "score": 0.0,
+    "units": 3,
+    "related": 0.0214,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/13-2011.00_accountant_two_liner",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.2051,
+    "units": 2,
+    "related": 0.7334,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/15-2051.00_ds_whatsapp",
+    "kind": "full",
+    "soc": "15-2051.00",
+    "score": 0.0498,
+    "units": 1,
+    "related": 0.2092,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/17-2051.00_civil_two_liner",
+    "kind": "full",
+    "soc": "17-2051.00",
+    "score": 0.2892,
+    "units": 2,
+    "related": 0.6602,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/25-2031.00_teacher_qa",
+    "kind": "full",
+    "soc": "25-2031.00",
+    "score": 0.1801,
+    "units": 2,
+    "related": 0.9342,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/27-1024.00_designer_two_liner",
+    "kind": "full",
+    "soc": "27-1024.00",
+    "score": 0.1807,
+    "units": 2,
+    "related": 0.6329,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/29-1051.00_pharmacist_skill_list",
+    "kind": "full",
+    "soc": "29-1051.00",
+    "score": 0.3219,
+    "units": 2,
+    "related": 0.7538,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/29-1141.00_nurse_whatsapp",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.2278,
+    "units": 2,
+    "related": 0.6849,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/35-1011.00_chef_qa",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.3782,
+    "units": 3,
+    "related": 0.8471,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/41-4012.00_sales_third_person",
+    "kind": "full",
+    "soc": "41-4012.00",
+    "score": 0.0943,
+    "units": 2,
+    "related": 0.2921,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/43-4051.00_support_whatsapp",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.2693,
+    "units": 1,
+    "related": 0.6894,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/47-2111.00_electrician_skill_list",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.184,
+    "units": 2,
+    "related": 0.7444,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/53-3032.00_driver_third_person",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.0804,
+    "units": 2,
+    "related": 0.6037,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/partial_13-2011.00_billing_short",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.0217,
+    "units": 1,
+    "related": 0.3013,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/partial_29-1141.00_gnm_student_short",
+    "kind": "partial",
+    "soc": "29-1141.00",
+    "score": 0.099,
+    "units": 1,
+    "related": 0.6846,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/partial_35-1011.00_commis_short",
+    "kind": "partial",
+    "soc": "35-1011.00",
+    "score": 0.1506,
+    "units": 1,
+    "related": 0.5335,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/partial_47-2111.00_helper_short",
+    "kind": "partial",
+    "soc": "47-2111.00",
+    "score": 0.1353,
+    "units": 1,
+    "related": 0.6517,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/wrong_13-2011.00_chef_short",
+    "kind": "wrong",
+    "soc": "13-2011.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0002,
+    "focus": 0.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/wrong_29-1141.00_driver_short",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0,
+    "focus": 0.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_short/wrong_47-2111.00_teacher_short",
+    "kind": "wrong",
+    "soc": "47-2111.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0429,
+    "focus": 0.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/13-2011.00_accountant_qa",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.1412,
+    "units": 4,
+    "related": 0.7852,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/13-2072.00_loan_officer_third_person",
+    "kind": "full",
+    "soc": "13-2072.00",
+    "score": 0.1468,
+    "units": 4,
+    "related": 0.7513,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/17-2141.00_mech_engineer_cover_letter",
+    "kind": "full",
+    "soc": "17-2141.00",
+    "score": 0.1218,
+    "units": 7,
+    "related": 0.7217,
+    "focus": 0.7143,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/25-2031.00_teacher_qa",
+    "kind": "full",
+    "soc": "25-2031.00",
+    "score": 0.0778,
+    "units": 4,
+    "related": 0.6457,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/27-1024.00_designer_key_value",
+    "kind": "full",
+    "soc": "27-1024.00",
+    "score": 0.3148,
+    "units": 7,
+    "related": 0.9024,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/29-1141.00_nurse_cover_letter",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.2324,
+    "units": 9,
+    "related": 0.8246,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/31-9092.00_medical_assistant_key_value",
+    "kind": "full",
+    "soc": "31-9092.00",
+    "score": 0.4561,
+    "units": 7,
+    "related": 0.925,
+    "focus": 0.8571,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/35-1011.00_chef_third_person",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.1519,
+    "units": 5,
+    "related": 0.7716,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/41-4012.00_sales_cover_letter",
+    "kind": "full",
+    "soc": "41-4012.00",
+    "score": 0.2321,
+    "units": 8,
+    "related": 0.8637,
+    "focus": 0.625,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/43-4051.00_csr_third_person",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.0281,
+    "units": 5,
+    "related": 0.502,
+    "focus": 0.6,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/43-4051.00_support_third_person_2",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.1143,
+    "units": 4,
+    "related": 0.6764,
+    "focus": 0.25,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/47-2111.00_electrician_qa",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.1913,
+    "units": 4,
+    "related": 0.7059,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/53-3032.00_driver_key_value",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.2267,
+    "units": 8,
+    "related": 0.9006,
+    "focus": 0.875,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/partial_13-2011.00_bcom_fresher_cover_letter",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.1451,
+    "units": 6,
+    "related": 0.597,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/partial_29-1141.00_gnm_intern_third_person",
+    "kind": "partial",
+    "soc": "29-1141.00",
+    "score": 0.0582,
+    "units": 3,
+    "related": 0.6009,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/partial_35-1011.00_trainee_key_value",
+    "kind": "partial",
+    "soc": "35-1011.00",
+    "score": 0.2811,
+    "units": 5,
+    "related": 0.6765,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/partial_47-2111.00_helper_qa",
+    "kind": "partial",
+    "soc": "47-2111.00",
+    "score": 0.0149,
+    "units": 2,
+    "related": 0.3754,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_13-2011.00_cashier_cover_letter",
+    "kind": "wrong",
+    "soc": "13-2011.00",
+    "score": 0.0668,
+    "units": 6,
+    "related": 0.4094,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_13-2072.00_sales_career_change_qa",
+    "kind": "wrong",
+    "soc": "13-2072.00",
+    "score": 0.1353,
+    "units": 3,
+    "related": 0.6953,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_15-2051.00_retail_to_data_resume",
+    "kind": "wrong",
+    "soc": "15-2051.00",
+    "score": 0.0528,
+    "units": 4,
+    "related": 0.5008,
+    "focus": 0.75,
+    "other_role": true
+   },
+   {
+    "profile": "tuning_oblique/wrong_15-2051.00_teacher_career_change_cover_letter",
+    "kind": "wrong",
+    "soc": "15-2051.00",
+    "score": 0.0222,
+    "units": 6,
+    "related": 0.3657,
+    "focus": 0.8333,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_27-1024.00_accountant_third_person",
+    "kind": "wrong",
+    "soc": "27-1024.00",
+    "score": 0.0181,
+    "units": 3,
+    "related": 0.2285,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_29-1141.00_lab_to_nurse_resume",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.2382,
+    "units": 4,
+    "related": 0.8072,
+    "focus": 1.0,
+    "other_role": true
+   },
+   {
+    "profile": "tuning_oblique/wrong_29-1141.00_receptionist_qa",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.1966,
+    "units": 2,
+    "related": 0.7742,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "tuning_oblique/wrong_47-2111.00_driver_key_value",
+    "kind": "wrong",
+    "soc": "47-2111.00",
+    "score": 0.0243,
+    "units": 5,
+    "related": 0.3541,
+    "focus": 0.8,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/13-2011.00_accountant_key_value",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.2836,
+    "units": 7,
+    "related": 0.7972,
+    "focus": 0.7143,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/13-2072.00_mfi_loan_cover_letter",
+    "kind": "full",
+    "soc": "13-2072.00",
+    "score": 0.3192,
+    "units": 6,
+    "related": 0.8475,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/15-2051.00_ds_short",
+    "kind": "full",
+    "soc": "15-2051.00",
+    "score": 0.1034,
+    "units": 1,
+    "related": 0.6298,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/17-2051.00_civil_engineer_key_value",
+    "kind": "full",
+    "soc": "17-2051.00",
+    "score": 0.3785,
+    "units": 6,
+    "related": 0.8431,
+    "focus": 0.8333,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/17-2141.00_mech_engineer_third_person",
+    "kind": "full",
+    "soc": "17-2141.00",
+    "score": 0.1134,
+    "units": 4,
+    "related": 0.736,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/25-2031.00_english_teacher_third_person",
+    "kind": "full",
+    "soc": "25-2031.00",
+    "score": 0.1557,
+    "units": 4,
+    "related": 0.843,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/27-1024.00_designer_qa",
+    "kind": "full",
+    "soc": "27-1024.00",
+    "score": 0.1263,
+    "units": 3,
+    "related": 0.6981,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/29-1051.00_hospital_pharmacist_qa",
+    "kind": "full",
+    "soc": "29-1051.00",
+    "score": 0.3422,
+    "units": 4,
+    "related": 0.7788,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/29-1123.00_physio_cover_letter",
+    "kind": "full",
+    "soc": "29-1123.00",
+    "score": 0.159,
+    "units": 5,
+    "related": 0.8127,
+    "focus": 0.8,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/29-1141.00_dialysis_nurse_third_person",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.0314,
+    "units": 4,
+    "related": 0.6528,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/31-9092.00_clinic_assistant_short",
+    "kind": "full",
+    "soc": "31-9092.00",
+    "score": 0.1397,
+    "units": 1,
+    "related": 0.751,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/35-1011.00_chef_cover_letter",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.367,
+    "units": 8,
+    "related": 0.8142,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/41-4012.00_fmcg_sales_third_person",
+    "kind": "full",
+    "soc": "41-4012.00",
+    "score": 0.0997,
+    "units": 4,
+    "related": 0.612,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/43-3071.00_teller_key_value",
+    "kind": "full",
+    "soc": "43-3071.00",
+    "score": 0.2837,
+    "units": 6,
+    "related": 0.7898,
+    "focus": 0.8333,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/43-4051.00_insurance_callcentre_qa",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.1127,
+    "units": 4,
+    "related": 0.5401,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/47-2111.00_solar_electrician_cover_letter",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.1083,
+    "units": 8,
+    "related": 0.6631,
+    "focus": 0.625,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/47-2152.00_plumber_whatsapp",
+    "kind": "full",
+    "soc": "47-2152.00",
+    "score": 0.2035,
+    "units": 1,
+    "related": 0.6517,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/53-3032.00_driver_qa",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.0605,
+    "units": 4,
+    "related": 0.6369,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_13-2011.00_tally_learner_key_value",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.0481,
+    "units": 4,
+    "related": 0.3357,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_15-2051.00_course_only_key_value",
+    "kind": "partial",
+    "soc": "15-2051.00",
+    "score": 0.0668,
+    "units": 4,
+    "related": 0.3671,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_25-2031.00_bed_trainee_cover_letter",
+    "kind": "partial",
+    "soc": "25-2031.00",
+    "score": 0.1729,
+    "units": 6,
+    "related": 0.867,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_29-1141.00_nursing_student_qa",
+    "kind": "partial",
+    "soc": "29-1141.00",
+    "score": 0.0721,
+    "units": 2,
+    "related": 0.4767,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_35-1011.00_helper_third_person",
+    "kind": "partial",
+    "soc": "35-1011.00",
+    "score": 0.0856,
+    "units": 3,
+    "related": 0.3798,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_47-2111.00_iti_fresher_cover_letter",
+    "kind": "partial",
+    "soc": "47-2111.00",
+    "score": 0.0557,
+    "units": 6,
+    "related": 0.6259,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/partial_53-3032.00_lmv_short",
+    "kind": "partial",
+    "soc": "53-3032.00",
+    "score": 0.0121,
+    "units": 1,
+    "related": 0.2457,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_13-2011.00_teller_to_accounts_cover_letter",
+    "kind": "wrong",
+    "soc": "13-2011.00",
+    "score": 0.053,
+    "units": 6,
+    "related": 0.4652,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_13-2072.00_teacher_to_loans_cover_letter",
+    "kind": "wrong",
+    "soc": "13-2072.00",
+    "score": 0.1734,
+    "units": 5,
+    "related": 0.6796,
+    "focus": 0.4,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_15-2051.00_mech_to_ds_cover_letter",
+    "kind": "wrong",
+    "soc": "15-2051.00",
+    "score": 0.0446,
+    "units": 6,
+    "related": 0.3383,
+    "focus": 0.8333,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_17-2051.00_property_agent_resume",
+    "kind": "wrong",
+    "soc": "17-2051.00",
+    "score": 0.0601,
+    "units": 4,
+    "related": 0.4951,
+    "focus": 0.75,
+    "other_role": true
+   },
+   {
+    "profile": "verdict_validation3/wrong_27-1024.00_data_entry_third_person",
+    "kind": "wrong",
+    "soc": "27-1024.00",
+    "score": 0.0,
+    "units": 2,
+    "related": 0.1365,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_29-1051.00_medrep_resume",
+    "kind": "wrong",
+    "soc": "29-1051.00",
+    "score": 0.1062,
+    "units": 3,
+    "related": 0.6669,
+    "focus": 0.6667,
+    "other_role": true
+   },
+   {
+    "profile": "verdict_validation3/wrong_29-1141.00_pharma_rep_qa",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.1121,
+    "units": 2,
+    "related": 0.6026,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_35-1011.00_delivery_short",
+    "kind": "wrong",
+    "soc": "35-1011.00",
+    "score": 0.1425,
+    "units": 1,
+    "related": 0.4312,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_43-4051.00_electrician_qa",
+    "kind": "wrong",
+    "soc": "43-4051.00",
+    "score": 0.0179,
+    "units": 2,
+    "related": 0.1339,
+    "focus": 0.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation3/wrong_47-2111.00_guard_key_value",
+    "kind": "wrong",
+    "soc": "47-2111.00",
+    "score": 0.0128,
+    "units": 4,
+    "related": 0.3151,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/13-2011.00_accountant_short",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.2339,
+    "units": 1,
+    "related": 0.6514,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/13-2072.00_loan_officer_long",
+    "kind": "full",
+    "soc": "13-2072.00",
+    "score": 0.3784,
+    "units": 4,
+    "related": 0.9325,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/29-1051.00_pharmacist_short",
+    "kind": "full",
+    "soc": "29-1051.00",
+    "score": 0.187,
+    "units": 1,
+    "related": 0.6938,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/29-1141.00_nurse_long",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.264,
+    "units": 4,
+    "related": 0.8119,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/29-1141.00_nurse_short",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.1397,
+    "units": 1,
+    "related": 0.5735,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/35-1011.00_chef_short",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.2661,
+    "units": 1,
+    "related": 0.6251,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/43-3071.00_teller_long",
+    "kind": "full",
+    "soc": "43-3071.00",
+    "score": 0.3579,
+    "units": 3,
+    "related": 0.9043,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/47-2111.00_electrician_long",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.4403,
+    "units": 4,
+    "related": 0.9035,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/47-2111.00_electrician_short",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.1305,
+    "units": 1,
+    "related": 0.6293,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/53-3032.00_driver_short",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.0692,
+    "units": 1,
+    "related": 0.5929,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/partial_13-2011.00_tally_learner",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.023,
+    "units": 2,
+    "related": 0.1864,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/partial_29-1141.00_anm_short",
+    "kind": "partial",
+    "soc": "29-1141.00",
+    "score": 0.0042,
+    "units": 1,
+    "related": 0.2358,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/partial_35-1011.00_kitchen_helper",
+    "kind": "partial",
+    "soc": "35-1011.00",
+    "score": 0.1906,
+    "units": 1,
+    "related": 0.5875,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/partial_47-2111.00_iti_student",
+    "kind": "partial",
+    "soc": "47-2111.00",
+    "score": 0.0437,
+    "units": 2,
+    "related": 0.478,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/partial_53-3032.00_cleaner_trainee",
+    "kind": "partial",
+    "soc": "53-3032.00",
+    "score": 0.0179,
+    "units": 1,
+    "related": 0.5168,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/wrong_13-2072.00_chef_applying",
+    "kind": "wrong",
+    "soc": "13-2072.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0117,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/wrong_29-1141.00_accountant_applying",
+    "kind": "wrong",
+    "soc": "29-1141.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0493,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/wrong_35-1011.00_qa_applying",
+    "kind": "wrong",
+    "soc": "35-1011.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0029,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/wrong_47-2111.00_designer_applying",
+    "kind": "wrong",
+    "soc": "47-2111.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0315,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation2/wrong_53-3032.00_nurse_applying",
+    "kind": "wrong",
+    "soc": "53-3032.00",
+    "score": 0.0,
+    "units": 1,
+    "related": 0.0251,
+    "focus": 0.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/13-2011.00_internal_auditor_linkedin",
+    "kind": "full",
+    "soc": "13-2011.00",
+    "score": 0.2339,
+    "units": 5,
+    "related": 0.8927,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/13-2072.00_gold_loan_whatsapp",
+    "kind": "full",
+    "soc": "13-2072.00",
+    "score": 0.2454,
+    "units": 9,
+    "related": 0.8397,
+    "focus": 0.7778,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/15-2051.00_data_science_fresher",
+    "kind": "full",
+    "soc": "15-2051.00",
+    "score": 0.1521,
+    "units": 7,
+    "related": 0.848,
+    "focus": 0.8571,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/17-2051.00_structural_engineer_third_person",
+    "kind": "full",
+    "soc": "17-2051.00",
+    "score": 0.0195,
+    "units": 4,
+    "related": 0.5641,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/17-2141.00_hvac_engineer_keyvalue",
+    "kind": "full",
+    "soc": "17-2141.00",
+    "score": 0.2169,
+    "units": 7,
+    "related": 0.6986,
+    "focus": 0.7143,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/25-2031.00_tgt_kvs_government",
+    "kind": "full",
+    "soc": "25-2031.00",
+    "score": 0.4073,
+    "units": 10,
+    "related": 0.9413,
+    "focus": 0.7,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/27-1024.00_freelance_designer_gig",
+    "kind": "full",
+    "soc": "27-1024.00",
+    "score": 0.189,
+    "units": 7,
+    "related": 0.8356,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/29-1051.00_pharmacist_third_person",
+    "kind": "full",
+    "soc": "29-1051.00",
+    "score": 0.1615,
+    "units": 6,
+    "related": 0.7616,
+    "focus": 0.8333,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/29-1141.00_nurse_career_break",
+    "kind": "full",
+    "soc": "29-1141.00",
+    "score": 0.1402,
+    "units": 7,
+    "related": 0.7284,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/31-9092.00_medical_assistant_interview",
+    "kind": "full",
+    "soc": "31-9092.00",
+    "score": 0.4037,
+    "units": 6,
+    "related": 0.912,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/35-1011.00_executive_chef_linkedin",
+    "kind": "full",
+    "soc": "35-1011.00",
+    "score": 0.3489,
+    "units": 5,
+    "related": 0.8465,
+    "focus": 0.8,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/41-4012.00_lubricants_two_liner",
+    "kind": "full",
+    "soc": "41-4012.00",
+    "score": 0.1286,
+    "units": 2,
+    "related": 0.5583,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/43-4051.00_bank_callcentre_cover_letter",
+    "kind": "full",
+    "soc": "43-4051.00",
+    "score": 0.2055,
+    "units": 9,
+    "related": 0.6482,
+    "focus": 0.5556,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/47-2111.00_industrial_electrician_hindi",
+    "kind": "full",
+    "soc": "47-2111.00",
+    "score": 0.2467,
+    "units": 8,
+    "related": 0.8373,
+    "focus": 0.875,
+    "other_role": false
+   },
+   {
+    "profile": "heldout2/53-3032.00_trucker_qa",
+    "kind": "full",
+    "soc": "53-3032.00",
+    "score": 0.1044,
+    "units": 7,
+    "related": 0.7547,
+    "focus": 0.7143,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_13-2011.00_bookkeeping_student",
+    "kind": "partial",
+    "soc": "13-2011.00",
+    "score": 0.0343,
+    "units": 1,
+    "related": 0.2479,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_15-2051.00_data_entry_learner",
+    "kind": "partial",
+    "soc": "15-2051.00",
+    "score": 0.0592,
+    "units": 3,
+    "related": 0.3497,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_17-2141.00_mech_diploma_fresher",
+    "kind": "partial",
+    "soc": "17-2141.00",
+    "score": 0.0391,
+    "units": 3,
+    "related": 0.2163,
+    "focus": 0.6667,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_29-1123.00_bpt_intern",
+    "kind": "partial",
+    "soc": "29-1123.00",
+    "score": 0.0687,
+    "units": 3,
+    "related": 0.756,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_31-9092.00_clinic_receptionist",
+    "kind": "partial",
+    "soc": "31-9092.00",
+    "score": 0.0324,
+    "units": 4,
+    "related": 0.28,
+    "focus": 0.75,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/partial_53-3032.00_lmv_driver",
+    "kind": "partial",
+    "soc": "53-3032.00",
+    "score": 0.1086,
+    "units": 4,
+    "related": 0.514,
+    "focus": 1.0,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/wrong_13-2011.00_driver_to_accountant",
+    "kind": "wrong",
+    "soc": "13-2011.00",
+    "score": 0.0117,
+    "units": 4,
+    "related": 0.2768,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/wrong_17-2051.00_teacher_to_civil",
+    "kind": "wrong",
+    "soc": "17-2051.00",
+    "score": 0.013,
+    "units": 4,
+    "related": 0.1597,
+    "focus": 0.5,
+    "other_role": false
+   },
+   {
+    "profile": "verdict_validation/wrong_35-1011.00_tester_to_chef",
+    "kind": "wrong",
+    "soc": "35-1011.00",
+    "score": 0.1018,
+    "units": 4,
+    "related": 0.4114,
+    "focus": 0.5,
+    "other_role": false
+   }
+  ]
+ },
+ "filters": {
+  "29-1141.00": {
+   "soc": "29-1141.00",
+   "rows_in": 455,
+   "kept": {
+    "work_activity": 41,
+    "task": 27,
+    "knowledge": 24,
+    "tech": 43,
+    "ability": 48,
+    "skill": 32,
+    "dwa": 37,
+    "tool": 182,
+    "market_skill": 5
+   },
+   "dropped": {
+    "unreliable": [
+     "Economics and Accounting",
+     "Production and Processing",
+     "Physics",
+     "Engineering and Technology",
+     "Food Production",
+     "Design",
+     "Geography",
+     "Building and Construction",
+     "Sound Localization",
+     "Repairing",
+     "Fine Arts",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Equipment Maintenance",
+     "Installation"
+    ],
+    "not_applicable_in_india": [
+     "Prescribe or recommend drugs, medical devices, or other forms of treatment, such as physical therapy, inhalation therapy, or related therapeutic procedures.",
+     "Prescribe assistive medical devices or related treatments.",
+     "Prescribe medications."
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Apache Spark",
+     "Google Docs",
+     "Microsoft Excel",
+     "Microsoft Project",
+     "Microsoft Word",
+     "Anti-embolism elastic stockings",
+     "Aqua K pads",
+     "Arterial blood gas testing equipment",
+     "Audiometers",
+     "Bag-valve masks",
+     "Balanced suspension traction equipment",
+     "Bilevel positive airway pressure BiPAP ventilators",
+     "Binocular light compound microscopes",
+     "Bucks traction equipment",
+     "Capillary glucose monitors",
+     "Centrifuges",
+     "Chemotherapy spill kits",
+     "Continuous enteral feeding equipment",
+     "Continuous positive airway pressure CPAP ventilators",
+     "Curved hemostats",
+     "Doppler pulse measurement devices",
+     "Endotracheal ET tubes",
+     "Flexible sigmoidoscopes",
+     "Gait belts",
+     "Gastrointestinal GI endoscopes",
+     "Glucose testing equipment",
+     "Heparin locks",
+     "Hyper/hypothermia blankets",
+     "Infusion control devices",
+     "Infusion pump enteral feeding tubes",
+     "Intermittent enteral feeding equipment",
+     "Intra-aortic balloon pumps IABP",
+     "Intracranial pressure monitors",
+     "Intravenous IV tubing",
+     "Intravenous syringe pumps",
+     "Laryngoscope blades",
+     "Laser printers",
+     "Leather restraints",
+     "Levine tubes",
+     "Limb restraints",
+     "Lukens traps",
+     "Manometers",
+     "Meconium aspirators",
+     "Occlusion clamps",
+     "Oxygen flowmeters",
+     "Oxygen regulators",
+     "Pelvic specula",
+     "Percussion hammers",
+     "Peripheral intravenous IV locks",
+     "Photopheresis systems",
+     "Phototherapy equipment",
+     "Pleuravacs",
+     "Pulmonary artery catheters",
+     "Rape kits",
+     "Reflex hammers",
+     "Sequential compression devices",
+     "Snellen eye charts",
+     "Staple removers",
+     "Subcutaneous hypodermic needles",
+     "Surgical clamps",
+     "Suture removal kits",
+     "Swab dryers",
+     "T-pieces with aerosol",
+     "Titmus vision screeners",
+     "Tracheostomy collars",
+     "Tuberculosis TB skin test equipment",
+     "Urinalysis test strips",
+     "Venous oxygen saturation SVO2 monitors",
+     "Ventilators",
+     "Vest restraints",
+     "FaceTime",
+     "FileMaker Pro",
+     "Google Drive",
+     "IBM Notes",
+     "YouTube"
+    ],
+    "curated": [
+     "Clinical Documentation",
+     "General Nursing",
+     "ICU / Critical Care",
+     "Infection Control Protocols",
+     "Patient Care"
+    ]
+   }
+  },
+  "29-1051.00": {
+   "soc": "29-1051.00",
+   "rows_in": 272,
+   "kept": {
+    "task": 21,
+    "knowledge": 29,
+    "work_activity": 41,
+    "tech": 21,
+    "ability": 39,
+    "skill": 31,
+    "dwa": 29,
+    "tool": 40
+   },
+   "dropped": {
+    "unreliable": [
+     "Building and Construction",
+     "History and Archeology",
+     "Dynamic Strength",
+     "Equipment Selection",
+     "Food Production",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Glare Sensitivity",
+     "Gross Body Equilibrium",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Fine Arts",
+     "Equipment Maintenance",
+     "Installation",
+     "Repairing"
+    ],
+    "not_applicable_in_india": [
+     "Prescribe medications.",
+     "Prescribe treatments or therapies."
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft Word",
+     "Ampoule filling machines",
+     "Area survey meters",
+     "Binocular light compound microscopes",
+     "Electronic toploading balances",
+     "Geiger-Muller counters",
+     "Glucometers",
+     "Horizontal air flow laminar hoods",
+     "Label-making machines",
+     "Laminar flow hoods",
+     "Lead transport shields",
+     "Metric weights",
+     "Mortars",
+     "Multiple channel well scintillation counters",
+     "Ostomy products",
+     "Pestles",
+     "Radiation shields for syringes and vials",
+     "Radiochemical fume hood and filter systems",
+     "Radionucleide dose calibrators",
+     "Sealing machines",
+     "Single channel well scintillation counters",
+     "Torsion balances",
+     "Vertical air flow laminar hoods",
+     "Label-making software",
+     "Multitask software",
+     "RxKinetics UD Labels for Windows"
+    ]
+   }
+  },
+  "31-9092.00": {
+   "soc": "31-9092.00",
+   "rows_in": 312,
+   "kept": {
+    "work_activity": 41,
+    "knowledge": 20,
+    "task": 20,
+    "tech": 32,
+    "ability": 47,
+    "skill": 34,
+    "dwa": 25,
+    "tool": 74
+   },
+   "dropped": {
+    "unreliable": [
+     "Telecommunications",
+     "Physics",
+     "Fine Arts",
+     "Production and Processing",
+     "Transportation",
+     "Design",
+     "Mechanical",
+     "Geography",
+     "Engineering and Technology",
+     "Philosophy and Theology",
+     "Building and Construction",
+     "Food Production",
+     "History and Archeology",
+     "Explosive Strength",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Sound Localization",
+     "Dynamic Flexibility",
+     "Installation"
+    ],
+    "not_applicable_in_india": [
+     "Authorize drug refills and provide prescription information to pharmacies.",
+     "Control prescription refills or authorizations."
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft PowerPoint",
+     "Microsoft SharePoint",
+     "Microsoft Word",
+     "Autoclaves",
+     "Baumanometers",
+     "Binocular light compound microscopes",
+     "Breathalyzers",
+     "Cast cutters",
+     "Centrifuges",
+     "Credit card readers",
+     "Culturettes",
+     "Endotracheal ET tubes",
+     "Handheld occluders",
+     "Keratometers",
+     "Laser printers",
+     "Metric rules",
+     "Microcapillary hematocrit tubes",
+     "Microscope slides",
+     "Pipettes",
+     "Pulmonary nebulizers",
+     "Staple removers",
+     "Suture removers",
+     "Transcutaneous electric nerve stimulation TENS units",
+     "Bookkeeping software",
+     "Microsoft SharePoint Server",
+     "Web browser software"
+    ]
+   }
+  },
+  "13-2011.00": {
+   "soc": "13-2011.00",
+   "rows_in": 475,
+   "kept": {
+    "work_activity": 41,
+    "task": 30,
+    "tech": 237,
+    "knowledge": 22,
+    "ability": 35,
+    "skill": 26,
+    "dwa": 28,
+    "tool": 11,
+    "market_skill": 8
+   },
+   "dropped": {
+    "unreliable": [
+     "Programming",
+     "Quality Control Analysis",
+     "Philosophy and Theology",
+     "Building and Construction",
+     "Foreign Language",
+     "Science",
+     "Design",
+     "History and Archeology",
+     "Mechanical",
+     "Medicine and Dentistry",
+     "Physics",
+     "Multilimb Coordination",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Biology",
+     "Chemistry",
+     "Fine Arts",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Night Vision",
+     "Peripheral Vision",
+     "Sound Localization",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Operation and Control",
+     "Repairing",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Epic Systems",
+     "Google Docs",
+     "IBM SPSS Statistics",
+     "MEDITECH software",
+     "Microsoft PowerPoint",
+     "Microsoft Project",
+     "Microsoft SQL Server",
+     "Microsoft Visual Basic",
+     "Microsoft Visual Basic for Applications VBA",
+     "Microsoft Word",
+     "SAS",
+     "Structured query language SQL",
+     "Swift",
+     "Teradata Database",
+     "Yardi software",
+     "10-key calculators",
+     "Computer data input scanners",
+     "Laptop computers",
+     "Laser facsimile machines",
+     "Photocopying equipment",
+     "Tablet computers",
+     "ADP Super Report Writer",
+     "Apache Solr",
+     "Arbutus Analyzer",
+     "Best Software CPAPayroll",
+     "Corel WordPerfect Office Suite",
+     "Data extraction software",
+     "Database software",
+     "Eko",
+     "FileMaker Pro",
+     "Google Slides",
+     "Human resource management software HRMS",
+     "LexisNexis",
+     "Medical condition coding software",
+     "Medical procedure coding software",
+     "Microsoft OneNote",
+     "Microsoft Publisher",
+     "Paisley Cardmap",
+     "Sage CPADocument Manager",
+     "Sage HandiSoft HandiLedger",
+     "TechSmith Camtasia",
+     "WizSoft WizRule",
+     "WizSoft WizWhy",
+     "Yardi Systems Yardi Enterprise"
+    ],
+    "curated": [
+     "Accounting",
+     "Advanced Excel",
+     "Financial Reporting",
+     "GST Filing & Compliance",
+     "Internal Auditing",
+     "Statutory Compliances",
+     "Tally ERP",
+     "Taxation & TDS"
+    ]
+   }
+  },
+  "13-2072.00": {
+   "soc": "13-2072.00",
+   "rows_in": 299,
+   "kept": {
+    "knowledge": 23,
+    "task": 17,
+    "work_activity": 41,
+    "tech": 88,
+    "ability": 33,
+    "skill": 28,
+    "dwa": 25,
+    "tool": 8
+   },
+   "dropped": {
+    "unreliable": [
+     "Food Production",
+     "Therapy and Counseling",
+     "Engineering and Technology",
+     "Dynamic Strength",
+     "Operation and Control",
+     "Mechanical",
+     "Biology",
+     "Wrist-Finger Speed",
+     "Design",
+     "Physics",
+     "Chemistry",
+     "Medicine and Dentistry",
+     "Fine Arts",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing",
+     "Science",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Access",
+     "Microsoft PowerPoint",
+     "Microsoft Word",
+     "Zoom",
+     "10-key calculators",
+     "Desktop computers",
+     "Tablet computers",
+     "EDExpress",
+     "ELM Resources ELM",
+     "EMT Applications CounselorMax",
+     "FileMaker Pro",
+     "LexisNexis",
+     "Microsoft Internet Explorer",
+     "Student information systems SIS software",
+     "Web browser software"
+    ]
+   }
+  },
+  "25-2031.00": {
+   "soc": "25-2031.00",
+   "rows_in": 277,
+   "kept": {
+    "knowledge": 28,
+    "work_activity": 41,
+    "tech": 24,
+    "task": 32,
+    "ability": 31,
+    "skill": 29,
+    "dwa": 33,
+    "tool": 23,
+    "market_skill": 4
+   },
+   "dropped": {
+    "unreliable": [
+     "Mechanical",
+     "Sales and Marketing",
+     "Gross Body Coordination",
+     "Spatial Orientation",
+     "Stamina",
+     "Static Strength",
+     "Wrist-Finger Speed",
+     "Production and Processing",
+     "Dynamic Strength",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Gross Body Equilibrium",
+     "Manual Dexterity",
+     "Multilimb Coordination",
+     "Food Production",
+     "Troubleshooting",
+     "Building and Construction",
+     "Control Precision",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Operation and Control",
+     "Repairing"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft PowerPoint",
+     "Microsoft SharePoint",
+     "Microsoft Word",
+     "Bunsen burners",
+     "Computer data input scanners",
+     "Computer laser printers",
+     "Digital video cameras",
+     "Dissection scalpels",
+     "Document cameras",
+     "Glass beakers",
+     "Interactive whiteboards",
+     "Laboratory heating plates",
+     "Laptop computers",
+     "Liquid crystal display LCD projectors",
+     "Multimedia projection equipment",
+     "Optical compound microscopes",
+     "Pencil compasses",
+     "Photocopying equipment",
+     "Safety gloves",
+     "Safety goggles",
+     "Television monitors",
+     "Video camcorders",
+     "Video cassette recorders VCR",
+     "Desmos",
+     "Email software",
+     "Flipgrid",
+     "Geogebra",
+     "Google Drive",
+     "Screencastify",
+     "Web browser software"
+    ],
+    "curated": [
+     "Classroom Management",
+     "Curriculum Delivery",
+     "Student Assessment & Evaluation",
+     "Subject Pedagogy"
+    ]
+   }
+  },
+  "41-4012.00": {
+   "soc": "41-4012.00",
+   "rows_in": 354,
+   "kept": {
+    "knowledge": 15,
+    "work_activity": 41,
+    "task": 18,
+    "tech": 138,
+    "ability": 50,
+    "skill": 28,
+    "dwa": 26,
+    "tool": 7,
+    "market_skill": 4
+   },
+   "dropped": {
+    "unreliable": [
+     "Telecommunications",
+     "Design",
+     "Food Production",
+     "Fine Arts",
+     "Personnel and Human Resources",
+     "Public Safety and Security",
+     "Education and Training",
+     "Engineering and Technology",
+     "Geography",
+     "Speed of Limb Movement",
+     "Quality Control Analysis",
+     "Mechanical",
+     "Dynamic Flexibility",
+     "Building and Construction",
+     "Physics",
+     "History and Archeology",
+     "Philosophy and Theology",
+     "Chemistry",
+     "Therapy and Counseling",
+     "Biology",
+     "Medicine and Dentistry",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing",
+     "Science",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Illustrator",
+     "Autodesk AutoCAD",
+     "Cisco Webex",
+     "Mozilla Firefox",
+     "Oracle Primavera Enterprise Project Portfolio Management",
+     "Slack",
+     "Yardi software",
+     "Zoom",
+     "Light-emitting diode LED projectors",
+     "3M Post-it App",
+     "Airtable",
+     "Blink",
+     "Citrix cloud computing software",
+     "Computerized time management systems",
+     "Dropbox",
+     "Eko",
+     "Evernote",
+     "FaceTime",
+     "FileMaker Pro",
+     "Google Drive",
+     "Google Meet",
+     "GroupMe",
+     "Healthcare common procedure coding system HCPCS",
+     "LogMeIn GoToMeeting",
+     "LogMeIn GoToWebinar",
+     "MASterMind",
+     "McAfee",
+     "Medical condition coding software",
+     "Microsoft Internet Explorer",
+     "Microsoft OneNote",
+     "Mozilla Thunderbird",
+     "NortonLifeLock cybersecurity software",
+     "Screencastify",
+     "SeaMonkey",
+     "Skype",
+     "SmugMug Flickr",
+     "Virtual private networking VPN software",
+     "Voice over internet protocol VoIP system software",
+     "YouTube"
+    ],
+    "curated": [
+     "B2B Field Sales",
+     "Channel Sales Distribution",
+     "Commercial Negotiation",
+     "Lead Generation & Acquisition"
+    ]
+   }
+  },
+  "43-4051.00": {
+   "soc": "43-4051.00",
+   "rows_in": 320,
+   "kept": {
+    "knowledge": 20,
+    "task": 13,
+    "work_activity": 41,
+    "tech": 112,
+    "ability": 36,
+    "skill": 27,
+    "dwa": 14,
+    "tool": 15,
+    "market_skill": 5
+   },
+   "dropped": {
+    "unreliable": [
+     "Sociology and Anthropology",
+     "Medicine and Dentistry",
+     "Therapy and Counseling",
+     "Philosophy and Theology",
+     "Mechanical",
+     "Building and Construction",
+     "Chemistry",
+     "Design",
+     "Physics",
+     "Depth Perception",
+     "Explosive Strength",
+     "Gross Body Coordination",
+     "Multilimb Coordination",
+     "Stamina",
+     "Biology",
+     "Food Production",
+     "Gross Body Equilibrium",
+     "Quality Control Analysis",
+     "History and Archeology",
+     "Fine Arts",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Operation and Control",
+     "Repairing",
+     "Science",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Creative Cloud software",
+     "Adobe Illustrator",
+     "Adobe Photoshop",
+     "Facebook",
+     "Yardi software",
+     "Global positioning system GPS receivers",
+     "On hold players",
+     "Airtable",
+     "Google Drive",
+     "Google Sites",
+     "LexisNexis",
+     "LogMeIn GoToMeeting",
+     "Medical condition coding software",
+     "Microsoft Internet Explorer",
+     "Nearpod",
+     "Open Text Fax Server, RightFax Edition",
+     "Padlet",
+     "Virtual private networking VPN software",
+     "YouTube"
+    ],
+    "curated": [
+     "CRM System Operations",
+     "Customer Relationship Management",
+     "Customer Support",
+     "Inbound Call Handling",
+     "Telecalling & Voice Operations"
+    ]
+   }
+  },
+  "17-2141.00": {
+   "soc": "17-2141.00",
+   "rows_in": 391,
+   "kept": {
+    "market_skill": 2,
+    "work_activity": 41,
+    "knowledge": 27,
+    "tech": 92,
+    "task": 28,
+    "ability": 38,
+    "skill": 34,
+    "dwa": 32,
+    "tool": 76
+   },
+   "dropped": {
+    "unreliable": [
+     "Technology Design",
+     "Sociology and Anthropology",
+     "Medicine and Dentistry",
+     "Therapy and Counseling",
+     "Fine Arts",
+     "History and Archeology",
+     "Peripheral Vision",
+     "Dynamic Flexibility",
+     "Dynamic Strength",
+     "Explosive Strength",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Food Production"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Chef",
+     "Microsoft Access",
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft SQL Server",
+     "Microsoft SharePoint",
+     "Microsoft Visual Basic for Applications VBA",
+     "Microsoft Word",
+     "Puppet",
+     "Shell script",
+     "Teradata Database",
+     "Trimble SketchUp Pro",
+     "Acoustic emission AE sensors",
+     "Analog to digital converters",
+     "Computed tomography CT systems",
+     "Contact testers",
+     "Cryogenic apparatus",
+     "Digital to analog converters",
+     "Ellipsometers",
+     "Environmental testing chambers",
+     "Evaporation systems",
+     "Fluorescence spectrometers",
+     "Fused deposition modeling FDM machines",
+     "Infrared thermography cameras",
+     "Interferometers",
+     "Interferometric microscopes",
+     "Laser Doppler anemometers",
+     "Laser Doppler velocimeters LDV",
+     "Laser digitizers",
+     "Multi-pen plotters",
+     "Optical laser scanners",
+     "Optical sensors",
+     "Oscilloscopes",
+     "Pitot tubes",
+     "Radio frequency sensors",
+     "Scanning electron microscopes SEM",
+     "Scanning probe microscopes SPM",
+     "Scanning tunneling microscopes STM",
+     "Spectrum analyzers",
+     "Spin-coaters",
+     "Vapor deposition tube furnaces",
+     "Wire electrical discharge machines",
+     "X ray tubes",
+     "Blink",
+     "Blue Ridge Numerics CFDesign",
+     "Cost estimating software",
+     "MAYA Nastran",
+     "Microsoft Dynamics",
+     "Microsoft Exchange",
+     "Oracle JD Edwards EnterpriseOne",
+     "Perforce Helix software",
+     "ReliaSoft Alta 6 Pro",
+     "ReliaSoft BlockSim",
+     "ReliaSoft Weibull++ 6",
+     "Sigmetrix CETOL 6 Sigma",
+     "SmugMug Flickr",
+     "Statistical energy analysis SEA software",
+     "Statistical software",
+     "Supervisory control and data acquisition SCADA software",
+     "Video analysis software"
+    ]
+   }
+  },
+  "17-2051.00": {
+   "soc": "17-2051.00",
+   "rows_in": 306,
+   "kept": {
+    "market_skill": 10,
+    "knowledge": 29,
+    "work_activity": 41,
+    "tech": 73,
+    "task": 16,
+    "ability": 34,
+    "skill": 33,
+    "dwa": 17,
+    "tool": 29
+   },
+   "dropped": {
+    "unreliable": [
+     "Glare Sensitivity",
+     "Equipment Selection",
+     "Food Production",
+     "Medicine and Dentistry",
+     "Therapy and Counseling",
+     "Arm-Hand Steadiness",
+     "Dynamic Flexibility",
+     "Dynamic Strength",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Manual Dexterity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Fine Arts",
+     "Installation"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Apache Subversion SVN",
+     "Microsoft Access",
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft Word",
+     "Shell script",
+     "Trimble SketchUp Pro",
+     "Blueprint copiers",
+     "Electronic distance measuring devices",
+     "Global positioning system GPS receivers",
+     "Laser levels",
+     "Measuring tapes",
+     "Microfilm readers",
+     "Planimeters",
+     "Precision levels",
+     "Protractors",
+     "Rhodes arcs",
+     "Rolling scales",
+     "Theodolites",
+     "Total stations",
+     "Two way radios",
+     "Corel WordPerfect Office Suite",
+     "Dassault Systemes Abaqus",
+     "Formula translation/translator FORTRAN",
+     "HEC-1",
+     "HEC-HMS",
+     "MAYA Nastran",
+     "Microsoft Dynamics",
+     "Microsoft Exchange",
+     "Microsoft Internet Explorer",
+     "Oracle JD Edwards EnterpriseOne",
+     "SmugMug Flickr",
+     "Supervisory control and data acquisition SCADA software",
+     "Trimble Geomatics Office"
+    ],
+    "curated": [
+     "AutoCAD Drafting",
+     "Civil Construction",
+     "Quality & Material Testing",
+     "Site Engineering",
+     "Structural Analysis"
+    ]
+   }
+  },
+  "47-2111.00": {
+   "soc": "47-2111.00",
+   "rows_in": 397,
+   "kept": {
+    "work_activity": 41,
+    "task": 21,
+    "tech": 30,
+    "ability": 51,
+    "skill": 34,
+    "dwa": 17,
+    "knowledge": 25,
+    "tool": 164,
+    "market_skill": 4
+   },
+   "dropped": {
+    "unreliable": [
+     "Geography",
+     "Dynamic Flexibility",
+     "Foreign Language",
+     "Medicine and Dentistry",
+     "Biology",
+     "Fine Arts",
+     "Food Production",
+     "History and Archeology",
+     "Philosophy and Theology",
+     "Programming"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft Windows",
+     "SAP software",
+     "Bear claw wire threaders",
+     "Butane soldering irons",
+     "Cable tie guns",
+     "Channel lock pliers",
+     "Clamp-on ammeters",
+     "Conduit fitting and reaming screwdrivers",
+     "Conduit locknut and reaming pliers",
+     "Double-end can socket wrenches",
+     "Drill bit sets",
+     "External snap ring pliers",
+     "Gas leak detection devices",
+     "Ground fault circuit interrupter GFCI testers",
+     "Growlers",
+     "Hacksaws",
+     "Hard hats",
+     "Heat guns",
+     "Hex key sets",
+     "Inductance testers",
+     "Internal snap ring pliers",
+     "Magnetic locators",
+     "Metal locators",
+     "Oscilloscopes",
+     "Phase rotation meters",
+     "Pump pliers",
+     "Respirators",
+     "Round shank screwdrivers",
+     "Safety glasses",
+     "Square shank screwdrivers",
+     "Tap sets",
+     "Tapered reamers",
+     "Tension gauges",
+     "Threading die hand tool",
+     "Torpedo levels",
+     "Two way radios",
+     "Welding hoods",
+     "Winches",
+     "Wire loop pullers",
+     "Wire wrap guns",
+     "Database software",
+     "Elite Software Inpoint",
+     "Elite Software Outpoint",
+     "Elite Software VDROP",
+     "Insight Direct ServiceCEO",
+     "Resolve Systems Service Management",
+     "Shafer Service Systems",
+     "SmartDraw",
+     "Turtle Creek Software Goldenseal"
+    ],
+    "curated": [
+     "Circuit Troubleshooting",
+     "Electrical Wiring & Cabling",
+     "ITI Electrical Standards",
+     "Preventive Maintenance"
+    ]
+   }
+  },
+  "35-1011.00": {
+   "soc": "35-1011.00",
+   "rows_in": 310,
+   "kept": {
+    "task": 21,
+    "tech": 24,
+    "work_activity": 41,
+    "ability": 52,
+    "knowledge": 33,
+    "skill": 34,
+    "dwa": 18,
+    "tool": 82,
+    "market_skill": 4
+   },
+   "dropped": {
+    "unreliable": [
+     "Installation"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Facebook",
+     "Google Sheets",
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft Word",
+     "Blast chillers",
+     "Desktop computers",
+     "Fire suppression blankets",
+     "Garbage compactors",
+     "Ice shaving or crushing equipment",
+     "Infrared heat lamps",
+     "Rolling pins",
+     "Sifters",
+     "ADP eTIME",
+     "CostGuard",
+     "Delphi Technology",
+     "EGS CALCMENU",
+     "Email software",
+     "Enggist & Grandjean EGS F&B Control",
+     "GNOME Gnutrition",
+     "GroupMe",
+     "ReServe Interactive",
+     "Sage MAS 90 ERP",
+     "SoftCafe MenuPro"
+    ],
+    "curated": [
+     "Culinary Operations",
+     "Food Safety & HACCP",
+     "Kitchen Management",
+     "Menu Costing & Planning"
+    ]
+   }
+  },
+  "53-3032.00": {
+   "soc": "53-3032.00",
+   "rows_in": 282,
+   "kept": {
+    "task": 29,
+    "work_activity": 41,
+    "tech": 20,
+    "ability": 52,
+    "knowledge": 29,
+    "dwa": 28,
+    "skill": 33,
+    "tool": 41,
+    "market_skill": 3
+   },
+   "dropped": {
+    "unreliable": [
+     "Food Production",
+     "Sociology and Anthropology",
+     "History and Archeology",
+     "Fine Arts",
+     "Programming",
+     "Science"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft Windows",
+     "Frequency modulation FM two way radios",
+     "Global positioning system GPS devices",
+     "Global positioning system GPS receivers",
+     "Handheld bar code scanners",
+     "Laser facsimile machines",
+     "Notebook computers",
+     "On-board computers",
+     "Personal digital assistants PDA",
+     "Two way radios",
+     "Winches",
+     "Eko",
+     "Evernote",
+     "Omnitracs Performance Monitoring",
+     "YouTube",
+     "ddlsoftware.com drivers daily log program DDL"
+    ],
+    "curated": [
+     "Fleet & Highway Safety",
+     "Heavy Vehicle Navigation",
+     "Route & Logistics Planning"
+    ]
+   }
+  },
+  "27-1024.00": {
+   "soc": "27-1024.00",
+   "rows_in": 293,
+   "kept": {
+    "work_activity": 41,
+    "knowledge": 30,
+    "task": 19,
+    "tech": 79,
+    "ability": 34,
+    "dwa": 17,
+    "skill": 28,
+    "tool": 10,
+    "market_skill": 5
+   },
+   "dropped": {
+    "industry_label": [
+     "It Software   Ecommerce",
+     "It Software   Other"
+    ],
+    "unreliable": [
+     "Dynamic Strength",
+     "Food Production",
+     "Biology",
+     "Medicine and Dentistry",
+     "Equipment Selection",
+     "Operation and Control",
+     "Science",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance",
+     "Installation",
+     "Repairing",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Apple macOS",
+     "Extensible markup language XML",
+     "Google Docs",
+     "Microsoft Access",
+     "Microsoft Excel",
+     "Microsoft Outlook",
+     "Microsoft Windows",
+     "Microsoft Word",
+     "Structured query language SQL",
+     "35 millimeter cameras",
+     "Laptop computers",
+     "Wide format printers",
+     "Corel WordPerfect Office Suite",
+     "Dynamic hypertext markup language DHTML",
+     "Extensible hypertext markup language XHTML",
+     "FileMaker Pro",
+     "Google Chrome",
+     "Google Drive",
+     "IBM Notes",
+     "Oracle Eloqua",
+     "Oracle JavaServer Pages JSP",
+     "PDF readers",
+     "Verilog",
+     "Web browser software"
+    ],
+    "curated": [
+     "Adobe Illustrator",
+     "Adobe Photoshop",
+     "Graphic Design & Layout",
+     "UI / Digital Design",
+     "Visual Identity & Branding"
+    ]
+   }
+  },
+  "15-2051.00": {
+   "soc": "15-2051.00",
+   "rows_in": 339,
+   "kept": {
+    "market_skill": 49,
+    "work_activity": 41,
+    "knowledge": 24,
+    "tech": 87,
+    "skill": 24,
+    "task": 16,
+    "ability": 35,
+    "dwa": 16,
+    "tool": 9
+   },
+   "dropped": {
+    "unreliable": [
+     "Programming",
+     "Systems Analysis",
+     "Systems Evaluation",
+     "Science",
+     "Operations Analysis",
+     "Building and Construction",
+     "Biology",
+     "Chemistry",
+     "Transportation",
+     "Spatial Orientation",
+     "Operation and Control",
+     "History and Archeology",
+     "Food Production",
+     "Therapy and Counseling",
+     "Fine Arts",
+     "Foreign Language",
+     "Equipment Selection",
+     "Troubleshooting",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance",
+     "Installation",
+     "Repairing"
+    ],
+    "generic_term": [
+     "Machine"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Laser facsimile machines",
+     "Llm"
+    ]
+   }
+  },
+  "29-1123.00": {
+   "soc": "29-1123.00",
+   "rows_in": 339,
+   "kept": {
+    "task": 24,
+    "work_activity": 41,
+    "knowledge": 29,
+    "tech": 20,
+    "ability": 46,
+    "skill": 34,
+    "dwa": 27,
+    "tool": 107
+   },
+   "dropped": {
+    "unreliable": [
+     "Building and Construction",
+     "Fine Arts",
+     "Spatial Orientation",
+     "Installation",
+     "Food Production",
+     "History and Archeology",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Sound Localization"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft Word",
+     "Babinski hammers",
+     "Biofeedback units",
+     "Cervical pivots",
+     "Cryotherapy equipment",
+     "Digital inclinometer range of motion measurement instruments",
+     "Force sensors",
+     "High-voltage galvanic stimulation machines",
+     "Hydraulic hand dynamometers",
+     "Infrared lamps",
+     "Low volt muscle stimulators",
+     "Moist hot packs",
+     "Neck braces",
+     "Occipivots",
+     "Paraffin baths",
+     "Percussion hammers",
+     "Ultraviolet UV lamps",
+     "Biometrics video game software",
+     "Cedaron Dexter Evaluation & Impairment Rating"
+    ]
+   }
+  },
+  "47-2152.00": {
+   "soc": "47-2152.00",
+   "rows_in": 536,
+   "kept": {
+    "tech": 41,
+    "knowledge": 30,
+    "work_activity": 41,
+    "task": 30,
+    "dwa": 26,
+    "ability": 52,
+    "tool": 278,
+    "skill": 33
+   },
+   "dropped": {
+    "unreliable": [
+     "Installation",
+     "Programming",
+     "Biology",
+     "Sociology and Anthropology",
+     "Fine Arts"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Intuit QuickBooks",
+     "Microsoft Excel",
+     "Microsoft Office software",
+     "Acetylene torches",
+     "Adjustable slip lock nut wrenches",
+     "Air wire brushes",
+     "Air-acetylene torches",
+     "Butane torches",
+     "Chain falls",
+     "Channel lock pliers",
+     "Combination squares",
+     "Drophead dies",
+     "Dumpy levels",
+     "Flaring tools",
+     "Flat blade screwdrivers",
+     "Flat head screwdrivers",
+     "Four-in-one keys",
+     "Hacksaws",
+     "Hand hacksaws",
+     "Hand tachometers",
+     "Impact screwdrivers",
+     "Inner/outer reamers",
+     "Jam-proof ratchet threaders",
+     "Laser alignment tools",
+     "Laser levels",
+     "Loaders",
+     "Locking pliers",
+     "Magnetic locators",
+     "Manual ratchet threader sets",
+     "Metal inert gas MIG welders",
+     "Mini hacksaws",
+     "Moisture meters",
+     "No hub torque wrenches",
+     "Non-contact infrared thermometers",
+     "Notebook computers",
+     "Offset grinders",
+     "Ohmmeters",
+     "Personal computers",
+     "Personal digital assistants PDA",
+     "Phillips head screwdrivers",
+     "Pocket levels",
+     "Portable welding machines",
+     "Power hacksaws",
+     "Propane torches",
+     "Radius markers",
+     "Ratcheting box wrenches",
+     "Reamers",
+     "Rubber strap wrenches",
+     "Screwdrivers",
+     "Shielded arc welding tools",
+     "Shut-off keys",
+     "Skip loaders",
+     "Slip joint pliers",
+     "Split bubble levels",
+     "Tablet computers",
+     "Thread repair files",
+     "Torpedo levels",
+     "Transmitters",
+     "Tristand chain vises",
+     "Tungsten inert gas TIG welding equipment",
+     "Two way radios",
+     "Two-hole pins",
+     "Vibration analyzers",
+     "Video diagnostic tools",
+     "Vise grip pliers",
+     "Welding hoods",
+     "Winches",
+     "Wire tracers",
+     "Bookkeeping software",
+     "Database software",
+     "Elite Software FIRE",
+     "Elite Software HSYM",
+     "Email software",
+     "Heat loss calculation software",
+     "Insight Direct ServiceCEO",
+     "KRS Enterprises Service First!",
+     "Klear Estimator",
+     "PricePoint",
+     "Quicken",
+     "Quote Software QuoteExpress",
+     "Wintac Pro"
+    ]
+   }
+  },
+  "13-1071.00": {
+   "soc": "13-1071.00",
+   "rows_in": 417,
+   "kept": {
+    "market_skill": 22,
+    "task": 26,
+    "work_activity": 41,
+    "knowledge": 18,
+    "tech": 172,
+    "skill": 27,
+    "ability": 33,
+    "dwa": 22,
+    "tool": 14
+   },
+   "dropped": {
+    "unreliable": [
+     "Production and Processing",
+     "Foreign Language",
+     "Transportation",
+     "Depth Perception",
+     "Dynamic Strength",
+     "Geography",
+     "Operations Analysis",
+     "Engineering and Technology",
+     "Design",
+     "Medicine and Dentistry",
+     "Operation and Control",
+     "Science",
+     "Building and Construction",
+     "Chemistry",
+     "Food Production",
+     "Mechanical",
+     "History and Archeology",
+     "Biology",
+     "Physics",
+     "Fine Arts",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Creative Cloud software",
+     "Adobe Illustrator",
+     "Adobe InDesign",
+     "Adobe Photoshop",
+     "Apple macOS",
+     "Cisco Webex",
+     "Extensible markup language XML",
+     "Facebook",
+     "Google Analytics",
+     "Google Docs",
+     "Hypertext markup language HTML",
+     "Microsoft Access",
+     "Microsoft SQL Server",
+     "Microsoft Visual Basic for Applications VBA",
+     "Microsoft Word",
+     "Oracle Database",
+     "Teradata Database",
+     "Zoom",
+     "10-key calculators",
+     "Digital audio recorders",
+     "Digital video disk DVD players",
+     "Laptop computers",
+     "Laser facsimile machines",
+     "Liquid crystal display LCD projectors",
+     "Office inkjet printers",
+     "Photocopying equipment",
+     "Video projectors",
+     "Web conferencing cameras",
+     "Adobe Dreamweaver",
+     "Airtable",
+     "Apple Final Cut Pro",
+     "Database software",
+     "Drupal",
+     "Evernote",
+     "FaceTime",
+     "FileMaker Pro",
+     "Google",
+     "Google Drive",
+     "Google Meet",
+     "Google Slides",
+     "IBM Domino",
+     "IBM InfoSphere DataStage",
+     "LexisNexis",
+     "Loom",
+     "Microsoft Internet Explorer",
+     "Microsoft Publisher",
+     "Online databases",
+     "Oracle Solaris",
+     "Oracle WebLogic Server",
+     "Perforce Helix software",
+     "Skype",
+     "SmugMug Flickr",
+     "Social media sites",
+     "StataCorp Stata",
+     "Web browser software",
+     "YouTube",
+     "Data Modeling",
+     "Power BI"
+    ]
+   }
+  },
+  "43-3071.00": {
+   "soc": "43-3071.00",
+   "rows_in": 247,
+   "kept": {
+    "task": 28,
+    "tech": 16,
+    "work_activity": 41,
+    "ability": 44,
+    "knowledge": 20,
+    "dwa": 21,
+    "tool": 21,
+    "skill": 28
+   },
+   "dropped": {
+    "unreliable": [
+     "Sociology and Anthropology",
+     "Geography",
+     "Explosive Strength",
+     "Gross Body Equilibrium",
+     "Programming",
+     "Medicine and Dentistry",
+     "Chemistry",
+     "Mechanical",
+     "Philosophy and Theology",
+     "Physics",
+     "Operations Analysis",
+     "Fine Arts",
+     "History and Archeology",
+     "Design",
+     "Food Production",
+     "Biology",
+     "Building and Construction",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing",
+     "Science"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "10-key calculators",
+     "Check validation printers",
+     "Filmers",
+     "Journal printers",
+     "Online video terminals",
+     "Passbook printers",
+     "Total Turnkey Solutions E-Vision"
+    ]
+   }
+  },
+  "23-1011.00": {
+   "soc": "23-1011.00",
+   "rows_in": 338,
+   "kept": {
+    "knowledge": 22,
+    "ability": 31,
+    "skill": 28,
+    "work_activity": 41,
+    "task": 22,
+    "tech": 126,
+    "dwa": 17,
+    "tool": 12
+   },
+   "dropped": {
+    "unreliable": [
+     "Public Safety and Security",
+     "Medicine and Dentistry",
+     "Engineering and Technology",
+     "Chemistry",
+     "Arm-Hand Steadiness",
+     "Control Precision",
+     "Manual Dexterity",
+     "Spatial Orientation",
+     "Fine Arts",
+     "Biology",
+     "Design",
+     "Building and Construction",
+     "Mechanical",
+     "Dynamic Flexibility",
+     "Dynamic Strength",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Food Production",
+     "Physics",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Operation and Control",
+     "Quality Control Analysis",
+     "Repairing",
+     "Troubleshooting"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Google Analytics",
+     "Microsoft Access",
+     "Microsoft Excel",
+     "Microsoft Outlook",
+     "Microsoft PowerPoint",
+     "Microsoft Project",
+     "Microsoft Word",
+     "Compact disk CD recorders",
+     "Computer data input scanners",
+     "Desktop computers",
+     "Digital photocopiers",
+     "Digital video disk DVD recorders",
+     "Laptop computers",
+     "Liquid crystal display LCD projectors",
+     "Optical character readers",
+     "Overhead projectors",
+     "Personal digital assistants PDA",
+     "Universal serial bus USB flash drives",
+     "ADERANT Expert Matter Center",
+     "Advanced Technologies Class Act",
+     "Bridgeway eCounsel",
+     "Canyon Solutions Jcats",
+     "Catalyst Repository Systems CatalystCR",
+     "Catalyst Repository Systems CatalystDR",
+     "Catalyst Repository Systems CatalystXE",
+     "Chesapeake Interlink Needles",
+     "Compugov DocketView",
+     "Convex FactLogic",
+     "Corel WordPerfect Office Suite",
+     "Corporate Focus Solium Shareworks",
+     "Corporatek EnAct Platinum",
+     "Creative Data Solutions DuProcess",
+     "Crocodile Consulting Traffic Control",
+     "Customer Expressions i-Sight",
+     "DATAssimilate Systems DATAssimilator",
+     "De Novo Systems De Novo CaseMgr",
+     "Diarymaster",
+     "Direct Hit Systems THREADS",
+     "Equative TimeLedger",
+     "HiPerSoft Practice Information Powertool",
+     "IDEA TrialPro",
+     "Iron Mountain Accutrac records management software",
+     "LexisNexis",
+     "LexisNexis Lexis Front Office",
+     "LexisNexis Shepard's Citations Service",
+     "LogMeIn GoToMeeting",
+     "Lucid IQ CMP",
+     "MicroFocus GroupWise",
+     "Microsoft Dynamics",
+     "Microsoft Publisher",
+     "Practice Technology Prevail",
+     "ProCAT Denoto",
+     "Saga Practice Manager",
+     "Sage Timeslips",
+     "Selectica Contract Performance Management",
+     "Solution Specialties TRACKER",
+     "Synergy International Systems Synergy CaseTrack",
+     "Tabs3 PracticeMaster",
+     "Upside Software UpsideContract",
+     "Web browser software",
+     "WebEx WebOffice",
+     "Woll2Woll InfoPower Studio",
+     "WorthMORE Software CaseWORTH",
+     "eLawSoftware"
+    ]
+   }
+  },
+  "29-2052.00": {
+   "soc": "29-2052.00",
+   "rows_in": 269,
+   "kept": {
+    "task": 21,
+    "knowledge": 27,
+    "tech": 20,
+    "work_activity": 41,
+    "ability": 44,
+    "skill": 31,
+    "dwa": 21,
+    "tool": 46
+   },
+   "dropped": {
+    "unreliable": [
+     "Food Production",
+     "Design",
+     "Geography",
+     "History and Archeology",
+     "Building and Construction",
+     "Fine Arts",
+     "Explosive Strength",
+     "Rate Control",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Apple Safari",
+     "Microsoft Edge",
+     "Microsoft Excel",
+     "Microsoft Word",
+     "Mozilla Firefox",
+     "Agar slides",
+     "Benchtop colloid mills",
+     "Blending/agitating machines",
+     "Bunsen burners",
+     "Centrifuges",
+     "Colloid mills",
+     "Computer laser printers",
+     "Double-beam balances",
+     "Equal-arm balances",
+     "Grinding and shearing colloid mills",
+     "Horizontal and vertical flow hoods",
+     "Intravenous IV infusion pumps",
+     "Label printers",
+     "Laboratory vacuum pumps",
+     "Laminar flow hoods",
+     "Petri dishes",
+     "Single-beam balances",
+     "Specific gravity testing equipment",
+     "Torsion balances",
+     "Tube filling and crimping machines",
+     "Unequal-arm balances",
+     "Water distillation equipment",
+     "Label-making software"
+    ]
+   }
+  },
+  "41-2031.00": {
+   "soc": "41-2031.00",
+   "rows_in": 312,
+   "kept": {
+    "task": 24,
+    "work_activity": 41,
+    "knowledge": 25,
+    "tech": 80,
+    "ability": 45,
+    "skill": 29,
+    "dwa": 24,
+    "tool": 23
+   },
+   "dropped": {
+    "unreliable": [
+     "Medicine and Dentistry",
+     "Philosophy and Theology",
+     "Building and Construction",
+     "Chemistry",
+     "Physics",
+     "Food Production",
+     "History and Archeology",
+     "Programming",
+     "Biology",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Repairing",
+     "Science"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Adobe Acrobat",
+     "Adobe Illustrator",
+     "Apple Safari",
+     "Autodesk AutoCAD",
+     "Google Docs",
+     "Microsoft Edge",
+     "Microsoft Word",
+     "Mozilla Firefox",
+     "Adjustable widemouth pliers",
+     "Barcode scanners",
+     "Clothing irons",
+     "Gas consoles",
+     "Handheld calculators",
+     "Magnetic card readers",
+     "Sewing machines",
+     "Tape measures",
+     "Blink",
+     "FileMaker Pro",
+     "Google Drive",
+     "Google Meet",
+     "GroupMe",
+     "IBM Notes",
+     "SmugMug Flickr",
+     "YouTube"
+    ]
+   }
+  },
+  "15-1253.00": {
+   "soc": "15-1253.00",
+   "rows_in": 710,
+   "kept": {
+    "market_skill": 49,
+    "work_activity": 41,
+    "task": 27,
+    "knowledge": 21,
+    "tech": 429,
+    "ability": 35,
+    "skill": 33,
+    "dwa": 26,
+    "tool": 17
+   },
+   "dropped": {
+    "industry_label": [
+     "It Software   Qa   Testing"
+    ],
+    "unreliable": [
+     "Physics",
+     "Therapy and Counseling",
+     "Transportation",
+     "Mechanical",
+     "Philosophy and Theology",
+     "Building and Construction",
+     "Chemistry",
+     "Biology",
+     "Fine Arts",
+     "Repairing",
+     "History and Archeology",
+     "Medicine and Dentistry",
+     "Food Production",
+     "Dynamic Flexibility",
+     "Explosive Strength",
+     "Extent Flexibility",
+     "Glare Sensitivity",
+     "Gross Body Coordination",
+     "Gross Body Equilibrium",
+     "Multilimb Coordination",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Stamina",
+     "Static Strength",
+     "Equipment Maintenance"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Trimble SketchUp Pro",
+     "Dynamic hypertext markup language DHTML",
+     "SmugMug Flickr",
+     "XML Path Language XPATH",
+     "Maven"
+    ]
+   }
+  },
+  "43-4081.00": {
+   "soc": "43-4081.00",
+   "rows_in": 227,
+   "kept": {
+    "task": 20,
+    "work_activity": 41,
+    "tech": 16,
+    "knowledge": 29,
+    "ability": 42,
+    "dwa": 20,
+    "skill": 28,
+    "tool": 10
+   },
+   "dropped": {
+    "unreliable": [
+     "Design",
+     "History and Archeology",
+     "Biology",
+     "Wrist-Finger Speed",
+     "Fine Arts",
+     "Operation and Control",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Rate Control",
+     "Reaction Time",
+     "Response Orientation",
+     "Sound Localization",
+     "Speed of Limb Movement",
+     "Equipment Maintenance",
+     "Equipment Selection",
+     "Installation",
+     "Operations Analysis",
+     "Repairing",
+     "Science"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Facebook",
+     "Yardi software",
+     "On hold players",
+     "Blink"
+    ]
+   }
+  },
+  "29-1292.00": {
+   "soc": "29-1292.00",
+   "rows_in": 268,
+   "kept": {
+    "task": 16,
+    "work_activity": 41,
+    "knowledge": 25,
+    "tech": 17,
+    "ability": 44,
+    "dwa": 15,
+    "skill": 34,
+    "tool": 59
+   },
+   "dropped": {
+    "unreliable": [
+     "Explosive Strength",
+     "Engineering and Technology",
+     "Economics and Accounting",
+     "Geography",
+     "Design",
+     "Building and Construction",
+     "Food Production",
+     "History and Archeology",
+     "Fine Arts",
+     "Dynamic Flexibility",
+     "Glare Sensitivity",
+     "Night Vision",
+     "Peripheral Vision",
+     "Sound Localization",
+     "Spatial Orientation",
+     "Speed of Limb Movement",
+     "Installation"
+    ]
+   },
+   "down_weighted": {
+    "off_domain": [
+     "Microsoft Excel",
+     "Microsoft Word",
+     "Mercury blood pressure units",
+     "Microscope slides"
+    ]
+   }
+  }
+ },
+ "nurse_sample": {
+  "core": [
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Record patients' medical information and vital signs.",
+    "status": "partial",
+    "similarity": 0.5556,
+    "reason": "semantic",
+    "evidence": "chart vital signs"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Administer medications to patients and monitor patients for reactions or side effects.",
+    "status": "met",
+    "similarity": 0.7379,
+    "reason": "semantic",
+    "evidence": "medication administration"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Maintain accurate, detailed reports and records.",
+    "status": "missing",
+    "similarity": 0.3831,
+    "reason": "none",
+    "evidence": "clinical documentation"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Monitor, record, and report symptoms or changes in patients' conditions.",
+    "status": "met",
+    "similarity": 0.6395,
+    "reason": "semantic",
+    "evidence": "Admitted patients, took history and assessed their condition on arrival."
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Provide health care, first aid, immunizations, or assistance in convalescence or rehabilit",
+    "status": "missing",
+    "similarity": 0.4945,
+    "reason": "none",
+    "evidence": "Counsel families on discharge, wound care at home and medication schedules."
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluat",
+    "status": "met",
+    "similarity": 0.6363,
+    "reason": "semantic",
+    "evidence": "Patient assessment"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Direct or supervise less-skilled nursing or healthcare personnel or supervise a particular",
+    "status": "missing",
+    "similarity": 0.478,
+    "reason": "none",
+    "evidence": "Registered with the Kerala Nursing Council."
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Monitor all aspects of patient care, including diet and physical activity.",
+    "status": "met",
+    "similarity": 0.617,
+    "reason": "semantic",
+    "evidence": "Patient assessment"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Perform administrative or managerial functions, such as taking responsibility for a unit's",
+    "status": "missing",
+    "similarity": 0.4156,
+    "reason": "none",
+    "evidence": "medication administration"
+   },
+   {
+    "type": "task",
+    "provenance": "onet",
+    "requirement": "Order, interpret, and evaluate diagnostic tests to identify and assess patient's condition",
+    "status": "met",
+    "similarity": 0.7211,
+    "reason": "semantic",
+    "evidence": "Patient assessment"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Epic Systems",
+    "status": "missing",
+    "similarity": 0.4217,
+    "reason": "none",
+    "evidence": "clinical documentation"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Henry Schein Dentrix",
+    "status": "missing",
+    "similarity": 0.4125,
+    "reason": "none",
+    "evidence": "clinical documentation"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Kronos Workforce Timekeeper",
+    "status": "missing",
+    "similarity": 0.2884,
+    "reason": "none",
+    "evidence": "GCS every hour"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "MEDITECH software",
+    "status": "partial",
+    "similarity": 0.4969,
+    "reason": "semantic",
+    "evidence": "medication administration"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft Access",
+    "status": "missing",
+    "similarity": 0.1538,
+    "reason": "none",
+    "evidence": "collected blood samples"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft Office software",
+    "status": "missing",
+    "similarity": 0.262,
+    "reason": "none",
+    "evidence": "medication administration"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft Outlook",
+    "status": "missing",
+    "similarity": 0.2178,
+    "reason": "none",
+    "evidence": "medication administration"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft PowerPoint",
+    "status": "missing",
+    "similarity": 0.199,
+    "reason": "none",
+    "evidence": "clinical documentation"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft SharePoint",
+    "status": "missing",
+    "similarity": 0.3512,
+    "reason": "none",
+    "evidence": "clinical documentation"
+   },
+   {
+    "type": "tech",
+    "provenance": "onet",
+    "requirement": "Microsoft Windows",
+    "status": "missing",
+    "similarity": 0.2398,
+    "reason": "none",
+    "evidence": "medication administration"
+   }
+  ],
+  "work_activities": [
+   {
+    "name": "Assisting and Caring for Others",
+    "status": "evidenced",
+    "via": [
+     "Administer non-intravenous medications."
+    ]
+   },
+   {
+    "name": "Documenting/Recording Information",
+    "status": "evidenced",
+    "via": [
+     "Record patient medical histories."
+    ]
+   },
+   {
+    "name": "Getting Information",
+    "status": "not_evidenced",
+    "via": []
+   },
+   {
+    "name": "Updating and Using Relevant Knowledge",
+    "status": "no_dwa_data",
+    "via": []
+   },
+   {
+    "name": "Communicating with Supervisors, Peers, or Subordinates",
+    "status": "not_evidenced",
+    "via": []
+   },
+   {
+    "name": "Identifying Objects, Actions, and Events",
+    "status": "no_dwa_data",
+    "via": []
+   },
+   {
+    "name": "Performing General Physical Activities",
+    "status": "no_dwa_data",
+    "via": []
+   },
+   {
+    "name": "Making Decisions and Solving Problems",
+    "status": "not_evidenced",
+    "via": []
+   },
+   {
+    "name": "Evaluating Information to Determine Compliance with Standards",
+    "status": "no_dwa_data",
+    "via": []
+   },
+   {
+    "name": "Organizing, Planning, and Prioritizing Work",
+    "status": "no_dwa_data",
+    "via": []
+   }
+  ],
+  "draws_on": [
+   {
+    "type": "knowledge",
+    "name": "Psychology",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "knowledge",
+    "name": "Customer and Personal Service",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "knowledge",
+    "name": "Medicine and Dentistry",
+    "inferred": true,
+    "support": "Monitor patient conditions during treatments, procedures, or activitie",
+    "kind": "dwa"
+   },
+   {
+    "type": "knowledge",
+    "name": "English Language",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "knowledge",
+    "name": "Administrative",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "skill",
+    "name": "Social Perceptiveness",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "skill",
+    "name": "Active Listening",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "skill",
+    "name": "Coordination",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "skill",
+    "name": "Critical Thinking",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   },
+   {
+    "type": "skill",
+    "name": "Service Orientation",
+    "inferred": false,
+    "support": "",
+    "kind": null
+   }
+  ],
+  "fit_indicators": [
+   "Deductive Reasoning",
+   "Problem Sensitivity",
+   "Inductive Reasoning",
+   "Oral Comprehension",
+   "Oral Expression",
+   "Written Comprehension"
+  ]
+ }
+}

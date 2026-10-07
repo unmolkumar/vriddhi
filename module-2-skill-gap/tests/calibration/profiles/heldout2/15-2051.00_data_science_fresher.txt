@@ -1,0 +1,13 @@
+Ananya Bose - aspiring data scientist (M.Sc Statistics, 2025)
+
+Projects
+- Credit card fraud detection: handled class imbalance with SMOTE, compared logistic regression, random forest and XGBoost, explained results with SHAP.
+- Customer segmentation for an online store using K-means on RFM features, with a Streamlit dashboard.
+- Sentiment analysis of product reviews with a fine-tuned BERT model.
+
+Internship
+Data Science Intern | Fractal Analytics | Jan 2025 - Jun 2025
+- Cleaned sales data in pandas, built a demand forecast in Prophet and presented it to the client team.
+
+Skills
+Python, pandas, scikit-learn, SQL, statistics, hypothesis testing, PyTorch basics, Power BI

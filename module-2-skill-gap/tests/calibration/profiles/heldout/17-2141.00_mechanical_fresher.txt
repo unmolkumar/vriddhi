@@ -1,0 +1,17 @@
+Kiran Joshi
+B.Tech Mechanical Engineering (2025), fresher
+
+Internship
+Summer Intern | Maruti Suzuki, Manesar | May 2024 - Jul 2024
+- Studied cycle time on the axle sub-assembly line and suggested a fixture change that saved 6 seconds per piece.
+- Made 3D models and drawings of the fixture in CATIA.
+
+Projects
+- Final year: designed and fabricated a solar-powered grain dryer; heat transfer calculations and a field test.
+- Baja SAEINDIA: suspension design and FEA of the knuckle in ANSYS.
+
+Skills
+CATIA, SolidWorks, AutoCAD, ANSYS, GD&T basics, thermodynamics, strength of materials, MS Excel
+
+Education
+B.Tech Mechanical, COEP Pune, 2025, CGPA 8.1
