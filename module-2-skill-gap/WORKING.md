@@ -1174,3 +1174,36 @@ The A2 gate passes (held-out-2 >= 12/15, extra occupations >= 7/10).
 - **Module 1 local DB:**
   - It needs a rebuild with main's loader for tiers, the new bands and `/profile` under main's code.
   - Its search misresolves some titles even at 0.95 ("teller" → Cashiers), which `other_role`'s guards absorb.
+
+## 16. General engine (v2) — A4b: licensing guard, match_texts for module 3
+
+### 16.1 Licensing guard for alternatives and more senior fits
+
+Bug found in the A4 live check: a pharmacist was offered Emergency Medicine Physicians (0.51) as a close alternative.
+
+- `data/general/regulated_occupations.json` lists occupations whose practice Indian law restricts to holders of a qualification or registration, with the Act behind each: physicians and surgeons (NMC), dentists (DCI), pharmacists (PCI), nurses and midwives (INC), physiotherapists (NCAHP), lawyers (Bar Council), architects (CoA), airline and commercial pilots (DGCA), veterinarians (VCI). For each it gives SOC prefixes and qualification patterns (MBBS, MD/MS with a speciality, BDS, B.Pharm / D.Pharm / Pharm.D, GNM / ANM / B.Sc Nursing, BPT / MPT, LLB, B.Arch, CPL / ATPL, B.V.Sc, …). Chartered accountants are listed but **not gated**: O*NET's Accountants and Auditors (13-2011) also covers accountants who need no licence.
+- `regulated.blocked(soc, evidence texts, past SOCs)`: a regulated occupation is offered (close alternative or over-qualified suggestion) only when the user's evidence (any unit, incl. education lines and typed skills, as written and expanded) shows one of its qualifications, or a past title resolves into it.
+- A related occupation with a higher job zone than the target is offered only when the user's score on it clears the good-fit threshold.
+- What was left out, and why, is in the response's `alternatives_excluded` (debug).
+- Tests (fake module 1 with pharmacists, physicians and nurses sharing tasks): a pharmacist with B.Pharm gets no physician or nursing alternatives; a nurse with GNM gets nursing alternatives and no physicians, and without GNM none; an MBBS doctor gets physician alternatives; a higher job zone without a good fit is left out.
+
+### 16.2 `POST /api/v2/skills/match_texts`
+
+- One user's evidence (`free_text` / `skills` / `profile`, `experience_years`) + 1–50 `jobs` (`job_id` unique, `job_text`, optional `job_title`, `soc_code`) → `results[]`: exactly `match_text`'s fields + `job_id`, `job_title`, in order; user-level warnings once at the top.
+- The evidence is parsed, encoded and its past titles resolved once (`UserEvidence`); each occupation is scored once per SOC; all new job clauses are encoded in one deduplicated batch; parsed job texts (`JOB_CACHE_TEXTS` = 4,096) and clause vectors (`JOB_CACHE_VECTORS` = 50,000) are kept in memory.
+- A job's SOC that module 1 can't give falls back to its text alone, with a warning on that job; size and duplicate errors are 422 `INVALID_REQUEST`.
+- Two speed-ups that also apply to `match_text`: job texts skip the v1 taxonomy lookup (job-text items are tasks, never matched by alias; it took 3.5 of 5.9 s), and job clauses are encoded one row each instead of being split into clauses again.
+- **Latency** (CPU, 14 threads, MiniLM; 50 jobs of six O*NET tasks each, ~150 words, half with `soc_code`; occupations warm): never-seen listings 2.78 / 2.86 / 3.21 s (median 2.86 s, target 3 s); listings seen before 0.2 s. `tests/calibration/test_latency.py` guards 4.0 s / 3.0 s.
+
+### 16.3 Fields for module 3's unlocks
+
+On every `met[]` / `missing[]` / `strengths[]` / `gaps[]` item:
+- `requirement_id`: `'{item_type}:{module 1 item_id}'` (+ `':curated'`: module 1 has a curated and a posting row both with id `autocad` for Civil Engineers), or `'job:{sha1 of the clause, lower-cased, punctuation removed}'[:12]` for job-text clauses. The roadmap's gain ranking is keyed by it too (it was keyed by `item_id`, which collided for that pair).
+- `effective_weight`: the share of the score the item carries when fully met: its type's effective share × its share of the type's weight, × blend (job text 0.6 / occupation 0.4, or 1.0) × the experience factor for occupation rows. The score is linear in each item's credit, so for one job, Σ `effective_weight × credit` = `match_score` (tested).
+- `score_gain_if_met` (partial and missing items): `effective_weight × (1 − credit)`. `missing[]` in `match_text(s)` is now ordered by it.
+- `weight` is unchanged: the raw item weight. The new effective weight is a separate field so existing consumers keep their meaning.
+
+### 16.4 Tests
+
+`pytest module-2-skill-gap/tests/` → **486 passed, 1 skipped** (live Groq without a key). The v1 suite is unchanged (284 + 1 skipped); 202 general-engine tests.
+

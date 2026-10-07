@@ -6,7 +6,7 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
-> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–15](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §15.9. Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
+> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–16](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §15.9 (§16 adds match_texts and the licensing guard). Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
 
 ## Install
 
@@ -31,7 +31,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 475 tests (285 v1 + 190 general engine); the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 487 tests (285 v1 + 202 general engine); the live Groq test is skipped without a key
 python module-2-skill-gap/scripts/calibrate.py --verdict   # general engine: tuning / held-out report, verdict threshold
 ```
 
@@ -56,6 +56,7 @@ General engine (v2) settings, all optional, in the root `.env`:
 | POST | `/api/v2/skills/gap_analysis` | Any occupation: role or SOC + free text / skills / v1 profile → score, verdict, gaps, alternatives, roadmap |
 | POST | `/api/v2/skills/analyze_resume` | Upload a resume + role or SOC → v1 profile + v2 gap analysis |
 | POST | `/api/v2/skills/match_text` | For module 3: a job's text (+ SOC) vs the user's evidence → job-level match |
+| POST | `/api/v2/skills/match_texts` | For module 3: up to 50 jobs vs one user's evidence (prepared once) → one `match_text` result per job ([HANDOFF_TO_M3.md](HANDOFF_TO_M3.md)) |
 
 Errors always look like `{"error": {"code": "ENCRYPTED_FILE", "message": "..."}}`. Codes: `FILE_TOO_LARGE` (413), `TOO_MANY_PAGES` (413), `UNSUPPORTED_FORMAT` (415), `ENCRYPTED_FILE`, `CORRUPT_FILE`, `EMPTY_DOCUMENT`, `OCR_FAILED` (400), `INVALID_REQUEST` (422).
 
