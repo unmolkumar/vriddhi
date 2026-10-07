@@ -294,7 +294,7 @@ pip install -r module-2-skill-gap/requirements.txt
 pytest module-2-skill-gap/tests/ -v
 ```
 
-**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–14) adds 169 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
+**285 passed, 0 failed, 0 skipped** (~1.5–3.5 min; OCR and MiniLM dominate). The general engine (v2, §11–15) adds 190 tests; the v1 tests above are unchanged. The live Groq test (`test_llm_live.py`) runs only when `GROQ_API_KEY` is set and is skipped otherwise.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -564,7 +564,7 @@ match_score        = skill_score × experience_factor
 
 | Label | When |
 |---|---|
-| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD` (0.29 in A2; 0.3254 in A3; **0.22 since A3b, with `insufficient_evidence` for short descriptions**, §14.1) |
+| `under_skilled` | match_score < `GOOD_FIT_THRESHOLD` (0.29 in A2; 0.3254 in A3; 0.22 in A3b, with `insufficient_evidence` for short descriptions (§14.1); **0.29 since A4, with `insufficient_evidence` for oblique write-ups too**, §15.3) |
 | `over_qualified` | ≥ threshold, years > band.high + `OVERQUALIFIED_EXTRA_YEARS = 3`, and a related occupation with a higher job zone also scores ≥ threshold. That occupation is returned as `suggested_role` |
 | `good_fit` | otherwise |
 
@@ -939,7 +939,7 @@ Module 1's current code ran against its own database file in place, with no copy
 |---|---|---|---|
 | 1 | Self-contained execution | ✅ | Same service on port 8002. Module 1 only over REST (`M1_BASE_URL`); offline fixtures for every test; prewarm script and `M2_PREWARM_SOCS` |
 | 2 | Contract compliance | ✅ | `src/general/schemas.py` → `src/models/schema_m2_v2.json` with a drift test; v2 accepts v1's `UserProfile`; INTEGRATION.md error shape |
-| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/` → **453 passed, 1 skipped** (live Groq without a key). The v1 suite is unchanged (284 + 1 skipped); 169 general-engine tests, including held-out floors, the A2 gate and the fresh verdict validation |
+| 3 | 100% passing tests | ✅ | A3b: 453 passed, 1 skipped. **Superseded by §15.9 (A4): 474 passed, 1 skipped** |
 | 4 | Error handling | ✅ | Module 1 down → 503 `M1_UNAVAILABLE` while v1 works; 404/502/422 as documented; Groq translation and question rephrase fail safe to the original text or templates |
 | 5 | Zero cross-module imports | ✅ | `src/general` imports only module 2 and third-party packages; `career_intel.db` is never opened by module 2 |
 | 6 | Documentation | ✅ | README (quick start, env vars, payloads incl. answers), §11–14, HANDOFF_TO_M3 |
@@ -952,3 +952,225 @@ Module 1's current code ran against its own database file in place, with no copy
 - **`fit_percent` saturates at 100** for strong profiles.
 - **Module 1 data:** `relatedness_tier` is missing from `/related`, and the DATABASE.md DWA count is stale.
 - **Over-qualified** relies on module 1's Indian experience bands, which can be narrow (1.3–3.3 years for Registered Nurses); a 7.5-year staff nurse is told she is over-qualified.
+
+## 15. General engine (v2) — A4: oblique write-ups, shorthand, fit, module 1 fixes
+
+A4 finishes the v2 engine for its pull request. As in every earlier round, constants were tuned on tuning sets only, frozen (commit `e8ec08d`), and then measured on validation sets; `verdict_validation3` was written after the freeze.
+
+### 15.1 What changed
+
+| Piece | Change |
+|---|---|
+| C1 verdict | `insufficient_evidence` for oblique write-ups (third person, cover letter, Q&A, key-value) by related share at any length; `under_skilled` when past titles point to another field (`other_role`); Q&A questions and negative answers are no longer evidence |
+| C2 shorthand | `data/general/shorthand.json` (79 entries): literal expansions of Indian workplace abbreviations with context guards, in a matching copy; the original and the rewrites are returned. Optional Groq normalisation of very short units (`M2_NORMALISE_SHORT=1`), off by default |
+| C3 fit_percent | Re-anchored on good-fit tuning profiles; 99 at most unless every core requirement is met |
+| C4 experience band | Module 1's Indian band only with `sample_size >= 30` and data from 2023 on; otherwise the job zone. Over-qualified at band max + 2 years |
+| C5 related | With no `relatedness_tier` anywhere, module 1's first 5 related occupations (by `index_val`) count as close for role history; real tiers are used when present |
+| C6 basics | At most 4 office tools of weight >= 0.5; the rest go to `later` |
+| C7 fixtures | Main fixture = module 1's latest v2.2 export (first v2.2 export kept as `_v2.2a`); module 1's live title search captured for the profiles' past titles (`tests/mocks/m1_title_search.json`, `scripts/capture_title_search.py`) |
+
+### 15.2 Frozen constants (tuning sets only)
+
+| Constant | A3b | A4 |
+|---|---|---|
+| `scoring.GOOD_FIT_THRESHOLD` | 0.22 | **0.29** |
+| `verdict.GOOD_FIT_THRESHOLD_SHORT` | 0.17 | **0.20** |
+| `verdict.SHORT_UNITS`, `MIN_RELATED_SHARE` | 3, 0.05 | 3, 0.05 |
+| `verdict.OBLIQUE_RELATED_SHARE` | — | **0.50** |
+| `verdict.FOCUS_MIN` | — | 0.0 (off: the search never chose it) |
+| `verdict.OTHER_ROLE_EXTRA` | — | **0.0** (other_role on: no `insufficient_evidence`) |
+| `service.OTHER_ROLE_MIN_CONFIDENCE` | — | 0.9 |
+| `scoring.FIT_MEDIAN_GOOD`, `FIT_P90_GOOD`, `FIT_CAP` | median 0.42 → 80, cap 100 | **0.48 → 80, 0.59 → 95, 99** |
+| `scoring.INDIA_BAND_MIN_SAMPLE`, `INDIA_BAND_MIN_YEAR` | — | 30, 2023 |
+| `scoring.OVERQUALIFIED_EXTRA_YEARS` | 3.0 | **2.0** |
+| `service.ROLE_RELATED_UNTIERED_TOP` | — | 5 |
+| `roadmap.BASICS_MAX`, `BASICS_MIN_WEIGHT` | — | 4, 0.5 |
+
+Matching thresholds and type shares are unchanged from A3b.
+
+### 15.3 Verdict for oblique write-ups (C1)
+
+**Tuning data.** `tuning_oblique` has 25 new profiles:
+- 13 practitioners, at least 3 per style;
+- 4 beginners;
+- 8 people from other fields, 5 of them career changers (two in Q&A form, three as a resume or cover letter with past titles).
+
+With the A3b tuning sets that makes 73 tuning profiles.
+
+**Findings on tuning data that shaped the design:**
+- **Q&A questions were matched as the person's evidence.** "Have you assessed a loan yourself?" counted as a claim, so two Q&A career changers scored 0.24–0.27, above the good-fit threshold. Questions (a `Q:` line, or a sentence ending in "?") and negative answers ("No, …", "Not yet") are now skipped; inline answers ("Q: Years? A: 6") are kept.
+- **Focus doesn't separate.** The share of a person's sentences related to the target is as high for career changers (0.67–1.0) as for practitioners (0.5–1.0).
+- **Past titles do separate**, when there are dated titles. `other_role` is set when a past title resolves at confidence >= 0.9 to another SOC major group and no title is close to the target. The confidence floor and major-group rule are needed because module 1's search misresolves titles at 0.7 ("senior staff nurse" → Nurse Midwives, "accounts assistant" → Dental Assistants) and sometimes at 0.95 ("teller" → Cashiers).
+
+**Rule** (`verdict.label_for`):
+
+| Condition | Verdict |
+|---|---|
+| score >= threshold (0.29; 0.20 for short) | good_fit, or over_qualified |
+| `other_role` | under_skilled |
+| short and related share >= 0.05 | insufficient_evidence |
+| related share >= 0.50 | insufficient_evidence |
+| otherwise | under_skilled |
+
+**Search** (`scripts/calibrate.py --verdict`, 200,970 combinations):
+- The objective is the lowest `VERDICT_COST`; ties go to fewer partial or wrong-role profiles called a good fit, then the simpler rule, then the larger margin.
+- The good-fit threshold moved to 0.29 because the new beginner profiles score up to 0.28.
+- Costs on tuning: 0.29–0.31 all cost 38; 0.25–0.28 cost 40; 0.22 costs 46.
+
+**Confusion (acceptable = practitioner good_fit or insufficient, beginner under_skilled or insufficient, other field under_skilled; as in A3b):**
+
+| Set | Acceptable | Practitioners g / i / u | Beginners g / i / u | Other field g / i / u |
+|---|---|---|---|---|
+| Tuning (73) | 71/73 | 22 / 18 / **0** | 0 / 16 / 3 | **0** / 2 / 12 |
+| **verdict_validation3 (35, written after freezing)** | **30/35** | 5 / 13 / **0** | 0 / 4 / 3 | **0** / 5 / 5 |
+| verdict_validation2 (A3b's fresh set, 20) | 20/20 | 5 / 5 / 0 | 0 / 5 / 0 | 0 / 0 / 5 |
+| A3 validation (held-out-2 + verdict_validation, 24) | 24/24 | 3 / 12 / 0 | 0 / 3 / 3 | 0 / 0 / 3 |
+
+g / i / u = good_fit / insufficient_evidence / under_skilled.
+
+On `verdict_validation3`:
+- **Met:** no practitioner is `under_skilled`, and no beginner or person from another field is a good fit.
+- **Not met:** "other field mostly `under_skilled`". It is 5/10. The other five get `insufficient_evidence`: teacher → loan officer (cover letter), data entry → designer (third person), pharma rep → nurse (Q&A), delivery rider → chef (short), electrician → customer support (Q&A).
+  - The two resume-format career changers are `under_skilled` through `other_role`.
+  - In the five, a related share >= 0.5 comes from overlap in what the person does (people contact, records, numbers) and no past title is detected.
+  - Follow-up questions are their next step.
+- **The price of fewer false `under_skilled`:** most practitioners writing obliquely get `insufficient_evidence` with questions rather than `good_fit` (13 of 18 in validation3).
+- **Earlier validation sets:** A3's 9 `under_skilled` practitioners (§14.1) are all fixed.
+
+### 15.4 Shorthand (C2)
+
+**The map** (`src/general/shorthand.py`, `data/general/shorthand.json`). The design was fixed before any held-out result was looked at:
+- **Literal expansions:** BP → blood pressure, MCB → miniature circuit breaker, GST → goods & services tax, yrs → years.
+- **Case:** `upper`-only for ambiguous abbreviations (IV, OT, CA, DB).
+- **Context guards** checked against the whole input:
+  - DB → distribution board only near MCB, wiring, panel …, never near SQL or database;
+  - OT → operation theatre only near nurse, surgery, ward ….
+- **What it changes:** a matching copy only. Spans stay on the original text; each unit keeps `original_text` and `rewrites`, and evidence in the response shows both.
+- **Clause splitting:** expansions contain no clause separators, so clauses keep their own spans.
+
+On the calibration sets the map is neutral for top-1 (held-out 50/55 before and after) and lowers the tuning mean margin from +0.328 to +0.322.
+
+**Groq normalisation of very short units** (<= 4 words, rewritten with the whole description as context; batched, cached, fail-safe). Measured live with the key:
+
+| Set | Map only | Map + Groq |
+|---|---|---|
+| Tuning top-1 / mean margin | 15/15, +0.322 | 15/15, +0.325 |
+| Tuning verdicts | 46/48 | 46/48, identical labels |
+| Held-out top-1 (held-out, new, held-out-2, Hinglish) | 14, 10, 23/25, 3 | **13**, 10, 23/25, 3 |
+| verdict_validation2 | 19/20 | 19/20 |
+
+The verdict rows in this table were measured with the A3b constants, before the A4 freeze.
+
+It was decided on tuning: no gain, plus a network call per request, so it is **off by default** (`M2_NORMALISE_SHORT=1` turns it on). Held-out confirms it: one top-1 lost.
+
+**Examples** (fixture, template questions; before = map off):
+
+| | Before | After map | After 3 answers (yes, yes, some) | Map + Groq |
+|---|---|---|---|---|
+| WhatsApp nurse ("hi mam i am staff nurse 3 yrs govt hospital medicine ward. injection, BP checking, dressing") | insufficient, 0.043, fit 7 (7–19), related 0.56 | insufficient, 0.053, fit 9 (9–21), related 0.67 | insufficient, 0.087, fit 15 (15–27), next 3 questions | insufficient, 0.086, fit 15 |
+| Two-line electrician ("ITI electrician 7 yrs. / House wiring, DB and MCB fitting, earthing, fault repair.") | insufficient, 0.149, fit 26 (26–41) | insufficient, 0.158, fit 27 (27–43) | **good_fit**, 0.204, fit 35 | insufficient, 0.158, fit 27 |
+
+The nurse's first questions ask about recording vital signs, giving medications and watching for reactions, keeping records, monitoring symptoms, and first aid or immunisations. The electrician's ask about blueprints, conduit in walls, ladders and scaffolds, tools, and the licence.
+
+Rewrites shown on the evidence: "BP -> blood pressure" for the nurse; "DB -> distribution board" and "MCB -> miniature circuit breaker" for the electrician. Groq added "blood pressure checking -> checking patients' blood pressure", "House wiring -> wiring houses" and "fault repair -> repairing faults".
+
+### 15.5 fit_percent (C3)
+
+`fit_percent` is piecewise-linear through these points:
+
+| Score | fit_percent |
+|---|---|
+| 0 | 0 |
+| 0.29 (the good-fit threshold) | 50 |
+| 0.48 (median good-fit tuning profile) | 80 |
+| 0.59 (90th percentile) | 95 |
+| 1.0 | 99 |
+
+It is 100 only when every core requirement is met. The anchors come from the 18 full tuning profiles (incl. short and oblique) at or above the threshold. The median of *all* full tuning profiles (0.27) is below the threshold, so it can't anchor 80.
+
+| Profile | Score | fit_percent | Verdict |
+|---|---|---|---|
+| Full staff nurse (tuning) | 0.596 | 95 | good_fit |
+| Full electrician (tuning) | 0.491 | 82 | good_fit |
+| WhatsApp nurse | 0.053 | 9 | insufficient_evidence |
+| Accountant applying as a nurse | 0.000 | 0 | under_skilled |
+
+### 15.6 Experience band, related occupations, basics (C4–C6)
+
+- **Experience band.**
+  - `scoring.india_band_reliable` uses module 1's `indian_experience` only when `fallback_to_job_zone` is false and `sample_size >= 30`, and the newest year in `years_covered` is >= 2023. Missing fields count as unreliable, and the job-zone band is used.
+  - Over-qualified needs more than band max + 2 years and a more senior related fit.
+  - Tests: the 7.5-year staff nurse on module 1's n=3, 2015–16 band (1.3–3.3) is `good_fit` on the job-zone band (2–6); with the same band at n=120 and 2023–2025 she is `over_qualified`.
+- **Related occupations.** `service.close_related` returns `Primary-Short`/`Primary-Long` tiers when module 1 sends any tier, otherwise the first 5 by `index_val`. Fixture stand-in tiers are still not close.
+- **Basics.** Nurse: Access, Office, Outlook, PowerPoint (SharePoint, Windows and the rest move to `later`).
+
+### 15.7 Module 1 update, live check (C7) and Hinglish (C8)
+
+**Module 1 on main** (merged `78c0ae1`):
+- populated `relatedness_tier`;
+- 2023+ experience bands with a job-zone fallback below n = 30;
+- `sample_size` and `years_covered` in `/profile`;
+- a deduplicated `onet_dwa` (24,087 rows; docs corrected);
+- a rebuilt export.
+
+The local `career_intel.db` was built before the rebuild, so main's latest module 1 code returns 500 on `/profile` against it (`no such column: fallback_to_job_zone`). The live check therefore ran module 1 at `e84674a` (the code that built this DB) from its own folder, against its own DB in place, with no copy, over REST only. The DB needs the new loader run by module 1's owner.
+
+**Live results:**
+- **`/api/v1/meta`:** schema 2.2.0, built 2026-10-06T13:38Z, export hash 02b93f2a…
+- **Data:**
+  - The live requirement rows for the 15 export occupations match the latest export item for item. Only the first v2.2 export (`_v2.2a`) differs, in the Data Scientists market skills.
+  - The refetch of the 10 extra occupations returned the committed data unchanged.
+- **`/related`:** `relatedness_tier` is still null in this DB, so C5's fallback applies. Registered Nurses → Acute Care, Nurse Practitioners, Critical Care, Clinical Nurse Specialists, LPN/LVN. An "Acute Care Nurse" past title now counts as role history for Registered Nurses (`applies_to_target: true`).
+- **Over-qualified:** the stale bands are ignored. The 7.5-year staff nurse is `good_fit` (job-zone band 2–6; A3b said over-qualified). The electrician, pharmacist and accountant at 12 years are `good_fit`; no more senior related fit clears the threshold.
+- **Close alternatives:**
+  - The electrician gets Electrical Power-Line Installers (0.48).
+  - The pharmacist gets **Emergency Medicine Physicians (0.51)**. It is the same job zone, so it is never an over-qualified suggestion, but it is a questionable alternative across a licensing boundary (§15.10).
+- **Calibration, fixture vs live:** identical for every set (top-1 and margins in §15.8, verdict tables in §15.3), as expected from identical rows.
+
+**Hinglish / Hindi** (5 profiles, frozen constants, not tuned on):
+
+| Translation | Top-1 | Top-3 | Mean margin | Verdicts |
+|---|---|---|---|---|
+| Committed translations | 3/5 | 5/5 | +0.112 | 1 good_fit, 4 insufficient, 0 under_skilled |
+| **Live Groq** | **4/5** | 5/5 | +0.123 | 1 good_fit, 4 insufficient, 0 under_skilled |
+| None | 3/5 | 3/5 | +0.009 | 5 under_skilled |
+
+The remaining miss is the Devanagari electrician, beaten by Plumbers.
+
+### 15.8 Final calibration (MiniLM, frozen constants; fixture = live)
+
+| Set | Top-1 | Top-3 | Mean margin |
+|---|---|---|---|
+| Tuning | 15/15 | 15/15 | +0.317 |
+| Held-out | 14/15 | 15/15 | +0.124 |
+| Extra occupations | 10/10 | 10/10 | +0.196 |
+| Held-out, curated removed | 13/15 | 15/15 | +0.099 |
+| Held-out-2 | 13/15 | 14/15 | +0.122 |
+| Held-out-2, extra occupations | 10/10 | 10/10 | +0.129 |
+| Held-out-2, curated removed | 12/15 | 14/15 | +0.099 |
+| Hinglish (committed translations) | 3/5 | 5/5 | +0.112 |
+| **Held-out total** | **50/55** | | |
+
+The A2 gate passes (held-out-2 >= 12/15, extra occupations >= 7/10).
+
+### 15.9 Readiness checklist (AGENTS.md §18) for the v2 engine, A4
+
+| # | Gate criterion | Status | Evidence |
+|---|---|---|---|
+| 1 | Self-contained execution | ✅ | Same service on port 8002. Module 1 only over REST (`M1_BASE_URL`); offline fixtures for every test (incl. captured title searches); prewarm script and `M2_PREWARM_SOCS` |
+| 2 | Contract compliance | ✅ | `src/general/schemas.py` → `src/models/schema_m2_v2.json` with a drift test (new: `evidence.rewrites`, `evidence_volume.focus` / `other_role`); v2 accepts v1's `UserProfile`; INTEGRATION.md error shape |
+| 3 | 100% passing tests | ✅ | `pytest module-2-skill-gap/tests/` → **474 passed, 1 skipped** (live Groq without a key). The v1 suite is unchanged (284 + 1 skipped); 190 general-engine tests, including held-out floors, the A2 gate and verdict regressions on both fresh validation sets |
+| 4 | Error handling | ✅ | Module 1 down → 503 `M1_UNAVAILABLE` while v1 works; 404/502/422 as documented; Groq translation, question rephrase and normalisation fail safe |
+| 5 | Zero cross-module imports | ✅ | `src/general` imports only module 2 and third-party packages; `career_intel.db` is never opened by module 2 |
+| 6 | Documentation | ✅ | README (quick start, env vars, payloads incl. answers and rewrites), §11–15, HANDOFF_TO_M3 |
+| 7 | Clean git history | ✅ | Conventional Commits with `(module-2)` scope on `feat/module-2-skill-gap` |
+
+### 15.10 Known limits after A4
+
+- **People from other fields with oblique write-ups** get `insufficient_evidence` rather than `under_skilled` when nothing names their past role (5/10 in validation3). They are never called a good fit.
+- **Practitioners writing obliquely** mostly get follow-up questions, not `good_fit`.
+- **Hinglish:** 4/5 with live Groq, 3/5 with the committed translations.
+- **Close alternatives can cross licensing boundaries** (pharmacist → Emergency Medicine Physicians).
+- **Module 1 local DB:**
+  - It needs a rebuild with main's loader for tiers, the new bands and `/profile` under main's code.
+  - Its search misresolves some titles even at 0.95 ("teller" → Cashiers), which `other_role`'s guards absorb.

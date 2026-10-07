@@ -6,7 +6,7 @@ Turns a resume (PDF, DOCX, TXT) or typed skills into an evidence-based skill pro
 - How it works, formulas and contracts: [WORKING.md](WORKING.md) · JSON Schema: [src/models/schema_m2.json](src/models/schema_m2.json)
 - Branch: `feat/module-2-skill-gap` · Port: **8002** (Module 1 uses 8001)
 
-> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–14](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §14.7. Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
+> **v2: any occupation.** `/api/v2/*` is a general career engine for every O*NET occupation, built on module 1 v2's requirements over REST (see [v2 below](#v2-any-occupation)). v1 (`/api/v1/*`, the tech-role taxonomy and gap analyzer) is unchanged. Design, calibration and formulas: [WORKING.md §11–15](WORKING.md#11-general-engine-v2--a1-a1b-and-a1c); readiness checklist in §15.9. Contract: [src/models/schema_m2_v2.json](src/models/schema_m2_v2.json).
 
 ## Install
 
@@ -31,7 +31,7 @@ uvicorn src.api.main:app --port 8002
 ## Test
 
 ```bash
-pytest module-2-skill-gap/tests/ -v      # 454 tests (285 v1 + 169 general engine); the live Groq test is skipped without a key
+pytest module-2-skill-gap/tests/ -v      # 475 tests (285 v1 + 190 general engine); the live Groq test is skipped without a key
 python module-2-skill-gap/scripts/calibrate.py --verdict   # general engine: tuning / held-out report, verdict threshold
 ```
 
@@ -43,6 +43,7 @@ General engine (v2) settings, all optional, in the root `.env`:
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Sentence embeddings (CPU) |
 | `GROQ_API_KEY`, `GROQ_MODEL` | none, `openai/gpt-oss-120b` | Rewriting Hinglish / Hindi sentences in English before matching, and rephrasing follow-up questions (also v1's optional LLM pass). Without a key: sentences matched as written (with a warning), template questions |
 | `M2_PREWARM_SOCS` | none | Comma-separated SOCs to prepare in the background at startup, e.g. `29-1141.00,47-2111.00` |
+| `M2_NORMALISE_SHORT` | off | `1`: also rewrite very short units ("dressing") as plain phrases through Groq. Measured without gain (WORKING.md §15.4), so off by default |
 
 ## Endpoints
 
@@ -167,7 +168,7 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
 
 v2 needs module 1 running; it returns `503 M1_UNAVAILABLE` when it isn't, and v1 is unaffected. An occupation is prepared on first use (requirements filtered, weighted and encoded, then cached): about 20 s with its related occupations, or ahead of time with `M2_PREWARM_SOCS` / `scripts/prewarm_embeddings.py`. Warm requests take 0.1–0.6 s on CPU.
 
-Evidence can be any style: a resume, a few lines, Hinglish or Hindi (rewritten in English through Groq when `GROQ_API_KEY` is set; the response keeps the original text). Job-title lines count as role history, not as evidence of tasks.
+Evidence can be any style: a resume, a few lines, a cover letter, Q&A or key-value notes, Hinglish or Hindi (rewritten in English through Groq when `GROQ_API_KEY` is set; the response keeps the original text). Common Indian workplace shorthand (BP, IV, MCB, DB near wiring, GST, TDS, KYC, yrs …) is expanded in a matching copy ([data/general/shorthand.json](data/general/shorthand.json)); evidence shows the text as written in `original_text` and the expansions in `rewrites`. Job-title lines count as role history, not as evidence of tasks; interview questions and "No, …" answers are not evidence.
 
 ### Example: gap analysis for any role
 
@@ -190,20 +191,22 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
   "method": "india_alias_exact",
   "low_confidence": false
  },
- "match_score": 0.5805,
- "fit_percent": 100,
+ "match_score": 0.5955,
+ "fit_percent": 95,
  "fit_label": "Strong fit",
  "verdict": {
   "label": "good_fit",
-  "reason": "Your evidence covers 58% of this role's weighted core requirements."
+  "reason": "Your evidence covers 60% of this role's weighted core requirements."
  },
  "evidence_volume": {
-  "units": 18,
-  "related_share": 0.9564,
-  "short": false
+  "units": 19,
+  "related_share": 0.956,
+  "short": false,
+  "focus": 1.0,
+  "other_role": null
  },
  "score_breakdown": {
-  "skill_score": 0.5805,
+  "skill_score": 0.5955,
   "experience_years": 7.5,
   "experience_band": [
    2.0,
@@ -238,13 +241,13 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
    "requirement": "Record patients' medical information and vital signs.",
    "item_type": "task",
    "status": "partial",
-   "similarity": 0.5502,
+   "similarity": 0.5556,
    "credit": 0.5,
    "weight": 0.935,
    "provenance": "onet",
    "reason": "semantic",
    "evidence": {
-    "text": "chart vitals",
+    "text": "chart vital signs",
     "evidence_type": "work",
     "section": "experience",
     "span": [
@@ -254,7 +257,7 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
    }
   }
  ],
- "gaps_total": 257,
+ "gaps_total": 255,
  "not_applicable_in_india": [
   {
    "requirement": "Prescribe or recommend drugs, medical devices, or other forms of treatment, such as physical therapy, inhalation therapy, or related therapeutic procedures.",
@@ -310,7 +313,7 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
    "Microsoft Office software",
    "Microsoft Outlook"
   ],
-  "later": "<238 more items>",
+  "later": "<243 more items>",
   "total_hours": {
    "low": 120,
    "high": 230
@@ -337,12 +340,12 @@ curl -X POST http://localhost:8002/api/v2/skills/gap_analysis -H "Content-Type: 
 
 ### Short descriptions: follow-up questions and answers
 
-A short description that shows something related to the role (and doesn't clear the good-fit threshold) gets `"verdict": {"label": "insufficient_evidence"}` instead of `under_skilled`, with `fit_provisional: true`, a `fit_range`, and 3–5 `follow_up_questions` built from the role's heaviest requirements not shown yet:
+A short description that shows something related to the role, or a longer one written obliquely (third person, cover letter, Q&A) that touches at least half of the role's core requirements, gets `"verdict": {"label": "insufficient_evidence"}` instead of `under_skilled` when it doesn't clear the good-fit threshold. It comes with `fit_provisional: true`, a `fit_range`, and 3–5 `follow_up_questions` built from the role's heaviest requirements not shown yet. Past job titles in another field (`evidence_volume.other_role`) keep `under_skilled`:
 
 ```json
-{"match_score": 0.1429, "fit_percent": 32, "fit_provisional": true, "fit_range": {"low": 32, "high": 52},
- "verdict": {"label": "insufficient_evidence", "reason": "Your description is short (2 items) and shows 14% of this role's weighted core requirements so far. Answer the questions below to give a fuller picture."},
- "evidence_volume": {"units": 2, "related_share": 0.5235, "short": true},
+{"match_score": 0.1429, "fit_percent": 25, "fit_provisional": true, "fit_range": {"low": 25, "high": 40},
+ "verdict": {"label": "insufficient_evidence", "reason": "Your description is short (2 items), and clearly shows 14% of the weighted total so far. Answer the questions below to give a fuller picture."},
+ "evidence_volume": {"units": 2, "related_share": 0.5235, "short": true, "focus": 1.0, "other_role": null},
  "follow_up_questions": [{"requirement_id": "...", "requirement": "Prepare sketches or follow blueprints to determine the location of wiring or equipment ...",
                           "item_type": "task", "question": "In your work, do you prepare sketches or follow blueprints?"}]}
 ```
@@ -355,7 +358,7 @@ A short description that shows something related to the role (and doesn't clear 
              {"requirement_id": "<...>", "answer": "some"}]}
 ```
 
-Here three answers (yes, yes, no) move the electrician to `good_fit` (fit 41). The roadmap also returns `basics` (generic office software) next to the main items and `later`.
+Here three answers (yes, yes, no) raise the electrician to 0.18 (fit 31); the next questions follow until the score clears the short-description threshold (0.20). The roadmap also returns `basics` (at most 4 in-demand office tools) next to the main items and `later`.
 
 ### Example: match a job's text (module 3)
 
