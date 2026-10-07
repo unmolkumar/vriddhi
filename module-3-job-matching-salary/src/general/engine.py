@@ -201,7 +201,7 @@ def resolve(req: JobSearchV2Request, c: Clients, warnings: list[str]) -> tuple[R
 # --- matching ---------------------------------------------------------------------------------------------------
 
 def _words(text: str) -> set[str]:
-    return {w for w in re.findall(r"[a-z][a-z+#.]{2,}", (text or "").lower())} - relevance.STOPWORDS
+    return {w for w in re.findall(r"[a-z][a-z0-9+#]{2,}", (text or "").lower())} - relevance.STOPWORDS
 
 
 def keyword_match(req: JobSearchV2Request, job: Job) -> JobMatchV2:
@@ -333,14 +333,15 @@ def search(req: JobSearchV2Request, c: Clients | None = None) -> JobSearchV2Resp
     m2_ok, results = True, {}
     if matched_jobs:
         payload = []
-        for j in matched_jobs:
+        for n, j in enumerate(matched_jobs):        # short positional ids: provider ids can exceed module 2's limit
             r = rels[j.job_id]
             soc = r.soc_code if (r.soc_code and r.confidence >= relevance.RESOLVE_MIN_CONFIDENCE
                                  and r.soc_code in target.related) else target.soc
-            payload.append({"job_id": j.job_id, "job_text": job_text(j)[:MAX_JOB_TEXT], "job_title": j.title,
+            payload.append({"job_id": f"j{n}", "job_text": job_text(j)[:MAX_JOB_TEXT], "job_title": j.title[:200],
                             **({"soc_code": soc} if soc else {})})
         try:
-            results = {r["job_id"]: reblend(r) for r in m2.match_texts(evidence(req), payload, client=c.m2)}
+            results = {matched_jobs[int(r["job_id"][1:])].job_id: reblend(r)
+                       for r in m2.match_texts(evidence(req), payload, client=c.m2)}
         except M2Unavailable as e:
             m2_ok = False
             warnings.append(f"Module 2 (matching) is unreachable ({e}); jobs are matched by keyword overlap, which "
