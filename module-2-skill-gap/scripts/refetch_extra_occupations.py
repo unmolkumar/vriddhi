@@ -3,6 +3,7 @@
 Run from module-2-skill-gap/ with module 1 up (M1_BASE_URL, default http://localhost:8001):
   python scripts/refetch_extra_occupations.py            # rewrite tests/mocks/m1_heldout_occupations.json
   python scripts/refetch_extra_occupations.py --dry-run  # show what module 1 returns per occupation
+  python scripts/refetch_extra_occupations.py --socs-from tests/mocks/m1_occupation_requirements_export.json       --out live_export.json                             # a live copy of the 15 export occupations (fixture vs live)
 
 The SOC list is read from the current fixture, so the same 10 occupations are refreshed. The metadata records
 module 1's version as the client sees it (GET /api/v1/meta when available, else the OpenAPI version).
@@ -25,9 +26,11 @@ from src.general.m1_client import EXTRA_FIXTURE_PATH, M1Client  # noqa: E402
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--dry-run", action="store_true", help="fetch and summarise, don't write")
+    ap.add_argument("--socs-from", type=Path, default=EXTRA_FIXTURE_PATH, help="fixture whose SOCs to fetch")
+    ap.add_argument("--out", type=Path, default=EXTRA_FIXTURE_PATH, help="file to write")
     args = ap.parse_args()
 
-    socs = list(json.loads(EXTRA_FIXTURE_PATH.read_text(encoding="utf-8"))["occupations"])
+    socs = list(json.loads(args.socs_from.read_text(encoding="utf-8"))["occupations"])
     client = M1Client(cache_dir=None)
     version = client.version()
     occupations = {}
@@ -46,8 +49,8 @@ def main() -> None:
                            "outside the 15-occupation export, for held-out calibration.",
             "data_label": f"module 1 {version}" + ("" if has_dwa else " (no DWA rows: database older than v2.1)"),
             "target_occupations_count": len(occupations)}
-    EXTRA_FIXTURE_PATH.write_text(json.dumps({"metadata": meta, "occupations": occupations}, indent=1), encoding="utf-8")
-    print(f"wrote {EXTRA_FIXTURE_PATH} (module 1 {version})")
+    args.out.write_text(json.dumps({"metadata": meta, "occupations": occupations}, indent=1), encoding="utf-8")
+    print(f"wrote {args.out} (module 1 {version})")
 
 
 if __name__ == "__main__":
