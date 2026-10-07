@@ -29,6 +29,12 @@ _SENTENCE = re.compile(r"(?<=[.!?;])\s+(?=[A-Z0-9])")
 _LIST_ITEM = re.compile(r"\s*[,|;•·▪●/]\s*|\s+and\s+|\n", re.IGNORECASE)
 _CLAUSE = re.compile(r"\s*[,;]\s*|\s+and\s+", re.IGNORECASE)
 MIN_CLAUSES = 2                # a sentence with this many list parts also yields one unit per part
+# Interview / Q&A write-ups (A4): the questions are someone else's words and a negative answer is not a claim, so
+# neither is evidence; "A:" labels are dropped from answers.
+_QUESTION_LABEL = re.compile(r"^(q|ques|question)\s*[.:)\-]\s*", re.IGNORECASE)
+_ANSWER_LABEL = re.compile(r"^(a|ans|answer)\s*[.:)\-]\s+", re.IGNORECASE)
+_INLINE_ANSWER = re.compile(r"\?\s*(a|ans|answer)\s*[.:)\-]\s*", re.IGNORECASE)
+_NEGATIVE_ANSWER = re.compile(r"^(no|nope|not yet|never|nahi|nahin)\s*[,.!;:-]|^not yet", re.IGNORECASE)
 HEADER_TITLE_LINES = 3         # header lines that may carry the current title ('Staff Nurse | Kochi')
 MAX_TITLE_WORDS = 6
 
@@ -89,9 +95,20 @@ def _units_of(section: str, body: str) -> list[tuple[str, list[str]]]:
     out = []
     for line in body.splitlines():
         line = _BULLET.sub("", line).strip()
-        if line:
-            out += [(s.strip(), clauses(s.strip())) for s in _SENTENCE.split(line) if s.strip()]
+        if _QUESTION_LABEL.match(line):                        # "Q: Years? A: 10." keeps the inline answer
+            inline = _INLINE_ANSWER.search(line)
+            line = line[inline.end():] if inline else ""
+        line = _ANSWER_LABEL.sub("", line)
+        if not line:
+            continue
+        out += [(s.strip(), clauses(s.strip())) for s in _SENTENCE.split(line)
+                if s.strip() and not is_question_or_no(s.strip())]
     return out
+
+
+def is_question_or_no(sentence: str) -> bool:
+    """A question ('Any medical work?') or a negative answer ('No, the finance company decided.'): not evidence."""
+    return sentence.endswith("?") or bool(_NEGATIVE_ANSWER.match(sentence))
 
 
 def _find(text: str, piece: str, cursor: int) -> tuple[int, int] | None:
