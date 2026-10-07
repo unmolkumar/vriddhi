@@ -152,8 +152,8 @@ def test_expected_gain_uses_type_shares_and_missing_credit():
           match("Half task", importance=0.9, status="partial", similarity=0.5)] + \
          [match(f"Tool {k}", "tool", importance=0.9) for k in range(10)]
     gain = roadmap.expected_gain(ms, scoring.credit)
-    assert gain["Big task"] > gain["Half task"] > gain["Small task"]
-    assert gain["Big task"] > gain["Tool 0"]                                  # tools share 0.05 over 10 items
+    assert gain["task:Big task"] > gain["task:Half task"] > gain["task:Small task"]      # keyed by requirement_id
+    assert gain["task:Big task"] > gain["tool:Tool 0"]                                  # tools share 0.05 over 10 items
 
 
 def test_plan_caps_tech_and_moves_office_software_to_basics():

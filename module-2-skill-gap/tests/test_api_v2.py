@@ -126,3 +126,57 @@ def test_openapi_lists_v2_and_v1(client):
 def test_v2_schema_export_is_current():
     committed = json.loads((HERE.parent / "src" / "models" / "schema_m2_v2.json").read_text(encoding="utf-8"))
     assert committed == export_json_schema(), "run: python -m src.general.schemas"
+
+
+# --- match_texts (batch, for module 3) and the unlock fields ------------------------------------------------
+JOB_A = "Staff Nurse, Pune. Administer medications to patients and monitor patients for reactions. Maintain patient records."
+JOB_B = "Ward nurse needed. Maintain patient records. Teach patients about home care and diet after discharge."
+
+
+def test_match_texts_equals_match_text_job_by_job(client):
+    jobs = [{"job_id": "a", "job_text": JOB_A, "soc_code": RN}, {"job_id": "b", "job_text": JOB_B, "job_title": "Ward nurse"}]
+    r = client.post("/api/v2/skills/match_texts", json={"free_text": NURSE, "jobs": jobs})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert [x["job_id"] for x in results] == ["a", "b"] and results[1]["job_title"] == "Ward nurse"
+    for job, res in zip(jobs, results):
+        single = client.post("/api/v2/skills/match_text", json={"free_text": NURSE, "job_text": job["job_text"],
+                                                                "soc_code": job.get("soc_code")}).json()
+        assert {k: v for k, v in res.items() if k not in ("job_id", "job_title", "warnings")} ==             {k: v for k, v in single.items() if k != "warnings"}
+        assert single["warnings"] == r.json()["warnings"] + res["warnings"]     # user-level warnings once, at the top
+    ids = lambda res: {x["requirement"]: x["requirement_id"] for x in res["met"] + res["missing"]}  # noqa: E731
+    a, b = ids(results[0]), ids(results[1])
+    assert a["Maintain patient records."] == b["Maintain patient records."]                      # same clause, same id
+    assert a["Maintain patient records."].startswith("job:")
+    assert any(i.startswith("task:") for i in a.values())                                         # occupation rows
+
+
+def test_score_gain_if_met_adds_up_to_the_score(client):
+    r = client.post("/api/v2/skills/match_text", json={"free_text": NURSE, "job_text": JOB_B}).json()   # job text only
+    items = r["met"] + r["missing"]
+    assert len(items) == r["job_requirements"]
+    assert sum(x["effective_weight"] for x in items) == pytest.approx(1.0, abs=1e-3)
+    assert sum(x["effective_weight"] * x["credit"] for x in items) == pytest.approx(r["match_score"], abs=1e-3)
+    for x in r["missing"]:
+        assert x["score_gain_if_met"] == pytest.approx(x["effective_weight"] * (1 - x["credit"]), abs=1e-4)
+    assert all(x["score_gain_if_met"] is None for x in r["met"])
+    gaps = client.post("/api/v2/skills/gap_analysis", json={"soc_code": RN, "free_text": NURSE}).json()["gaps"]
+    assert all(g["requirement_id"] and g["score_gain_if_met"] is not None for g in gaps)
+
+
+@pytest.mark.parametrize("payload", [
+    {"free_text": NURSE, "jobs": []},
+    {"free_text": NURSE, "jobs": [{"job_id": str(i), "job_text": JOB_A} for i in range(51)]},
+    {"free_text": NURSE, "jobs": [{"job_id": "x", "job_text": JOB_A}, {"job_id": "x", "job_text": JOB_B}]},
+    {"jobs": [{"job_id": "x", "job_text": JOB_A}]}])
+def test_match_texts_limits_are_structured_errors(client, payload):
+    r = client.post("/api/v2/skills/match_texts", json=payload)
+    assert r.status_code == 422 and r.json()["error"]["code"]
+
+
+def test_match_texts_unknown_soc_falls_back_to_the_job_text(client):
+    r = client.post("/api/v2/skills/match_texts", json={"free_text": NURSE, "jobs": [
+        {"job_id": "a", "job_text": JOB_A, "soc_code": "99-9999.00"}, {"job_id": "b", "job_text": JOB_B, "soc_code": RN}]})
+    assert r.status_code == 200
+    a, b = r.json()["results"]
+    assert a["blend"] == 1.0 and "unavailable from module 1" in a["warnings"][0] and b["occupation_title"]
