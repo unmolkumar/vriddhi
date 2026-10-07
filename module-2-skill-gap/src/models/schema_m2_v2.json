@@ -361,6 +361,35 @@
       "title": "EvidenceVolumeOut",
       "type": "object"
     },
+    "ExcludedAlternative": {
+      "properties": {
+        "soc_code": {
+          "title": "Soc Code",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "reason": {
+          "description": "Why it isn't suggested: a regulated occupation without the qualification, or a higher job zone without a good fit",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "soc_code",
+        "title",
+        "score",
+        "reason"
+      ],
+      "title": "ExcludedAlternative",
+      "type": "object"
+    },
     "ExtractedSkill": {
       "description": "A skill in the user's profile, with evidence and an evidence-based level.",
       "properties": {
@@ -784,6 +813,14 @@
             "$ref": "#/$defs/CloseAlternative"
           },
           "title": "Close Alternatives",
+          "type": "array"
+        },
+        "alternatives_excluded": {
+          "description": "Debug: related occupations left out of close_alternatives / suggested_role",
+          "items": {
+            "$ref": "#/$defs/ExcludedAlternative"
+          },
+          "title": "Alternatives Excluded",
           "type": "array"
         },
         "roadmap": {

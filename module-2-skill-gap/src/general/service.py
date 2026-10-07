@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.general import inference, roadmap, scoring, shorthand, verdict
+from src.general import inference, regulated, roadmap, scoring, shorthand, verdict
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import (
     EvidenceUnit, Translator, from_profile, from_skills, from_text, profile_history, role_history,
@@ -24,7 +24,7 @@ from src.general.requirements import (
     DEFAULT_LEVEL, SCORED_TYPES, FilterReport, RequirementItem, domain_texts, normalise,
 )
 from src.general.schemas import (
-    CloseAlternative, DrawsOnItem, EvidenceRef, EvidenceVolumeOut, FitIndicatorItem, FitRange, FollowUpQuestionOut,
+    CloseAlternative, DrawsOnItem, ExcludedAlternative, EvidenceRef, EvidenceVolumeOut, FitIndicatorItem, FitRange, FollowUpQuestionOut,
     GapAnalysisV2Request, GapAnalysisV2Response, GeneralRoadmap, LaterItem, MatchTextRequest, MatchTextResponse, NotApplicableItem, ProvenanceSummary,
     RequirementResult, RoadmapItem, RoleHistoryItem, RoleOption, RoleResolution, ScoreBreakdown, TypeScore, Verdict,
     WorkActivityItem,
@@ -338,7 +338,8 @@ class GeneralEngine:
         match_score = skill * factor
         vol = self._volume(occ, units, unit_vectors, matches, roles)
 
-        alternatives, better_fit = self._alternatives(occ, units, unit_vectors, years, roles, match_score, warnings)
+        alternatives, better_fit, excluded = self._alternatives(occ, units, unit_vectors, years, roles, match_score,
+                                                                warnings)
         if resolution.low_confidence:
             alternatives += [CloseAlternative(soc_code=o.soc_code, title=o.title, score=o.confidence, source="search",
                                               message=f"Did you mean {o.title}?") for o in resolution.did_you_mean]
@@ -383,7 +384,7 @@ class GeneralEngine:
             work_activities=[WorkActivityItem(name=w.item.name, status=w.status, via=w.via)
                              for w in generic.work_activities],
             fit_indicators=[FitIndicatorItem(**f.model_dump()) for f in generic.fit_indicators],
-            close_alternatives=alternatives,
+            close_alternatives=alternatives, alternatives_excluded=excluded,
             roadmap=self._roadmap(occ, gaps, matches, units, req.hours_per_week),
             provenance_summary=self._provenance(occ),
             m1_version=occ.version, warnings=warnings)
@@ -397,12 +398,16 @@ class GeneralEngine:
         return verdict.volume(units, matches, sims, other)
 
     def _alternatives(self, occ, units, unit_vectors, years, roles, target_score, warnings):
+        """(close alternatives, more senior fit, excluded). A regulated occupation (regulated.py) needs the user's
+        qualification or a past title in it; a higher job zone than the target needs a good fit."""
         try:
             related = self.client.related(occ.soc, limit=RELATED_LIMIT)
         except M1Error as e:
             warnings.append(f"Related occupations unavailable ({e.code}).")
-            return [], None
-        out, better = [], None
+            return [], None, []
+        texts = [t for u in units for t in {u.text, u.original_text or u.text}]
+        past = {r.soc for r in roles}
+        out, better, excluded = [], None, []
         for r in related[:RELATED_LIMIT]:
             soc = r.get("related_soc_code")
             try:
@@ -410,6 +415,13 @@ class GeneralEngine:
             except M1Error:
                 continue                    # not in module 1 (or the fixture): skip quietly
             s, _, _ = self._score(other, units, unit_vectors, years, roles)
+            reason = regulated.blocked(soc, texts, past)
+            if reason is None and (other.job_zone or 0) > (occ.job_zone or 0) and s < scoring.GOOD_FIT_THRESHOLD:
+                reason = f"Job zone {other.job_zone} is above the target's {occ.job_zone} and the evidence isn't a good fit"
+            if reason:
+                if s >= target_score - ALTERNATIVE_MARGIN:
+                    excluded.append(ExcludedAlternative(soc_code=soc, title=other.title, score=round(s, 4), reason=reason))
+                continue
             if s >= target_score - ALTERNATIVE_MARGIN:
                 stronger = s > target_score
                 out.append(CloseAlternative(
@@ -419,7 +431,7 @@ class GeneralEngine:
             if (other.job_zone or 0) > (occ.job_zone or 0) and s >= scoring.GOOD_FIT_THRESHOLD:
                 if better is None or s > better[2]:
                     better = (soc, other.title, s)
-        return sorted(out, key=lambda a: -a.score), better
+        return sorted(out, key=lambda a: -a.score), better, excluded
 
     def _roadmap(self, occ: OccupationData, gaps: list[RequirementMatch], matches: list[RequirementMatch],
                  units: list[EvidenceUnit], hours_per_week: float | None) -> GeneralRoadmap:

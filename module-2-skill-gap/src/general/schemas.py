@@ -186,6 +186,14 @@ class CloseAlternative(BaseModel):
     message: str
 
 
+class ExcludedAlternative(BaseModel):
+    soc_code: str
+    title: str
+    score: float
+    reason: str = Field(description="Why it isn't suggested: a regulated occupation without the qualification, or a "
+                                    "higher job zone without a good fit")
+
+
 class RoadmapItem(BaseModel):
     step: int
     requirement: str
@@ -240,6 +248,8 @@ class GapAnalysisV2Response(BaseModel):
     work_activities: list[WorkActivityItem]
     fit_indicators: list[FitIndicatorItem]
     close_alternatives: list[CloseAlternative]
+    alternatives_excluded: list[ExcludedAlternative] = Field(
+        default_factory=list, description="Debug: related occupations left out of close_alternatives / suggested_role")
     roadmap: GeneralRoadmap
     provenance_summary: ProvenanceSummary
     m1_version: str

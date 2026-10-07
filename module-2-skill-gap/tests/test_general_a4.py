@@ -98,3 +98,67 @@ def test_other_role_needs_a_confident_title_in_another_field():
     nurse = lab.replace("Laboratory Technician | Metropolis Lab", "Staff Nurse | Apollo Hospitals")
     r = e.analyze(GapAnalysisV2Request(soc_code="29-1141.00", free_text=nurse))
     assert r.evidence_volume.other_role is None
+
+
+# --- A4b (prompt 21) A1: licensing guard ----------------------------------------------------------------------
+
+class Clinic:
+    """Pharmacists, physicians, nurses: all related, sharing tasks (word-overlap encoder)."""
+    TASKS = ["Review prescriptions for patients", "Give medicines to patients", "Advise patients on doses"]
+    DATA = {"29-1051.00": ("Pharmacists", 5), "29-1229.00": ("Physicians, All Other", 5),
+            "29-1141.00": ("Registered Nurses", 3), "29-1141.01": ("Acute Care Nurses", 3),
+            "31-1131.00": ("Nursing Assistants", 4)}
+
+    def version(self):
+        return "test"
+
+    def profile(self, soc):
+        from src.general.m1_client import M1Error
+        if soc not in self.DATA:
+            raise M1Error("not_found", soc, 404)
+        return {"soc_code": soc, "title": self.DATA[soc][0], "job_zone": {"job_zone": self.DATA[soc][1]}}
+
+    def requirements(self, soc):
+        return [{"soc_code": soc, "item_type": "task", "item_id": f"{soc}-{k}", "item_name": t, "importance_norm": 0.8,
+                 "reliable": 1} for k, t in enumerate(self.TASKS)]
+
+    def related(self, soc, limit=20):
+        return [{"related_soc_code": s, "relatedness_tier": None, "index_val": i + 1}
+                for i, s in enumerate(s for s in self.DATA if s != soc)]
+
+    def search(self, q, k=5):
+        from src.general.m1_client import resolution
+        return resolution(q, [])
+
+
+def _clinic(soc, text):
+    e = GeneralEngine(client=Clinic(), encoder=WordEncoder(), translator=None, rephraser=None, normaliser=None)
+    r = e.analyze(GapAnalysisV2Request(soc_code=soc, free_text=text, experience_years=3))
+    return {a.soc_code for a in r.close_alternatives}, {x.soc_code: x.reason for x in r.alternatives_excluded}
+
+
+WORK = "Review prescriptions for patients. Give medicines to patients. Advise patients on doses."
+
+
+def test_pharmacist_is_never_offered_physician_roles():
+    alts, excluded = _clinic("29-1051.00", WORK + "\nB.Pharm, 2016")
+    assert "29-1229.00" not in alts and "regulated in India" in excluded["29-1229.00"]
+    assert "29-1141.00" not in alts                                      # nursing needs GNM / B.Sc Nursing too
+
+
+def test_nurse_with_gnm_gets_nursing_alternatives():
+    alts, excluded = _clinic("29-1141.00", WORK + "\nGNM, 2018")
+    assert "29-1141.01" in alts and "29-1229.00" not in alts
+    alts, excluded = _clinic("29-1141.00", WORK)                         # no nursing qualification shown
+    assert "29-1141.01" not in alts and "29-1141.01" in excluded
+
+
+def test_mbbs_doctor_gets_physician_alternatives():
+    alts, _ = _clinic("29-1051.00", WORK + "\nMBBS, AIIMS Delhi, 2012")
+    assert "29-1229.00" in alts
+
+
+def test_higher_job_zone_needs_a_good_fit():
+    alts, excluded = _clinic("29-1141.00", "Give medicines to patients.\nGNM, 2018")      # weak evidence
+    assert "31-1131.00" not in alts
+    assert "Job zone 4" in excluded["31-1131.00"] or "regulated" in excluded["31-1131.00"]

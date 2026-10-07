@@ -1,0 +1,28 @@
+{
+ "about": "Occupations whose practice is restricted by law in India to holders of a recognised qualification or registration. A regulated occupation is offered as a close alternative or a more senior fit only when the user's evidence shows one of its qualifications (education lines, licences, typed skills; case-insensitive regular expressions) or a past title in it (src/general/regulated.py). soc_prefixes match the start of the SOC code.",
+ "source": "National Medical Commission Act 2019 (physicians, surgeons); Dentists Act 1948 (Dental Council of India); Pharmacy Act 1948 (Pharmacy Council of India); Indian Nursing Council Act 1947 and state nursing councils; National Commission for Allied and Healthcare Professions Act 2021 (physiotherapists); Advocates Act 1961 (Bar Council of India); Chartered Accountants Act 1949 (ICAI); Architects Act 1972 (Council of Architecture); Aircraft Rules 1937 (DGCA pilot licences); Indian Veterinary Council Act 1984.",
+ "version": 1,
+ "occupations": [
+  {"name": "Physicians and surgeons", "soc_prefixes": ["29-121", "29-122", "29-124"],
+   "qualifications": ["\\bMBBS\\b", "\\bM\\.?\\s?D\\.?\\s+(in\\s+)?(general\\s+)?(medicine|paediatrics|pediatrics|anaesthesia|anesthesia|psychiatry|radiology|dermatology|pathology)", "\\bM\\.?\\s?S\\.?\\s+(in\\s+)?(general\\s+surgery|surgery|orthopaedics|orthopedics|ent|ophthalmology|obstetrics)", "\\bDNB\\b", "registered medical practitioner", "\\bNMC\\b registration", "medical council registration"]},
+  {"name": "Dentists", "soc_prefixes": ["29-102"],
+   "qualifications": ["\\bBDS\\b", "\\bMDS\\b", "dental council"]},
+  {"name": "Pharmacists", "soc_prefixes": ["29-1051"],
+   "qualifications": ["\\bB\\.?\\s?Pharm", "\\bD\\.?\\s?Pharm", "\\bPharm\\.?\\s?D\\b", "\\bM\\.?\\s?Pharm", "registered pharmacist", "pharmacy council"]},
+  {"name": "Nurses and midwives", "soc_prefixes": ["29-1141", "29-1151", "29-1161", "29-1171", "29-2061"],
+   "qualifications": ["\\bGNM\\b", "\\bANM\\b", "\\bB\\.?\\s?Sc\\.?\\s*(\\(\\s*)?Nursing", "\\bM\\.?\\s?Sc\\.?\\s*(\\(\\s*)?Nursing", "general nursing (and|&) midwifery", "registered nurse", "nursing council"]},
+  {"name": "Physiotherapists", "soc_prefixes": ["29-1123"],
+   "qualifications": ["\\bBPT\\b", "\\bMPT\\b", "\\bB\\.?\\s?P\\.?\\s?T\\b", "bachelor of physiotherapy", "master of physiotherapy"]},
+  {"name": "Lawyers", "soc_prefixes": ["23-1011"],
+   "qualifications": ["\\bLL\\.?\\s?B\\b", "\\bLL\\.?\\s?M\\b", "enrolled advocate", "bar council"]},
+  {"name": "Chartered accountants (statutory audit)", "soc_prefixes": [],
+   "qualifications": ["chartered accountant", "\\bCA\\b", "\\bICAI\\b"],
+   "note": "Not gated: O*NET's Accountants and Auditors (13-2011) also covers accountants who need no licence; only statutory audit sign-off needs a CA."},
+  {"name": "Architects", "soc_prefixes": ["17-1011", "17-1012"],
+   "qualifications": ["\\bB\\.?\\s?Arch\\b", "\\bM\\.?\\s?Arch\\b", "council of architecture", "\\bCOA\\b registration"]},
+  {"name": "Airline and commercial pilots", "soc_prefixes": ["53-2011", "53-2012"],
+   "qualifications": ["\\bCPL\\b", "\\bATPL\\b", "commercial pilot licen[cs]e", "airline transport pilot"]},
+  {"name": "Veterinarians", "soc_prefixes": ["29-1131"],
+   "qualifications": ["\\bB\\.?\\s?V\\.?\\s?Sc\\b", "\\bM\\.?\\s?V\\.?\\s?Sc\\b", "veterinary council"]}
+ ]
+}
