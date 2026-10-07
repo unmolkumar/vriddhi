@@ -162,10 +162,12 @@ def target_scores(engine, files: list) -> list[dict]:
         soc = f.name.removeprefix(cal.PARTIAL_PREFIX).removeprefix(cal.WRONG_PREFIX).split("_", 1)[0]
         ev = engine.evidence(GapAnalysisV2Request(soc_code=soc, free_text=f.read_text(encoding="utf-8")))
         uv = engine.encoder.encode([u.text for u in ev.units])
-        score, matches, _ = engine._score(engine.occupation(soc), ev.units, uv, ev.years, engine.roles(ev.history))
-        vol = v.volume(ev.units, matches)
+        occ, roles = engine.occupation(soc), engine.roles(ev.history)
+        score, matches, _ = engine._score(occ, ev.units, uv, ev.years, roles)
+        vol = engine._volume(occ, ev.units, uv, matches, roles)
         rows.append({"profile": f"{f.parent.name}/{f.stem}", "kind": kind, "soc": soc, "score": round(score, 4),
-                     "units": vol.units, "related": vol.related_share})
+                     "units": vol.units, "related": vol.related_share, "focus": vol.focus,
+                     "other_role": vol.other_role is not None})
     return rows
 
 
@@ -176,59 +178,100 @@ VERDICT_COST = {"full": {"good_fit": 0, "insufficient_evidence": 1, "under_skill
                 "wrong": {"under_skilled": 0, "insufficient_evidence": 2, "good_fit": 5}}
 
 
+VERDICT_LABELS = ("good_fit", "insufficient_evidence", "under_skilled")
+TUNING_VERDICT_SETS = ("tuning", "verdict_tuning", "tuning_short", "tuning_oblique")
+
+
 def verdict_grid():
-    ts = [round(0.15 + 0.01 * i, 2) for i in range(31)]
+    """(threshold, short threshold, short units, min related, oblique related, focus min, other-role extra); None
+    switches a rule off."""
+    ts = [round(0.15 + 0.01 * i, 2) for i in range(21)]
     for t in ts:
         for ts_short in [None] + [x for x in ts if x < t]:
-            for units in range(3, 11):
-                for related in (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4):
-                    yield t, ts_short, units, related
+            for units in (3, 4):
+                for related in (0.05, 0.1, 0.2):
+                    for oblique in (None, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75):
+                        for focus in ((0.0,) if oblique is None else (0.0, 0.4, 0.5, 0.6)):
+                            for extra in (None, 0.0, 0.03, 0.05, 0.1):
+                                yield t, ts_short, units, related, oblique, focus, extra
 
 
 def verdict_labels(rows, params):
     from src.general import verdict as v
-    return [v.label_for(r["score"], r["units"], r["related"], *params) for r in rows]
+    return [v.label_for(r["score"], r["units"], r["related"], r["focus"], r["other_role"], *params) for r in rows]
 
 
-def verdict_cost(rows, params) -> tuple:
-    labels = verdict_labels(rows, params)
-    cost = sum(VERDICT_COST[r["kind"]][lab] for r, lab in zip(rows, labels))
-    margin = min(abs(r["score"] - (params[1] if r["units"] < params[2] and params[1] is not None else params[0]))
-                 for r in rows)
-    return cost, -margin
+def _arrays(rows) -> dict:
+    a = {k: np.array([float(r[k]) for r in rows]) for k in ("score", "units", "related", "focus", "other_role")}
+    a["cost"] = np.array([[VERDICT_COST[r["kind"]][lab] for lab in VERDICT_LABELS] for r in rows], dtype=float)
+    return a
+
+
+def _label_idx(a: dict, params) -> np.ndarray:
+    """verdict.label_for, vectorised over profiles: 0 good_fit, 1 insufficient_evidence, 2 under_skilled."""
+    t, t_short, short_units, min_related, oblique, focus_min, extra = params
+    short = a["units"] < short_units
+    other = (a["other_role"] > 0) & (extra is not None)
+    base = np.where(short, t_short, t) if t_short is not None else np.full(len(short), t)
+    thr = base + np.where(other, extra or 0.0, 0.0)
+    insufficient = short & (a["related"] >= min_related)
+    if oblique is not None:
+        insufficient = insufficient | ((a["related"] >= oblique) & (a["focus"] >= focus_min))
+    return np.where(a["score"] >= thr, 0, np.where(~other & insufficient, 1, 2))
+
+
+def verdict_cost(rows, params, arrays=None) -> tuple:
+    """(cost, severe errors, active optional rules, -margin): lowest cost first, then the fewest beginners or people
+    from other fields called a good fit, then the simpler rule, then the larger margin."""
+    a = arrays or _arrays(rows)
+    idx = _label_idx(a, params)
+    cost = float(a["cost"][np.arange(len(idx)), idx].sum())
+    severe = int(((idx == 0) & (a["cost"][:, 0] > 0)).sum())
+    t, t_short, short_units = params[0], params[1], params[2]
+    thr = np.where(a["units"] < short_units, t_short, t) if t_short is not None else np.full(len(idx), t)
+    active = (params[4] is not None) + (params[5] > 0) + (params[6] is not None) + (params[1] is not None)
+    return cost, severe, active, -float(np.abs(a["score"] - thr).min())
 
 
 def confusion(rows, params) -> dict:
-    out: dict = {k: {"good_fit": 0, "insufficient_evidence": 0, "under_skilled": 0} for k in VERDICT_COST}
-    for r, lab in zip(rows, verdict_labels(rows, params)):
+    labels = verdict_labels(rows, params)
+    out: dict = {k: {lab: 0 for lab in VERDICT_LABELS} for k in VERDICT_COST}
+    for r, lab in zip(rows, labels):
         out[r["kind"]][lab] += 1
     ok = sum(out["full"][x] for x in ("good_fit", "insufficient_evidence")) + out["partial"]["under_skilled"] \
         + out["partial"]["insufficient_evidence"] + out["wrong"]["under_skilled"]
+    pick = lambda kind, lab: [r["profile"] for r, x in zip(rows, labels) if kind(r["kind"]) and x == lab]  # noqa: E731
     return {"confusion": out, "acceptable": ok, "n": len(rows),
-            "full_called_under_skilled": [r["profile"] for r, lab in zip(rows, verdict_labels(rows, params))
-                                          if r["kind"] == "full" and lab == "under_skilled"],
-            "non_full_called_good_fit": [r["profile"] for r, lab in zip(rows, verdict_labels(rows, params))
-                                         if r["kind"] != "full" and lab == "good_fit"]}
+            "full_called_under_skilled": pick(lambda k: k == "full", "under_skilled"),
+            "non_full_called_good_fit": pick(lambda k: k != "full", "good_fit"),
+            "wrong_called_insufficient": pick(lambda k: k == "wrong", "insufficient_evidence")}
 
 
-def verdict_calibration(client, encoder, translator) -> dict:
-    """Verdict thresholds (good-fit, optional short-description good-fit, short-description units, minimum related
-    share) by minimum VERDICT_COST on the tuning profiles (tuning, verdict_tuning, tuning_short); reported on the
-    fresh validation set (verdict_validation2) and the A3 validation (held-out-2 full + verdict_validation)."""
+def verdict_calibration(client, encoder, translator, validation_sets=("verdict_validation3",)) -> dict:
+    """Verdict constants (verdict_grid) by minimum VERDICT_COST on the tuning profiles (TUNING_VERDICT_SETS) only;
+    reported with the shipped constants on the validation sets: A4's (written after the constants were frozen),
+    A3b's fresh set (verdict_validation2) and A3's (held-out-2 full + verdict_validation)."""
+    from src.general import verdict as v
     from src.general.service import GeneralEngine
-    engine = GeneralEngine(client=client, encoder=encoder, translator=translator, rephraser=None)
+    engine = GeneralEngine(client=client, encoder=encoder, translator=translator, rephraser=None, normaliser=None)
     files = lambda d: sorted((cal.PROFILES_DIR / d).glob("*.txt"))  # noqa: E731
-    tuning = target_scores(engine, files("tuning") + files("verdict_tuning") + files("tuning_short"))
+    tuning = target_scores(engine, [f for d in TUNING_VERDICT_SETS for f in files(d)])
+    arrays = _arrays(tuning)
+    best = min(verdict_grid(), key=lambda prm: verdict_cost(tuning, prm, arrays))
+    shipped = v.params()
     export = set(EXPORT_SOCS)
-    fresh = target_scores(engine, files("verdict_validation2"))
-    a3 = target_scores(engine, [f for f in files("heldout2") if f.name.split("_")[0] in export] + files("verdict_validation"))
-    best = min(verdict_grid(), key=lambda prm: verdict_cost(tuning, prm))
+    checks = {d: target_scores(engine, files(d)) for d in validation_sets + ("verdict_validation2",)
+              if (cal.PROFILES_DIR / d).exists()}
+    checks["validation_a3"] = target_scores(engine, [f for f in files("heldout2") if f.name.split("_")[0] in export]
+                                            + files("verdict_validation"))
     full = [r["score"] for r in tuning if r["kind"] == "full"]
-    return {"params": {"good_fit_threshold": best[0], "good_fit_threshold_short": best[1], "short_units": best[2],
-                       "min_related_share": best[3]},
-            "median_full_tuning": round(statistics.median(full), 2), "tuning_cost": verdict_cost(tuning, best)[0],
-            "tuning": confusion(tuning, best), "validation_fresh": confusion(fresh, best),
-            "validation_a3": confusion(a3, best), "rows": tuning + fresh + a3}
+    names = ("good_fit_threshold", "good_fit_threshold_short", "short_units", "min_related_share",
+             "oblique_related_share", "focus_min", "other_role_extra")
+    return {"search_best": dict(zip(names, best)), "shipped": dict(zip(names, shipped)),
+            "search_cost": verdict_cost(tuning, best, arrays)[0], "shipped_cost": verdict_cost(tuning, shipped, arrays)[0],
+            "median_full_tuning": round(statistics.median(full), 2), "tuning": confusion(tuning, shipped),
+            **{k: confusion(rows, shipped) for k, rows in checks.items()},
+            "rows": tuning + [r for rows in checks.values() for r in rows]}
 
 
 def main() -> None:
@@ -272,12 +315,15 @@ def main() -> None:
     if args.verdict:
         vc = verdict_calibration(client, encoder, translator)
         out["verdict_calibration"] = vc
-        print(f"\n== verdict params {vc['params']} (tuning cost {vc['tuning_cost']}), "
+        print(f"\n== verdict: shipped {vc['shipped']} (tuning cost {vc['shipped_cost']})")
+        print(f"   search best on tuning {vc['search_best']} (cost {vc['search_cost']}); "
               f"median full tuning score {vc['median_full_tuning']}")
-        for label in ("tuning", "validation_fresh", "validation_a3"):
-            c = vc[label]
-            print(f"  {label:17} acceptable {c['acceptable']}/{c['n']}  {c['confusion']}")
-            print(f"      full -> under_skilled: {c['full_called_under_skilled']}   non-full -> good_fit: {c['non_full_called_good_fit']}")
+        for label, c in vc.items():
+            if isinstance(c, dict) and "confusion" in c:
+                print(f"  {label:22} acceptable {c['acceptable']}/{c['n']}  {c['confusion']}")
+                print(f"      full -> under_skilled: {c['full_called_under_skilled']}")
+                print(f"      non-full -> good_fit: {c['non_full_called_good_fit']}   wrong -> insufficient: "
+                      f"{c['wrong_called_insufficient']}")
     out["filters"] = {o.soc: o.report.model_dump() for o in occupations}
     for o in occupations:
         if o.soc in args.filters.split(","):

@@ -54,4 +54,5 @@ def test_hinglish_evidence_is_translated(engine):
     r = analyze(engine, "hinglish/29-1141.00_nurse_hinglish.txt", soc_code="29-1141.00")
     translated = [s for s in r.strengths if s.evidence and s.evidence.translated]
     assert translated and translated[0].evidence.original_text and not any("non-English" in w for w in r.warnings)
-    assert r.verdict.label == "good_fit"
+    # A4: the good-fit threshold rose to 0.29; a practitioner just below it gets follow-up questions, never under_skilled
+    assert r.verdict.label in ("good_fit", "insufficient_evidence")

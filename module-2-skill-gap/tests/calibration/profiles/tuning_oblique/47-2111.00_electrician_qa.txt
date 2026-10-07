@@ -1,0 +1,8 @@
+Q: What kind of electrical work have you done?
+A: Mostly building wiring, flats and offices, about nine years now.
+Q: What do you do on a new site?
+A: I read the drawing, mark where the points come, cut chases, lay the conduit and then pull the wires.
+Q: And when something stops working?
+A: I check with a tester and multimeter, find the loose joint or burnt cable and change it.
+Q: Do you handle the panel?
+A: Yes, I fix the breakers in the board, connect the earthing and test everything before giving supply.

@@ -34,15 +34,17 @@ def test_volume_counts_sentences_not_clauses_titles_education_or_answers():
     assert 0 < vol.related_share < 1 and vol.short == (1 < verdict.SHORT_UNITS)
 
 
-@pytest.mark.parametrize("score, units, related, label", [
-    (0.30, 1, 0.6, "good_fit"),                 # above the threshold
-    (0.18, 1, 0.6, "good_fit"),                 # short: the short-description threshold applies
-    (0.10, 1, 0.6, "insufficient_evidence"),    # short, below, related evidence
-    (0.10, 1, 0.0, "under_skilled"),            # short but nothing related: someone from another field
-    (0.10, 9, 0.6, "under_skilled")])           # long description, below the threshold
-def test_label_rule(score, units, related, label):
-    params = (scoring.GOOD_FIT_THRESHOLD, verdict.GOOD_FIT_THRESHOLD_SHORT, verdict.SHORT_UNITS, verdict.MIN_RELATED_SHARE)
-    assert verdict.label_for(score, units, related, *params) == label
+@pytest.mark.parametrize("score, units, related, other, label", [
+    (0.30, 1, 0.6, False, "good_fit"),                 # above the threshold
+    (0.21, 1, 0.6, False, "good_fit"),                 # short: the short-description threshold applies
+    (0.10, 1, 0.6, False, "insufficient_evidence"),    # short, below, related evidence
+    (0.10, 1, 0.0, False, "under_skilled"),            # short but nothing related: someone from another field
+    (0.10, 9, 0.3, False, "under_skilled"),            # long description, below the threshold, little related
+    (0.10, 9, 0.6, False, "insufficient_evidence"),    # A4: long but oblique (much related, little clearly met)
+    (0.10, 9, 0.6, True, "under_skilled"),             # A4: ... with past titles in another field
+    (0.10, 1, 0.6, True, "under_skilled")])
+def test_label_rule(score, units, related, other, label):
+    assert verdict.label_for(score, units, related, 1.0, other, *verdict.params()) == label
 
 
 def test_decide_matches_label_rule():

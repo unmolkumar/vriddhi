@@ -75,3 +75,26 @@ def test_basics_are_capped_above_a_minimum_weight():
     main, later, basics = roadmap.plan(gaps, gaps, scoring.credit, set(), [])
     assert len(basics) == roadmap.BASICS_MAX and all(b.item.weight >= roadmap.BASICS_MIN_WEIGHT for b in basics)
     assert not main and {m.item.name for m in later} == set(names) - {b.item.name for b in basics}
+
+
+# --- C1: Q&A write-ups and the oblique / career-change verdict ------------------------------------------------
+
+def test_questions_and_negative_answers_are_not_evidence():
+    from src.general.evidence import from_text
+    text = ("Q: What do you do now?\nA: I file GST returns and reconcile the bank.\n"
+            "Q: Years? A: Six years.\nQ: Have you done a statutory audit?\nA: No, the CA firm did it.\nA: Not yet, learning.")
+    texts = [u.text for u in from_text(text) if u.context_span is None]
+    assert texts == ["I file goods & services tax returns and reconcile the bank.", "Six years."]
+
+
+def test_other_role_needs_a_confident_title_in_another_field():
+    from src.general.m1_client import EXTRA_FIXTURE_PATH, FIXTURE_PATH, FixtureM1Client
+    e = GeneralEngine(client=FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH), encoder=WordEncoder(), translator=None,
+                      rephraser=None, normaliser=None)
+    lab = ("Experience\nLaboratory Technician | Metropolis Lab, Chennai | Jun 2016 - Present\n"
+           "- Collect blood samples from patients and record vital signs.\n")
+    r = e.analyze(GapAnalysisV2Request(soc_code="29-1141.00", free_text=lab))
+    assert r.evidence_volume.other_role and r.verdict.label == "under_skilled"
+    nurse = lab.replace("Laboratory Technician | Metropolis Lab", "Staff Nurse | Apollo Hospitals")
+    r = e.analyze(GapAnalysisV2Request(soc_code="29-1141.00", free_text=nurse))
+    assert r.evidence_volume.other_role is None

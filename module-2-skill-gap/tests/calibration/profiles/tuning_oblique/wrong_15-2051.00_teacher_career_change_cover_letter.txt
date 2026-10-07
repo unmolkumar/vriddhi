@@ -1,0 +1,6 @@
+Dear Hiring Team,
+
+I am applying for the Data Scientist role. I have taught physics to class 11 and 12 for eight years, preparing lesson plans, conducting practicals and mentoring students for entrance exams. This year I completed an online data science certificate and built a small project predicting house prices in Python. I am a quick learner and believe my teaching experience will help me explain results to business teams.
+
+Sincerely,
+Ramesh Iyer
