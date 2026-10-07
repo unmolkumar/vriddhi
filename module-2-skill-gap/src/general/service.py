@@ -43,6 +43,8 @@ ROLE_TITLES_MAX = 6            # past titles resolved per request
 ROLE_DISPLAY_MIN_CONFIDENCE = 0.9   # a past title that doesn't apply to the target is shown only above this
 # Module 1 /related tiers close enough for a past title to imply the target's tasks (fixture stand-ins excluded).
 ROLE_RELATED_TIERS = {"Primary-Short", "Primary-Long"}
+# When module 1 sends no tiers at all (relatedness_tier null), the first few by its order (index_val) count as close.
+ROLE_RELATED_UNTIERED_TOP = 5
 JOB_TEXT_BLEND = 0.6           # match_text: weight of the job's own text vs the occupation's core requirements
 JOB_MIN_WORDS = 3              # job-text clauses shorter than this aren't requirements ("Pune", "Full time")
 JOB_MAX_REQUIREMENTS = 60
@@ -127,6 +129,14 @@ def prepare_occupation(soc: str, profile: dict, rows: list[dict], encoder: Encod
     vectors = encoder.encode_cached(f"{key}-x", texts)
     return OccupationData(soc, title, profile, items, core, report, vectors, version, starts,
                           {i.item_id: vectors[starts[n]] for n, i in enumerate(core)}, not_applicable)
+
+
+def close_related(related: list[dict]) -> set[str]:
+    """Related SOCs close enough for role history (see ROLE_RELATED_TIERS / ROLE_RELATED_UNTIERED_TOP)."""
+    if any(r.get("relatedness_tier") for r in related):
+        return {r["related_soc_code"] for r in related if r.get("relatedness_tier") in ROLE_RELATED_TIERS}
+    ordered = sorted(related, key=lambda r: r.get("index_val") or float("inf"))
+    return {r["related_soc_code"] for r in ordered[:ROLE_RELATED_UNTIERED_TOP]}
 
 
 def apply_role_history(matches: list[RequirementMatch], roles: list[Role]) -> list[RequirementMatch]:
@@ -283,12 +293,12 @@ class GeneralEngine:
         return out
 
     def _close_to(self, soc: str) -> set[str]:
-        """The SOC and its closely related occupations (ROLE_RELATED_TIERS), for role history."""
+        """The SOC and its closely related occupations, for role history: ROLE_RELATED_TIERS when module 1 sends
+        tiers, else its first ROLE_RELATED_UNTIERED_TOP by index_val."""
         if soc not in self._related:
             close = {soc}
             try:
-                close |= {r["related_soc_code"] for r in self.client.related(soc, limit=RELATED_LIMIT)
-                          if r.get("relatedness_tier") in ROLE_RELATED_TIERS}
+                close |= close_related(self.client.related(soc, limit=RELATED_LIMIT))
             except M1Error:
                 pass
             self._related[soc] = close
