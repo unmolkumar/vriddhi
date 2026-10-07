@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from src.general.m1 import Match
 
 MAX_QUERIES = 3
+KEEP_PLURAL = frozenset({"sales", "news", "series", "species", "goods", "operations", "accounts"})
 ALIAS_METHODS = ("india_alias", "onet_alt_title")
 ALIAS_MAX_WORDS = 4
 # Tuning searches only (staff nurse - Pune, electrician - Delhi NCR, data scientist - Bengaluru).
@@ -38,6 +39,8 @@ joiner joiners male female fresher freshers experienced level grade i ii iii iv 
 
 def singular(word: str) -> str:
     w = word.lower()
+    if w in KEEP_PLURAL or w.endswith(("ss", "us", "is", "ics")):
+        return w
     if w.endswith("ies") and len(w) > 4:
         return w[:-3] + "y"
     if w.endswith("s") and not w.endswith("ss") and len(w) > 3:
