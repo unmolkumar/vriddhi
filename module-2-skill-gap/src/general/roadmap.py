@@ -115,7 +115,10 @@ def order(gaps: list[RequirementMatch], known: set[str]) -> list[RequirementMatc
 
 
 # --- A3b: ranking by expected score gain --------------------------------------------------------------------
-# Generic office/productivity software: a separate `basics` list unless the occupation's market skills name it.
+# Generic office/productivity software: a separate `basics` list unless the occupation's market skills name it;
+# at most BASICS_MAX items of at least BASICS_MIN_WEIGHT (hot or in-demand technology), the rest go to `later`.
+BASICS_MAX = 4
+BASICS_MIN_WEIGHT = 0.5
 BASIC_SOFTWARE = re.compile(
     r"\b(microsoft (word|excel|outlook|access|powerpoint|office|windows|onenote|teams|exchange|sharepoint)|"
     r"office suite|google (docs|sheets|drive|slides|workspace)|gmail|adobe acrobat|web browser|email|e-mail|"
@@ -170,7 +173,8 @@ def plan(gaps: list[RequirementMatch], matches: list[RequirementMatch], credit, 
             later.append(m)
     main = order_keep_rank(main, known)
     basics.sort(key=lambda m: -gain.get(m.item.item_id, 0.0))
-    return main, later, basics
+    shown = [m for m in basics if m.item.weight >= BASICS_MIN_WEIGHT][:BASICS_MAX]
+    return main, later + [m for m in basics if m not in shown], shown
 
 
 def order_keep_rank(items: list[RequirementMatch], known: set[str]) -> list[RequirementMatch]:
