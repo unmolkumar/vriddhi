@@ -5,9 +5,12 @@ encodes only its own evidence. Module 1 is reached only through the client (REST
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import re
 from dataclasses import dataclass, field
+from collections import OrderedDict
 from functools import lru_cache
 from pathlib import Path
 
@@ -25,7 +28,8 @@ from src.general.requirements import (
 )
 from src.general.schemas import (
     CloseAlternative, DrawsOnItem, ExcludedAlternative, EvidenceRef, EvidenceVolumeOut, FitIndicatorItem, FitRange, FollowUpQuestionOut,
-    GapAnalysisV2Request, GapAnalysisV2Response, GeneralRoadmap, LaterItem, MatchTextRequest, MatchTextResponse, NotApplicableItem, ProvenanceSummary,
+    GapAnalysisV2Request, GapAnalysisV2Response, GeneralRoadmap, LaterItem, MatchTextRequest, MatchTextResponse,
+    MatchTextsItem, MatchTextsRequest, MatchTextsResponse, NotApplicableItem, ProvenanceSummary,
     RequirementResult, RoadmapItem, RoleHistoryItem, RoleOption, RoleResolution, ScoreBreakdown, TypeScore, Verdict,
     WorkActivityItem,
 )
@@ -49,6 +53,8 @@ ROLE_RELATED_UNTIERED_TOP = 5
 JOB_TEXT_BLEND = 0.6           # match_text: weight of the job's own text vs the occupation's core requirements
 JOB_MIN_WORDS = 3              # job-text clauses shorter than this aren't requirements ("Pune", "Full time")
 JOB_MAX_REQUIREMENTS = 60
+JOB_CACHE_TEXTS = 4096         # match_texts: parsed job texts kept in memory (listings recur across users and pages)
+JOB_CACHE_VECTORS = 50_000     # ... and clause vectors
 MATCH_TEXT_TOP = 15
 NOT_APPLICABLE_PATH = Path(__file__).resolve().parents[2] / "data" / "general" / "india_not_applicable.json"
 M1_NA_REASON = "Module 1 marks this as not relevant in India."
@@ -178,12 +184,25 @@ def advice(m: RequirementMatch) -> str | None:
     return None
 
 
-def result(m: RequirementMatch) -> RequirementResult:
+def result(m: RequirementMatch, effective: dict[str, float] | None = None) -> RequirementResult:
+    """effective: requirement_id -> effective weight (effective_weights); gives effective_weight and, for partial or
+    missing items, score_gain_if_met."""
+    rid = m.item.requirement_id
+    eff = effective.get(rid) if effective else None
+    credit = scoring.credit(m)
     return RequirementResult(
         requirement=m.item.name, item_type=m.item.item_type, item_id=m.item.item_id, status=m.status,
-        similarity=m.similarity, credit=round(scoring.credit(m), 4), weight=round(m.item.weight, 4),
+        similarity=m.similarity, credit=round(credit, 4), weight=round(m.item.weight, 4),
         required_level=m.item.level, provenance=m.item.provenance, reason=m.reason, evidence=evidence_ref(m),
-        advice=advice(m), flags=m.item.flags)
+        advice=advice(m), flags=m.item.flags, requirement_id=rid,
+        effective_weight=round(eff, 4) if eff is not None else None,
+        score_gain_if_met=round(eff * (1 - credit), 4) if eff is not None and m.status != "met" else None)
+
+
+def effective_weights(matches: list[RequirementMatch], scale: float = 1.0) -> dict[str, float]:
+    """requirement_id -> the share of the score the item carries when fully met, times `scale` (blend, experience
+    factor). The score is linear in each item's credit, so gain if met = effective weight x (1 - credit)."""
+    return {k: v * scale for k, v in roadmap.expected_gain(matches, lambda m: 0.0).items()}
 
 
 class GeneralEngine:
@@ -199,6 +218,7 @@ class GeneralEngine:
         self._occupations: dict[str, OccupationData] = {}
         self._titles: dict[str, Role | None] = {}
         self._related: dict[str, set[str]] = {}
+        self._clause_vectors: OrderedDict[str, np.ndarray] = OrderedDict()
 
     # --- module 1 -----------------------------------------------------------------------------
     def version(self, soc: str | None = None) -> str:
@@ -360,6 +380,7 @@ class GeneralEngine:
         met = sorted((m for m in matches if m.status == "met"), key=lambda m: -m.item.weight * scoring.credit(m))
         gaps = sorted((m for m in matches if m.status != "met"), key=lambda m: -m.item.weight)
         generic = inference.infer(occ.items, matches, units, self.encoder)
+        effective = effective_weights(matches, factor)
         return GapAnalysisV2Response(
             resolution=resolution, match_score=round(match_score, 4), fit_percent=percent,
             fit_label=scoring.fit_label(percent), fit_provisional=fit_range is not None, fit_range=fit_range,
@@ -370,8 +391,8 @@ class GeneralEngine:
                 skill_score=round(skill, 4), by_type={t: TypeScore(**v) for t, v in scoring.by_type(matches).items()},
                 experience_years=years, experience_band=(band.low, band.high) if band else None,
                 experience_band_source=band.source if band else "none", experience_factor=round(factor, 4)),
-            strengths=[result(m) for m in met[:STRENGTHS_TOP]],
-            gaps=[result(m) for m in gaps[:GAPS_TOP]], gaps_total=len(gaps),
+            strengths=[result(m, effective) for m in met[:STRENGTHS_TOP]],
+            gaps=[result(m, effective) for m in gaps[:GAPS_TOP]], gaps_total=len(gaps),
             not_applicable_in_india=[NotApplicableItem(requirement=i.name, item_type=i.item_type, reason=r)
                                      for i, r in occ.not_applicable],
             role_history=[RoleHistoryItem(title=r.title, years=r.years, soc_code=r.soc,
@@ -473,49 +494,132 @@ class GeneralEngine:
 
     # --- match_text (module 3) ------------------------------------------------------------------
     def match_text(self, req: MatchTextRequest) -> MatchTextResponse:
+        user = self._user(req)
+        items = job_requirements(req.job_text)
+        occ_part = self._occupation_part(req.soc_code, user, raise_errors=True) if req.soc_code else None
+        return self._match_job(user, items, self._clause_vectors_for([i.name for i in items]), None, occ_part,
+                               list(user.warnings))
+
+    def match_texts(self, req: MatchTextsRequest) -> MatchTextsResponse:
+        """A page of jobs against one user's evidence: the evidence is read, encoded and its past titles resolved
+        once; every job's requirement clauses are encoded in one batch; each occupation is scored once per SOC.
+        A SOC module 1 can't give falls back to the job text alone, with a warning on that job."""
+        user = self._user(req)
+        per_job = [job_requirements(j.job_text) for j in req.jobs]
+        self._clause_vectors_for([i.name for items in per_job for i in items])     # one batch for the whole page
+        occ_parts: dict[str, object] = {}
+        results = []
+        for job, items in zip(req.jobs, per_job):
+            job_vectors, starts = self._clause_vectors_for([i.name for i in items]), None     # one row per clause
+            warnings = []
+            occ_part = None
+            if job.soc_code:
+                if job.soc_code not in occ_parts:
+                    occ_parts[job.soc_code] = self._occupation_part(job.soc_code, user, raise_errors=False)
+                occ_part = occ_parts[job.soc_code]
+                if isinstance(occ_part, str):                       # module 1 error message
+                    warnings.append(occ_part)
+                    occ_part = None
+            r = self._match_job(user, items, job_vectors, starts, occ_part, warnings, job.soc_code)
+            results.append(MatchTextsItem(job_id=job.job_id, job_title=job.job_title, **r.model_dump()))
+        return MatchTextsResponse(results=results, warnings=user.warnings)
+
+    # --- match_text helpers ----------------------------------------------------------------------
+    def _clause_vectors_for(self, texts: list[str]) -> np.ndarray | None:
+        """Vectors of job clauses: new texts encoded in one batch (deduplicated), all kept in an LRU cache."""
+        if not texts:
+            return None
+        cache = self._clause_vectors
+        new = list(dict.fromkeys(t for t in texts if t not in cache))
+        if new:
+            for t, v in zip(new, self.encoder.encode(new)):
+                cache[t] = v
+        for t in texts:
+            cache.move_to_end(t)
+        while len(cache) > JOB_CACHE_VECTORS:
+            cache.popitem(last=False)
+        return np.stack([cache[t] for t in texts])
+
+    def _user(self, req) -> "UserEvidence":
         ev = self.evidence(req)
-        units, years, warnings = ev.units, ev.years, ev.warnings
-        unit_vectors = self.encoder.encode([u.text for u in units])
-        job_items = job_requirements(req.job_text)
-        if not job_items:
+        return UserEvidence(ev.units, self.encoder.encode([u.text for u in ev.units]), ev.years, self.roles(ev.history),
+                            ev.warnings)
+
+    def _occupation_part(self, soc: str, user: "UserEvidence", raise_errors: bool):
+        """(occupation, score, matches, experience factor), or a warning string when module 1 can't give it."""
+        try:
+            occ = self.occupation(soc)
+        except M1Error as e:
+            if raise_errors:
+                raise
+            return f"Occupation {soc} unavailable from module 1 ({e.code}); matched on the job text only."
+        s, matches, factor = self._score(occ, user.units, user.vectors, user.years, user.roles)
+        return occ, s, matches, factor
+
+    def _match_job(self, user: "UserEvidence", items, job_vectors, starts, occ_part, warnings: list[str],
+                   soc_code: str | None = None) -> MatchTextResponse:
+        if not items:
             warnings.append("No requirement-like sentences found in job_text.")
-        job_matches = classify(job_items, units, score(job_items, units, self.encoder, unit_vectors=unit_vectors))
+        job_matches = classify(items, user.units, score(items, user.units, self.encoder, req_vectors=job_vectors,
+                                                        starts=starts, unit_vectors=user.vectors)) if items else []
         job_score = coverage(job_matches, credit=scoring.credit) if job_matches else 0.0
-        occ_score, occ_matches, occ, version = None, [], None, None
-        if req.soc_code:
-            occ = self.occupation(req.soc_code)
-            occ_score, occ_matches, _ = self._score(occ, units, unit_vectors, years, self.roles(ev.history))
-            version = occ.version
+        occ, occ_score, occ_matches, factor = occ_part if occ_part else (None, None, [], 1.0)
         blend = JOB_TEXT_BLEND if occ_score is not None else 1.0
         total = blend * job_score + (1 - blend) * (occ_score or 0.0)
+        effective = effective_weights(job_matches, blend) | effective_weights(occ_matches, (1 - blend) * factor)
         everything = job_matches + occ_matches
         met = sorted((m for m in everything if m.status == "met"), key=lambda m: -m.item.weight * scoring.credit(m))
-        missing = sorted((m for m in everything if m.status != "met"), key=lambda m: -m.item.weight)
+        missing = sorted((m for m in everything if m.status != "met"),
+                         key=lambda m: -effective.get(m.item.requirement_id, 0.0) * (1 - scoring.credit(m)))
         return MatchTextResponse(
             match_score=round(total, 4), job_text_score=round(job_score, 4),
             occupation_score=round(occ_score, 4) if occ_score is not None else None, blend=blend,
-            soc_code=req.soc_code, occupation_title=occ.title if occ else None,
-            met=[result(m) for m in met[:MATCH_TEXT_TOP]], missing=[result(m) for m in missing[:MATCH_TEXT_TOP]],
-            job_requirements=len(job_items), m1_version=version, warnings=warnings)
+            soc_code=occ.soc if occ else soc_code, occupation_title=occ.title if occ else None,
+            met=[result(m, effective) for m in met[:MATCH_TEXT_TOP]],
+            missing=[result(m, effective) for m in missing[:MATCH_TEXT_TOP]],
+            job_requirements=len(items), m1_version=occ.version if occ else None, warnings=warnings)
+
+
+@dataclass
+class UserEvidence:
+    """A user's evidence prepared once for match_text / match_texts."""
+    units: list[EvidenceUnit]
+    vectors: np.ndarray
+    years: float | None
+    roles: list[Role]
+    warnings: list[str]
+
+
+def clause_id(text: str) -> str:
+    """'job:' + a hash of the clause, lower-cased, without punctuation or extra spaces: stable across postings."""
+    norm = " ".join(re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split())
+    return "job:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()[:12]
 
 
 def job_requirements(job_text: str) -> list[RequirementItem]:
+    """Clause-split job text as task-like requirements (see _job_requirements); cached per text."""
+    return list(_job_requirements(job_text))
+
+
+@lru_cache(maxsize=JOB_CACHE_TEXTS)
+def _job_requirements(job_text: str) -> tuple[RequirementItem, ...]:
     """Clause-split job text as task-like requirements (provenance 'job_text'). A sentence that was split into
     clauses is replaced by its clauses; title lines are skipped."""
-    units = [u for u in from_text(job_text) if u.matchable]
+    units = [u for u in from_text(job_text, skills=False) if u.matchable]
     split = {u.context_span for u in units if u.context_span}
     seen, items = set(), []
     for u in units:
-        if u.span in split or len(u.text.split()) < JOB_MIN_WORDS or u.text.lower() in seen:
+        cid = clause_id(u.text)
+        if u.span in split or len(u.text.split()) < JOB_MIN_WORDS or cid in seen:
             continue
-        seen.add(u.text.lower())
+        seen.add(cid)
         items.append(RequirementItem(
-            soc="job", item_type="task", item_id=f"job:{len(items)}", name=u.text, description="", importance=1.0,
+            soc="job", item_type="task", item_id=cid, name=u.text, description="", importance=1.0,
             level=DEFAULT_LEVEL["task"], source="job_text", provenance="job_text", reliable=True, layer="core",
             weight=1.0))
         if len(items) >= JOB_MAX_REQUIREMENTS:
             break
-    return items
+    return tuple(items)
 
 
 __all__ = ["GeneralEngine", "RoleNotResolved", "prepare_occupation", "job_requirements", "requirement_skill_id",

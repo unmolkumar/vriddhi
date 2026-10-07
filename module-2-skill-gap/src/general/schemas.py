@@ -93,6 +93,13 @@ class RequirementResult(BaseModel):
     evidence: EvidenceRef | None = None
     advice: str | None = None
     flags: list[str] = Field(default_factory=list)
+    requirement_id: str = Field(description="Stable id: '{item_type}:{module 1 item_id}' (+ ':curated'), or "
+                                            "'job:{hash of the normalised clause}' for job-text clauses")
+    effective_weight: float | None = Field(
+        default=None, description="Share of match_score this item carries when fully met (type share x the item's "
+                                  "share of its type x blend x experience factor); `weight` is the raw item weight")
+    score_gain_if_met: float | None = Field(
+        default=None, description="Partial/missing items: how much match_score would rise if this item were fully met")
 
 
 class TypeScore(BaseModel):
@@ -289,8 +296,42 @@ class MatchTextResponse(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+MATCH_TEXTS_MAX_JOBS = 50
+
+
+class JobIn(BaseModel):
+    job_id: str = Field(min_length=1, max_length=120)
+    job_text: str = Field(min_length=1, max_length=MAX_TEXT_CHARS)
+    job_title: str | None = Field(default=None, max_length=200)
+    soc_code: str | None = Field(default=None, pattern=SOC_PATTERN,
+                                 description="The job's occupation; blends in its core requirements")
+
+
+class MatchTextsRequest(EvidenceSources):
+    """For module 3: one user's evidence against a page of jobs (evidence prepared once)."""
+    jobs: list[JobIn] = Field(min_length=1, max_length=MATCH_TEXTS_MAX_JOBS)
+
+    @model_validator(mode="after")
+    def _check(self) -> "MatchTextsRequest":
+        if not self.has_evidence():
+            raise ValueError("give free_text, skills or profile")
+        if len({j.job_id for j in self.jobs}) != len(self.jobs):
+            raise ValueError("job_id values must be unique")
+        return self
+
+
+class MatchTextsItem(MatchTextResponse):
+    job_id: str
+    job_title: str | None = None
+
+
+class MatchTextsResponse(BaseModel):
+    results: list[MatchTextsItem] = Field(description="One per job, in request order; same shape as match_text")
+    warnings: list[str] = Field(default_factory=list, description="About the user's evidence (once, not per job)")
+
+
 EXPORTED_MODELS = [GapAnalysisV2Request, GapAnalysisV2Response, AnalyzeResumeV2Response, MatchTextRequest,
-                   MatchTextResponse, ErrorResponse]
+                   MatchTextResponse, MatchTextsRequest, MatchTextsResponse, ErrorResponse]
 
 
 def export_json_schema() -> dict:

@@ -126,7 +126,7 @@ BASIC_SOFTWARE = re.compile(
 
 
 def expected_gain(matches: list[RequirementMatch], credit) -> dict[str, float]:
-    """item_id -> score the item would add if fully met: the type's effective share (renormalised, as in the score)
+    """requirement_id -> score the item would add if fully met: the type's effective share (renormalised, as in the score)
     x the item's share of its type's weight x the credit still missing."""
     from src.general.matcher import TYPE_SHARE, effective_share
 
@@ -141,7 +141,7 @@ def expected_gain(matches: list[RequirementMatch], credit) -> dict[str, float]:
     for t, ms in groups.items():
         w = sum(m.item.weight for m in ms) or 1.0
         for m in ms:
-            out[m.item.item_id] = raw[t] / total * m.item.weight / w * (1 - credit(m))
+            out[m.item.requirement_id] = raw[t] / total * m.item.weight / w * (1 - credit(m))
     return out
 
 
@@ -162,7 +162,7 @@ def plan(gaps: list[RequirementMatch], matches: list[RequirementMatch], credit, 
     names = {n.lower() for n in market_skills}
     basics = [m for m in gaps if is_basic_software(m, ids, names)]
     rest = [m for m in gaps if not is_basic_software(m, ids, names)]
-    ranked = sorted(rest, key=lambda m: (m.reason == "implied_by_role", -gain.get(m.item.item_id, 0.0)))
+    ranked = sorted(rest, key=lambda m: (m.reason == "implied_by_role", -gain.get(m.item.requirement_id, 0.0)))
     main, later, tech = [], [], 0
     for m in ranked:
         is_tech = m.item.item_type in ("tech", "tool")
@@ -172,7 +172,7 @@ def plan(gaps: list[RequirementMatch], matches: list[RequirementMatch], credit, 
         else:
             later.append(m)
     main = order_keep_rank(main, known)
-    basics.sort(key=lambda m: -gain.get(m.item.item_id, 0.0))
+    basics.sort(key=lambda m: -gain.get(m.item.requirement_id, 0.0))
     shown = [m for m in basics if m.item.weight >= BASICS_MIN_WEIGHT][:BASICS_MAX]
     return main, later + [m for m in basics if m not in shown], shown
 

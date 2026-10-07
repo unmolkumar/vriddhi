@@ -89,6 +89,14 @@ class RequirementItem(BaseModel):
     flags: list[str] = Field(default_factory=list, description="Why the weight was lowered: 'curated', 'off_domain(0.12)'")
 
     @property
+    def requirement_id(self) -> str:
+        """Stable id across requests: '{item_type}:{module 1 item_id}' (':curated' added for hand-written rows, which
+        can share an item_id with a posting row); job-text clauses keep their 'job:{clause hash}' id."""
+        if self.provenance == "job_text":
+            return self.item_id
+        return f"{self.item_type}:{self.item_id}" + (":curated" if self.provenance == "curated" else "")
+
+    @property
     def base_weight(self) -> float:
         """Weight before the provenance and off-domain factors."""
         return self.importance * LAYER_WEIGHT[self.layer]

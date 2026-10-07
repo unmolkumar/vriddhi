@@ -13,7 +13,7 @@ from src.engines.profile_builder import build_profile
 from src.general.m1_client import M1Error
 from src.general.schemas import (
     MAX_TEXT_CHARS, AnalyzeResumeV2Response, GapAnalysisV2Request, GapAnalysisV2Response, MatchTextRequest,
-    MatchTextResponse,
+    MatchTextResponse, MatchTextsRequest, MatchTextsResponse,
 )
 from src.general.service import GeneralEngine, RoleNotResolved
 from src.models.schemas import ErrorResponse
@@ -82,3 +82,11 @@ async def analyze_resume(
 def match_text(request: MatchTextRequest, engine: GeneralEngine = Depends(get_engine)):
     """For module 3: one job's text (+ optional soc_code) against the user's evidence -> job-level match."""
     return _run(lambda: engine.match_text(request))
+
+
+@router_v2.post("/skills/match_texts", response_model=MatchTextsResponse, responses=_errors)
+def match_texts(request: MatchTextsRequest, engine: GeneralEngine = Depends(get_engine)):
+    """For module 3: one user's evidence against up to 50 jobs ({job_id, job_text, job_title?, soc_code?}) -> one
+    match_text-shaped result per job, in order. The evidence is prepared once. A job's SOC that module 1 can't give
+    falls back to its text alone (warning on that job)."""
+    return _run(lambda: engine.match_texts(request))

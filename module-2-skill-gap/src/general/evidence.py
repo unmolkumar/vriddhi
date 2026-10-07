@@ -157,7 +157,8 @@ def _skill_ids(texts: list[str], skills_context: bool = False) -> list[str]:
 
 
 def from_text(text: str, *, default_section: str = "free_text", translator: Translator | None = None,
-              warnings: list[str] | None = None, normaliser: Normaliser | None = None) -> list[EvidenceUnit]:
+              warnings: list[str] | None = None, normaliser: Normaliser | None = None,
+              skills: bool = True) -> list[EvidenceUnit]:
     """Resume-style or free text -> units. Text with no recognised headings is one 'free_text' section.
 
     - A list-like sentence (comma / semicolon / 'and' parts) yields the sentence and one unit per part; each part
@@ -168,7 +169,9 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
       fails) they are matched as written and a warning is added.
     - Shorthand (shorthand.expand) is expanded in a matching copy; the unit keeps the text as written in
       original_text and lists the rewrites. With a `normaliser`, very short units are then rewritten as plain phrases.
+    - skills=False skips the taxonomy lookup (skill_ids stay empty): job texts don't need it, and it is the slow part.
     """
+    ids = _skill_ids if skills else (lambda texts, skills_context=False: [])
     sections = segment(text or "")
     multi = len(sections) > 1
     rows = []
@@ -197,10 +200,10 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
         if i in english:
             eng, rewrites = expand(english[i], text)
             units.append(EvidenceUnit(text=eng, evidence_type=kind, section=name, span=span, translated=True,
-                                      original_text=piece, rewrites=rewrites, skill_ids=_skill_ids([eng])))
+                                      original_text=piece, rewrites=rewrites, skill_ids=ids([eng])))
             units += [EvidenceUnit(text=part, evidence_type=kind, section=name, span=span, context_span=span,
                                    translated=True, original_text=piece, rewrites=rewrites,
-                                   skill_ids=_skill_ids([part], True)) for part in clauses(eng)]
+                                   skill_ids=ids([part], True)) for part in clauses(eng)]
             continue
         education = not title and is_education_line(name, piece)
         if title or education:
@@ -211,7 +214,7 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
         expanded, rewrites = expand(piece, text)
         units.append(EvidenceUnit(text=expanded, evidence_type=kind, section=name, span=span,
                                   original_text=piece if rewrites else None, rewrites=rewrites,
-                                  skill_ids=_skill_ids(list(dict.fromkeys([piece, expanded])), name == "skills")))
+                                  skill_ids=ids(list(dict.fromkeys([piece, expanded])), name == "skills")))
         part_cursor = span[0] if span else 0
         for part in parts:
             part_span = _find(text, part, part_cursor)
@@ -221,7 +224,7 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
             units.append(EvidenceUnit(
                 text=p_expanded, evidence_type=kind, section=name, span=part_span, context_span=span,
                 original_text=part if p_rewrites else None, rewrites=p_rewrites,
-                skill_ids=_skill_ids(list(dict.fromkeys([part, p_expanded])), True)))
+                skill_ids=ids(list(dict.fromkeys([part, p_expanded])), True)))
     return normalise_short(units, text, normaliser) if normaliser else units
 
 

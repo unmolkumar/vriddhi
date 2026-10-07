@@ -947,6 +947,55 @@
       "title": "HourRange",
       "type": "object"
     },
+    "JobIn": {
+      "properties": {
+        "job_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "job_text": {
+          "maxLength": 50000,
+          "minLength": 1,
+          "title": "Job Text",
+          "type": "string"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{2}-\\d{4}\\.\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The job's occupation; blends in its core requirements",
+          "title": "Soc Code"
+        }
+      },
+      "required": [
+        "job_id",
+        "job_text"
+      ],
+      "title": "JobIn",
+      "type": "object"
+    },
     "LaterItem": {
       "properties": {
         "requirement": {
@@ -1175,6 +1224,219 @@
       "title": "MatchTextResponse",
       "type": "object"
     },
+    "MatchTextsItem": {
+      "properties": {
+        "match_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Match Score",
+          "type": "number"
+        },
+        "job_text_score": {
+          "title": "Job Text Score",
+          "type": "number"
+        },
+        "occupation_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Occupation Score"
+        },
+        "blend": {
+          "description": "Weight of the job text in match_score (JOB_TEXT_BLEND, or 1 without soc_code)",
+          "title": "Blend",
+          "type": "number"
+        },
+        "soc_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Soc Code"
+        },
+        "occupation_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Occupation Title"
+        },
+        "met": {
+          "items": {
+            "$ref": "#/$defs/RequirementResult"
+          },
+          "title": "Met",
+          "type": "array"
+        },
+        "missing": {
+          "items": {
+            "$ref": "#/$defs/RequirementResult"
+          },
+          "title": "Missing",
+          "type": "array"
+        },
+        "job_requirements": {
+          "title": "Job Requirements",
+          "type": "integer"
+        },
+        "m1_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "M1 Version"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        }
+      },
+      "required": [
+        "match_score",
+        "job_text_score",
+        "occupation_score",
+        "blend",
+        "soc_code",
+        "occupation_title",
+        "met",
+        "missing",
+        "job_requirements",
+        "m1_version",
+        "job_id"
+      ],
+      "title": "MatchTextsItem",
+      "type": "object"
+    },
+    "MatchTextsRequest": {
+      "description": "For module 3: one user's evidence against a page of jobs (evidence prepared once).",
+      "properties": {
+        "free_text": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Resume text or a description of your work, any style",
+          "title": "Free Text"
+        },
+        "skills": {
+          "description": "Typed skills (self-reported)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Skills",
+          "type": "array"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UserProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "v1 UserProfile from /api/v1/skills/analyze_resume"
+        },
+        "experience_years": {
+          "anyOf": [
+            {
+              "maximum": 60,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Overrides the parsed experience",
+          "title": "Experience Years"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/JobIn"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Jobs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "jobs"
+      ],
+      "title": "MatchTextsRequest",
+      "type": "object"
+    },
+    "MatchTextsResponse": {
+      "properties": {
+        "results": {
+          "description": "One per job, in request order; same shape as match_text",
+          "items": {
+            "$ref": "#/$defs/MatchTextsItem"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "description": "About the user's evidence (once, not per job)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "results"
+      ],
+      "title": "MatchTextsResponse",
+      "type": "object"
+    },
     "NotApplicableItem": {
       "properties": {
         "requirement": {
@@ -1320,6 +1582,37 @@
           },
           "title": "Flags",
           "type": "array"
+        },
+        "requirement_id": {
+          "description": "Stable id: '{item_type}:{module 1 item_id}' (+ ':curated'), or 'job:{hash of the normalised clause}' for job-text clauses",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "effective_weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Share of match_score this item carries when fully met (type share x the item's share of its type x blend x experience factor); `weight` is the raw item weight",
+          "title": "Effective Weight"
+        },
+        "score_gain_if_met": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial/missing items: how much match_score would rise if this item were fully met",
+          "title": "Score Gain If Met"
         }
       },
       "required": [
@@ -1332,7 +1625,8 @@
         "weight",
         "required_level",
         "provenance",
-        "reason"
+        "reason",
+        "requirement_id"
       ],
       "title": "RequirementResult",
       "type": "object"
