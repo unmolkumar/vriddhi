@@ -96,8 +96,8 @@ def decide(score: float, vol: EvidenceVolume, years, band, better_fit) -> tuple[
     if rule == "insufficient_evidence":
         what = (f"Your description is short ({vol.units} item{'s' if vol.units != 1 else ''})" if vol.short
                 else f"Your description touches {vol.related_share:.0%} of this role's core requirements")
-        return "insufficient_evidence", (f"{what} but clearly shows only {score:.0%} of its weighted core requirements so "
-                                         "far. Answer the questions below to give a fuller picture.")
+        return "insufficient_evidence", (f"{what}, and clearly shows {score:.0%} of the weighted total so far. Answer "
+                                         "the questions below to give a fuller picture.")
     if vol.other_role:
         reason += f" Your past roles point to {vol.other_role}."
     return label, reason
