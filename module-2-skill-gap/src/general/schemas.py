@@ -75,7 +75,8 @@ class EvidenceRef(BaseModel):
     span: tuple[int, int] | None = Field(default=None, description="Offsets in free_text")
     context_span: tuple[int, int] | None = None
     translated: bool = Field(default=False, description="text is an English rewrite of original_text")
-    original_text: str | None = None
+    original_text: str | None = Field(default=None, description="The evidence as written, when translated or rewritten")
+    rewrites: list[str] = Field(default_factory=list, description="Shorthand expanded in text ('BP -> blood pressure')")
 
 
 class RequirementResult(BaseModel):

@@ -61,7 +61,8 @@ def test_translation_keeps_original_text_and_span():
     warnings = []
     units = from_text(text, translator=lambda xs: [table.get(x) for x in xs], warnings=warnings)
     tr = next(u for u in units if u.translated)
-    assert tr.text == "I check patients' BP and pulse every hour." and tr.original_text.startswith("Mareezon")
+    assert tr.text == "I check patients' blood pressure and pulse every hour." and tr.original_text.startswith("Mareezon")
+    assert tr.rewrites == ["BP -> blood pressure"]                         # shorthand expanded after translation
     assert text[tr.span[0]:tr.span[1]] == tr.original_text and not warnings
 
 

@@ -152,7 +152,7 @@ def apply_answers(matches: list[RequirementMatch], answers: dict[str, tuple[str,
             answer, detail = a
             text = f"You answered {answer}" + (f": {detail}" if detail else "")
             update = {"evidence_text": text, "evidence_type": "self", "evidence_section": "answers",
-                      "evidence_span": None, "evidence_context_span": None, "reason": "answered"}
+                      "evidence_span": None, "evidence_context_span": None, "reason": "answered", "evidence_translated": False, "evidence_original": None, "evidence_rewrites": []}
             if answer == "yes":
                 update |= {"status": "met", "implied_credit": None}
             elif scoring.credit(m) < ANSWER_SOME_CREDIT:

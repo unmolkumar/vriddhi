@@ -53,6 +53,7 @@ class RequirementMatch(BaseModel):
     evidence_context_span: tuple[int, int] | None = None
     evidence_translated: bool = False
     evidence_original: str | None = None
+    evidence_rewrites: list[str] = Field(default_factory=list)
 
 
 class Scored(NamedTuple):
@@ -145,7 +146,8 @@ def classify(items: list[RequirementItem], units: list[EvidenceUnit], scored: li
             evidence_text=u.text if u else None, evidence_type=u.evidence_type if u else None,
             evidence_section=u.section if u else None, evidence_span=u.span if u else None,
             evidence_context_span=u.context_span if u else None,
-            evidence_translated=bool(u and u.translated), evidence_original=u.original_text if u else None))
+            evidence_translated=bool(u and u.translated), evidence_original=u.original_text if u else None,
+            evidence_rewrites=list(u.rewrites) if u else []))
     return out
 
 

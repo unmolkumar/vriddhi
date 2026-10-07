@@ -70,7 +70,7 @@ WRONG_PREFIX = "wrong_"
 
 
 def load_profiles(directory: Path = PROFILES_DIR, sets: tuple[str, ...] = SETS,
-                  translator: Translator | None = None) -> list[Profile]:
+                  translator: Translator | None = None, normaliser=None) -> list[Profile]:
     """<soc>_<name>.txt (full), partial_<soc>_<name>.txt, wrong_<target soc>_<name>.txt."""
     out = []
     for s in sets:
@@ -78,7 +78,8 @@ def load_profiles(directory: Path = PROFILES_DIR, sets: tuple[str, ...] = SETS,
             kind = "partial" if f.name.startswith(PARTIAL_PREFIX) else "wrong" if f.name.startswith(WRONG_PREFIX) else "full"
             soc = f.name.removeprefix(PARTIAL_PREFIX).removeprefix(WRONG_PREFIX).split("_", 1)[0]
             text = f.read_text(encoding="utf-8")
-            out.append(Profile(f"{s}/{f.stem}", soc, s, kind != "full", from_text(text, translator=translator),
+            out.append(Profile(f"{s}/{f.stem}", soc, s, kind != "full",
+                               from_text(text, translator=translator, normaliser=normaliser),
                                role_history(text), kind))
     return out
 
@@ -204,12 +205,12 @@ def implied_by_soc(profile: Profile, client) -> dict[str, float]:
 
 
 def build(encoder: Encoder | None = None, client: FixtureM1Client | None = None, sets: tuple[str, ...] = SETS,
-          translator: Translator | None = None):
+          translator: Translator | None = None, normaliser=None):
     """Everything evaluate() needs: profiles, occupations (export + extra fixtures) and the precomputed pairs.
     Non-English sentences use the committed translations (FixtureTranslator) unless a translator is given."""
     encoder = encoder or Encoder()
     client = client or FixtureM1Client(FIXTURE_PATH, EXTRA_FIXTURE_PATH)
-    profiles = load_profiles(sets=sets, translator=translator or FixtureTranslator())
+    profiles = load_profiles(sets=sets, translator=translator or FixtureTranslator(), normaliser=normaliser)
     occupations = load_occupations(client, encoder)
     pairs = {}
     for p in profiles:

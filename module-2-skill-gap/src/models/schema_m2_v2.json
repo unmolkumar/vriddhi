@@ -297,7 +297,16 @@
             }
           ],
           "default": null,
+          "description": "The evidence as written, when translated or rewritten",
           "title": "Original Text"
+        },
+        "rewrites": {
+          "description": "Shorthand expanded in text ('BP -> blood pressure')",
+          "items": {
+            "type": "string"
+          },
+          "title": "Rewrites",
+          "type": "array"
         }
       },
       "required": [

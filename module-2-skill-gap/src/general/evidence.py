@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 
 from src.engines.skill_extractor import extract_skills, resolve_skill
 from src.models.schemas import UserProfile
+from src.general.shorthand import expand, is_very_short
 from src.parsers.section_segmenter import _DEGREE, _INSTITUTION, _YEAR, DATE_RANGE, extract_work_history, segment
 
 EvidenceType = Literal["work", "project", "mentioned", "self"]
@@ -45,6 +46,7 @@ baandhta dekh dekhna dekhta dhoondh dhoondhta theek yeh woh ye wo hota hoti hote
 humne kar diye gaadi maal rassi kaise koi bhai ji sahi galat jaise wahan yahan abhi kabhi phir isliye lekin magar
 """.split())
 Translator = Callable[[list[str]], list[str | None]]
+Normaliser = Callable[[list[str], str], list[str | None]]     # (very short units, whole text) -> plain phrases
 
 
 class EvidenceUnit(BaseModel):
@@ -59,7 +61,9 @@ class EvidenceUnit(BaseModel):
     education: bool = Field(default=False, description="A degree/institution line: qualifications and knowledge "
                                                         "inference only, never task/DWA/tool evidence")
     translated: bool = Field(default=False, description="text is an English rewrite of original_text")
-    original_text: str | None = Field(default=None, description="The text as written, when translated")
+    original_text: str | None = Field(default=None, description="The text as written, when translated or rewritten")
+    rewrites: list[str] = Field(default_factory=list, description="Shorthand expanded or phrases normalised in text "
+                                                                 "('BP -> blood pressure')")
 
     @property
     def matchable(self) -> bool:
@@ -131,8 +135,12 @@ def _is_title_line(section: str, piece: str, multi_section: bool) -> bool:
     return section == "header" and multi_section and len(piece.split()) <= MAX_TITLE_WORDS
 
 
+def _skill_ids(texts: list[str], skills_context: bool = False) -> list[str]:
+    return list(dict.fromkeys(h.id for t in texts for h in extract_skills(t, use_llm=False, skills_context=skills_context)))
+
+
 def from_text(text: str, *, default_section: str = "free_text", translator: Translator | None = None,
-              warnings: list[str] | None = None) -> list[EvidenceUnit]:
+              warnings: list[str] | None = None, normaliser: Normaliser | None = None) -> list[EvidenceUnit]:
     """Resume-style or free text -> units. Text with no recognised headings is one 'free_text' section.
 
     - A list-like sentence (comma / semicolon / 'and' parts) yields the sentence and one unit per part; each part
@@ -141,6 +149,8 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
     - Sentences that look non-English (is_english) are rewritten in English by `translator` when given, in one
       batch; the unit keeps the original text and span and is marked translated. Without a translator (or when it
       fails) they are matched as written and a warning is added.
+    - Shorthand (shorthand.expand) is expanded in a matching copy; the unit keeps the text as written in
+      original_text and lists the rewrites. With a `normaliser`, very short units are then rewritten as plain phrases.
     """
     sections = segment(text or "")
     multi = len(sections) > 1
@@ -168,30 +178,50 @@ def from_text(text: str, *, default_section: str = "free_text", translator: Tran
             cursor = span[0]
         kind = SECTION_TYPE.get(name, "mentioned")
         if i in english:
-            eng = english[i]
+            eng, rewrites = expand(english[i], text)
             units.append(EvidenceUnit(text=eng, evidence_type=kind, section=name, span=span, translated=True,
-                                      original_text=piece,
-                                      skill_ids=[h.id for h in extract_skills(eng, use_llm=False)]))
+                                      original_text=piece, rewrites=rewrites, skill_ids=_skill_ids([eng])))
             units += [EvidenceUnit(text=part, evidence_type=kind, section=name, span=span, context_span=span,
-                                   translated=True, original_text=piece,
-                                   skill_ids=[h.id for h in extract_skills(part, use_llm=False, skills_context=True)])
-                      for part in clauses(eng)]
+                                   translated=True, original_text=piece, rewrites=rewrites,
+                                   skill_ids=_skill_ids([part], True)) for part in clauses(eng)]
             continue
         education = not title and is_education_line(name, piece)
-        hits = extract_skills(piece, use_llm=False, skills_context=name == "skills")
-        units.append(EvidenceUnit(text=piece, evidence_type=kind, section=name, span=span, role_title=title,
-                                  education=education, skill_ids=[] if title or education else [h.id for h in hits]))
         if title or education:
+            units.append(EvidenceUnit(text=piece, evidence_type=kind, section=name, span=span, role_title=title,
+                                      education=education))
             continue
+        # Shorthand is expanded per unit (expansions contain no clause separators, so clauses keep their spans).
+        expanded, rewrites = expand(piece, text)
+        units.append(EvidenceUnit(text=expanded, evidence_type=kind, section=name, span=span,
+                                  original_text=piece if rewrites else None, rewrites=rewrites,
+                                  skill_ids=_skill_ids(list(dict.fromkeys([piece, expanded])), name == "skills")))
         part_cursor = span[0] if span else 0
         for part in parts:
             part_span = _find(text, part, part_cursor)
             if part_span:
                 part_cursor = part_span[1]
+            p_expanded, p_rewrites = expand(part, text)
             units.append(EvidenceUnit(
-                text=part, evidence_type=kind, section=name, span=part_span, context_span=span,
-                skill_ids=[h.id for h in extract_skills(part, use_llm=False, skills_context=True)]))
-    return units
+                text=p_expanded, evidence_type=kind, section=name, span=part_span, context_span=span,
+                original_text=part if p_rewrites else None, rewrites=p_rewrites,
+                skill_ids=_skill_ids(list(dict.fromkeys([part, p_expanded])), True)))
+    return normalise_short(units, text, normaliser) if normaliser else units
+
+
+def normalise_short(units: list[EvidenceUnit], text: str, normaliser: Normaliser) -> list[EvidenceUnit]:
+    """Very short matchable units (shorthand.is_very_short) rewritten as plain phrases by `normaliser` (fail-safe:
+    None keeps the unit)."""
+    idx = [i for i, u in enumerate(units) if u.matchable and is_very_short(u.text)]
+    if not idx:
+        return units
+    phrases = normaliser([units[i].text for i in idx], text)
+    out = list(units)
+    for i, phrase in zip(idx, phrases):
+        u = units[i]
+        if phrase and phrase.strip() and phrase.strip().lower() != u.text.lower():
+            out[i] = u.model_copy(update={"text": phrase.strip(), "original_text": u.original_text or u.text,
+                                          "rewrites": u.rewrites + [f"{u.text} -> {phrase.strip()}"]})
+    return out
 
 
 def _months(ym: str | None, today: date) -> int | None:
@@ -255,15 +285,17 @@ def from_resume(data: bytes, filename: str | None = None) -> list[EvidenceUnit]:
 
 
 def from_skills(skills: list[str]) -> list[EvidenceUnit]:
-    """Typed skills -> self-reported units."""
-    units = []
+    """Typed skills -> self-reported units (shorthand expanded, as in from_text)."""
+    units, context = [], " ".join(skills)
     for s in skills:
         s = s.strip()
         if len(s) < 2:
             continue
         entry = resolve_skill(s)
         ids = [entry["id"]] if entry else [h.id for h in extract_skills(s, use_llm=False, skills_context=True)]
-        units.append(EvidenceUnit(text=s, evidence_type="self", section="typed", skill_ids=ids))
+        expanded, rewrites = expand(s, context)
+        units.append(EvidenceUnit(text=expanded, evidence_type="self", section="typed", skill_ids=ids,
+                                  original_text=s if rewrites else None, rewrites=rewrites))
     return units
 
 

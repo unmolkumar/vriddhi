@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.general import inference, roadmap, scoring, verdict
+from src.general import inference, roadmap, scoring, shorthand, verdict
 from src.general.embeddings import Encoder, cosine
 from src.general.evidence import (
     EvidenceUnit, Translator, from_profile, from_skills, from_text, profile_history, role_history,
@@ -154,7 +154,7 @@ def apply_role_history(matches: list[RequirementMatch], roles: list[Role]) -> li
         if m.item.item_type in scoring.IMPLIED_TYPES and m.status == "missing" and credit > 0:
             m = m.model_copy(update={"status": "partial", "reason": "implied_by_role", "implied_credit": round(credit, 4),
                                      "evidence_text": text, "evidence_type": "work", "evidence_section": "role_history",
-                                     "evidence_span": None, "evidence_context_span": None})
+                                     "evidence_span": None, "evidence_context_span": None, "evidence_translated": False, "evidence_original": None, "evidence_rewrites": []})
         out.append(m)
     return out
 
@@ -164,7 +164,8 @@ def evidence_ref(m: RequirementMatch) -> EvidenceRef | None:
         return None
     return EvidenceRef(text=m.evidence_text, evidence_type=m.evidence_type, section=m.evidence_section or "",
                        span=m.evidence_span, context_span=m.evidence_context_span,
-                       translated=m.evidence_translated, original_text=m.evidence_original)
+                       translated=m.evidence_translated, original_text=m.evidence_original,
+                       rewrites=m.evidence_rewrites)
 
 
 def advice(m: RequirementMatch) -> str | None:
@@ -186,13 +187,14 @@ def result(m: RequirementMatch) -> RequirementResult:
 
 class GeneralEngine:
     def __init__(self, client=None, encoder: Encoder | None = None, translator: Translator | None = _DEFAULT,
-                 rephraser=_DEFAULT):
+                 rephraser=_DEFAULT, normaliser=_DEFAULT):
         from src.general.translate import default_translator
 
         self.client = client or M1Client()
         self.encoder = encoder or Encoder()
         self.translator = default_translator() if translator is _DEFAULT else translator
         self.rephraser = verdict.default_rephraser() if rephraser is _DEFAULT else rephraser
+        self.normaliser = shorthand.default_normaliser() if normaliser is _DEFAULT else normaliser
         self._occupations: dict[str, OccupationData] = {}
         self._titles: dict[str, Role | None] = {}
         self._related: dict[str, set[str]] = {}
@@ -247,7 +249,7 @@ class GeneralEngine:
     def evidence(self, req) -> Evidence:
         units, warnings, history = [], [], []
         if req.free_text and req.free_text.strip():
-            units += from_text(req.free_text, translator=self.translator, warnings=warnings)
+            units += from_text(req.free_text, translator=self.translator, warnings=warnings, normaliser=self.normaliser)
             history += role_history(req.free_text)
         units += from_skills([s for s in req.skills if s.strip()])
         for a in getattr(req, "answers", []):
