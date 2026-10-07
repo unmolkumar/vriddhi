@@ -61,7 +61,8 @@ def test_worked_example():
 
 
 def test_experience_band_prefers_indian_postings():
-    profile = {"indian_experience": {"typical_min": 2, "typical_max": 5, "sample_size": 40}, "job_zone": {"job_zone": 4}}
+    profile = {"indian_experience": {"typical_min": 2, "typical_max": 5, "sample_size": 40, "years_covered": "2023-2025"},
+               "job_zone": {"job_zone": 4}}
     assert scoring.experience_band(profile) == (2.0, 5.0, "india_postings")
     fallback = {"indian_experience": {"typical_min": 1, "typical_max": 4, "sample_size": 0, "fallback_to_job_zone": True},
                 "job_zone": {"job_zone": 4}}

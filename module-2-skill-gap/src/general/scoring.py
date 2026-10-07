@@ -9,6 +9,7 @@
 """
 from __future__ import annotations
 
+import re
 from typing import NamedTuple
 
 from src.engines.profile_builder import EVIDENCE_STRENGTH as V1_EVIDENCE_STRENGTH
@@ -32,8 +33,11 @@ IMPLIED_CREDIT_MAX = 0.4
 IMPLIED_CREDIT_UNKNOWN_YEARS = 0.1       # a title with no dates (resume header)
 ROLE_MIN_CONFIDENCE = 0.7                # module 1 search confidence for a past title to count
 
-# Experience. Band from module 1's Indian postings (profile.indian_experience), else the O*NET job zone.
+# Experience. Band from module 1's Indian postings (profile.indian_experience) when it is reliable (enough recent
+# postings), else the O*NET job zone.
 JOB_ZONE_YEARS = {1: (0.0, 1.0), 2: (0.0, 2.0), 3: (1.0, 4.0), 4: (2.0, 6.0), 5: (4.0, 10.0)}
+INDIA_BAND_MIN_SAMPLE = 30       # postings behind module 1's Indian band
+INDIA_BAND_MIN_YEAR = 2023       # ... and its newest posting year (years_covered "2023-2025")
 EXPERIENCE_MIN_FACTOR = 0.8      # far below the band, the score keeps 80%
 EXPERIENCE_GAP_YEARS = 3.0       # ... reached this many years below the band's minimum
 
@@ -44,7 +48,7 @@ FIT_LABELS = ((80, "Strong fit"), (50, "Good fit"), (25, "Developing"), (0, "Ear
 
 # Verdict (calibrated on the tuning set, WORKING.md section 12.2).
 GOOD_FIT_THRESHOLD = 0.22        # A3b: tuned with verdict.py's thresholds on the tuning sets (WORKING.md 14.1)
-OVERQUALIFIED_EXTRA_YEARS = 3.0  # years above the band's maximum
+OVERQUALIFIED_EXTRA_YEARS = 2.0  # years above the band's maximum
 
 
 class Band(NamedTuple):
@@ -105,12 +109,19 @@ def fit_label(percent: int) -> str:
     return next(label for floor, label in FIT_LABELS if percent >= floor)
 
 
+def india_band_reliable(exp: dict) -> bool:
+    """Enough recent postings behind module 1's Indian band. Missing sample_size / years_covered -> unreliable."""
+    years = [int(y) for y in re.findall(r"\d{4}", str(exp.get("years_covered") or ""))]
+    return (not exp.get("fallback_to_job_zone") and exp.get("typical_max") is not None
+            and (exp.get("sample_size") or 0) >= INDIA_BAND_MIN_SAMPLE and bool(years) and max(years) >= INDIA_BAND_MIN_YEAR)
+
+
 def experience_band(profile: dict | None) -> Band | None:
-    """Module 1 profile -> band: indian_experience when it has postings behind it, else the job zone."""
+    """Module 1 profile -> band: indian_experience when reliable (india_band_reliable), else the job zone."""
     if not profile:
         return None
     exp = profile.get("indian_experience") or {}
-    if exp.get("sample_size") and not exp.get("fallback_to_job_zone") and exp.get("typical_max") is not None:
+    if india_band_reliable(exp):
         return Band(float(exp.get("typical_min") or 0.0), float(exp["typical_max"]), "india_postings")
     zone = (profile.get("job_zone") or {}).get("job_zone")
     if zone in JOB_ZONE_YEARS:
