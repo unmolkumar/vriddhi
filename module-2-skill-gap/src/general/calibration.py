@@ -5,6 +5,9 @@ Profile sets (tests/calibration/profiles/<set>/<soc>_<name>.txt):
   heldout  15 more for the same occupations, in other styles; never used for tuning
   new      10 for occupations outside the export (fetched from a live module 1, no curated data)
   heldout2 25 more (15 export + 10 extra occupations) in yet other styles, written after A1b; never used for tuning
+  verdict sets  verdict_tuning, tuning_short, tuning_oblique (A4: third person, cover letter, Q&A, key-value; career
+                changers) are tuning; verdict_validation, verdict_validation2 and verdict_validation3 (written after the
+                A4 freeze) are validation only. hinglish: Hinglish / Hindi, never tuned on
 Used by scripts/calibrate.py and tests/calibration. Similarities are computed once per (profile, occupation);
 thresholds and type shares are then re-applied cheaply.
 """
